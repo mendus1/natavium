@@ -710,7 +710,7 @@ export default function Natavium() {
   // =========================
   if (step === "preview" && chartResult) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 text-white p-6">
+      <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 text-white p-6 pb-16">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-8">
             <h1 className="text-5xl font-black mb-2">Your Natal Chart</h1>
@@ -1163,16 +1163,6 @@ export default function Natavium() {
                 <p className="mb-4">Your drive is expressed protectively...</p>
               </div>
             </div>
-          </div>
-
-          <div className="text-center">
-            <button
-              onClick={() => setStep("payment")}
-              className="bg-gradient-to-r from-yellow-400 to-orange-500 text-gray-900 px-10 py-4 rounded-full text-xl font-black hover:scale-105 transition-transform shadow-2xl"
-            >
-              Get Full Chart - $4.99
-            </button>
-            <p className="text-purple-300 mt-3 text-sm">Less than a latte • Insight that lasts forever</p>
           </div>
         </div>
       </div>
