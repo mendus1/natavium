@@ -23,11 +23,6 @@ import {
   Crown,
 } from "lucide-react";
 
-// External navigation helper (for Stripe redirects, etc. - causes full reload)
-const externalNavigate = (to) => {
-  window.location.assign(to);
-};
-
 // =========================
 // Bundle Definitions
 // =========================
@@ -725,7 +720,6 @@ function CalculatingPage() {
 // Preview (Paywall)
 // =========================
 function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle }) {
-  const navigate = useNavigate();
   const [showTooltip, setShowTooltip] = useState(null);
 
   if (!chartResult) {
