@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Routes, Route, useNavigate, useParams, Navigate } from "react-router-dom";
 import { calculateNatalChartFromLocal } from "./ephemeris";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 import {
   Sparkles,
   Lock,
-  Share2,
   Download,
   Star,
   Moon,
@@ -21,6 +22,8 @@ import {
   Info,
   Gift,
   Crown,
+  Mail,
+  Loader2,
 } from "lucide-react";
 
 // =========================
@@ -1375,6 +1378,12 @@ function PaymentPage({ handlePayment, selectedBundle }) {
 // =========================
 function ChartPage({ chartResult, birthData, isPremium }) {
   const navigate = useNavigate();
+  const chartRef = useRef(null);
+  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [emailAddress, setEmailAddress] = useState("");
+  const [emailStatus, setEmailStatus] = useState("idle"); // idle, sending, success, error
+  const [emailError, setEmailError] = useState("");
+  const [pdfGenerating, setPdfGenerating] = useState(false);
 
   if (!isPremium || !chartResult) {
     return <Navigate to="/preview" replace />;
@@ -1382,8 +1391,246 @@ function ChartPage({ chartResult, birthData, isPremium }) {
 
   const displayDate = formatBirthDate(birthData.birthMonth, birthData.birthDay, birthData.birthYear);
 
+  // PDF Generation Handler
+  const handleDownloadPDF = async () => {
+    if (!chartRef.current || pdfGenerating) return;
+
+    setPdfGenerating(true);
+    try {
+      // Capture the chart section
+      const canvas = await html2canvas(chartRef.current, {
+        backgroundColor: "#1e1b4b",
+        scale: 2,
+        logging: false,
+        useCORS: true,
+      });
+
+      // Create PDF
+      const pdf = new jsPDF("p", "mm", "a4");
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+
+      // Add title
+      pdf.setFillColor(30, 27, 75);
+      pdf.rect(0, 0, pageWidth, pageHeight, "F");
+
+      pdf.setTextColor(253, 224, 71);
+      pdf.setFontSize(24);
+      pdf.text("Natavium", pageWidth / 2, 15, { align: "center" });
+
+      pdf.setTextColor(196, 181, 253);
+      pdf.setFontSize(12);
+      pdf.text("Your Natal Chart", pageWidth / 2, 22, { align: "center" });
+
+      // Add birth info
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFontSize(10);
+      pdf.text(`${displayDate} • ${birthData.time} • ${birthData.location}`, pageWidth / 2, 30, { align: "center" });
+
+      // Add chart image
+      const imgData = canvas.toDataURL("image/png");
+      const imgWidth = pageWidth - 20;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+      // Check if image fits on first page
+      const startY = 38;
+      const maxImgHeight = pageHeight - startY - 10;
+
+      if (imgHeight > maxImgHeight) {
+        // Scale down to fit
+        const scaleFactor = maxImgHeight / imgHeight;
+        pdf.addImage(imgData, "PNG", 10, startY, imgWidth * scaleFactor, maxImgHeight);
+      } else {
+        pdf.addImage(imgData, "PNG", 10, startY, imgWidth, imgHeight);
+      }
+
+      // Add planetary placements on second page
+      pdf.addPage();
+      pdf.setFillColor(30, 27, 75);
+      pdf.rect(0, 0, pageWidth, pageHeight, "F");
+
+      pdf.setTextColor(253, 224, 71);
+      pdf.setFontSize(16);
+      pdf.text("Planetary Placements", pageWidth / 2, 15, { align: "center" });
+
+      // Build placements table
+      const planets = [
+        { name: "Sun", data: chartResult.sun, emoji: "Sun" },
+        { name: "Moon", data: chartResult.moon, emoji: "Moon" },
+        { name: "Mercury", data: chartResult.mercury, emoji: "Mercury" },
+        { name: "Venus", data: chartResult.venus, emoji: "Venus" },
+        { name: "Mars", data: chartResult.mars, emoji: "Mars" },
+        { name: "Jupiter", data: chartResult.jupiter, emoji: "Jupiter" },
+        { name: "Saturn", data: chartResult.saturn, emoji: "Saturn" },
+        { name: "Uranus", data: chartResult.uranus, emoji: "Uranus" },
+        { name: "Neptune", data: chartResult.neptune, emoji: "Neptune" },
+        { name: "Pluto", data: chartResult.pluto, emoji: "Pluto" },
+      ];
+
+      let yPos = 28;
+      pdf.setFontSize(10);
+
+      // Header row
+      pdf.setTextColor(253, 224, 71);
+      pdf.text("Planet", 15, yPos);
+      pdf.text("Sign", 55, yPos);
+      pdf.text("Degree", 105, yPos);
+      pdf.text("House", 145, yPos);
+
+      yPos += 8;
+      pdf.setTextColor(255, 255, 255);
+
+      planets.forEach((planet) => {
+        if (planet.data) {
+          pdf.text(planet.name, 15, yPos);
+          pdf.text(planet.data.sign || "—", 55, yPos);
+          pdf.text(`${planet.data.degree || "—"}°`, 105, yPos);
+          pdf.text(planet.data.house ? `${planet.data.house}${houseSuffix(planet.data.house)}` : "—", 145, yPos);
+          yPos += 7;
+        }
+      });
+
+      // Add Rising sign
+      yPos += 5;
+      pdf.setTextColor(253, 224, 71);
+      pdf.text("Ascendant", 15, yPos);
+      pdf.setTextColor(255, 255, 255);
+      pdf.text(chartResult.rising?.sign || "—", 55, yPos);
+      pdf.text(`${chartResult.rising?.degree || "—"}°`, 105, yPos);
+      pdf.text("1st", 145, yPos);
+
+      // Footer
+      pdf.setTextColor(167, 139, 250);
+      pdf.setFontSize(9);
+      pdf.text("Generated by Natavium - natavium.com", pageWidth / 2, pageHeight - 10, { align: "center" });
+
+      // Download
+      const fileName = `natavium-chart-${chartResult.sun?.sign?.toLowerCase() || "natal"}-${Date.now()}.pdf`;
+      pdf.save(fileName);
+    } catch (error) {
+      console.error("PDF generation error:", error);
+      alert("Failed to generate PDF. Please try again.");
+    } finally {
+      setPdfGenerating(false);
+    }
+  };
+
+  // Email Handler
+  const handleSendEmail = async () => {
+    if (!emailAddress || emailStatus === "sending") return;
+
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(emailAddress)) {
+      setEmailError("Please enter a valid email address");
+      return;
+    }
+
+    setEmailStatus("sending");
+    setEmailError("");
+
+    try {
+      const response = await fetch("/api/send-chart-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: emailAddress,
+          chartResult,
+          birthData,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to send email");
+      }
+
+      setEmailStatus("success");
+      setTimeout(() => {
+        setShowEmailModal(false);
+        setEmailStatus("idle");
+        setEmailAddress("");
+      }, 2000);
+    } catch (error) {
+      console.error("Email send error:", error);
+      setEmailError(error.message || "Failed to send email. Please try again.");
+      setEmailStatus("error");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 text-white p-6">
+      {/* Email Modal */}
+      {showEmailModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-gradient-to-br from-indigo-900 to-purple-900 rounded-2xl p-6 max-w-md w-full border border-white/20 shadow-2xl">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-bold">Email Your Chart</h3>
+              <button
+                onClick={() => {
+                  setShowEmailModal(false);
+                  setEmailStatus("idle");
+                  setEmailError("");
+                }}
+                className="p-1 hover:bg-white/10 rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {emailStatus === "success" ? (
+              <div className="text-center py-8">
+                <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Check className="w-8 h-8 text-green-400" />
+                </div>
+                <p className="text-lg font-semibold text-green-400">Email Sent!</p>
+                <p className="text-purple-300 text-sm mt-2">Check your inbox for your chart results.</p>
+              </div>
+            ) : (
+              <>
+                <p className="text-purple-300 text-sm mb-4">
+                  We'll send your complete chart results including all planetary placements to your email.
+                </p>
+
+                <div className="mb-4">
+                  <label className="block text-sm font-medium mb-2">Email Address</label>
+                  <input
+                    type="email"
+                    value={emailAddress}
+                    onChange={(e) => setEmailAddress(e.target.value)}
+                    placeholder="your@email.com"
+                    className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-purple-400 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
+                    disabled={emailStatus === "sending"}
+                  />
+                  {emailError && (
+                    <p className="text-red-400 text-sm mt-2">{emailError}</p>
+                  )}
+                </div>
+
+                <button
+                  onClick={handleSendEmail}
+                  disabled={!emailAddress || emailStatus === "sending"}
+                  className="w-full bg-gradient-to-r from-yellow-400 to-orange-500 text-gray-900 px-6 py-3 rounded-xl font-bold hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-2"
+                >
+                  {emailStatus === "sending" ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      Sending...
+                    </>
+                  ) : (
+                    <>
+                      <Mail className="w-5 h-5" />
+                      Send to Email
+                    </>
+                  )}
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-8">
           <h1 className="text-5xl font-black mb-2">Your Complete Natal Chart</h1>
@@ -1392,13 +1639,29 @@ function ChartPage({ chartResult, birthData, isPremium }) {
           </p>
 
           <div className="flex justify-center gap-4">
-            <button className="flex items-center px-4 py-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors text-sm">
-              <Share2 className="w-4 h-4 mr-2" />
-              Share
+            <button
+              onClick={() => setShowEmailModal(true)}
+              className="flex items-center px-4 py-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors text-sm"
+            >
+              <Mail className="w-4 h-4 mr-2" />
+              Email Results
             </button>
-            <button className="flex items-center px-4 py-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors text-sm">
-              <Download className="w-4 h-4 mr-2" />
-              Download
+            <button
+              onClick={handleDownloadPDF}
+              disabled={pdfGenerating}
+              className="flex items-center px-4 py-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors text-sm disabled:opacity-50"
+            >
+              {pdfGenerating ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Generating...
+                </>
+              ) : (
+                <>
+                  <Download className="w-4 h-4 mr-2" />
+                  Download PDF
+                </>
+              )}
             </button>
           </div>
         </div>
@@ -1409,7 +1672,8 @@ function ChartPage({ chartResult, birthData, isPremium }) {
           <p className="text-green-200">Your complete analysis is unlocked.</p>
         </div>
 
-        <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 mb-8 border border-white/20">
+        {/* Chart content for PDF capture */}
+        <div ref={chartRef} className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 mb-8 border border-white/20">
           <h2 className="text-3xl font-bold mb-6">Your Cosmic Blueprint</h2>
 
           <div className="space-y-6">
