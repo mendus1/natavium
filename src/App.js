@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Routes, Route, useNavigate, useParams, Navigate } from "react-router-dom";
 import { calculateNatalChartFromLocal } from "./ephemeris";
 import {
   Sparkles,
@@ -20,7 +21,6 @@ import {
 } from "lucide-react";
 
 export default function Natavium() {
-  const [step, setStep] = useState("landing");
   const [birthData, setBirthData] = useState({
     date: "",
     time: "",
@@ -32,9 +32,6 @@ export default function Natavium() {
   const [calcError, setCalcError] = useState(null);
   const [chartResult, setChartResult] = useState(null);
   const [isPremium, setIsPremium] = useState(false);
-
-  const [showInfo, setShowInfo] = useState(false);
-  const [infoPage, setInfoPage] = useState("systems");
 
   const handleInputChange = (field, value) => {
     setBirthData((prev) => {
@@ -78,8 +75,8 @@ export default function Natavium() {
     };
   };
 
-  const calculateChart = async () => {
-    setStep("calculating");
+  const calculateChart = async (navigate) => {
+    navigate("/calculating");
     setCalcError(null);
 
     try {
@@ -105,17 +102,17 @@ export default function Natavium() {
       console.log("Chart result:", chart);
 
       setChartResult(chart);
-      setStep("preview");
+      navigate("/preview", { replace: true });
     } catch (error) {
       console.error("Chart calculation error:", error);
       setCalcError(error.message);
-      setStep("input");
+      navigate("/input", { replace: true });
     }
   };
 
-  const handlePayment = () => {
+  const handlePayment = (navigate) => {
     setIsPremium(true);
-    setStep("full");
+    navigate("/chart", { replace: true });
   };
 
   const houseSuffix = (n) => {
@@ -136,12 +133,16 @@ export default function Natavium() {
   // =========================
   // Info / Documentation Pages
   // =========================
-  if (showInfo) {
+  function InfoPage() {
+    const navigate = useNavigate();
+    const { page } = useParams();
+    const infoPage = page || "systems";
+
     return (
       <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 text-white p-6">
         <div className="max-w-4xl mx-auto">
           <button
-            onClick={() => setShowInfo(false)}
+            onClick={() => navigate("/")}
             className="mb-6 px-4 py-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors flex items-center"
           >
             <X className="w-4 h-4 mr-2" />
@@ -151,7 +152,7 @@ export default function Natavium() {
           <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 border border-white/20">
             <div className="flex gap-4 mb-8 border-b border-white/20 pb-4 overflow-x-auto">
               <button
-                onClick={() => setInfoPage("systems")}
+                onClick={() => navigate("/info/systems")}
                 className={`px-4 py-2 rounded-lg font-semibold whitespace-nowrap transition-colors ${
                   infoPage === "systems" ? "bg-white/20" : "hover:bg-white/10"
                 }`}
@@ -160,7 +161,7 @@ export default function Natavium() {
               </button>
 
               <button
-                onClick={() => setInfoPage("approach")}
+                onClick={() => navigate("/info/approach")}
                 className={`px-4 py-2 rounded-lg font-semibold whitespace-nowrap transition-colors ${
                   infoPage === "approach" ? "bg-white/20" : "hover:bg-white/10"
                 }`}
@@ -169,7 +170,7 @@ export default function Natavium() {
               </button>
 
               <button
-                onClick={() => setInfoPage("services")}
+                onClick={() => navigate("/info/services")}
                 className={`px-4 py-2 rounded-lg font-semibold whitespace-nowrap transition-colors ${
                   infoPage === "services" ? "bg-white/20" : "hover:bg-white/10"
                 }`}
@@ -433,7 +434,9 @@ export default function Natavium() {
   // =========================
   // Landing
   // =========================
-  if (step === "landing") {
+  function LandingPage() {
+    const navigate = useNavigate();
+
     return (
       <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 text-white p-6">
         <div className="max-w-4xl mx-auto">
@@ -441,10 +444,7 @@ export default function Natavium() {
             <div />
             <div className="flex gap-3">
               <button
-                onClick={() => {
-                  setShowInfo(true);
-                  setInfoPage("services");
-                }}
+                onClick={() => navigate("/info/services")}
                 className="flex items-center px-4 py-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors text-sm"
               >
                 <DollarSign className="w-4 h-4 mr-2" />
@@ -452,10 +452,7 @@ export default function Natavium() {
               </button>
 
               <button
-                onClick={() => {
-                  setShowInfo(true);
-                  setInfoPage("systems");
-                }}
+                onClick={() => navigate("/info/systems")}
                 className="flex items-center px-4 py-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors text-sm"
               >
                 <BookOpen className="w-4 h-4 mr-2" />
@@ -500,7 +497,7 @@ export default function Natavium() {
 
           <div className="text-center mb-12">
             <button
-              onClick={() => setStep("input")}
+              onClick={() => navigate("/input")}
               className="bg-gradient-to-r from-yellow-400 to-orange-500 text-gray-900 px-12 py-5 rounded-full text-2xl font-black hover:scale-105 transition-transform shadow-2xl"
             >
               Discover Your Chart →
@@ -538,7 +535,9 @@ export default function Natavium() {
   // =========================
   // Input Form
   // =========================
-  if (step === "input") {
+  function InputPage() {
+    const navigate = useNavigate();
+
     return (
       <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 text-white p-6 flex items-center justify-center">
         <div className="max-w-2xl w-full">
@@ -663,14 +662,14 @@ export default function Natavium() {
 
             <div className="flex gap-4">
               <button
-                onClick={() => setStep("landing")}
+                onClick={() => navigate("/")}
                 className="flex-1 px-6 py-3 rounded-xl bg-white/10 border border-white/30 font-semibold hover:bg-white/20 transition-colors"
               >
                 ← Back
               </button>
 
               <button
-                onClick={calculateChart}
+                onClick={() => calculateChart(navigate)}
                 disabled={!birthData.date || !birthData.hour || !birthData.minute || !birthData.location}
                 className="flex-1 px-6 py-4 rounded-xl bg-gradient-to-r from-yellow-400 to-orange-500 text-gray-900 font-black text-lg hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
               >
@@ -686,7 +685,7 @@ export default function Natavium() {
   // =========================
   // Calculating
   // =========================
-  if (step === "calculating") {
+  function CalculatingPage() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 text-white flex items-center justify-center p-6">
         <div className="text-center">
@@ -708,7 +707,13 @@ export default function Natavium() {
   // =========================
   // Preview (Paywall)
   // =========================
-  if (step === "preview" && chartResult) {
+  function PreviewPage() {
+    const navigate = useNavigate();
+
+    if (!chartResult) {
+      return <Navigate to="/input" replace />;
+    }
+
     return (
       <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 text-white p-6 pb-16">
         <div className="max-w-4xl mx-auto">
@@ -1141,7 +1146,7 @@ export default function Natavium() {
                   </div>
 
                   <button
-                    onClick={() => setStep("payment")}
+                    onClick={() => navigate("/payment")}
                     className="bg-gradient-to-r from-yellow-400 to-orange-500 text-gray-900 px-8 py-3 rounded-full text-lg font-black hover:scale-105 transition-transform shadow-2xl"
                   >
                     Unlock Now
@@ -1172,7 +1177,9 @@ export default function Natavium() {
   // =========================
   // Payment
   // =========================
-  if (step === "payment") {
+  function PaymentPage() {
+    const navigate = useNavigate();
+
     return (
       <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 text-white p-6 flex items-center justify-center">
         <div className="max-w-md w-full bg-white/10 backdrop-blur-lg rounded-3xl p-8 border border-white/20">
@@ -1205,14 +1212,14 @@ export default function Natavium() {
           </div>
 
           <button
-            onClick={handlePayment}
+            onClick={() => handlePayment(navigate)}
             className="w-full bg-gradient-to-r from-yellow-400 to-orange-500 text-gray-900 px-6 py-4 rounded-xl text-lg font-black hover:scale-105 transition-transform shadow-xl mb-4"
           >
             Complete Purchase
           </button>
 
           <button
-            onClick={() => setStep("preview")}
+            onClick={() => navigate("/preview")}
             className="w-full text-purple-300 hover:text-white transition-colors text-sm"
           >
             ← Back to preview
@@ -1227,7 +1234,13 @@ export default function Natavium() {
   // =========================
   // Full Unlocked
   // =========================
-  if (step === "full" && isPremium && chartResult) {
+  function ChartPage() {
+    const navigate = useNavigate();
+
+    if (!isPremium || !chartResult) {
+      return <Navigate to="/preview" replace />;
+    }
+
     return (
       <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 text-white p-6">
         <div className="max-w-4xl mx-auto">
@@ -1321,7 +1334,7 @@ export default function Natavium() {
 
             <div className="mt-8 text-center">
               <button
-                onClick={() => setStep("landing")}
+                onClick={() => navigate("/")}
                 className="px-6 py-3 rounded-xl bg-white/10 border border-white/20 hover:bg-white/20 transition-colors"
               >
                 Back to Home
@@ -1333,5 +1346,20 @@ export default function Natavium() {
     );
   }
 
-  return null;
+  // =========================
+  // Routes
+  // =========================
+  return (
+    <Routes>
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/input" element={<InputPage />} />
+      <Route path="/calculating" element={<CalculatingPage />} />
+      <Route path="/preview" element={<PreviewPage />} />
+      <Route path="/payment" element={<PaymentPage />} />
+      <Route path="/chart" element={<ChartPage />} />
+      <Route path="/info/:page" element={<InfoPage />} />
+      <Route path="/info" element={<InfoPage />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+  );
 }

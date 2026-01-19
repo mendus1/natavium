@@ -13,6 +13,7 @@
     "luxon": "^3.7.2",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
+    "react-router-dom": "^7.12.0",
     "react-scripts": "^5.0.1",
     "tz-lookup": "^6.1.25",
     "web-vitals": "^2.1.4"
