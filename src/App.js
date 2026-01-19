@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Routes, Route, useParams, Navigate } from "react-router-dom";
+import { Routes, Route, useNavigate, useParams, Navigate } from "react-router-dom";
 import { calculateNatalChartFromLocal } from "./ephemeris";
 import {
   Sparkles,
@@ -23,15 +23,8 @@ import {
   Crown,
 } from "lucide-react";
 
-// Simple navigation helper (works everywhere in this file)
-const navigate = (to) => {
-  // Support "back" style navigation if you ever do navigate(-1)
-  if (typeof to === "number") {
-    window.history.go(to);
-    return;
-  }
-
-  // Normal route navigation (full reload)
+// External navigation helper (for Stripe redirects, etc. - causes full reload)
+const externalNavigate = (to) => {
   window.location.assign(to);
 };
 
@@ -123,6 +116,7 @@ const formatBirthDate = (birthMonth, birthDay, birthYear) => {
 // Info / Documentation Pages
 // =========================
 function InfoPage() {
+  const navigate = useNavigate();
   const { page } = useParams();
   const infoPage = page || "systems";
 
@@ -423,6 +417,7 @@ function InfoPage() {
 // Landing
 // =========================
 function LandingPage() {
+  const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 text-white p-6">
@@ -523,6 +518,7 @@ function LandingPage() {
 // Input Form
 // =========================
 function InputPage({ birthData, handleInputChange, calculateChart, calcError }) {
+  const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 text-white p-6 flex items-center justify-center">
@@ -729,6 +725,7 @@ function CalculatingPage() {
 // Preview (Paywall)
 // =========================
 function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle }) {
+  const navigate = useNavigate();
   const [showTooltip, setShowTooltip] = useState(null);
 
   if (!chartResult) {
@@ -1306,6 +1303,7 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
 // Payment
 // =========================
 function PaymentPage({ handlePayment, selectedBundle }) {
+  const navigate = useNavigate();
   const bundle = BUNDLES[selectedBundle];
   const IconComponent = bundle.icon;
 
@@ -1382,6 +1380,7 @@ function PaymentPage({ handlePayment, selectedBundle }) {
 // Full Unlocked
 // =========================
 function ChartPage({ chartResult, birthData, isPremium }) {
+  const navigate = useNavigate();
 
   if (!isPremium || !chartResult) {
     return <Navigate to="/preview" replace />;
