@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Routes, Route, useParams, Navigate } from "react-router-dom";
+import { Routes, Route, useParams, Navigate, useNavigate } from "react-router-dom";
 import { calculateNatalChartFromLocal } from "./ephemeris";
 import {
   Sparkles,
@@ -1491,6 +1491,7 @@ function ChartPage({ chartResult, birthData, isPremium }) {
 // Main App Component
 // =========================
 export default function Natavium() {
+  const navigate = useNavigate();
   const [birthData, setBirthData] = useState({
     date: "",
     birthMonth: "",
