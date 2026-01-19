@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Routes, Route, useParams, Navigate, useNavigate } from "react-router-dom";
+import { Routes, Route, useParams, Navigate } from "react-router-dom";
 import { calculateNatalChartFromLocal } from "./ephemeris";
 import {
   Sparkles,
@@ -22,6 +22,18 @@ import {
   Gift,
   Crown,
 } from "lucide-react";
+
+// Simple navigation helper (works everywhere in this file)
+const navigate = (to) => {
+  // Support "back" style navigation if you ever do navigate(-1)
+  if (typeof to === "number") {
+    window.history.go(to);
+    return;
+  }
+
+  // Normal route navigation (full reload)
+  window.location.assign(to);
+};
 
 // =========================
 // Bundle Definitions
@@ -1294,7 +1306,6 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
 // Payment
 // =========================
 function PaymentPage({ handlePayment, selectedBundle }) {
-  const navigate = useNavigate();
   const bundle = BUNDLES[selectedBundle];
   const IconComponent = bundle.icon;
 
@@ -1487,7 +1498,6 @@ function ChartPage({ chartResult, birthData, isPremium }) {
 // Main App Component
 // =========================
 export default function Natavium() {
-  const navigate = useNavigate();
   const [birthData, setBirthData] = useState({
     date: "",
     birthMonth: "",
