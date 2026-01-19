@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Routes, Route, useNavigate, useParams, Navigate } from "react-router-dom";
+import { Routes, Route, useParams, Navigate } from "react-router-dom";
 import { calculateNatalChartFromLocal } from "./ephemeris";
 import {
   Sparkles,
@@ -1298,7 +1298,6 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
 // Payment
 // =========================
 function PaymentPage({ handlePayment, selectedBundle }) {
-  const navigate = useNavigate();
   const bundle = BUNDLES[selectedBundle];
   const IconComponent = bundle.icon;
 
