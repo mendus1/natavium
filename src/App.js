@@ -3,6 +3,7 @@ import { Routes, Route, useNavigate, useParams, Navigate } from "react-router-do
 import { calculateNatalChartFromLocal } from "./ephemeris";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
+import "./App.css";
 import {
   Sparkles,
   Lock,
@@ -30,9 +31,9 @@ import {
 // Bundle Definitions
 // =========================
 const BUNDLES = {
-  essential: {
-    id: "essential",
-    name: "Essential",
+  base: {
+    id: "base",
+    name: "Base",
     price: 4.99,
     description: "Core natal chart analysis",
     icon: Star,
@@ -42,43 +43,42 @@ const BUNDLES = {
       { text: "Big Three analysis (Sun, Moon, Rising)", included: true },
       { text: "All 10 planetary placements", included: true },
       { text: "House positions explained", included: true },
-      { text: "Downloadable PDF", included: true },
+      { text: "PDF + Email Delivery", included: true },
       { text: "2026 transit forecast", included: false },
-      { text: "Compatibility add-on discount", included: false },
+      { text: "AI-generated reading", included: false },
     ],
   },
-  complete: {
-    id: "complete",
-    name: "Complete",
+  essential: {
+    id: "essential",
+    name: "Essential",
     price: 7.99,
     description: "Full analysis + yearly forecast",
     icon: Gift,
     color: "purple",
     popular: true,
     features: [
-      { text: "Everything in Essential", included: true },
+      { text: "Everything in Base", included: true },
       { text: "3000+ word AI-generated reading", included: true },
       { text: "2026 transit forecast", included: true },
       { text: "Key life themes & patterns", included: true },
       { text: "Strengths & challenges breakdown", included: true },
-      { text: "Compatibility add-on discount", included: false },
-      { text: "Monthly transit updates", included: false },
+      { text: "PDF + Email Delivery", included: true },
     ],
   },
   ultimate: {
     id: "ultimate",
     name: "Ultimate",
     price: 12.99,
-    description: "Complete + compatibility & transits",
+    description: "Everything + compatibility & transits",
     icon: Crown,
     color: "pink",
     features: [
-      { text: "Everything in Complete", included: true },
-      { text: "1 free compatibility reading ($2.99 value)", included: true },
+      { text: "Everything in Essential", included: true },
+      { text: "1 free compatibility reading ($3.99 value)", included: true },
       { text: "Monthly transit updates for 3 months", included: true },
       { text: "Vedic chart comparison", included: true },
       { text: "Priority support", included: true },
-      { text: "Future feature early access", included: true },
+      { text: "PDF + Email Delivery", included: true },
     ],
   },
 };
@@ -722,8 +722,18 @@ function CalculatingPage() {
 // =========================
 // Preview (Paywall)
 // =========================
+// Add-on services definition
+const ADD_ONS = [
+  { id: "compatibility", name: "Compatibility", price: 3.99, description: "Compare charts with a partner" },
+  { id: "house_deep_dive", name: "House Deep Dive", price: 2.99, description: "Detailed house analysis" },
+  { id: "solar_return", name: "Solar Return", price: 4.99, description: "Your year ahead forecast" },
+  { id: "vedic_chart", name: "Vedic Chart", price: 2.99, description: "Eastern astrology perspective" },
+  { id: "transit_report", name: "Transit Report", price: 1.99, description: "Current planetary influences" },
+];
+
 function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle }) {
   const [showTooltip, setShowTooltip] = useState(null);
+  const [selectedAddOns, setSelectedAddOns] = useState([]);
 
   if (!chartResult) {
     return <Navigate to="/input" replace />;
@@ -731,6 +741,22 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
 
   const displayDate = formatBirthDate(birthData.birthMonth, birthData.birthDay, birthData.birthYear);
   const currentBundle = BUNDLES[selectedBundle];
+
+  // Calculate total price including add-ons
+  const addOnsTotal = selectedAddOns.reduce((sum, id) => {
+    const addOn = ADD_ONS.find(a => a.id === id);
+    return sum + (addOn ? addOn.price : 0);
+  }, 0);
+  const totalPrice = currentBundle.price + addOnsTotal;
+
+  // Toggle add-on selection
+  const toggleAddOn = (addOnId) => {
+    setSelectedAddOns(prev =>
+      prev.includes(addOnId)
+        ? prev.filter(id => id !== addOnId)
+        : [...prev, addOnId]
+    );
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 text-white p-6 pb-16">
@@ -1132,23 +1158,17 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
             protective. People instinctively feel safe with you...
           </p>
 
-          <div className="relative mt-8">
+          <div className="relative mt-6">
             {/* Blurred premium preview */}
             <div className="blur-sm select-none opacity-50">
-              <h3 className="text-xl font-bold mb-3 mt-6">
+              <h3 className="text-xl font-bold mb-2">
                 Mercury in {chartResult.mercury.sign}
               </h3>
-              <p className="mb-4">Your communication style is methodical and thorough...</p>
-
-              <h3 className="text-xl font-bold mb-3">Venus in {chartResult.venus.sign}</h3>
-              <p className="mb-4">In love, you need mental stimulation and variety...</p>
-
-              <h3 className="text-xl font-bold mb-3">Mars in {chartResult.mars.sign}</h3>
-              <p className="mb-4">Your drive is expressed protectively...</p>
+              <p className="text-sm">Your communication style is methodical...</p>
             </div>
 
             {/* Gradient overlay */}
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-purple-900/80 to-purple-900 pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-purple-900 pointer-events-none" />
           </div>
 
           <div className="text-center mt-4">
@@ -1212,7 +1232,7 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
                         }}
                         className="p-1 hover:bg-white/10 rounded-full transition-colors"
                       >
-                        <Info className="w-4 h-4 text-purple-300" />
+                        <Info className="w-5 h-5 animate-info-pulse" />
                       </button>
 
                       {showTooltip === bundle.id && (
@@ -1258,6 +1278,56 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
           </div>
         </div>
 
+        {/* Add-On Customization Section */}
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold text-center mb-2">Prefer to customize?</h2>
+          <p className="text-center text-purple-300 text-sm mb-6">Start with the Base Package and add anything you want</p>
+
+          <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+            {ADD_ONS.map((addOn) => {
+              const isSelected = selectedAddOns.includes(addOn.id);
+              return (
+                <button
+                  key={addOn.id}
+                  onClick={() => toggleAddOn(addOn.id)}
+                  className={`relative p-4 rounded-xl border transition-all text-left ${
+                    isSelected
+                      ? "bg-purple-500/20 border-purple-400"
+                      : "bg-white/5 border-white/10 hover:bg-white/10"
+                  }`}
+                >
+                  <div className="flex items-start justify-between mb-2">
+                    <div
+                      className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
+                        isSelected
+                          ? "bg-purple-500 border-purple-500"
+                          : "border-white/30"
+                      }`}
+                    >
+                      {isSelected && <Check className="w-3 h-3 text-white" />}
+                    </div>
+                  </div>
+                  <h4 className="font-semibold text-sm mb-1">{addOn.name}</h4>
+                  <p className="text-purple-300 text-xs font-bold">+${addOn.price.toFixed(2)}</p>
+                </button>
+              );
+            })}
+            </div>
+
+            {selectedAddOns.length > 0 && (
+              <div className="mt-4 pt-4 border-t border-white/10 flex items-center justify-between">
+                <span className="text-purple-300 text-sm">
+                  {selectedAddOns.length} add-on{selectedAddOns.length > 1 ? "s" : ""} selected
+                </span>
+                <span className="text-yellow-300 font-bold">
+                  +${addOnsTotal.toFixed(2)}
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+
         {/* Proceed to Payment Button */}
         <div className="text-center">
           <button
@@ -1266,7 +1336,7 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
                 const res = await fetch("/api/create-checkout-session", {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ bundle: "full_chart" }),
+                  body: JSON.stringify({ bundle: selectedBundle, addOns: selectedAddOns }),
                 });
 
                 const data = await res.json();
@@ -1285,7 +1355,7 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
             }}
             className="bg-gradient-to-r from-yellow-400 to-orange-500 text-gray-900 px-12 py-4 rounded-full text-xl font-black hover:scale-105 transition-transform shadow-2xl"
           >
-            Proceed to Payment — ${currentBundle.price.toFixed(2)}
+            Proceed to Payment — ${totalPrice.toFixed(2)}
           </button>
           <p className="text-purple-300 mt-3 text-sm">
             🔒 Secure checkout • Instant access • Yours forever
@@ -1769,7 +1839,7 @@ export default function Natavium() {
   const [calcError, setCalcError] = useState(null);
   const [chartResult, setChartResult] = useState(null);
   const [isPremium, setIsPremium] = useState(false);
-  const [selectedBundle, setSelectedBundle] = useState("complete"); // default to most popular
+  const [selectedBundle, setSelectedBundle] = useState("essential"); // default to most popular
 
   const handleInputChange = (field, value) => {
     setBirthData((prev) => {

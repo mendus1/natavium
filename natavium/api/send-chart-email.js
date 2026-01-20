@@ -153,7 +153,7 @@ module.exports = async function handler(req, res) {
     `;
 
     const { data, error } = await resend.emails.send({
-      from: "Natavium <charts@natavium.com>",
+      from: "Natavium <onboarding@resend.dev>",
       to: [email],
       subject: `Your Natal Chart - ${chartResult.sun?.sign || ""} Sun, ${chartResult.moon?.sign || ""} Moon, ${chartResult.rising?.sign || ""} Rising`,
       html: emailHtml,
