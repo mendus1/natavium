@@ -333,10 +333,30 @@ function InfoPage() {
                   <div className="bg-white/5 rounded-xl p-5">
                     <div className="flex items-center justify-between mb-3">
                       <h4 className="text-lg font-bold">Compatibility</h4>
-                      <span className="text-xl font-bold text-purple-300">$2.99</span>
+                      <span className="text-xl font-bold text-purple-300">$3.99</span>
                     </div>
                     <p className="text-sm text-purple-200">
                       Compare your chart with partner or friend. Shows harmony and growth areas.
+                    </p>
+                  </div>
+
+                  <div className="bg-white/5 rounded-xl p-5">
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="text-lg font-bold">House Deep Dive</h4>
+                      <span className="text-xl font-bold text-purple-300">$2.99</span>
+                    </div>
+                    <p className="text-sm text-purple-200">
+                      Detailed analysis of each house in your chart and what it means.
+                    </p>
+                  </div>
+
+                  <div className="bg-white/5 rounded-xl p-5">
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="text-lg font-bold">Solar Return</h4>
+                      <span className="text-xl font-bold text-purple-300">$4.99</span>
+                    </div>
+                    <p className="text-sm text-purple-200">
+                      Your year ahead forecast. Birthday prediction for coming year.
                     </p>
                   </div>
 
@@ -357,16 +377,6 @@ function InfoPage() {
                     </div>
                     <p className="text-sm text-purple-200">
                       Current planetary movements affecting YOUR chart this month.
-                    </p>
-                  </div>
-
-                  <div className="bg-white/5 rounded-xl p-5">
-                    <div className="flex items-center justify-between mb-3">
-                      <h4 className="text-lg font-bold">Solar Return</h4>
-                      <span className="text-xl font-bold text-purple-300">$3.99</span>
-                    </div>
-                    <p className="text-sm text-purple-200">
-                      Your year ahead forecast. Birthday prediction for coming year.
                     </p>
                   </div>
                 </div>
@@ -1210,7 +1220,13 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
               return (
                 <button
                   key={bundle.id}
-                  onClick={() => setSelectedBundle(bundle.id)}
+                  onClick={() => {
+                    setSelectedBundle(bundle.id);
+                    // Clear add-ons when switching to non-base package
+                    if (bundle.id !== "base") {
+                      setSelectedAddOns([]);
+                    }
+                  }}
                   className={`relative p-6 rounded-2xl border-2 transition-all text-left ${colors.border} ${colors.bg} ${
                     isSelected ? "scale-105 shadow-xl" : "hover:bg-white/10"
                   }`}
@@ -1278,55 +1294,57 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
           </div>
         </div>
 
-        {/* Add-On Customization Section */}
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold text-center mb-2">Prefer to customize?</h2>
-          <p className="text-center text-purple-300 text-sm mb-6">Start with the Base Package and add anything you want</p>
+        {/* Add-On Customization Section - Only show for Base package */}
+        {selectedBundle === "base" && (
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold text-center mb-2">Customize Your Base Package</h2>
+            <p className="text-center text-purple-300 text-sm mb-6">Add any services you want</p>
 
-          <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-            {ADD_ONS.map((addOn) => {
-              const isSelected = selectedAddOns.includes(addOn.id);
-              return (
-                <button
-                  key={addOn.id}
-                  onClick={() => toggleAddOn(addOn.id)}
-                  className={`relative p-4 rounded-xl border transition-all text-left ${
-                    isSelected
-                      ? "bg-purple-500/20 border-purple-400"
-                      : "bg-white/5 border-white/10 hover:bg-white/10"
-                  }`}
-                >
-                  <div className="flex items-start justify-between mb-2">
-                    <div
-                      className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
-                        isSelected
-                          ? "bg-purple-500 border-purple-500"
-                          : "border-white/30"
-                      }`}
-                    >
-                      {isSelected && <Check className="w-3 h-3 text-white" />}
+            <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+              {ADD_ONS.map((addOn) => {
+                const isSelected = selectedAddOns.includes(addOn.id);
+                return (
+                  <button
+                    key={addOn.id}
+                    onClick={() => toggleAddOn(addOn.id)}
+                    className={`relative p-4 rounded-xl border transition-all text-left ${
+                      isSelected
+                        ? "bg-purple-500/20 border-purple-400"
+                        : "bg-white/5 border-white/10 hover:bg-white/10"
+                    }`}
+                  >
+                    <div className="flex items-start justify-between mb-2">
+                      <div
+                        className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
+                          isSelected
+                            ? "bg-purple-500 border-purple-500"
+                            : "border-white/30"
+                        }`}
+                      >
+                        {isSelected && <Check className="w-3 h-3 text-white" />}
+                      </div>
                     </div>
-                  </div>
-                  <h4 className="font-semibold text-sm mb-1">{addOn.name}</h4>
-                  <p className="text-purple-300 text-xs font-bold">+${addOn.price.toFixed(2)}</p>
-                </button>
-              );
-            })}
-            </div>
-
-            {selectedAddOns.length > 0 && (
-              <div className="mt-4 pt-4 border-t border-white/10 flex items-center justify-between">
-                <span className="text-purple-300 text-sm">
-                  {selectedAddOns.length} add-on{selectedAddOns.length > 1 ? "s" : ""} selected
-                </span>
-                <span className="text-yellow-300 font-bold">
-                  +${addOnsTotal.toFixed(2)}
-                </span>
+                    <h4 className="font-semibold text-sm mb-1">{addOn.name}</h4>
+                    <p className="text-purple-300 text-xs font-bold">+${addOn.price.toFixed(2)}</p>
+                  </button>
+                );
+              })}
               </div>
-            )}
+
+              {selectedAddOns.length > 0 && (
+                <div className="mt-4 pt-4 border-t border-white/10 flex items-center justify-between">
+                  <span className="text-purple-300 text-sm">
+                    {selectedAddOns.length} add-on{selectedAddOns.length > 1 ? "s" : ""} selected
+                  </span>
+                  <span className="text-yellow-300 font-bold">
+                    +${addOnsTotal.toFixed(2)}
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Proceed to Payment Button */}
         <div className="text-center">
@@ -1977,9 +1995,13 @@ export default function Natavium() {
         locationString: birthData.location,
       });
 
-      console.log("Chart result:", chart);
+      // Generate unique chart ID
+      const chartId = `NAT-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
 
-      setChartResult(chart);
+      console.log("Chart result:", chart);
+      console.log("Chart ID:", chartId);
+
+      setChartResult({ ...chart, chartId });
       navigate("/preview", { replace: true });
     } catch (error) {
       console.error("Chart calculation error:", error);
