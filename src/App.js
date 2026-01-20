@@ -1798,48 +1798,176 @@ function ChartPage({ chartResult, birthData, isPremium }) {
           <div className="text-4xl mb-2">🎉</div>
           <h2 className="text-2xl font-bold mb-2">Welcome to Your Cosmic Journey!</h2>
           <p className="text-green-200">Your complete analysis is unlocked.</p>
+          {chartResult.chartId && (
+            <p className="text-green-300/70 text-xs mt-2">Chart ID: {chartResult.chartId}</p>
+          )}
         </div>
 
         {/* Chart content for PDF capture */}
-        <div ref={chartRef} className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 mb-8 border border-white/20">
-          <h2 className="text-3xl font-bold mb-6">Your Cosmic Blueprint</h2>
-
-          <div className="space-y-6">
-            <div>
-              <h3 className="text-2xl font-bold text-yellow-300 mb-3">
-                ☀️ Sun in {chartResult.sun.sign}
-              </h3>
-              <p className="text-lg leading-relaxed">
-                Your {chartResult.sun.sign} Sun reveals core identity focused on stability and
-                building lasting value. Grounded, methodical approach to life.
-              </p>
+        <div ref={chartRef} className="space-y-8">
+          {/* Chart Wheel */}
+          <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 border border-white/20">
+            <h2 className="text-2xl font-bold text-center mb-6">Your Natal Chart</h2>
+            {(() => {
+              const zodiacSigns = [
+                { name: "Aries", glyph: "♈︎", element: "fire" },
+                { name: "Taurus", glyph: "♉︎", element: "earth" },
+                { name: "Gemini", glyph: "♊︎", element: "air" },
+                { name: "Cancer", glyph: "♋︎", element: "water" },
+                { name: "Leo", glyph: "♌︎", element: "fire" },
+                { name: "Virgo", glyph: "♍︎", element: "earth" },
+                { name: "Libra", glyph: "♎︎", element: "air" },
+                { name: "Scorpio", glyph: "♏︎", element: "water" },
+                { name: "Sagittarius", glyph: "♐︎", element: "fire" },
+                { name: "Capricorn", glyph: "♑︎", element: "earth" },
+                { name: "Aquarius", glyph: "♒︎", element: "air" },
+                { name: "Pisces", glyph: "♓︎", element: "water" },
+              ];
+              const elementColors = { fire: "#ef4444", earth: "#22c55e", air: "#facc15", water: "#3b82f6" };
+              const planetGlyphs = { sun: "☉", moon: "☽", mercury: "☿", venus: "♀", mars: "♂", jupiter: "♃", saturn: "♄" };
+              const risingIndex = zodiacSigns.findIndex((s) => s.name === chartResult.rising.sign);
+              const risingOffset = 180 - risingIndex * 30 - 15;
+              const getPosition = (angleDeg, radius) => {
+                const angleRad = (angleDeg * Math.PI) / 180;
+                return { x: 200 + radius * Math.cos(angleRad), y: 200 + radius * Math.sin(angleRad) };
+              };
+              const getPlanetAngle = (sign, degree) => {
+                const signIndex = zodiacSigns.findIndex((s) => s.name === sign);
+                return signIndex * 30 + degree + risingOffset;
+              };
+              const planets = [
+                { key: "sun", ...chartResult.sun },
+                { key: "moon", ...chartResult.moon },
+                { key: "mercury", sign: chartResult.mercury.sign, degree: chartResult.mercury.degree || 8 },
+                { key: "venus", sign: chartResult.venus.sign, degree: chartResult.venus.degree || 24 },
+                { key: "mars", sign: chartResult.mars.sign, degree: chartResult.mars.degree || 12 },
+              ];
+              return (
+                <div className="relative w-72 h-72 md:w-80 md:h-80 mx-auto mb-4">
+                  <svg viewBox="0 0 400 400" className="w-full h-full">
+                    <defs>
+                      <filter id="glowChart" x="-50%" y="-50%" width="200%" height="200%">
+                        <feGaussianBlur stdDeviation="2" result="coloredBlur" />
+                        <feMerge><feMergeNode in="coloredBlur" /><feMergeNode in="SourceGraphic" /></feMerge>
+                      </filter>
+                      <radialGradient id="centerGradientChart" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stopColor="rgba(139, 92, 246, 0.3)" />
+                        <stop offset="100%" stopColor="rgba(30, 27, 75, 0.8)" />
+                      </radialGradient>
+                    </defs>
+                    <circle cx="200" cy="200" r="195" fill="rgba(30, 27, 75, 0.6)" />
+                    <circle cx="200" cy="200" r="195" fill="none" stroke="rgba(253, 224, 71, 0.4)" strokeWidth="2" />
+                    <circle cx="200" cy="200" r="160" fill="none" stroke="rgba(167, 139, 250, 0.3)" strokeWidth="1" />
+                    <circle cx="200" cy="200" r="120" fill="none" stroke="rgba(167, 139, 250, 0.3)" strokeWidth="1" />
+                    <circle cx="200" cy="200" r="80" fill="url(#centerGradientChart)" stroke="rgba(236, 72, 153, 0.4)" strokeWidth="1" />
+                    {zodiacSigns.map((sign, i) => {
+                      const startAngle = i * 30 + risingOffset;
+                      const midAngle = startAngle + 15;
+                      const glyphPos = getPosition(midAngle, 177);
+                      const lineStart = getPosition(startAngle, 160);
+                      const lineEnd = getPosition(startAngle, 195);
+                      return (
+                        <g key={sign.name}>
+                          <line x1={lineStart.x} y1={lineStart.y} x2={lineEnd.x} y2={lineEnd.y} stroke="rgba(253, 224, 71, 0.3)" strokeWidth="1" />
+                          <text x={glyphPos.x} y={glyphPos.y} textAnchor="middle" dominantBaseline="central" fill={elementColors[sign.element]} fontSize="16" fontWeight="bold">{sign.glyph}</text>
+                        </g>
+                      );
+                    })}
+                    {Array.from({ length: 12 }, (_, i) => {
+                      const houseAngle = i * 30 + risingOffset + 15;
+                      const housePos = getPosition(houseAngle, 140);
+                      return <text key={`house-${i + 1}`} x={housePos.x} y={housePos.y} textAnchor="middle" dominantBaseline="central" fill="rgba(167, 139, 250, 0.7)" fontSize="11" fontWeight="500">{i + 1}</text>;
+                    })}
+                    {Array.from({ length: 12 }, (_, i) => {
+                      const angle = i * 30 + risingOffset;
+                      const innerPos = getPosition(angle, 80);
+                      const outerPos = getPosition(angle, 120);
+                      const isCardinal = i % 3 === 0;
+                      return <line key={`cusp-${i}`} x1={innerPos.x} y1={innerPos.y} x2={outerPos.x} y2={outerPos.y} stroke={isCardinal ? "rgba(253, 224, 71, 0.5)" : "rgba(167, 139, 250, 0.25)"} strokeWidth={isCardinal ? "2" : "1"} />;
+                    })}
+                    <g><polygon points="5,200 25,192 25,208" fill="#facc15" filter="url(#glowChart)" /><text x="35" y="200" textAnchor="start" dominantBaseline="central" fill="#facc15" fontSize="10" fontWeight="bold">ASC</text></g>
+                    {planets.map((planet) => {
+                      const angle = getPlanetAngle(planet.sign, planet.degree);
+                      const pos = getPosition(angle, 100);
+                      const signData = zodiacSigns.find((s) => s.name === planet.sign);
+                      const color = signData ? elementColors[signData.element] : "#fff";
+                      return (
+                        <g key={planet.key} filter="url(#glowChart)">
+                          <circle cx={pos.x} cy={pos.y} r="14" fill="rgba(30, 27, 75, 0.9)" stroke={color} strokeWidth="1.5" />
+                          <text x={pos.x} y={pos.y} textAnchor="middle" dominantBaseline="central" fill={color} fontSize="14" fontWeight="bold">{planetGlyphs[planet.key]}</text>
+                        </g>
+                      );
+                    })}
+                    <circle cx="200" cy="200" r="25" fill="rgba(139, 92, 246, 0.2)" stroke="rgba(236, 72, 153, 0.5)" strokeWidth="1" />
+                    <text x="200" y="200" textAnchor="middle" dominantBaseline="central" fill="rgba(253, 224, 71, 0.8)" fontSize="10" fontWeight="bold">✦</text>
+                  </svg>
+                </div>
+              );
+            })()}
+            <div className="flex flex-wrap justify-center gap-4 text-xs">
+              <div className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-red-500"></span><span className="text-purple-300">Fire</span></div>
+              <div className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-green-500"></span><span className="text-purple-300">Earth</span></div>
+              <div className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-yellow-400"></span><span className="text-purple-300">Air</span></div>
+              <div className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-blue-500"></span><span className="text-purple-300">Water</span></div>
             </div>
+          </div>
 
-            <div>
-              <h3 className="text-2xl font-bold text-blue-300 mb-3">
-                🌙 Moon in {chartResult.moon.sign}
-              </h3>
-              <p className="text-lg leading-relaxed">
-                Your {chartResult.moon.sign} Moon governs emotional landscape through analysis and
-                competence.
-              </p>
+          {/* Big Three Analysis */}
+          <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 border border-white/20">
+            <h2 className="text-2xl font-bold mb-6">Your Big Three</h2>
+            <div className="space-y-6">
+              <div className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-xl p-6 border border-yellow-500/30">
+                <h3 className="text-xl font-bold text-yellow-300 mb-2">☉ {chartResult.sun.sign} Sun</h3>
+                <p className="text-sm text-purple-300 mb-3">{chartResult.sun.degree}° in {chartResult.sun.house}{houseSuffix(chartResult.sun.house)} house</p>
+                <p className="text-purple-100">Your core identity and ego expression. The Sun in {chartResult.sun.sign} gives you a {chartResult.sun.sign === "Aries" || chartResult.sun.sign === "Leo" || chartResult.sun.sign === "Sagittarius" ? "fiery, passionate nature" : chartResult.sun.sign === "Taurus" || chartResult.sun.sign === "Virgo" || chartResult.sun.sign === "Capricorn" ? "grounded, practical approach" : chartResult.sun.sign === "Gemini" || chartResult.sun.sign === "Libra" || chartResult.sun.sign === "Aquarius" ? "intellectual, communicative style" : "intuitive, emotional depth"}.</p>
+              </div>
+              <div className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-xl p-6 border border-blue-500/30">
+                <h3 className="text-xl font-bold text-blue-300 mb-2">☽ {chartResult.moon.sign} Moon</h3>
+                <p className="text-sm text-purple-300 mb-3">{chartResult.moon.degree}° in {chartResult.moon.house}{houseSuffix(chartResult.moon.house)} house</p>
+                <p className="text-purple-100">Your emotional core and inner world. The Moon in {chartResult.moon.sign} shapes how you process feelings and find emotional security.</p>
+              </div>
+              <div className="bg-gradient-to-r from-pink-500/20 to-purple-500/20 rounded-xl p-6 border border-pink-500/30">
+                <h3 className="text-xl font-bold text-pink-300 mb-2">↑ {chartResult.rising.sign} Rising</h3>
+                <p className="text-sm text-purple-300 mb-3">{chartResult.rising.degree}° Ascendant</p>
+                <p className="text-purple-100">Your rising sign is the mask you wear and how others perceive you. {chartResult.rising.sign} rising gives you a {chartResult.rising.sign === "Aries" || chartResult.rising.sign === "Leo" || chartResult.rising.sign === "Sagittarius" ? "confident, dynamic first impression" : chartResult.rising.sign === "Taurus" || chartResult.rising.sign === "Virgo" || chartResult.rising.sign === "Capricorn" ? "stable, reliable presence" : chartResult.rising.sign === "Gemini" || chartResult.rising.sign === "Libra" || chartResult.rising.sign === "Aquarius" ? "friendly, approachable demeanor" : "sensitive, caring aura"}.</p>
+              </div>
             </div>
+          </div>
 
-            <div>
-              <h3 className="text-2xl font-bold text-pink-300 mb-3">
-                ⬆️ {chartResult.rising.sign} Rising
-              </h3>
-              <p className="text-lg leading-relaxed">
-                Ascendant shapes perception — nurturing, empathetic, protective presence.
-              </p>
+          {/* Planetary Placements */}
+          <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 border border-white/20">
+            <h2 className="text-2xl font-bold mb-6">Planetary Placements</h2>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              {[
+                { name: "Mercury", glyph: "☿", data: chartResult.mercury, desc: "Communication" },
+                { name: "Venus", glyph: "♀", data: chartResult.venus, desc: "Love & Beauty" },
+                { name: "Mars", glyph: "♂", data: chartResult.mars, desc: "Drive & Action" },
+                { name: "Jupiter", glyph: "♃", data: chartResult.jupiter, desc: "Growth & Luck" },
+                { name: "Saturn", glyph: "♄", data: chartResult.saturn, desc: "Structure" },
+                { name: "Uranus", glyph: "♅", data: chartResult.uranus, desc: "Innovation" },
+                { name: "Neptune", glyph: "♆", data: chartResult.neptune, desc: "Dreams" },
+                { name: "Pluto", glyph: "♇", data: chartResult.pluto, desc: "Transformation" },
+              ].map((planet) => (
+                <div key={planet.name} className="bg-white/5 rounded-lg p-4">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-lg">{planet.glyph}</span>
+                    <span className="font-semibold">{planet.name}</span>
+                  </div>
+                  <p className="text-yellow-300 font-bold">{planet.data?.sign || "—"}</p>
+                  <p className="text-purple-300 text-xs">{planet.data?.degree || "—"}° • {planet.data?.house ? `${planet.data.house}${houseSuffix(planet.data.house)} house` : "—"}</p>
+                  <p className="text-purple-400 text-xs mt-1">{planet.desc}</p>
+                </div>
+              ))}
             </div>
+          </div>
 
-            <div className="bg-purple-500/20 rounded-xl p-6 border border-purple-500/30">
-              <h3 className="text-2xl font-bold text-yellow-300 mb-4">🔮 2026 Forecast</h3>
-              <p className="text-lg leading-relaxed">
-                Jupiter transiting your 1st house brings expansion and opportunity. Natural warmth
-                amplified.
-              </p>
+          {/* 2026 Forecast */}
+          <div className="bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-3xl p-8 border border-purple-500/30">
+            <h2 className="text-2xl font-bold text-yellow-300 mb-6">🔮 2026 Forecast</h2>
+            <div className="space-y-4">
+              <p className="text-purple-100 leading-relaxed">With Jupiter transiting through your chart, 2026 brings significant opportunities for growth and expansion. Your {chartResult.sun.sign} Sun will be energized by favorable aspects, encouraging you to step into leadership roles and pursue long-held ambitions.</p>
+              <p className="text-purple-100 leading-relaxed">Saturn's influence this year asks you to build solid foundations. This is an excellent time for career advancement, particularly in areas that require discipline and long-term planning.</p>
+              <p className="text-purple-100 leading-relaxed">Key periods to watch: Spring brings romantic opportunities, Summer favors financial decisions, and Fall is ideal for personal development and learning new skills.</p>
             </div>
           </div>
         </div>

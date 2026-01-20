@@ -113,6 +113,16 @@ module.exports = async function handler(req, res) {
         </div>
       </div>
 
+      <!-- 2026 Forecast -->
+      <div style="margin-bottom: 24px;">
+        <h2 style="color: #fde047; font-size: 18px; margin: 0 0 16px 0;">🔮 2026 Forecast</h2>
+        <div style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(236, 72, 153, 0.2)); border-radius: 12px; padding: 16px; border: 1px solid rgba(139, 92, 246, 0.3);">
+          <p style="color: #e2e8f0; font-size: 14px; line-height: 1.6; margin: 0 0 12px 0;">With Jupiter transiting through your chart, 2026 brings significant opportunities for growth and expansion. Your ${chartResult.sun?.sign || ""} Sun will be energized by favorable aspects.</p>
+          <p style="color: #e2e8f0; font-size: 14px; line-height: 1.6; margin: 0 0 12px 0;">Saturn's influence this year asks you to build solid foundations. This is an excellent time for career advancement and long-term planning.</p>
+          <p style="color: #c4b5fd; font-size: 13px; line-height: 1.6; margin: 0;"><strong>Key periods:</strong> Spring brings romantic opportunities • Summer favors financial decisions • Fall is ideal for personal development</p>
+        </div>
+      </div>
+
       <!-- All Planetary Placements -->
       <div style="margin-bottom: 24px;">
         <h2 style="color: #fde047; font-size: 18px; margin: 0 0 16px 0;">Planetary Placements</h2>
