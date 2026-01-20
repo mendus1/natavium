@@ -1555,22 +1555,34 @@ function ChartPage({ chartResult, birthData, isPremium }) {
       pdf.setFontSize(10);
       pdf.text(`${displayDate} • ${birthData.time} • ${birthData.location}`, pageWidth / 2, 30, { align: "center" });
 
+      // Add chart ID if available
+      if (chartResult.chartId) {
+        pdf.setTextColor(150, 150, 150);
+        pdf.setFontSize(8);
+        pdf.text(`Chart ID: ${chartResult.chartId}`, pageWidth / 2, 35, { align: "center" });
+      }
+
       // Add chart image
       const imgData = canvas.toDataURL("image/png");
-      const imgWidth = pageWidth - 20;
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      const maxWidth = pageWidth - 20;
+      const imgAspect = canvas.width / canvas.height;
 
-      // Check if image fits on first page
-      const startY = 38;
+      // Calculate dimensions to fit while maintaining aspect ratio
+      const startY = 42;
       const maxImgHeight = pageHeight - startY - 10;
 
-      if (imgHeight > maxImgHeight) {
-        // Scale down to fit
-        const scaleFactor = maxImgHeight / imgHeight;
-        pdf.addImage(imgData, "PNG", 10, startY, imgWidth * scaleFactor, maxImgHeight);
-      } else {
-        pdf.addImage(imgData, "PNG", 10, startY, imgWidth, imgHeight);
+      let finalWidth = maxWidth;
+      let finalHeight = finalWidth / imgAspect;
+
+      // If too tall, scale based on height instead
+      if (finalHeight > maxImgHeight) {
+        finalHeight = maxImgHeight;
+        finalWidth = finalHeight * imgAspect;
       }
+
+      // Center horizontally
+      const imgX = (pageWidth - finalWidth) / 2;
+      pdf.addImage(imgData, "PNG", imgX, startY, finalWidth, finalHeight);
 
       // Add planetary placements on second page
       pdf.addPage();
