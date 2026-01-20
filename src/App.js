@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Routes, Route, useNavigate, useParams, Navigate } from "react-router-dom";
 import { calculateNatalChartFromLocal } from "./ephemeris";
 import jsPDF from "jspdf";
@@ -1372,7 +1372,10 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
 function SuccessPage({ setIsPremium, chartResult }) {
   const navigate = useNavigate();
 
-  React.useEffect(() => {
+  // Check if we have chart data (from props or localStorage)
+  const hasChartData = chartResult || localStorage.getItem("natavium_chartResult");
+
+  useEffect(() => {
     // Payment successful - unlock premium content
     setIsPremium(true);
 
@@ -1384,8 +1387,8 @@ function SuccessPage({ setIsPremium, chartResult }) {
     return () => clearTimeout(timer);
   }, [setIsPremium, navigate]);
 
-  // If no chart data, redirect to input
-  if (!chartResult) {
+  // If no chart data anywhere, redirect to input
+  if (!hasChartData) {
     return <Navigate to="/input" replace />;
   }
 
@@ -1862,21 +1865,45 @@ function ChartPage({ chartResult, birthData, isPremium }) {
 // Main App Component
 // =========================
 export default function Natavium() {
-  const [birthData, setBirthData] = useState({
-    date: "",
-    birthMonth: "",
-    birthDay: "",
-    birthYear: "",
-    time: "",
-    hour: "",
-    minute: "",
-    period: "AM",
-    location: "",
+  // Load initial state from localStorage
+  const [birthData, setBirthData] = useState(() => {
+    const saved = localStorage.getItem("natavium_birthData");
+    return saved ? JSON.parse(saved) : {
+      date: "",
+      birthMonth: "",
+      birthDay: "",
+      birthYear: "",
+      time: "",
+      hour: "",
+      minute: "",
+      period: "AM",
+      location: "",
+    };
   });
   const [calcError, setCalcError] = useState(null);
-  const [chartResult, setChartResult] = useState(null);
-  const [isPremium, setIsPremium] = useState(false);
+  const [chartResult, setChartResult] = useState(() => {
+    const saved = localStorage.getItem("natavium_chartResult");
+    return saved ? JSON.parse(saved) : null;
+  });
+  const [isPremium, setIsPremium] = useState(() => {
+    return localStorage.getItem("natavium_isPremium") === "true";
+  });
   const [selectedBundle, setSelectedBundle] = useState("essential"); // default to most popular
+
+  // Persist state to localStorage
+  useEffect(() => {
+    localStorage.setItem("natavium_birthData", JSON.stringify(birthData));
+  }, [birthData]);
+
+  useEffect(() => {
+    if (chartResult) {
+      localStorage.setItem("natavium_chartResult", JSON.stringify(chartResult));
+    }
+  }, [chartResult]);
+
+  useEffect(() => {
+    localStorage.setItem("natavium_isPremium", isPremium.toString());
+  }, [isPremium]);
 
   const handleInputChange = (field, value) => {
     setBirthData((prev) => {
