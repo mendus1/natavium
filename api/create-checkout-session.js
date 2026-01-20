@@ -53,8 +53,8 @@ module.exports = async function handler(req, res) {
       req.headers.origin ||
       "http://localhost:3000";
 
-    const successUrl = `${origin}/#/success?session_id={CHECKOUT_SESSION_ID}`;
-    const cancelUrl = `${origin}/#/preview`;
+    const successUrl = `${origin}/success?session_id={CHECKOUT_SESSION_ID}`;
+    const cancelUrl = `${origin}/preview`;
 
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
