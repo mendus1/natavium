@@ -1367,6 +1367,43 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
 }
 
 // =========================
+// Success (after Stripe payment)
+// =========================
+function SuccessPage({ setIsPremium, chartResult }) {
+  const navigate = useNavigate();
+
+  React.useEffect(() => {
+    // Payment successful - unlock premium content
+    setIsPremium(true);
+
+    // Redirect to chart page after a brief moment
+    const timer = setTimeout(() => {
+      navigate("/chart", { replace: true });
+    }, 1500);
+
+    return () => clearTimeout(timer);
+  }, [setIsPremium, navigate]);
+
+  // If no chart data, redirect to input
+  if (!chartResult) {
+    return <Navigate to="/input" replace />;
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 text-white flex items-center justify-center p-6">
+      <div className="text-center">
+        <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+          <Check className="w-10 h-10 text-green-400" />
+        </div>
+        <h1 className="text-4xl font-black mb-4">Payment Successful!</h1>
+        <p className="text-purple-300 text-lg mb-2">Thank you for your purchase.</p>
+        <p className="text-purple-400">Redirecting to your chart...</p>
+      </div>
+    </div>
+  );
+}
+
+// =========================
 // Payment
 // =========================
 function PaymentPage({ handlePayment, selectedBundle }) {
@@ -1956,6 +1993,12 @@ export default function Natavium() {
         <PaymentPage
           handlePayment={handlePayment}
           selectedBundle={selectedBundle}
+        />
+      } />
+      <Route path="/success" element={
+        <SuccessPage
+          setIsPremium={setIsPremium}
+          chartResult={chartResult}
         />
       } />
       <Route path="/chart" element={
