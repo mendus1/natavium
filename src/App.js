@@ -51,7 +51,7 @@ const BUNDLES = {
   essential: {
     id: "essential",
     name: "Essential",
-    price: 7.99,
+    price: 9.99,
     description: "Full analysis + yearly forecast",
     icon: Gift,
     color: "purple",
@@ -68,7 +68,7 @@ const BUNDLES = {
   ultimate: {
     id: "ultimate",
     name: "Ultimate",
-    price: 12.99,
+    price: 14.99,
     description: "Everything + compatibility & transits",
     icon: Crown,
     color: "pink",
@@ -1850,7 +1850,7 @@ export default function Natavium() {
         const m = field === "minute" ? value : prev.minute;
         const p = field === "period" ? value : prev.period;
         if (h && m) {
-          updated.time = `${h}:${m} ${p}`;
+          updated.time = `${h}:${String(m).padStart(2, "0")} ${p}`;
         }
       }
       // Update the combined date string when month/day/year changes
