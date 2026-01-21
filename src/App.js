@@ -2005,12 +2005,23 @@ function ChartPage({ chartResult, birthData, isPremium }) {
             </div>
           </div>
 
-          <div className="mt-8 text-center">
+          <div className="mt-8 text-center flex flex-col sm:flex-row gap-4 justify-center">
             <button
               onClick={() => navigate("/")}
               className="px-6 py-3 rounded-xl bg-white/10 border border-white/20 hover:bg-white/20 transition-colors"
             >
               Back to Home
+            </button>
+            <button
+              onClick={() => {
+                localStorage.removeItem("natavium_birthData");
+                localStorage.removeItem("natavium_chartResult");
+                localStorage.removeItem("natavium_isPremium");
+                navigate("/input");
+              }}
+              className="px-6 py-3 rounded-xl bg-purple-500/20 border border-purple-500/30 hover:bg-purple-500/30 transition-colors"
+            >
+              Calculate New Chart
             </button>
           </div>
         </div>
