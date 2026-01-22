@@ -1,8 +1,6 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Routes, Route, useNavigate, useParams, Navigate } from "react-router-dom";
 import { calculateNatalChartFromLocal } from "./ephemeris";
-import jsPDF from "jspdf";
-import html2canvas from "html2canvas";
 import "./App.css";
 import {
   Sparkles,
@@ -1506,7 +1504,6 @@ function PaymentPage({ handlePayment, selectedBundle }) {
 // =========================
 function ChartPage({ chartResult, birthData, isPremium }) {
   const navigate = useNavigate();
-  const chartRef = useRef(null);
   const [showEmailModal, setShowEmailModal] = useState(false);
   const [emailAddress, setEmailAddress] = useState("");
   const [emailStatus, setEmailStatus] = useState("idle"); // idle, sending, success, error
@@ -1519,134 +1516,45 @@ function ChartPage({ chartResult, birthData, isPremium }) {
 
   const displayDate = formatBirthDate(birthData.birthMonth, birthData.birthDay, birthData.birthYear);
 
-  // PDF Generation Handler
+  // PDF Generation Handler (Server-side via Puppeteer)
   const handleDownloadPDF = async () => {
-    if (!chartRef.current || pdfGenerating) return;
+    if (pdfGenerating) return;
 
     setPdfGenerating(true);
     try {
-      // Capture the chart section
-      const canvas = await html2canvas(chartRef.current, {
-        backgroundColor: "#1e1b4b",
-        scale: 2,
-        logging: false,
-        useCORS: true,
+      const response = await fetch("/api/generate-pdf", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          chartResult,
+          birthData,
+        }),
       });
 
-      // Create PDF
-      const pdf = new jsPDF("p", "mm", "a4");
-      const pageWidth = pdf.internal.pageSize.getWidth();
-      const pageHeight = pdf.internal.pageSize.getHeight();
+      const data = await response.json();
 
-      // Add title
-      pdf.setFillColor(30, 27, 75);
-      pdf.rect(0, 0, pageWidth, pageHeight, "F");
-
-      pdf.setTextColor(253, 224, 71);
-      pdf.setFontSize(24);
-      pdf.text("Natavium", pageWidth / 2, 15, { align: "center" });
-
-      pdf.setTextColor(196, 181, 253);
-      pdf.setFontSize(12);
-      pdf.text("Your Natal Chart", pageWidth / 2, 22, { align: "center" });
-
-      // Add birth info
-      pdf.setTextColor(255, 255, 255);
-      pdf.setFontSize(10);
-      pdf.text(`${displayDate} • ${birthData.time} • ${birthData.location}`, pageWidth / 2, 30, { align: "center" });
-
-      // Add chart ID if available
-      if (chartResult.chartId) {
-        pdf.setTextColor(150, 150, 150);
-        pdf.setFontSize(8);
-        pdf.text(`Chart ID: ${chartResult.chartId}`, pageWidth / 2, 35, { align: "center" });
+      if (!response.ok) {
+        throw new Error(data.error || "PDF generation failed");
       }
 
-      // Add chart image
-      const imgData = canvas.toDataURL("image/png");
-      const maxWidth = pageWidth - 20;
-      const imgAspect = canvas.width / canvas.height;
-
-      // Calculate dimensions to fit while maintaining aspect ratio
-      const startY = 42;
-      const maxImgHeight = pageHeight - startY - 10;
-
-      let finalWidth = maxWidth;
-      let finalHeight = finalWidth / imgAspect;
-
-      // If too tall, scale based on height instead
-      if (finalHeight > maxImgHeight) {
-        finalHeight = maxImgHeight;
-        finalWidth = finalHeight * imgAspect;
+      // Decode base64 and trigger download
+      const byteCharacters = atob(data.pdf);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
       }
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: "application/pdf" });
 
-      // Center horizontally
-      const imgX = (pageWidth - finalWidth) / 2;
-      pdf.addImage(imgData, "PNG", imgX, startY, finalWidth, finalHeight);
-
-      // Add planetary placements on second page
-      pdf.addPage();
-      pdf.setFillColor(30, 27, 75);
-      pdf.rect(0, 0, pageWidth, pageHeight, "F");
-
-      pdf.setTextColor(253, 224, 71);
-      pdf.setFontSize(16);
-      pdf.text("Planetary Placements", pageWidth / 2, 15, { align: "center" });
-
-      // Build placements table
-      const planets = [
-        { name: "Sun", data: chartResult.sun, emoji: "Sun" },
-        { name: "Moon", data: chartResult.moon, emoji: "Moon" },
-        { name: "Mercury", data: chartResult.mercury, emoji: "Mercury" },
-        { name: "Venus", data: chartResult.venus, emoji: "Venus" },
-        { name: "Mars", data: chartResult.mars, emoji: "Mars" },
-        { name: "Jupiter", data: chartResult.jupiter, emoji: "Jupiter" },
-        { name: "Saturn", data: chartResult.saturn, emoji: "Saturn" },
-        { name: "Uranus", data: chartResult.uranus, emoji: "Uranus" },
-        { name: "Neptune", data: chartResult.neptune, emoji: "Neptune" },
-        { name: "Pluto", data: chartResult.pluto, emoji: "Pluto" },
-      ];
-
-      let yPos = 28;
-      pdf.setFontSize(10);
-
-      // Header row
-      pdf.setTextColor(253, 224, 71);
-      pdf.text("Planet", 15, yPos);
-      pdf.text("Sign", 55, yPos);
-      pdf.text("Degree", 105, yPos);
-      pdf.text("House", 145, yPos);
-
-      yPos += 8;
-      pdf.setTextColor(255, 255, 255);
-
-      planets.forEach((planet) => {
-        if (planet.data) {
-          pdf.text(planet.name, 15, yPos);
-          pdf.text(planet.data.sign || "—", 55, yPos);
-          pdf.text(`${planet.data.degree || "—"}°`, 105, yPos);
-          pdf.text(planet.data.house ? `${planet.data.house}${houseSuffix(planet.data.house)}` : "—", 145, yPos);
-          yPos += 7;
-        }
-      });
-
-      // Add Rising sign
-      yPos += 5;
-      pdf.setTextColor(253, 224, 71);
-      pdf.text("Ascendant", 15, yPos);
-      pdf.setTextColor(255, 255, 255);
-      pdf.text(chartResult.rising?.sign || "—", 55, yPos);
-      pdf.text(`${chartResult.rising?.degree || "—"}°`, 105, yPos);
-      pdf.text("1st", 145, yPos);
-
-      // Footer
-      pdf.setTextColor(167, 139, 250);
-      pdf.setFontSize(9);
-      pdf.text("Generated by Natavium - natavium.com", pageWidth / 2, pageHeight - 10, { align: "center" });
-
-      // Download
-      const fileName = `natavium-chart-${chartResult.sun?.sign?.toLowerCase() || "natal"}-${Date.now()}.pdf`;
-      pdf.save(fileName);
+      // Create download link
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = data.filename || `natavium-chart-${Date.now()}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
     } catch (error) {
       console.error("PDF generation error:", error);
       alert("Failed to generate PDF. Please try again.");
@@ -1815,8 +1723,8 @@ function ChartPage({ chartResult, birthData, isPremium }) {
           )}
         </div>
 
-        {/* Chart content for PDF capture */}
-        <div ref={chartRef} className="space-y-8">
+        {/* Chart content */}
+        <div className="space-y-8">
           {/* Chart Wheel */}
           <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 border border-white/20">
             <h2 className="text-2xl font-bold text-center mb-6">Your Natal Chart</h2>
