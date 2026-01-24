@@ -1,5 +1,5 @@
-const chromium = require("@sparticuz/chromium");
-const puppeteer = require("puppeteer-core");
+import chromium from '@sparticuz/chromium';
+import puppeteerCore from 'puppeteer-core';
 
 // Helper function for house suffix
 function getHouseSuffix(n) {
@@ -14,7 +14,7 @@ function getHouseSuffix(n) {
   }
 }
 
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method Not Allowed" });
   }
@@ -26,6 +26,26 @@ module.exports = async function handler(req, res) {
 
     if (!chartResult || !birthData) {
       return res.status(400).json({ error: "Missing chart or birth data" });
+    }
+
+    // --- 1. THE BROWSER SWITCH LOGIC ---
+    if (process.env.VERCEL_ENV || process.env.AWS_LAMBDA_FUNCTION_VERSION) {
+      // PROD: Use lightweight Chromium
+      browser = await puppeteerCore.launch({
+        args: chromium.args,
+        defaultViewport: chromium.defaultViewport,
+        executablePath: await chromium.executablePath(),
+        headless: chromium.headless,
+        ignoreHTTPSErrors: true,
+      });
+    } else {
+      // LOCAL: Use full Puppeteer (Dynamic Import)
+      // This prevents Vercel from trying to bundle the huge local Puppeteer
+      const puppeteer = await import('puppeteer');
+      browser = await puppeteer.default.launch({
+        headless: true,
+        args: ['--no-sandbox'],
+      });
     }
 
     // Format birth date
@@ -179,14 +199,6 @@ module.exports = async function handler(req, res) {
 </html>
     `;
 
-    // Launch browser
-    browser = await puppeteer.launch({
-      args: chromium.args,
-      defaultViewport: chromium.defaultViewport,
-      executablePath: await chromium.executablePath(),
-      headless: chromium.headless,
-    });
-
     const page = await browser.newPage();
     await page.setContent(html, { waitUntil: "networkidle0" });
 
@@ -200,8 +212,8 @@ module.exports = async function handler(req, res) {
     await browser.close();
     browser = null;
 
-    // Return PDF as base64
-    const pdfBase64 = pdfBuffer.toString("base64");
+    // Return PDF as base64 (convert Uint8Array to Buffer first)
+    const pdfBase64 = Buffer.from(pdfBuffer).toString("base64");
 
     return res.status(200).json({
       success: true,
