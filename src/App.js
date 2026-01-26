@@ -763,6 +763,41 @@ const ADD_ONS = [
 function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle }) {
   const [showTooltip, setShowTooltip] = useState(null);
   const [selectedAddOns, setSelectedAddOns] = useState([]);
+  const [teaser, setTeaser] = useState(null);
+  const [teaserLoading, setTeaserLoading] = useState(false);
+  const [teaserError, setTeaserError] = useState(null);
+
+  // Fetch AI teaser on mount
+  useEffect(() => {
+    if (!chartResult) return;
+
+    const fetchTeaser = async () => {
+      setTeaserLoading(true);
+      setTeaserError(null);
+
+      try {
+        const response = await fetch('/api/generate-teaser', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ chartResult }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to generate teaser');
+        }
+
+        const data = await response.json();
+        setTeaser(data.teaser);
+      } catch (error) {
+        console.error('Teaser fetch error:', error);
+        setTeaserError(error.message);
+      } finally {
+        setTeaserLoading(false);
+      }
+    };
+
+    fetchTeaser();
+  }, [chartResult]);
 
   if (!chartResult) {
     return <Navigate to="/input" replace />;
@@ -1167,25 +1202,32 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
           </div>
         </div>
 
-        {/* Preview text with paywall */}
+        {/* AI-Generated Teaser with paywall */}
         <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 mb-8 border border-white/20">
           <h2 className="text-3xl font-bold mb-6">Your Cosmic Blueprint</h2>
 
-          <p className="text-lg leading-relaxed mb-4">
-            Your {chartResult.sun.sign} Sun reveals a core identity focused on stability, beauty,
-            and building lasting value. You embody groundedness and commitment to what endures.
-          </p>
-
-          <p className="text-lg leading-relaxed mb-4">
-            Combined with your {chartResult.moon.sign} Moon, your emotional world is characterized
-            by analytical precision. You process feelings through analysis and find security in
-            competence.
-          </p>
-
-          <p className="text-lg leading-relaxed mb-6">
-            Your {chartResult.rising.sign} Rising shapes how others see you — nurturing, empathetic,
-            protective. People instinctively feel safe with you...
-          </p>
+          {teaserLoading ? (
+            <div className="flex flex-col items-center justify-center py-8">
+              <Loader2 className="w-10 h-10 text-yellow-300 animate-spin mb-4" />
+              <p className="text-purple-300">Analyzing your unique cosmic signature...</p>
+            </div>
+          ) : teaserError ? (
+            <div className="space-y-4">
+              <p className="text-lg leading-relaxed">
+                Your {chartResult.sun.sign} Sun combined with {chartResult.moon.sign} Moon and {chartResult.rising.sign} Rising
+                creates a unique cosmic blueprint that shapes your personality, emotions, and how others perceive you.
+              </p>
+              <p className="text-purple-300 text-sm">Full AI analysis available in paid packages below.</p>
+            </div>
+          ) : teaser ? (
+            <div className="space-y-4">
+              {teaser.split('\n\n').map((paragraph, idx) => (
+                <p key={idx} className="text-lg leading-relaxed text-purple-100">
+                  {paragraph}
+                </p>
+              ))}
+            </div>
+          ) : null}
 
           <div className="relative mt-6">
             {/* Blurred premium preview */}
@@ -1193,7 +1235,7 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
               <h3 className="text-xl font-bold mb-2">
                 Mercury in {chartResult.mercury.sign}
               </h3>
-              <p className="text-sm">Your communication style is methodical...</p>
+              <p className="text-sm">Your communication style reveals hidden patterns...</p>
             </div>
 
             {/* Gradient overlay */}
@@ -1406,23 +1448,76 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
 // =========================
 // Success (after Stripe payment)
 // =========================
-function SuccessPage({ setIsPremium, chartResult }) {
+function SuccessPage({ setIsPremium, chartResult, birthData, selectedBundle }) {
   const navigate = useNavigate();
+  const [generationStatus, setGenerationStatus] = useState('starting'); // starting, generating, complete, error
+  const [generationProgress, setGenerationProgress] = useState(0);
+  const [error, setError] = useState(null);
 
   // Check if we have chart data (from props or localStorage)
   const hasChartData = chartResult || localStorage.getItem("natavium_chartResult");
 
   useEffect(() => {
+    if (!hasChartData) return;
+
     // Payment successful - unlock premium content
     setIsPremium(true);
 
-    // Redirect to chart page after a brief moment
-    const timer = setTimeout(() => {
-      navigate("/chart", { replace: true });
-    }, 1500);
+    const generateReport = async () => {
+      setGenerationStatus('generating');
+      setGenerationProgress(20);
 
+      try {
+        // Simulate progress updates
+        const progressInterval = setInterval(() => {
+          setGenerationProgress(prev => Math.min(prev + 10, 85));
+        }, 800);
+
+        const response = await fetch('/api/generate-analysis', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chartResult,
+            birthData,
+            productType: selectedBundle || 'essential',
+          }),
+        });
+
+        clearInterval(progressInterval);
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Failed to generate report');
+        }
+
+        const data = await response.json();
+
+        // Store the analysis in localStorage for ChartPage to retrieve
+        localStorage.setItem('natavium_analysis', JSON.stringify({
+          content: data.analysis,
+          productType: data.productType,
+          generatedAt: new Date().toISOString(),
+        }));
+
+        setGenerationProgress(100);
+        setGenerationStatus('complete');
+
+        // Redirect to chart page after brief success display
+        setTimeout(() => {
+          navigate('/chart', { replace: true });
+        }, 1500);
+
+      } catch (err) {
+        console.error('Report generation error:', err);
+        setError(err.message);
+        setGenerationStatus('error');
+      }
+    };
+
+    // Small delay before starting generation
+    const timer = setTimeout(generateReport, 500);
     return () => clearTimeout(timer);
-  }, [setIsPremium, navigate]);
+  }, [hasChartData, chartResult, birthData, selectedBundle, setIsPremium, navigate]);
 
   // If no chart data anywhere, redirect to input
   if (!hasChartData) {
@@ -1431,13 +1526,71 @@ function SuccessPage({ setIsPremium, chartResult }) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 text-white flex items-center justify-center p-6">
-      <div className="text-center">
-        <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-          <Check className="w-10 h-10 text-green-400" />
-        </div>
-        <h1 className="text-4xl font-black mb-4">Payment Successful!</h1>
-        <p className="text-purple-300 text-lg mb-2">Thank you for your purchase.</p>
-        <p className="text-purple-400">Redirecting to your chart...</p>
+      <div className="text-center max-w-md">
+        {generationStatus === 'starting' && (
+          <>
+            <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Check className="w-10 h-10 text-green-400" />
+            </div>
+            <h1 className="text-4xl font-black mb-4">Payment Successful!</h1>
+            <p className="text-purple-300 text-lg">Preparing your personalized reading...</p>
+          </>
+        )}
+
+        {generationStatus === 'generating' && (
+          <>
+            <div className="w-20 h-20 bg-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Sparkles className="w-10 h-10 text-yellow-300 animate-pulse" />
+            </div>
+            <h1 className="text-4xl font-black mb-4">Creating Your Reading</h1>
+            <p className="text-purple-300 text-lg mb-6">
+              GPT-4 is analyzing your unique cosmic blueprint...
+            </p>
+
+            {/* Progress bar */}
+            <div className="w-full bg-white/10 rounded-full h-3 mb-4">
+              <div
+                className="bg-gradient-to-r from-yellow-400 to-orange-500 h-3 rounded-full transition-all duration-500"
+                style={{ width: `${generationProgress}%` }}
+              />
+            </div>
+            <p className="text-purple-400 text-sm">
+              {generationProgress < 30 && "Interpreting planetary positions..."}
+              {generationProgress >= 30 && generationProgress < 60 && "Analyzing aspect patterns..."}
+              {generationProgress >= 60 && generationProgress < 85 && "Synthesizing your unique profile..."}
+              {generationProgress >= 85 && "Finalizing your reading..."}
+            </p>
+          </>
+        )}
+
+        {generationStatus === 'complete' && (
+          <>
+            <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Check className="w-10 h-10 text-green-400" />
+            </div>
+            <h1 className="text-4xl font-black mb-4">Your Reading is Ready!</h1>
+            <p className="text-purple-300 text-lg">Taking you to your personalized analysis...</p>
+          </>
+        )}
+
+        {generationStatus === 'error' && (
+          <>
+            <div className="w-20 h-20 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+              <X className="w-10 h-10 text-red-400" />
+            </div>
+            <h1 className="text-4xl font-black mb-4">Generation Error</h1>
+            <p className="text-red-300 text-lg mb-4">{error}</p>
+            <button
+              onClick={() => navigate('/chart', { replace: true })}
+              className="bg-gradient-to-r from-yellow-400 to-orange-500 text-gray-900 px-6 py-3 rounded-xl font-bold hover:scale-105 transition-transform"
+            >
+              Continue to Chart
+            </button>
+            <p className="text-purple-400 text-sm mt-4">
+              Don't worry - you can regenerate your reading from the chart page.
+            </p>
+          </>
+        )}
       </div>
     </div>
   );
@@ -1530,6 +1683,56 @@ function ChartPage({ chartResult, birthData, isPremium }) {
   const [emailStatus, setEmailStatus] = useState("idle"); // idle, sending, success, error
   const [emailError, setEmailError] = useState("");
   const [pdfGenerating, setPdfGenerating] = useState(false);
+  const [analysis, setAnalysis] = useState(null);
+  const [analysisLoading, setAnalysisLoading] = useState(false);
+
+  // Load analysis from localStorage on mount
+  useEffect(() => {
+    const storedAnalysis = localStorage.getItem('natavium_analysis');
+    if (storedAnalysis) {
+      try {
+        const parsed = JSON.parse(storedAnalysis);
+        setAnalysis(parsed);
+      } catch (e) {
+        console.error('Failed to parse stored analysis:', e);
+      }
+    }
+  }, []);
+
+  // Function to regenerate analysis if needed
+  const regenerateAnalysis = async () => {
+    setAnalysisLoading(true);
+    try {
+      const response = await fetch('/api/generate-analysis', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chartResult,
+          birthData,
+          productType: 'essential', // Default to essential for regeneration
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to regenerate analysis');
+      }
+
+      const data = await response.json();
+      const newAnalysis = {
+        content: data.analysis,
+        productType: data.productType,
+        generatedAt: new Date().toISOString(),
+      };
+
+      localStorage.setItem('natavium_analysis', JSON.stringify(newAnalysis));
+      setAnalysis(newAnalysis);
+    } catch (error) {
+      console.error('Regeneration error:', error);
+      alert('Failed to regenerate analysis. Please try again.');
+    } finally {
+      setAnalysisLoading(false);
+    }
+  };
 
   if (!isPremium || !chartResult) {
     return <Navigate to="/preview" replace />;
@@ -1920,14 +2123,92 @@ function ChartPage({ chartResult, birthData, isPremium }) {
             </div>
           </div>
 
-          {/* 2026 Forecast */}
+          {/* AI-Generated Full Analysis */}
           <div className="bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-3xl p-8 border border-purple-500/30">
-            <h2 className="text-2xl font-bold text-yellow-300 mb-6">🔮 2026 Forecast</h2>
-            <div className="space-y-4">
-              <p className="text-purple-100 leading-relaxed">With Jupiter transiting through your chart, 2026 brings significant opportunities for growth and expansion. Your {chartResult.sun.sign} Sun will be energized by favorable aspects, encouraging you to step into leadership roles and pursue long-held ambitions.</p>
-              <p className="text-purple-100 leading-relaxed">Saturn's influence this year asks you to build solid foundations. This is an excellent time for career advancement, particularly in areas that require discipline and long-term planning.</p>
-              <p className="text-purple-100 leading-relaxed">Key periods to watch: Spring brings romantic opportunities, Summer favors financial decisions, and Fall is ideal for personal development and learning new skills.</p>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-yellow-300">
+                <Sparkles className="w-6 h-6 inline mr-2" />
+                Your Personalized Reading
+              </h2>
+              {analysis && (
+                <span className="text-xs text-purple-400">
+                  {analysis.productType?.charAt(0).toUpperCase() + analysis.productType?.slice(1)} Package
+                </span>
+              )}
             </div>
+
+            {analysisLoading ? (
+              <div className="flex flex-col items-center justify-center py-12">
+                <Loader2 className="w-10 h-10 text-yellow-300 animate-spin mb-4" />
+                <p className="text-purple-300">Regenerating your reading...</p>
+              </div>
+            ) : analysis?.content ? (
+              <div className="prose prose-invert max-w-none">
+                {/* Simple markdown-like rendering */}
+                {analysis.content.split('\n').map((line, idx) => {
+                  // H2 headers
+                  if (line.startsWith('## ')) {
+                    return (
+                      <h3 key={idx} className="text-xl font-bold text-yellow-300 mt-6 mb-3">
+                        {line.replace('## ', '')}
+                      </h3>
+                    );
+                  }
+                  // H3 headers
+                  if (line.startsWith('### ')) {
+                    return (
+                      <h4 key={idx} className="text-lg font-semibold text-purple-200 mt-4 mb-2">
+                        {line.replace('### ', '')}
+                      </h4>
+                    );
+                  }
+                  // Bold text replacement and bullet points
+                  if (line.startsWith('- ') || line.startsWith('* ')) {
+                    return (
+                      <p key={idx} className="text-purple-100 ml-4 mb-1">
+                        • {line.slice(2).replace(/\*\*(.*?)\*\*/g, '$1')}
+                      </p>
+                    );
+                  }
+                  // Empty lines
+                  if (line.trim() === '') {
+                    return <div key={idx} className="h-2" />;
+                  }
+                  // Regular paragraphs
+                  return (
+                    <p key={idx} className="text-purple-100 leading-relaxed mb-3">
+                      {line.replace(/\*\*(.*?)\*\*/g, '$1')}
+                    </p>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <p className="text-purple-300 mb-4">Your personalized AI reading hasn't been generated yet.</p>
+                <button
+                  onClick={regenerateAnalysis}
+                  className="bg-gradient-to-r from-yellow-400 to-orange-500 text-gray-900 px-6 py-3 rounded-xl font-bold hover:scale-105 transition-transform"
+                >
+                  Generate My Reading
+                </button>
+              </div>
+            )}
+
+            {analysis?.content && (
+              <div className="mt-8 pt-6 border-t border-white/10 flex justify-between items-center">
+                <p className="text-purple-400 text-xs">
+                  Generated {analysis.generatedAt ? new Date(analysis.generatedAt).toLocaleDateString() : 'recently'}
+                </p>
+                <button
+                  onClick={regenerateAnalysis}
+                  disabled={analysisLoading}
+                  className="text-purple-300 hover:text-white text-sm flex items-center gap-2 disabled:opacity-50"
+                >
+                  <Sparkles className="w-4 h-4" />
+                  Regenerate
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
@@ -1964,6 +2245,7 @@ function ChartPage({ chartResult, birthData, isPremium }) {
                 localStorage.removeItem("natavium_birthData");
                 localStorage.removeItem("natavium_chartResult");
                 localStorage.removeItem("natavium_isPremium");
+                localStorage.removeItem("natavium_analysis");
                 navigate("/input");
               }}
               className="px-6 py-3 rounded-xl bg-purple-500/20 border border-purple-500/30 hover:bg-purple-500/30 transition-colors"
@@ -2353,6 +2635,8 @@ export default function Natavium() {
         <SuccessPage
           setIsPremium={setIsPremium}
           chartResult={chartResult}
+          birthData={birthData}
+          selectedBundle={selectedBundle}
         />
       } />
       <Route path="/chart" element={
