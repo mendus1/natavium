@@ -6,6 +6,7 @@ const openai = new OpenAI({
 });
 
 // Product tier configurations
+// TODO: Switch essential/ultimate to 'gpt-4o' once OpenAI quota is set up
 const PRODUCT_CONFIG = {
   base: {
     model: 'gpt-4o-mini',
@@ -15,14 +16,14 @@ const PRODUCT_CONFIG = {
     includeCompatibility: false,
   },
   essential: {
-    model: 'gpt-4o',
+    model: 'gpt-4o-mini',
     maxTokens: 4000,
     sections: ['bigThree', 'planets', 'houses', 'aspects', 'themes', 'transits'],
     includeTransits: true,
     includeCompatibility: false,
   },
   ultimate: {
-    model: 'gpt-4o',
+    model: 'gpt-4o-mini',
     maxTokens: 6000,
     sections: ['bigThree', 'planets', 'houses', 'aspects', 'themes', 'transits', 'vedic'],
     includeTransits: true,
