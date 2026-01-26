@@ -7,24 +7,25 @@ const openai = new OpenAI({
 
 // Product tier configurations
 // TODO: Switch essential/ultimate to 'gpt-4o' once OpenAI quota is set up
+// TODO: Increase maxTokens for production (currently reduced to avoid serverless timeouts)
 const PRODUCT_CONFIG = {
   base: {
     model: 'gpt-4o-mini',
-    maxTokens: 1500,
+    maxTokens: 800,
     sections: ['bigThree', 'planets', 'houses'],
     includeTransits: false,
     includeCompatibility: false,
   },
   essential: {
     model: 'gpt-4o-mini',
-    maxTokens: 4000,
+    maxTokens: 1500,
     sections: ['bigThree', 'planets', 'houses', 'aspects', 'themes', 'transits'],
     includeTransits: true,
     includeCompatibility: false,
   },
   ultimate: {
     model: 'gpt-4o-mini',
-    maxTokens: 6000,
+    maxTokens: 2000,
     sections: ['bigThree', 'planets', 'houses', 'aspects', 'themes', 'transits', 'vedic'],
     includeTransits: true,
     includeCompatibility: true,
@@ -34,11 +35,10 @@ const PRODUCT_CONFIG = {
 // Build the prompt based on product tier
 function buildPrompt(chartResult, birthData, productType) {
   const config = PRODUCT_CONFIG[productType] || PRODUCT_CONFIG.base;
-  const name = birthData.name || 'The Client';
 
   // Base chart data (always included)
   let chartDataSection = `
-## Birth Chart Data for ${name}
+## Birth Chart Data
 - **Sun:** ${chartResult.sun?.sign || 'Unknown'} in House ${chartResult.sun?.house || '?'}
 - **Moon:** ${chartResult.moon?.sign || 'Unknown'} in House ${chartResult.moon?.house || '?'}
 - **Ascendant (Rising):** ${chartResult.rising?.sign || 'Unknown'}

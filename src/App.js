@@ -1486,8 +1486,19 @@ function SuccessPage({ setIsPremium, chartResult, birthData, selectedBundle }) {
         clearInterval(progressInterval);
 
         if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || 'Failed to generate report');
+          // Handle non-JSON error responses (like 504 timeout)
+          let errorMessage = 'Failed to generate report';
+          try {
+            const errorData = await response.json();
+            errorMessage = errorData.error || errorMessage;
+          } catch {
+            if (response.status === 504) {
+              errorMessage = 'Request timed out. The server took too long to respond. Please try again.';
+            } else {
+              errorMessage = `Server error (${response.status}). Please try again.`;
+            }
+          }
+          throw new Error(errorMessage);
         }
 
         const data = await response.json();
