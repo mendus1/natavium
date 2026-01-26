@@ -22,7 +22,7 @@ export default async function handler(req, res) {
   let browser = null;
 
   try {
-    const { chartResult, birthData } = req.body;
+    const { chartResult, birthData, chartImage } = req.body;
 
     if (!chartResult || !birthData) {
       return res.status(400).json({ error: "Missing chart or birth data" });
@@ -148,6 +148,18 @@ export default async function handler(req, res) {
       <div class="birth-info">${birthDate} • ${birthData.time} • ${birthData.location}</div>
       ${chartResult.chartId ? `<div class="chart-id">Chart ID: ${chartResult.chartId}</div>` : ""}
     </div>
+
+    <!-- START NEW CHART IMAGE BLOCK -->
+    ${chartImage ? `
+    <div class="section" style="text-align: center;">
+      <div class="section-title">Natal Chart Wheel</div>
+      <img src="${chartImage}" style="max-width: 100%; height: auto; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.3);" />
+    </div>
+    ` : ""}
+    <!-- END NEW CHART IMAGE BLOCK -->
+
+    <div class="section">
+      <div class="section-title">Your Big Three</div>     
 
     <div class="section">
       <div class="section-title">Your Big Three</div>

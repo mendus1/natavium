@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import html2canvas from 'html2canvas';
 import { Routes, Route, useNavigate, useParams, Navigate } from "react-router-dom";
 import { calculateNatalChartFromLocal } from "./ephemeris";
 import "./App.css";
@@ -238,7 +239,7 @@ function InfoPage() {
               <div className="bg-white/5 rounded-xl p-6">
                 <h3 className="text-xl font-bold text-yellow-300 mb-3">🤖 AI-Generated Readings</h3>
                 <p className="text-purple-200 mb-3">
-                  Unlike template-based apps, Natavium uses <strong>Claude AI</strong> to actually
+                  Unlike template-based apps, Natavium uses <strong>GPT-4</strong> to actually
                   analyze YOUR specific chart.
                 </p>
                 <p className="text-purple-200">
@@ -472,7 +473,7 @@ function LandingPage() {
             <Zap className="w-10 h-10 text-yellow-300 mb-4" />
             <h3 className="text-xl font-bold mb-2">AI-Powered</h3>
             <p className="text-purple-200 text-sm">
-              Claude AI synthesizes your placements - real analysis, not templates.
+              GPT-4 synthesizes your placements - real analysis, not templates.
             </p>
           </div>
 
@@ -515,6 +516,26 @@ function LandingPage() {
             </div>
           </div>
         </div>
+
+        {/* Footer with legal links */}
+        <footer className="mt-12 pt-8 border-t border-white/10 text-center text-sm text-purple-300">
+          <div className="flex justify-center gap-6 mb-4">
+            <button
+              onClick={() => navigate("/impressum")}
+              className="hover:text-white transition-colors"
+            >
+              Impressum
+            </button>
+            <span className="text-white/30">|</span>
+            <button
+              onClick={() => navigate("/datenschutz")}
+              className="hover:text-white transition-colors"
+            >
+              Datenschutz
+            </button>
+          </div>
+          <p className="text-purple-400">© {new Date().getFullYear()} Natavium. Alle Rechte vorbehalten.</p>
+        </footer>
       </div>
     </div>
   );
@@ -1522,22 +1543,39 @@ function ChartPage({ chartResult, birthData, isPremium }) {
 
     setPdfGenerating(true);
     try {
+      // --- START NEW IMAGE CAPTURE LOGIC ---
+      let chartImage = null;
+      const chartElement = document.getElementById("natal-chart-container");
+      
+      if (chartElement) {
+        // Capture the chart div as an image
+        const canvas = await html2canvas(chartElement, {
+          scale: 2, // Makes text sharper
+          backgroundColor: null, // Transparent background
+          logging: false
+        });
+        chartImage = canvas.toDataURL("image/png");
+      }
+      // --- END NEW IMAGE CAPTURE LOGIC ---
+
       const response = await fetch("/api/generate-pdf", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           chartResult,
           birthData,
+          chartImage, // <--- Now sending the captured image
         }),
       });
 
-      const data = await response.json();
-
       if (!response.ok) {
-        throw new Error(data.error || "PDF generation failed");
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to generate PDF");
       }
 
-      // Decode base64 and trigger download
+      const data = await response.json();
+      
+      // Convert Base64 back to binary for download
       const byteCharacters = atob(data.pdf);
       const byteNumbers = new Array(byteCharacters.length);
       for (let i = 0; i < byteCharacters.length; i++) {
@@ -1545,16 +1583,17 @@ function ChartPage({ chartResult, birthData, isPremium }) {
       }
       const byteArray = new Uint8Array(byteNumbers);
       const blob = new Blob([byteArray], { type: "application/pdf" });
-
-      // Create download link
-      const url = URL.createObjectURL(blob);
+      const url = window.URL.createObjectURL(blob);
+      
+      // Trigger download
       const link = document.createElement("a");
       link.href = url;
-      link.download = data.filename || `natavium-chart-${Date.now()}.pdf`;
+      link.download = data.filename || "natal-chart.pdf";
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      URL.revokeObjectURL(url);
+      window.URL.revokeObjectURL(url);
+
     } catch (error) {
       console.error("PDF generation error:", error);
       alert("Failed to generate PDF. Please try again.");
@@ -1726,7 +1765,7 @@ function ChartPage({ chartResult, birthData, isPremium }) {
         {/* Chart content */}
         <div className="space-y-8">
           {/* Chart Wheel */}
-          <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 border border-white/20">
+          <div id="natal-chart-container" className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 border border-white/20">
             <h2 className="text-2xl font-bold text-center mb-6">Your Natal Chart</h2>
             {(() => {
               const zodiacSigns = [
@@ -1941,6 +1980,213 @@ function ChartPage({ chartResult, birthData, isPremium }) {
 // =========================
 // Main App Component
 // =========================
+// =========================
+// Impressum (Legal Notice) - German Law Compliance
+// =========================
+function ImpressumPage() {
+  const navigate = useNavigate();
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 text-white p-6">
+      <div className="max-w-4xl mx-auto">
+        <button
+          onClick={() => navigate(-1)}
+          className="mb-6 px-4 py-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors flex items-center"
+        >
+          <X className="w-4 h-4 mr-2" />
+          Zurück
+        </button>
+
+        <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 border border-white/20">
+          <h1 className="text-3xl font-black mb-8">Impressum</h1>
+
+          <div className="space-y-6 text-purple-200">
+            <section>
+              <h2 className="text-xl font-bold text-white mb-2">Angaben gemäß § 5 TMG</h2>
+              <p>xxxx (Vor- und Nachname / Firmenname)</p>
+              <p>xxxx (Straße und Hausnummer)</p>
+              <p>xxxx (PLZ und Ort)</p>
+              <p>xxxx (Land)</p>
+            </section>
+
+            <section>
+              <h2 className="text-xl font-bold text-white mb-2">Kontakt</h2>
+              <p>Telefon: xxxx</p>
+              <p>E-Mail: xxxx</p>
+            </section>
+
+            <section>
+              <h2 className="text-xl font-bold text-white mb-2">Umsatzsteuer-ID</h2>
+              <p>Umsatzsteuer-Identifikationsnummer gemäß § 27 a Umsatzsteuergesetz:</p>
+              <p>xxxx</p>
+            </section>
+
+            <section>
+              <h2 className="text-xl font-bold text-white mb-2">Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV</h2>
+              <p>xxxx (Name)</p>
+              <p>xxxx (Anschrift)</p>
+            </section>
+
+            <section>
+              <h2 className="text-xl font-bold text-white mb-2">EU-Streitschlichtung</h2>
+              <p>
+                Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit:{" "}
+                <a href="https://ec.europa.eu/consumers/odr/" target="_blank" rel="noopener noreferrer" className="text-yellow-300 hover:underline">
+                  https://ec.europa.eu/consumers/odr/
+                </a>
+              </p>
+              <p className="mt-2">Unsere E-Mail-Adresse finden Sie oben im Impressum.</p>
+            </section>
+
+            <section>
+              <h2 className="text-xl font-bold text-white mb-2">Verbraucherstreitbeilegung/Universalschlichtungsstelle</h2>
+              <p>
+                Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer
+                Verbraucherschlichtungsstelle teilzunehmen.
+              </p>
+            </section>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// =========================
+// Datenschutzerklärung (Privacy Policy) - GDPR Compliance
+// =========================
+function PrivacyPage() {
+  const navigate = useNavigate();
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 text-white p-6">
+      <div className="max-w-4xl mx-auto">
+        <button
+          onClick={() => navigate(-1)}
+          className="mb-6 px-4 py-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors flex items-center"
+        >
+          <X className="w-4 h-4 mr-2" />
+          Zurück
+        </button>
+
+        <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 border border-white/20">
+          <h1 className="text-3xl font-black mb-8">Datenschutzerklärung</h1>
+
+          <div className="space-y-6 text-purple-200">
+            <section>
+              <h2 className="text-xl font-bold text-white mb-2">1. Datenschutz auf einen Blick</h2>
+              <h3 className="text-lg font-semibold text-white mt-4 mb-2">Allgemeine Hinweise</h3>
+              <p>
+                Die folgenden Hinweise geben einen einfachen Überblick darüber, was mit Ihren personenbezogenen
+                Daten passiert, wenn Sie diese Website besuchen. Personenbezogene Daten sind alle Daten, mit
+                denen Sie persönlich identifiziert werden können.
+              </p>
+            </section>
+
+            <section>
+              <h2 className="text-xl font-bold text-white mb-2">2. Verantwortliche Stelle</h2>
+              <p>Die verantwortliche Stelle für die Datenverarbeitung auf dieser Website ist:</p>
+              <p className="mt-2">xxxx (Name)</p>
+              <p>xxxx (Straße und Hausnummer)</p>
+              <p>xxxx (PLZ und Ort)</p>
+              <p>Telefon: xxxx</p>
+              <p>E-Mail: xxxx</p>
+            </section>
+
+            <section>
+              <h2 className="text-xl font-bold text-white mb-2">3. Datenerfassung auf dieser Website</h2>
+
+              <h3 className="text-lg font-semibold text-white mt-4 mb-2">Welche Daten werden erfasst?</h3>
+              <p>
+                Wir erheben und verarbeiten folgende personenbezogene Daten, die Sie uns freiwillig zur
+                Verfügung stellen:
+              </p>
+              <ul className="list-disc list-inside mt-2 space-y-1">
+                <li>Geburtsdatum und -uhrzeit (für die Horoskop-Berechnung)</li>
+                <li>Geburtsort (für die Horoskop-Berechnung)</li>
+                <li>E-Mail-Adresse (für die Zustellung Ihres Horoskops)</li>
+                <li>Zahlungsinformationen (werden durch unseren Zahlungsdienstleister verarbeitet)</li>
+              </ul>
+
+              <h3 className="text-lg font-semibold text-white mt-4 mb-2">Zweck der Datenverarbeitung</h3>
+              <p>
+                Ihre Daten werden ausschließlich zur Erstellung und Lieferung Ihres personalisierten
+                Horoskops sowie zur Abwicklung der Zahlung verwendet.
+              </p>
+
+              <h3 className="text-lg font-semibold text-white mt-4 mb-2">Rechtsgrundlage</h3>
+              <p>
+                Die Verarbeitung erfolgt auf Grundlage von Art. 6 Abs. 1 lit. b DSGVO (Vertragserfüllung)
+                sowie Art. 6 Abs. 1 lit. a DSGVO (Einwilligung).
+              </p>
+            </section>
+
+            <section>
+              <h2 className="text-xl font-bold text-white mb-2">4. Speicherdauer</h2>
+              <p>
+                Ihre Daten werden nur so lange gespeichert, wie es für die Erfüllung des Vertragszwecks
+                erforderlich ist oder gesetzliche Aufbewahrungsfristen dies vorschreiben.
+              </p>
+            </section>
+
+            <section>
+              <h2 className="text-xl font-bold text-white mb-2">5. Ihre Rechte</h2>
+              <p>Sie haben jederzeit das Recht:</p>
+              <ul className="list-disc list-inside mt-2 space-y-1">
+                <li>Auskunft über Ihre gespeicherten Daten zu erhalten (Art. 15 DSGVO)</li>
+                <li>Berichtigung unrichtiger Daten zu verlangen (Art. 16 DSGVO)</li>
+                <li>Löschung Ihrer Daten zu verlangen (Art. 17 DSGVO)</li>
+                <li>Einschränkung der Verarbeitung zu verlangen (Art. 18 DSGVO)</li>
+                <li>Datenübertragbarkeit zu verlangen (Art. 20 DSGVO)</li>
+                <li>Widerspruch gegen die Verarbeitung einzulegen (Art. 21 DSGVO)</li>
+                <li>Ihre Einwilligung jederzeit zu widerrufen (Art. 7 Abs. 3 DSGVO)</li>
+              </ul>
+            </section>
+
+            <section>
+              <h2 className="text-xl font-bold text-white mb-2">6. Zahlungsdienstleister</h2>
+              <p>
+                Für die Abwicklung von Zahlungen nutzen wir den Dienst Stripe. Stripe verarbeitet Ihre
+                Zahlungsdaten gemäß deren eigener Datenschutzerklärung:{" "}
+                <a href="https://stripe.com/de/privacy" target="_blank" rel="noopener noreferrer" className="text-yellow-300 hover:underline">
+                  https://stripe.com/de/privacy
+                </a>
+              </p>
+            </section>
+
+            <section>
+              <h2 className="text-xl font-bold text-white mb-2">7. Hosting</h2>
+              <p>
+                Diese Website wird bei xxxx (Hosting-Anbieter) gehostet. Der Hoster erhebt in sog.
+                Logfiles folgende Daten, die Ihr Browser übermittelt: IP-Adresse, Datum und Uhrzeit der
+                Anfrage, Zeitzonendifferenz zur Greenwich Mean Time, Inhalt der Anforderung, HTTP-Statuscode,
+                übertragene Datenmenge, Website, von der die Anforderung kommt, und Informationen zu Browser
+                und Betriebssystem.
+              </p>
+            </section>
+
+            <section>
+              <h2 className="text-xl font-bold text-white mb-2">8. Cookies</h2>
+              <p>
+                Diese Website verwendet technisch notwendige Cookies, um die Funktionsfähigkeit der
+                Website zu gewährleisten. Diese Cookies werden nur für die Dauer Ihrer Sitzung gespeichert.
+              </p>
+            </section>
+
+            <section>
+              <h2 className="text-xl font-bold text-white mb-2">9. Beschwerderecht</h2>
+              <p>
+                Sie haben das Recht, sich bei einer Datenschutz-Aufsichtsbehörde über die Verarbeitung
+                Ihrer personenbezogenen Daten durch uns zu beschweren.
+              </p>
+            </section>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function Natavium() {
   // Load initial state from localStorage
   const [birthData, setBirthData] = useState(() => {
@@ -2118,6 +2364,8 @@ export default function Natavium() {
       } />
       <Route path="/info/:page" element={<InfoPage />} />
       <Route path="/info" element={<InfoPage />} />
+      <Route path="/impressum" element={<ImpressumPage />} />
+      <Route path="/datenschutz" element={<PrivacyPage />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
