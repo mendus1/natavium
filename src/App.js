@@ -1448,10 +1448,10 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
 // =========================
 // Success (after Stripe payment)
 // =========================
-function SuccessPage({ setIsPremium, chartResult, birthData, selectedBundle }) {
+function SuccessPage({ setIsPremium, chartResult, selectedBundle }) {
   const navigate = useNavigate();
   const [generationStatus, setGenerationStatus] = useState('starting'); // starting, generating, complete, error
-  const [generationProgress, setGenerationProgress] = useState(0);
+  const [streamedText, setStreamedText] = useState('');
   const [error, setError] = useState(null);
 
   // Check if we have chart data (from props or localStorage)
@@ -1465,35 +1465,27 @@ function SuccessPage({ setIsPremium, chartResult, birthData, selectedBundle }) {
 
     const generateReport = async () => {
       setGenerationStatus('generating');
-      setGenerationProgress(20);
+      setStreamedText('');
 
       try {
-        // Simulate progress updates
-        const progressInterval = setInterval(() => {
-          setGenerationProgress(prev => Math.min(prev + 10, 85));
-        }, 800);
-
         const response = await fetch('/api/generate-analysis', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             chartResult,
-            birthData,
             productType: selectedBundle || 'essential',
           }),
         });
 
-        clearInterval(progressInterval);
-
         if (!response.ok) {
-          // Handle non-JSON error responses (like 504 timeout)
+          // Handle error responses
           let errorMessage = 'Failed to generate report';
           try {
             const errorData = await response.json();
             errorMessage = errorData.error || errorMessage;
           } catch {
             if (response.status === 504) {
-              errorMessage = 'Request timed out. The server took too long to respond. Please try again.';
+              errorMessage = 'Request timed out. Please try again.';
             } else {
               errorMessage = `Server error (${response.status}). Please try again.`;
             }
@@ -1501,16 +1493,27 @@ function SuccessPage({ setIsPremium, chartResult, birthData, selectedBundle }) {
           throw new Error(errorMessage);
         }
 
-        const data = await response.json();
+        // Handle streaming response
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let fullText = '';
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          const chunk = decoder.decode(value, { stream: true });
+          fullText += chunk;
+          setStreamedText(fullText);
+        }
 
         // Store the analysis in localStorage for ChartPage to retrieve
         localStorage.setItem('natavium_analysis', JSON.stringify({
-          content: data.analysis,
-          productType: data.productType,
+          content: fullText,
+          productType: selectedBundle || 'essential',
           generatedAt: new Date().toISOString(),
         }));
 
-        setGenerationProgress(100);
         setGenerationStatus('complete');
 
         // Redirect to chart page after brief success display
@@ -1528,7 +1531,7 @@ function SuccessPage({ setIsPremium, chartResult, birthData, selectedBundle }) {
     // Small delay before starting generation
     const timer = setTimeout(generateReport, 500);
     return () => clearTimeout(timer);
-  }, [hasChartData, chartResult, birthData, selectedBundle, setIsPremium, navigate]);
+  }, [hasChartData, chartResult, selectedBundle, setIsPremium, navigate]);
 
   // If no chart data anywhere, redirect to input
   if (!hasChartData) {
@@ -1554,22 +1557,20 @@ function SuccessPage({ setIsPremium, chartResult, birthData, selectedBundle }) {
               <Sparkles className="w-10 h-10 text-yellow-300 animate-pulse" />
             </div>
             <h1 className="text-4xl font-black mb-4">Creating Your Reading</h1>
-            <p className="text-purple-300 text-lg mb-6">
+            <p className="text-purple-300 text-lg mb-4">
               GPT-4 is analyzing your unique cosmic blueprint...
             </p>
 
-            {/* Progress bar */}
-            <div className="w-full bg-white/10 rounded-full h-3 mb-4">
-              <div
-                className="bg-gradient-to-r from-yellow-400 to-orange-500 h-3 rounded-full transition-all duration-500"
-                style={{ width: `${generationProgress}%` }}
-              />
-            </div>
-            <p className="text-purple-400 text-sm">
-              {generationProgress < 30 && "Interpreting planetary positions..."}
-              {generationProgress >= 30 && generationProgress < 60 && "Analyzing aspect patterns..."}
-              {generationProgress >= 60 && generationProgress < 85 && "Synthesizing your unique profile..."}
-              {generationProgress >= 85 && "Finalizing your reading..."}
+            {/* Live streaming preview */}
+            {streamedText && (
+              <div className="mt-4 bg-white/5 rounded-xl p-4 max-h-48 overflow-y-auto text-left">
+                <p className="text-purple-200 text-sm whitespace-pre-wrap">
+                  {streamedText.slice(0, 500)}{streamedText.length > 500 ? '...' : ''}
+                </p>
+              </div>
+            )}
+            <p className="text-purple-400 text-sm mt-4">
+              {streamedText.length > 0 ? `${streamedText.length} characters generated...` : 'Starting generation...'}
             </p>
           </>
         )}
@@ -2646,7 +2647,6 @@ export default function Natavium() {
         <SuccessPage
           setIsPremium={setIsPremium}
           chartResult={chartResult}
-          birthData={birthData}
           selectedBundle={selectedBundle}
         />
       } />

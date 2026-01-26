@@ -1,6 +1,7 @@
 // api/generate-analysis.js
-// Using Edge Runtime for 30-second timeout (vs 10s for serverless)
-import OpenAI from 'openai';
+// Using Vercel AI SDK with streaming for long reports
+import { streamText } from 'ai';
+import { openai } from '@ai-sdk/openai';
 
 export const config = {
   runtime: 'edge',
@@ -8,7 +9,7 @@ export const config = {
 
 // Product tier configurations
 // TODO: Switch essential/ultimate to 'gpt-4o' once OpenAI quota is set up
-// TODO: Increase maxTokens for production (currently reduced to avoid serverless timeouts)
+// TODO: Increase maxTokens for production (currently reduced for testing)
 const PRODUCT_CONFIG = {
   base: {
     model: 'gpt-4o-mini',
@@ -218,33 +219,17 @@ Format your response in clean Markdown:
 
     const userPrompt = `${chartDataSection}\n\n${analysisRequest}`;
 
-    // Initialize OpenAI client
-    const openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
-    });
-
-    // Call OpenAI
-    const completion = await openai.chat.completions.create({
-      model: config.model,
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: userPrompt },
-      ],
-      max_tokens: config.maxTokens,
+    // Use Vercel AI SDK for streaming
+    const result = streamText({
+      model: openai(config.model),
+      system: systemPrompt,
+      prompt: userPrompt,
+      maxTokens: config.maxTokens,
       temperature: 0.7,
     });
 
-    const analysisText = completion.choices[0].message.content;
-
-    // Return the analysis
-    return new Response(JSON.stringify({
-      analysis: analysisText,
-      productType: tier,
-      model: config.model,
-    }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    // Return streaming response
+    return result.toTextStreamResponse();
 
   } catch (error) {
     console.error('OpenAI API Error:', error);
