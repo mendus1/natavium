@@ -1,9 +1,10 @@
 // api/generate-analysis.js
+// Using Edge Runtime for 30-second timeout (vs 10s for serverless)
 import OpenAI from 'openai';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+export const config = {
+  runtime: 'edge',
+};
 
 // Product tier configurations
 // TODO: Switch essential/ultimate to 'gpt-4o' once OpenAI quota is set up
@@ -33,7 +34,7 @@ const PRODUCT_CONFIG = {
 };
 
 // Build the prompt based on product tier
-function buildPrompt(chartResult, birthData, productType) {
+function buildPrompt(chartResult, productType) {
   const config = PRODUCT_CONFIG[productType] || PRODUCT_CONFIG.base;
 
   // Base chart data (always included)
@@ -165,21 +166,30 @@ Total length: approximately 4500-5500 words.
   return { chartDataSection, analysisRequest };
 }
 
-export default async function handler(req, res) {
+export default async function handler(req) {
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+    return new Response(JSON.stringify({ error: 'Method not allowed' }), {
+      status: 405,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
 
   try {
-    const { chartResult, birthData, productType = 'base' } = req.body;
+    const { chartResult, productType = 'base' } = await req.json();
 
     // Validate required data
     if (!chartResult) {
-      return res.status(400).json({ error: 'No chart data provided' });
+      return new Response(JSON.stringify({ error: 'No chart data provided' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      });
     }
 
     if (!chartResult.sun?.sign || !chartResult.moon?.sign || !chartResult.rising?.sign) {
-      return res.status(400).json({ error: 'Incomplete chart data: missing Sun, Moon, or Rising' });
+      return new Response(JSON.stringify({ error: 'Incomplete chart data: missing Sun, Moon, or Rising' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      });
     }
 
     // Validate product type
@@ -188,7 +198,7 @@ export default async function handler(req, res) {
     const config = PRODUCT_CONFIG[tier];
 
     // Build the prompt
-    const { chartDataSection, analysisRequest } = buildPrompt(chartResult, birthData, tier);
+    const { chartDataSection, analysisRequest } = buildPrompt(chartResult, tier);
 
     const systemPrompt = `You are an expert Western astrologer with deep knowledge of the Placidus house system, planetary aspects, and psychological astrology.
 
@@ -208,6 +218,11 @@ Format your response in clean Markdown:
 
     const userPrompt = `${chartDataSection}\n\n${analysisRequest}`;
 
+    // Initialize OpenAI client
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+
     // Call OpenAI
     const completion = await openai.chat.completions.create({
       model: config.model,
@@ -222,10 +237,13 @@ Format your response in clean Markdown:
     const analysisText = completion.choices[0].message.content;
 
     // Return the analysis
-    res.status(200).json({
+    return new Response(JSON.stringify({
       analysis: analysisText,
       productType: tier,
       model: config.model,
+    }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
     });
 
   } catch (error) {
@@ -233,13 +251,22 @@ Format your response in clean Markdown:
 
     // Handle specific OpenAI errors
     if (error.code === 'insufficient_quota') {
-      return res.status(503).json({ error: 'Service temporarily unavailable. Please try again later.' });
+      return new Response(JSON.stringify({ error: 'Service temporarily unavailable. Please try again later.' }), {
+        status: 503,
+        headers: { 'Content-Type': 'application/json' },
+      });
     }
 
     if (error.code === 'rate_limit_exceeded') {
-      return res.status(429).json({ error: 'Too many requests. Please wait a moment and try again.' });
+      return new Response(JSON.stringify({ error: 'Too many requests. Please wait a moment and try again.' }), {
+        status: 429,
+        headers: { 'Content-Type': 'application/json' },
+      });
     }
 
-    res.status(500).json({ error: 'Failed to generate analysis. Please try again.' });
+    return new Response(JSON.stringify({ error: 'Failed to generate analysis. Please try again.' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
 }
