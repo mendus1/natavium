@@ -2,17 +2,39 @@ const { Resend } = require("resend");
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+// Convert markdown to HTML for email
+function markdownToHtml(markdown) {
+  if (!markdown) return '';
+  return markdown
+    // Headers
+    .replace(/^### (.+)$/gm, '<h3 style="color: #fde047; font-size: 16px; margin: 20px 0 10px 0;">$1</h3>')
+    .replace(/^## (.+)$/gm, '<h2 style="color: #fde047; font-size: 18px; margin: 24px 0 12px 0;">$1</h2>')
+    // Bold
+    .replace(/\*\*(.+?)\*\*/g, '<strong style="color: #f9a8d4;">$1</strong>')
+    // Bullet points
+    .replace(/^- (.+)$/gm, '<li style="color: #e2e8f0; margin: 6px 0;">$1</li>')
+    // Wrap consecutive list items
+    .replace(/(<li[^>]*>.*<\/li>\n?)+/g, '<ul style="list-style-type: disc; padding-left: 20px; margin: 10px 0;">$&</ul>')
+    // Paragraphs (lines that aren't headers or list items)
+    .replace(/^(?!<[hul]|<li)(.+)$/gm, '<p style="color: #e2e8f0; line-height: 1.6; margin: 10px 0; font-size: 14px;">$1</p>')
+    // Clean up empty paragraphs
+    .replace(/<p[^>]*>\s*<\/p>/g, '');
+}
+
 module.exports = async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method Not Allowed" });
   }
 
   try {
-    const { email, chartResult, birthData } = req.body;
+    const { email, chartResult, birthData, chartImage, analysis } = req.body;
 
     if (!email || !chartResult || !birthData) {
       return res.status(400).json({ error: "Missing required fields" });
     }
+
+    // Convert analysis markdown to HTML
+    const analysisHtml = markdownToHtml(analysis);
 
     // Format birth details
     const months = [
@@ -88,6 +110,14 @@ module.exports = async function handler(req, res) {
         </table>
       </div>
 
+      ${chartImage ? `
+      <!-- Natal Chart Wheel -->
+      <div style="text-align: center; margin-bottom: 24px;">
+        <h2 style="color: #fde047; font-size: 18px; margin: 0 0 16px 0;">Your Natal Chart</h2>
+        <img src="${chartImage}" alt="Natal Chart Wheel" style="max-width: 100%; height: auto; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);" />
+      </div>
+      ` : ""}
+
       <!-- Big Three -->
       <div style="margin-bottom: 24px;">
         <h2 style="color: #fde047; font-size: 18px; margin: 0 0 16px 0;">Your Big Three</h2>
@@ -113,6 +143,15 @@ module.exports = async function handler(req, res) {
         </div>
       </div>
 
+      ${analysisHtml ? `
+      <!-- Your Personal Analysis -->
+      <div style="margin-bottom: 24px;">
+        <h2 style="color: #fde047; font-size: 18px; margin: 0 0 16px 0;">📜 Your Personal Analysis</h2>
+        <div style="background: rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 20px; border: 1px solid rgba(139, 92, 246, 0.3);">
+          ${analysisHtml}
+        </div>
+      </div>
+      ` : `
       <!-- 2026 Forecast -->
       <div style="margin-bottom: 24px;">
         <h2 style="color: #fde047; font-size: 18px; margin: 0 0 16px 0;">🔮 2026 Forecast</h2>
@@ -122,6 +161,7 @@ module.exports = async function handler(req, res) {
           <p style="color: #c4b5fd; font-size: 13px; line-height: 1.6; margin: 0;"><strong>Key periods:</strong> Spring brings romantic opportunities • Summer favors financial decisions • Fall is ideal for personal development</p>
         </div>
       </div>
+      `}
 
       <!-- All Planetary Placements -->
       <div style="margin-bottom: 24px;">
