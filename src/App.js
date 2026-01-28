@@ -1890,9 +1890,11 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
         const chunk = decoder.decode(value, { stream: true });
         fullText += chunk;
         // Update state progressively for live streaming
+        // Capture current value in block-scoped variable to avoid no-loop-func warning
+        const currentText = fullText;
         setAnalyses(prev => ({
           ...prev,
-          [tabId]: { content: fullText, generatedAt: new Date().toISOString() }
+          [tabId]: { content: currentText, generatedAt: new Date().toISOString() }
         }));
       }
 
@@ -1956,9 +1958,11 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
         if (done) break;
         const chunk = decoder.decode(value, { stream: true });
         fullText += chunk;
+        // Capture current value in block-scoped variable to avoid no-loop-func warning
+        const currentText = fullText;
         setAnalyses(prev => ({
           ...prev,
-          [activeTab]: { content: fullText, generatedAt: new Date().toISOString() }
+          [activeTab]: { content: currentText, generatedAt: new Date().toISOString() }
         }));
       }
 
