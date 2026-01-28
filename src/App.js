@@ -1415,7 +1415,7 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
                 const res = await fetch("/api/create-checkout-session", {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ bundle: selectedBundle, addOns: selectedAddOns, birthData }),
+                  body: JSON.stringify({ bundle: selectedBundle, addOns: selectedAddOns, chartData: chartResult }),
                 });
 
                 const data = await res.json();

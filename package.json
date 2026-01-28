@@ -29,7 +29,6 @@
     "react-scripts": "^5.0.1",
     "resend": "^6.8.0",
     "stripe": "^20.2.0",
-    "swisseph": "^0.5.17",
     "tz-lookup": "^6.1.25",
     "web-vitals": "^2.1.4"
   },

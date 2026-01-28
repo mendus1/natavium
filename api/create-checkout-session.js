@@ -1,6 +1,5 @@
 import Stripe from "stripe";
 import { createClient } from "@supabase/supabase-js";
-import { calculateNatalChartFromLocal } from "./utils/server-ephemeris.js";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -29,11 +28,11 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { bundle, addOns = [], birthData } = req.body;
+    const { bundle, addOns = [], chartData } = req.body;
 
     // --- Validate inputs ---
-    if (!birthData) {
-      return res.status(400).json({ error: "Missing birth data" });
+    if (!chartData || !chartData.sun?.sign || !chartData.moon?.sign || !chartData.rising?.sign) {
+      return res.status(400).json({ error: "Missing or incomplete chart data" });
     }
 
     const bundlePriceId = PRICE_MAP[bundle];
@@ -41,32 +40,11 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: `Invalid bundle: ${bundle}` });
     }
 
-    // --- 1. Calculate chart on the server ---
-    const hour = parseInt(birthData.hour, 10);
-    const minute = parseInt(birthData.minute, 10);
-    const period = birthData.period;
-
-    let hour24 = hour;
-    if (period === "AM") {
-      hour24 = hour === 12 ? 0 : hour;
-    } else {
-      hour24 = hour === 12 ? 12 : hour + 12;
-    }
-
-    const chartResult = await calculateNatalChartFromLocal({
-      year: parseInt(birthData.birthYear, 10),
-      month: parseInt(birthData.birthMonth, 10),
-      day: parseInt(birthData.birthDay, 10),
-      hour: hour24,
-      minute,
-      locationString: birthData.location,
-    });
-
-    // --- 2. Insert order into Supabase (chart output only, no raw birth data) ---
+    // --- 1. Insert order into Supabase ---
     const { data: order, error: dbError } = await supabase
       .from("orders")
       .insert({
-        chart_data: chartResult,
+        chart_data: chartData,
         product_type: bundle,
         payment_status: "pending",
       })
@@ -80,7 +58,7 @@ export default async function handler(req, res) {
 
     const orderId = order.id;
 
-    // --- 3. Build Stripe line items ---
+    // --- 2. Build Stripe line items ---
     const line_items = [{ price: bundlePriceId, quantity: 1 }];
 
     for (const addOnId of addOns) {
@@ -90,7 +68,7 @@ export default async function handler(req, res) {
       }
     }
 
-    // --- 4. Create Stripe Checkout Session with orderId in metadata ---
+    // --- 3. Create Stripe Checkout Session with orderId in metadata ---
     const origin =
       process.env.NATAVIUM_BASE_URL ||
       req.headers.origin ||
