@@ -1,6 +1,6 @@
 import Stripe from "stripe";
 import { createClient } from "@supabase/supabase-js";
-import { calculateNatalChartFromLocal } from "../src/ephemeris.js";
+import { calculateNatalChartFromLocal } from "./utils/server-ephemeris.js";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
