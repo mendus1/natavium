@@ -33,6 +33,42 @@ function markdownToHtml(markdown) {
     .replace(/<p[^>]*>\s*<\/p>/g, '');
 }
 
+// Analysis type display names
+const ANALYSIS_TITLES = {
+  natal: '📜 Your Natal Chart Analysis',
+  house_deep_dive: '🏠 House Deep Dive',
+  transit_report: '🌟 Transit Report',
+  vedic_chart: '🕉️ Vedic Chart Analysis',
+  solar_return: '☀️ Solar Return Analysis',
+  compatibility: '💕 Compatibility Analysis',
+};
+
+// Build HTML sections for all analyses
+function buildAnalysesSections(analyses) {
+  if (!analyses || typeof analyses !== 'object') return '';
+
+  const order = ['natal', 'house_deep_dive', 'transit_report', 'vedic_chart', 'solar_return', 'compatibility'];
+  let sections = '';
+
+  for (const key of order) {
+    const analysis = analyses[key];
+    if (analysis?.content) {
+      const title = ANALYSIS_TITLES[key] || key;
+      const html = markdownToHtml(analysis.content);
+      sections += `
+    <div class="section" style="page-break-before: always;">
+      <div class="section-title">${title}</div>
+      <div class="analysis-content">
+        ${html}
+      </div>
+    </div>
+      `;
+    }
+  }
+
+  return sections;
+}
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method Not Allowed" });
@@ -41,14 +77,14 @@ export default async function handler(req, res) {
   let browser = null;
 
   try {
-    const { chartResult, birthData, chartImage, analysis, analysisType } = req.body;
+    const { chartResult, birthData, chartImage, analyses } = req.body;
 
     if (!chartResult || !birthData) {
       return res.status(400).json({ error: "Missing chart or birth data" });
     }
 
-    // Convert analysis markdown to HTML
-    const analysisHtml = markdownToHtml(analysis);
+    // Build all analysis sections
+    const analysesSectionsHtml = buildAnalysesSections(analyses);
 
     // --- 1. THE BROWSER SWITCH LOGIC ---
     if (process.env.VERCEL_ENV || process.env.AWS_LAMBDA_FUNCTION_VERSION) {
@@ -215,14 +251,7 @@ export default async function handler(req, res) {
       </table>
     </div>
 
-    ${analysisHtml ? `
-    <div class="section" style="page-break-before: always;">
-      <div class="section-title">📜 Your Personal Analysis</div>
-      <div class="analysis-content">
-        ${analysisHtml}
-      </div>
-    </div>
-    ` : `
+    ${analysesSectionsHtml || `
     <div class="section forecast">
       <div class="section-title">🔮 2026 Forecast</div>
       <p>With Jupiter transiting through your chart, 2026 brings significant opportunities for growth and expansion. Your ${chartResult.sun?.sign || ""} Sun will be energized by favorable aspects, encouraging you to step into leadership roles and pursue long-held ambitions.</p>

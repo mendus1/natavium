@@ -2018,8 +2018,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
           chartResult,
           birthData,
           chartImage,
-          analysis: analyses[activeTab]?.content || analyses.natal?.content || '',
-          analysisType: activeTab,
+          analyses: analyses,
         }),
       });
 
@@ -2079,7 +2078,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
           email: emailAddress,
           chartResult,
           birthData,
-          analysis: analyses.natal?.content || '',
+          analyses: analyses,
         }),
       });
 

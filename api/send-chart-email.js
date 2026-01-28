@@ -21,20 +21,57 @@ function markdownToHtml(markdown) {
     .replace(/<p[^>]*>\s*<\/p>/g, '');
 }
 
+// Analysis type display names
+const ANALYSIS_TITLES = {
+  natal: '📜 Your Natal Chart Analysis',
+  house_deep_dive: '🏠 House Deep Dive',
+  transit_report: '🌟 Transit Report',
+  vedic_chart: '🕉️ Vedic Chart Analysis',
+  solar_return: '☀️ Solar Return Analysis',
+  compatibility: '💕 Compatibility Analysis',
+};
+
+// Build HTML sections for all analyses (email version)
+function buildAnalysesSections(analyses) {
+  if (!analyses || typeof analyses !== 'object') return '';
+
+  const order = ['natal', 'house_deep_dive', 'transit_report', 'vedic_chart', 'solar_return', 'compatibility'];
+  let sections = '';
+
+  for (const key of order) {
+    const analysis = analyses[key];
+    if (analysis?.content) {
+      const title = ANALYSIS_TITLES[key] || key;
+      const html = markdownToHtml(analysis.content);
+      sections += `
+      <!-- ${title} -->
+      <div style="margin-bottom: 24px;">
+        <h2 style="color: #fde047; font-size: 18px; margin: 0 0 16px 0;">${title}</h2>
+        <div style="background: rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 20px; border: 1px solid rgba(139, 92, 246, 0.3);">
+          ${html}
+        </div>
+      </div>
+      `;
+    }
+  }
+
+  return sections;
+}
+
 module.exports = async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method Not Allowed" });
   }
 
   try {
-    const { email, chartResult, birthData, analysis } = req.body;
+    const { email, chartResult, birthData, analyses } = req.body;
 
     if (!email || !chartResult || !birthData) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
-    // Convert analysis markdown to HTML
-    const analysisHtml = markdownToHtml(analysis);
+    // Build all analysis sections
+    const analysesSectionsHtml = buildAnalysesSections(analyses);
 
     // Format birth details
     const months = [
@@ -135,15 +172,7 @@ module.exports = async function handler(req, res) {
         </div>
       </div>
 
-      ${analysisHtml ? `
-      <!-- Your Personal Analysis -->
-      <div style="margin-bottom: 24px;">
-        <h2 style="color: #fde047; font-size: 18px; margin: 0 0 16px 0;">📜 Your Personal Analysis</h2>
-        <div style="background: rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 20px; border: 1px solid rgba(139, 92, 246, 0.3);">
-          ${analysisHtml}
-        </div>
-      </div>
-      ` : `
+      ${analysesSectionsHtml || `
       <!-- 2026 Forecast -->
       <div style="margin-bottom: 24px;">
         <h2 style="color: #fde047; font-size: 18px; margin: 0 0 16px 0;">🔮 2026 Forecast</h2>
