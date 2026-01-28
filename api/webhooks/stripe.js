@@ -9,6 +9,18 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
+// Reverse mapping: Stripe price ID -> add-on ID
+const PRICE_TO_ADDON = {
+  [process.env.STRIPE_PRICE_ID_COMPATIBILITY]: 'compatibility',
+  [process.env.STRIPE_PRICE_ID_HOUSE]: 'house_deep_dive',
+  [process.env.STRIPE_PRICE_ID_TRANSIT]: 'transit_report',
+  [process.env.STRIPE_PRICE_ID_VEDIC]: 'vedic_chart',
+  [process.env.STRIPE_PRICE_ID_RETURN]: 'solar_return',
+};
+
+// Ultimate bundle includes these products for free
+const ULTIMATE_BUNDLE_INCLUDES = ['compatibility', 'transit_report', 'vedic_chart'];
+
 // Disable Vercel's default body parser — we need the raw buffer for signature verification
 export const config = {
   api: {
@@ -37,10 +49,31 @@ export default async function handler(req, res) {
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object;
     const orderId = session.metadata?.orderId;
+    const productType = session.metadata?.productType;
 
     if (!orderId) {
       console.error('Webhook: No orderId in session metadata');
       return res.json({ received: true });
+    }
+
+    // Extract purchased add-ons from line items
+    let purchasedAddons = [];
+    try {
+      const lineItems = await stripe.checkout.sessions.listLineItems(session.id);
+      purchasedAddons = lineItems.data
+        .map(item => PRICE_TO_ADDON[item.price?.id])
+        .filter(Boolean);
+    } catch (lineItemsError) {
+      console.error('Failed to fetch line items:', lineItemsError);
+    }
+
+    // Apply Ultimate bundle benefits
+    if (productType === 'ultimate') {
+      for (const addon of ULTIMATE_BUNDLE_INCLUDES) {
+        if (!purchasedAddons.includes(addon)) {
+          purchasedAddons.push(addon);
+        }
+      }
     }
 
     const { error: updateError } = await supabase
@@ -49,13 +82,14 @@ export default async function handler(req, res) {
         payment_status: 'paid',
         stripe_session_id: session.id,
         customer_email: session.customer_details?.email || null,
+        purchased_addons: purchasedAddons,
       })
       .eq('id', orderId);
 
     if (updateError) {
       console.error(`Supabase update error for order ${orderId}:`, updateError);
     } else {
-      console.log(`Order ${orderId} marked as paid`);
+      console.log(`Order ${orderId} marked as paid with add-ons: ${purchasedAddons.join(', ') || 'none'}`);
     }
   }
 

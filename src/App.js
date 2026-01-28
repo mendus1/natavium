@@ -24,6 +24,9 @@ import {
   Crown,
   Mail,
   Loader2,
+  Home,
+  TrendingUp,
+  Cake,
 } from "lucide-react";
 
 // =========================
@@ -81,6 +84,63 @@ const BUNDLES = {
     ],
   },
 };
+
+// =========================
+// Dashboard Tab Configuration
+// =========================
+const DASHBOARD_TABS = [
+  {
+    id: 'natal',
+    label: 'Natal Chart',
+    icon: Star,
+    alwaysActive: true,
+    requiresPurchase: false,
+  },
+  {
+    id: 'house_deep_dive',
+    label: 'Deep Dive',
+    icon: Home,
+    requiresPurchase: true,
+    priceIfLocked: 2.99,
+    description: 'Detailed analysis of each of your 12 houses - career, relationships, finances, and more.',
+  },
+  {
+    id: 'compatibility',
+    label: 'Compatibility',
+    icon: Heart,
+    requiresPurchase: true,
+    priceIfLocked: 3.99,
+    includedIn: ['ultimate'],
+    comingSoon: true,
+    description: 'Compare your chart with a partner or friend to discover harmony and growth areas.',
+  },
+  {
+    id: 'transit_report',
+    label: 'Transits',
+    icon: TrendingUp,
+    requiresPurchase: true,
+    priceIfLocked: 1.99,
+    includedIn: ['ultimate'],
+    description: 'Current planetary movements affecting your chart - 3-month forecast included.',
+  },
+  {
+    id: 'vedic_chart',
+    label: 'Vedic',
+    icon: Sun,
+    requiresPurchase: true,
+    priceIfLocked: 2.99,
+    includedIn: ['ultimate'],
+    description: 'Eastern sidereal astrology perspective with Nakshatra analysis.',
+  },
+  {
+    id: 'solar_return',
+    label: 'Solar Return',
+    icon: Cake,
+    requiresPurchase: true,
+    priceIfLocked: 4.99,
+    description: 'Your year-ahead forecast based on your upcoming birthday chart.',
+  },
+];
 
 // =========================
 // Helper Functions
@@ -1426,6 +1486,11 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
                   return;
                 }
 
+                // Store orderId for later retrieval in ChartPage
+                if (data.orderId) {
+                  localStorage.setItem('natavium_orderId', data.orderId);
+                }
+
                 window.location.href = data.url;
               } catch (err) {
                 console.error(err);
@@ -1457,6 +1522,23 @@ function SuccessPage({ setIsPremium, chartResult, selectedBundle }) {
   // Check if we have chart data (from props or localStorage)
   const hasChartData = chartResult || localStorage.getItem("natavium_chartResult");
 
+  // Extract session_id from URL params and store orderId
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const sessionId = urlParams.get('session_id');
+    if (sessionId) {
+      // Store session ID for potential order lookup
+      localStorage.setItem('natavium_sessionId', sessionId);
+    }
+
+    // Store purchased products info
+    const purchasedProducts = {
+      bundle: selectedBundle || 'essential',
+      addOns: [], // Add-ons will be fetched from order when ChartPage loads
+    };
+    localStorage.setItem('natavium_purchasedProducts', JSON.stringify(purchasedProducts));
+  }, [selectedBundle]);
+
   useEffect(() => {
     if (!hasChartData) return;
 
@@ -1474,6 +1556,7 @@ function SuccessPage({ setIsPremium, chartResult, selectedBundle }) {
           body: JSON.stringify({
             chartResult,
             productType: selectedBundle || 'essential',
+            analysisType: 'natal',
           }),
         });
 
@@ -1507,11 +1590,18 @@ function SuccessPage({ setIsPremium, chartResult, selectedBundle }) {
           setStreamedText(fullText);
         }
 
-        // Store the analysis in localStorage for ChartPage to retrieve
-        localStorage.setItem('natavium_analysis', JSON.stringify({
+        // Store the analysis in localStorage using the new multi-analysis format
+        const analysisData = {
           content: fullText,
-          productType: selectedBundle || 'essential',
           generatedAt: new Date().toISOString(),
+        };
+        localStorage.setItem('natavium_analyses', JSON.stringify({
+          natal: analysisData,
+        }));
+        // Also store in legacy format for backwards compatibility
+        localStorage.setItem('natavium_analysis', JSON.stringify({
+          ...analysisData,
+          productType: selectedBundle || 'essential',
         }));
 
         setGenerationStatus('complete');
@@ -1688,30 +1778,156 @@ function PaymentPage({ handlePayment, selectedBundle }) {
 // =========================
 // Full Unlocked
 // =========================
-function ChartPage({ chartResult, birthData, isPremium }) {
+function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
   const navigate = useNavigate();
   const [showEmailModal, setShowEmailModal] = useState(false);
   const [emailAddress, setEmailAddress] = useState("");
   const [emailStatus, setEmailStatus] = useState("idle"); // idle, sending, success, error
   const [emailError, setEmailError] = useState("");
   const [pdfGenerating, setPdfGenerating] = useState(false);
-  const [analysis, setAnalysis] = useState(null);
   const [analysisLoading, setAnalysisLoading] = useState(false);
 
-  // Load analysis from localStorage on mount
+  // Tab and dashboard state
+  const [activeTab, setActiveTab] = useState('natal');
+  const [analyses, setAnalyses] = useState({});
+  const [generatingTab, setGeneratingTab] = useState(null);
+  const [upsellTab, setUpsellTab] = useState(null);
+  const [purchasedProducts, setPurchasedProducts] = useState(() => {
+    const saved = localStorage.getItem('natavium_purchasedProducts');
+    return saved ? JSON.parse(saved) : { bundle: selectedBundle || 'essential', addOns: [] };
+  });
+
+  // Load analyses from localStorage on mount
   useEffect(() => {
-    const storedAnalysis = localStorage.getItem('natavium_analysis');
-    if (storedAnalysis) {
+    const storedAnalyses = localStorage.getItem('natavium_analyses');
+    if (storedAnalyses) {
       try {
-        const parsed = JSON.parse(storedAnalysis);
-        setAnalysis(parsed);
+        const parsed = JSON.parse(storedAnalyses);
+        setAnalyses(parsed);
       } catch (e) {
-        console.error('Failed to parse stored analysis:', e);
+        console.error('Failed to parse stored analyses:', e);
+      }
+    }
+    // Also check for legacy single analysis
+    const legacyAnalysis = localStorage.getItem('natavium_analysis');
+    if (legacyAnalysis && !storedAnalyses) {
+      try {
+        const parsed = JSON.parse(legacyAnalysis);
+        setAnalyses({ natal: parsed });
+        // Migrate to new format
+        localStorage.setItem('natavium_analyses', JSON.stringify({ natal: parsed }));
+      } catch (e) {
+        console.error('Failed to parse legacy analysis:', e);
       }
     }
   }, []);
 
-  // Function to regenerate analysis if needed
+  // Fetch order data to get purchased products (if orderId is in localStorage)
+  useEffect(() => {
+    const fetchOrderData = async () => {
+      const orderId = localStorage.getItem('natavium_orderId');
+      if (!orderId) return;
+
+      try {
+        const res = await fetch(`/api/get-order?id=${orderId}`);
+        if (res.ok) {
+          const data = await res.json();
+          const products = {
+            bundle: data.productType,
+            addOns: data.purchasedAddons || [],
+          };
+          setPurchasedProducts(products);
+          localStorage.setItem('natavium_purchasedProducts', JSON.stringify(products));
+        }
+      } catch (err) {
+        console.error('Failed to fetch order data:', err);
+      }
+    };
+    fetchOrderData();
+  }, []);
+
+  // Check if a tab is accessible
+  const isTabAccessible = (tabId) => {
+    const tab = DASHBOARD_TABS.find(t => t.id === tabId);
+    if (!tab) return false;
+    if (tab.alwaysActive || !tab.requiresPurchase) return true;
+    if (tab.comingSoon) return false; // Coming soon tabs are never accessible
+    if (purchasedProducts.addOns.includes(tabId)) return true;
+    if (tab.includedIn?.includes(purchasedProducts.bundle)) return true;
+    return false;
+  };
+
+  // Generate analysis for a specific tab
+  const generateAnalysisForTab = async (tabId) => {
+    if (analyses[tabId]?.content || generatingTab) return;
+
+    setGeneratingTab(tabId);
+
+    try {
+      const response = await fetch('/api/generate-analysis', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chartResult,
+          analysisType: tabId,
+          productType: purchasedProducts.bundle || 'essential',
+          birthData,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to generate analysis');
+      }
+
+      // Stream the response
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let fullText = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        const chunk = decoder.decode(value, { stream: true });
+        fullText += chunk;
+        // Update state progressively for live streaming
+        setAnalyses(prev => ({
+          ...prev,
+          [tabId]: { content: fullText, generatedAt: new Date().toISOString() }
+        }));
+      }
+
+      // Save to localStorage
+      const updatedAnalyses = {
+        ...analyses,
+        [tabId]: { content: fullText, generatedAt: new Date().toISOString() }
+      };
+      localStorage.setItem('natavium_analyses', JSON.stringify(updatedAnalyses));
+
+    } catch (error) {
+      console.error(`Failed to generate ${tabId} analysis:`, error);
+    } finally {
+      setGeneratingTab(null);
+    }
+  };
+
+  // Handle tab click
+  const handleTabClick = (tab) => {
+    if (tab.comingSoon) {
+      setUpsellTab({ ...tab, isComingSoon: true });
+      return;
+    }
+    if (isTabAccessible(tab.id)) {
+      setActiveTab(tab.id);
+      // Generate analysis if not already present
+      if (!analyses[tab.id]?.content && tab.id !== 'natal') {
+        generateAnalysisForTab(tab.id);
+      }
+    } else {
+      setUpsellTab(tab);
+    }
+  };
+
+  // Function to regenerate analysis for the active tab
   const regenerateAnalysis = async () => {
     setAnalysisLoading(true);
     try {
@@ -1721,7 +1937,8 @@ function ChartPage({ chartResult, birthData, isPremium }) {
         body: JSON.stringify({
           chartResult,
           birthData,
-          productType: 'essential', // Default to essential for regeneration
+          analysisType: activeTab,
+          productType: purchasedProducts.bundle || 'essential',
         }),
       });
 
@@ -1729,15 +1946,29 @@ function ChartPage({ chartResult, birthData, isPremium }) {
         throw new Error('Failed to regenerate analysis');
       }
 
-      const data = await response.json();
-      const newAnalysis = {
-        content: data.analysis,
-        productType: data.productType,
-        generatedAt: new Date().toISOString(),
-      };
+      // Stream the response
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let fullText = '';
 
-      localStorage.setItem('natavium_analysis', JSON.stringify(newAnalysis));
-      setAnalysis(newAnalysis);
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        const chunk = decoder.decode(value, { stream: true });
+        fullText += chunk;
+        setAnalyses(prev => ({
+          ...prev,
+          [activeTab]: { content: fullText, generatedAt: new Date().toISOString() }
+        }));
+      }
+
+      // Save to localStorage
+      const updatedAnalyses = {
+        ...analyses,
+        [activeTab]: { content: fullText, generatedAt: new Date().toISOString() }
+      };
+      localStorage.setItem('natavium_analyses', JSON.stringify(updatedAnalyses));
+
     } catch (error) {
       console.error('Regeneration error:', error);
       alert('Failed to regenerate analysis. Please try again.');
@@ -1745,6 +1976,9 @@ function ChartPage({ chartResult, birthData, isPremium }) {
       setAnalysisLoading(false);
     }
   };
+
+  // Get the current analysis for the active tab
+  const currentAnalysis = analyses[activeTab];
 
   if (!isPremium || !chartResult) {
     return <Navigate to="/preview" replace />;
@@ -1968,16 +2202,126 @@ function ChartPage({ chartResult, birthData, isPremium }) {
           </div>
         </div>
 
-        <div className="bg-green-500/20 border border-green-500/50 rounded-2xl p-6 mb-8 text-center">
-          <div className="text-4xl mb-2">🎉</div>
-          <h2 className="text-2xl font-bold mb-2">Welcome to Your Cosmic Journey!</h2>
-          <p className="text-green-200">Your complete analysis is unlocked.</p>
-          {chartResult.chartId && (
-            <p className="text-green-300/70 text-xs mt-2">Chart ID: {chartResult.chartId}</p>
-          )}
-        </div>
+        {/* Tab Navigation */}
+        <nav className="flex gap-1 overflow-x-auto bg-white/5 rounded-2xl p-2 mb-6 scrollbar-hide">
+          {DASHBOARD_TABS.map((tab) => {
+            const accessible = isTabAccessible(tab.id);
+            const TabIcon = tab.icon;
+            const isActive = activeTab === tab.id;
+            const isGenerating = generatingTab === tab.id;
 
-        {/* Chart content */}
+            return (
+              <button
+                key={tab.id}
+                onClick={() => handleTabClick(tab)}
+                className={`flex items-center gap-2 px-4 py-3 rounded-xl font-semibold
+                  whitespace-nowrap transition-all min-w-fit ${
+                  isActive
+                    ? 'bg-gradient-to-r from-yellow-400/20 to-orange-500/20 text-yellow-300 border border-yellow-500/30'
+                    : accessible
+                      ? 'hover:bg-white/10 text-purple-200'
+                      : 'text-purple-400 opacity-60 hover:opacity-80'
+                }`}
+              >
+                {isGenerating ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <TabIcon className="w-4 h-4" />
+                )}
+                <span>{tab.label}</span>
+                {tab.comingSoon && (
+                  <span className="text-[10px] bg-purple-500/30 px-1.5 py-0.5 rounded text-purple-200">Soon</span>
+                )}
+                {!accessible && !tab.comingSoon && <Lock className="w-3 h-3 ml-1" />}
+              </button>
+            );
+          })}
+        </nav>
+
+        {/* Upsell Modal */}
+        {upsellTab && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <div className="bg-gradient-to-br from-indigo-900 to-purple-900 rounded-2xl p-8 max-w-md w-full border border-white/20 shadow-2xl">
+              <div className="text-center mb-6">
+                {upsellTab.isComingSoon ? (
+                  <>
+                    <div className="w-16 h-16 bg-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Sparkles className="w-8 h-8 text-purple-300" />
+                    </div>
+                    <h3 className="text-2xl font-bold mb-2">{upsellTab.label}</h3>
+                    <p className="text-purple-300 mb-4">{upsellTab.description}</p>
+                    <div className="bg-purple-500/20 rounded-xl p-4 mb-4">
+                      <p className="text-yellow-300 font-semibold">Coming Soon!</p>
+                      <p className="text-purple-300 text-sm mt-1">This feature is currently in development.</p>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="w-16 h-16 bg-yellow-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Lock className="w-8 h-8 text-yellow-300" />
+                    </div>
+                    <h3 className="text-2xl font-bold mb-2">Unlock {upsellTab.label}</h3>
+                    <p className="text-purple-300">{upsellTab.description}</p>
+                  </>
+                )}
+              </div>
+
+              {!upsellTab.isComingSoon && (
+                <div className="bg-white/10 rounded-xl p-4 mb-6">
+                  <div className="flex justify-between items-center">
+                    <span className="font-semibold">{upsellTab.label}</span>
+                    <span className="text-2xl font-bold text-yellow-300">
+                      ${upsellTab.priceIfLocked?.toFixed(2)}
+                    </span>
+                  </div>
+                  {upsellTab.includedIn && (
+                    <p className="text-purple-400 text-xs mt-2">
+                      Included free with Ultimate package
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {!upsellTab.isComingSoon && (
+                <button
+                  onClick={() => {
+                    // TODO: Implement add-on purchase flow
+                    alert('Add-on purchase coming soon! For now, upgrade to Ultimate to get this feature.');
+                    setUpsellTab(null);
+                  }}
+                  className="w-full bg-gradient-to-r from-yellow-400 to-orange-500
+                    text-gray-900 py-4 rounded-xl font-bold hover:scale-105 transition-transform mb-3"
+                >
+                  Unlock for ${upsellTab.priceIfLocked?.toFixed(2)}
+                </button>
+              )}
+
+              <button
+                onClick={() => setUpsellTab(null)}
+                className="w-full py-3 text-purple-300 hover:text-white transition-colors"
+              >
+                {upsellTab.isComingSoon ? 'Got it' : 'Maybe later'}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Chart content - shown on Natal tab */}
+        {activeTab === 'natal' && (
+          <>
+            <div className="bg-green-500/20 border border-green-500/50 rounded-2xl p-6 mb-8 text-center">
+              <div className="text-4xl mb-2">🎉</div>
+              <h2 className="text-2xl font-bold mb-2">Welcome to Your Cosmic Journey!</h2>
+              <p className="text-green-200">Your complete analysis is unlocked.</p>
+              {chartResult.chartId && (
+                <p className="text-green-300/70 text-xs mt-2">Chart ID: {chartResult.chartId}</p>
+              )}
+            </div>
+          </>
+        )}
+
+        {/* Natal Chart Tab Content */}
+        {activeTab === 'natal' && (
         <div className="space-y-8">
           {/* Chart Wheel */}
           <div id="natal-chart-container" className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 border border-white/20">
@@ -2142,22 +2486,22 @@ function ChartPage({ chartResult, birthData, isPremium }) {
                 <Sparkles className="w-6 h-6 inline mr-2" />
                 Your Personalized Reading
               </h2>
-              {analysis && (
+              {purchasedProducts.bundle && (
                 <span className="text-xs text-purple-400">
-                  {analysis.productType?.charAt(0).toUpperCase() + analysis.productType?.slice(1)} Package
+                  {purchasedProducts.bundle.charAt(0).toUpperCase() + purchasedProducts.bundle.slice(1)} Package
                 </span>
               )}
             </div>
 
-            {analysisLoading ? (
+            {analysisLoading || generatingTab === 'natal' ? (
               <div className="flex flex-col items-center justify-center py-12">
                 <Loader2 className="w-10 h-10 text-yellow-300 animate-spin mb-4" />
-                <p className="text-purple-300">Regenerating your reading...</p>
+                <p className="text-purple-300">Generating your reading...</p>
               </div>
-            ) : analysis?.content ? (
+            ) : currentAnalysis?.content ? (
               <div className="prose prose-invert max-w-none">
                 {/* Simple markdown-like rendering */}
-                {analysis.content.split('\n').map((line, idx) => {
+                {currentAnalysis.content.split('\n').map((line, idx) => {
                   // H2 headers
                   if (line.startsWith('## ')) {
                     return (
@@ -2198,7 +2542,7 @@ function ChartPage({ chartResult, birthData, isPremium }) {
               <div className="text-center py-8">
                 <p className="text-purple-300 mb-4">Your personalized AI reading hasn't been generated yet.</p>
                 <button
-                  onClick={regenerateAnalysis}
+                  onClick={() => generateAnalysisForTab('natal')}
                   className="bg-gradient-to-r from-yellow-400 to-orange-500 text-gray-900 px-6 py-3 rounded-xl font-bold hover:scale-105 transition-transform"
                 >
                   Generate My Reading
@@ -2206,14 +2550,14 @@ function ChartPage({ chartResult, birthData, isPremium }) {
               </div>
             )}
 
-            {analysis?.content && (
+            {currentAnalysis?.content && (
               <div className="mt-8 pt-6 border-t border-white/10 flex justify-between items-center">
                 <p className="text-purple-400 text-xs">
-                  Generated {analysis.generatedAt ? new Date(analysis.generatedAt).toLocaleDateString() : 'recently'}
+                  Generated {currentAnalysis.generatedAt ? new Date(currentAnalysis.generatedAt).toLocaleDateString() : 'recently'}
                 </p>
                 <button
                   onClick={regenerateAnalysis}
-                  disabled={analysisLoading}
+                  disabled={analysisLoading || generatingTab}
                   className="text-purple-300 hover:text-white text-sm flex items-center gap-2 disabled:opacity-50"
                 >
                   <Sparkles className="w-4 h-4" />
@@ -2223,29 +2567,108 @@ function ChartPage({ chartResult, birthData, isPremium }) {
             )}
           </div>
         </div>
+        )}
 
-        <div className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-2xl p-8 border border-purple-500/30">
-          <h3 className="text-2xl font-bold mb-6 text-center">Add More Services</h3>
+        {/* Other Tab Content - Reusable Analysis Display */}
+        {activeTab !== 'natal' && (
+          <div className="space-y-8">
+            <div className="bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-3xl p-8 border border-purple-500/30">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-yellow-300">
+                  <Sparkles className="w-6 h-6 inline mr-2" />
+                  {DASHBOARD_TABS.find(t => t.id === activeTab)?.label} Analysis
+                </h2>
+              </div>
 
-          <div className="grid md:grid-cols-2 gap-4">
-            <div className="bg-white/10 rounded-xl p-6">
-              <h4 className="text-xl font-bold mb-2">Compatibility</h4>
-              <p className="text-purple-200 text-sm mb-4">Compare with partner - $2.99</p>
-              <button className="w-full bg-white/20 px-4 py-2 rounded-lg hover:bg-white/30 transition-colors text-sm font-semibold">
-                Add Service
-              </button>
-            </div>
+              {generatingTab === activeTab ? (
+                <div className="flex flex-col items-center justify-center py-12">
+                  <Loader2 className="w-10 h-10 text-yellow-300 animate-spin mb-4" />
+                  <p className="text-purple-300">Generating your {DASHBOARD_TABS.find(t => t.id === activeTab)?.label.toLowerCase()} analysis...</p>
+                  {currentAnalysis?.content && (
+                    <div className="mt-6 w-full prose prose-invert max-w-none opacity-70">
+                      {currentAnalysis.content.split('\n').slice(0, 10).map((line, idx) => {
+                        if (line.startsWith('## ')) {
+                          return <h3 key={idx} className="text-xl font-bold text-yellow-300 mt-4 mb-2">{line.replace('## ', '')}</h3>;
+                        }
+                        if (line.trim() === '') return <div key={idx} className="h-2" />;
+                        return <p key={idx} className="text-purple-100 leading-relaxed mb-2">{line.replace(/\*\*(.*?)\*\*/g, '$1')}</p>;
+                      })}
+                    </div>
+                  )}
+                </div>
+              ) : currentAnalysis?.content ? (
+                <div className="prose prose-invert max-w-none">
+                  {currentAnalysis.content.split('\n').map((line, idx) => {
+                    if (line.startsWith('## ')) {
+                      return <h3 key={idx} className="text-xl font-bold text-yellow-300 mt-6 mb-3">{line.replace('## ', '')}</h3>;
+                    }
+                    if (line.startsWith('### ')) {
+                      return <h4 key={idx} className="text-lg font-semibold text-purple-200 mt-4 mb-2">{line.replace('### ', '')}</h4>;
+                    }
+                    if (line.startsWith('- ') || line.startsWith('* ')) {
+                      return <p key={idx} className="text-purple-100 ml-4 mb-1">• {line.slice(2).replace(/\*\*(.*?)\*\*/g, '$1')}</p>;
+                    }
+                    if (line.trim() === '') return <div key={idx} className="h-2" />;
+                    return <p key={idx} className="text-purple-100 leading-relaxed mb-3">{line.replace(/\*\*(.*?)\*\*/g, '$1')}</p>;
+                  })}
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <p className="text-purple-300 mb-4">Your {DASHBOARD_TABS.find(t => t.id === activeTab)?.label.toLowerCase()} analysis hasn't been generated yet.</p>
+                  <button
+                    onClick={() => generateAnalysisForTab(activeTab)}
+                    className="bg-gradient-to-r from-yellow-400 to-orange-500 text-gray-900 px-6 py-3 rounded-xl font-bold hover:scale-105 transition-transform"
+                  >
+                    Generate Analysis
+                  </button>
+                </div>
+              )}
 
-            <div className="bg-white/10 rounded-xl p-6">
-              <h4 className="text-xl font-bold mb-2">Vedic Chart</h4>
-              <p className="text-purple-200 text-sm mb-4">Eastern perspective - $2.99</p>
-              <button className="w-full bg-white/20 px-4 py-2 rounded-lg hover:bg-white/30 transition-colors text-sm font-semibold">
-                Add Service
-              </button>
+              {currentAnalysis?.content && !generatingTab && (
+                <div className="mt-8 pt-6 border-t border-white/10 flex justify-between items-center">
+                  <p className="text-purple-400 text-xs">
+                    Generated {currentAnalysis.generatedAt ? new Date(currentAnalysis.generatedAt).toLocaleDateString() : 'recently'}
+                  </p>
+                  <button
+                    onClick={regenerateAnalysis}
+                    disabled={analysisLoading || generatingTab}
+                    className="text-purple-300 hover:text-white text-sm flex items-center gap-2 disabled:opacity-50"
+                  >
+                    <Sparkles className="w-4 h-4" />
+                    Regenerate
+                  </button>
+                </div>
+              )}
             </div>
           </div>
+        )}
 
-          <div className="mt-8 text-center flex flex-col sm:flex-row gap-4 justify-center">
+        {/* Footer Navigation */}
+        <div className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-2xl p-8 border border-purple-500/30 mt-8">
+          <h3 className="text-2xl font-bold mb-6 text-center">Explore More</h3>
+
+          <div className="grid md:grid-cols-3 gap-4 mb-8">
+            {DASHBOARD_TABS.filter(tab => tab.id !== 'natal' && !isTabAccessible(tab.id) && !tab.comingSoon).slice(0, 3).map(tab => {
+              const TabIcon = tab.icon;
+              return (
+                <div key={tab.id} className="bg-white/10 rounded-xl p-6">
+                  <div className="flex items-center gap-2 mb-2">
+                    <TabIcon className="w-5 h-5 text-yellow-300" />
+                    <h4 className="text-xl font-bold">{tab.label}</h4>
+                  </div>
+                  <p className="text-purple-200 text-sm mb-4">{tab.description?.slice(0, 60)}...</p>
+                  <button
+                    onClick={() => setUpsellTab(tab)}
+                    className="w-full bg-gradient-to-r from-yellow-400/20 to-orange-500/20 border border-yellow-500/30 px-4 py-2 rounded-lg hover:from-yellow-400/30 hover:to-orange-500/30 transition-colors text-sm font-semibold text-yellow-300"
+                  >
+                    Unlock - ${tab.priceIfLocked?.toFixed(2)}
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="text-center flex flex-col sm:flex-row gap-4 justify-center">
             <button
               onClick={() => navigate("/")}
               className="px-6 py-3 rounded-xl bg-white/10 border border-white/20 hover:bg-white/20 transition-colors"
@@ -2257,7 +2680,9 @@ function ChartPage({ chartResult, birthData, isPremium }) {
                 localStorage.removeItem("natavium_birthData");
                 localStorage.removeItem("natavium_chartResult");
                 localStorage.removeItem("natavium_isPremium");
+                localStorage.removeItem("natavium_analyses");
                 localStorage.removeItem("natavium_analysis");
+                localStorage.removeItem("natavium_purchasedProducts");
                 navigate("/input");
               }}
               className="px-6 py-3 rounded-xl bg-purple-500/20 border border-purple-500/30 hover:bg-purple-500/30 transition-colors"
@@ -2655,6 +3080,7 @@ export default function Natavium() {
           chartResult={chartResult}
           birthData={birthData}
           isPremium={isPremium}
+          selectedBundle={selectedBundle}
         />
       } />
       <Route path="/info/:page" element={<InfoPage />} />
