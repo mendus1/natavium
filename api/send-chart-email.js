@@ -27,7 +27,7 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const { email, chartResult, birthData, chartImage, analysis } = req.body;
+    const { email, chartResult, birthData, analysis } = req.body;
 
     if (!email || !chartResult || !birthData) {
       return res.status(400).json({ error: "Missing required fields" });
@@ -109,14 +109,6 @@ module.exports = async function handler(req, res) {
           </tr>
         </table>
       </div>
-
-      ${chartImage ? `
-      <!-- Natal Chart Wheel -->
-      <div style="text-align: center; margin-bottom: 24px;">
-        <h2 style="color: #fde047; font-size: 18px; margin: 0 0 16px 0;">Your Natal Chart</h2>
-        <img src="${chartImage}" alt="Natal Chart Wheel" style="max-width: 100%; height: auto; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);" />
-      </div>
-      ` : ""}
 
       <!-- Big Three -->
       <div style="margin-bottom: 24px;">

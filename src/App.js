@@ -2072,18 +2072,6 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
     setEmailError("");
 
     try {
-      // Capture chart image for email
-      let chartImageForEmail = null;
-      const chartElementForEmail = document.getElementById("natal-chart-container");
-      if (chartElementForEmail) {
-        const canvas = await html2canvas(chartElementForEmail, {
-          scale: 2,
-          backgroundColor: null,
-          logging: false
-        });
-        chartImageForEmail = canvas.toDataURL("image/png");
-      }
-
       const response = await fetch("/api/send-chart-email", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -2091,7 +2079,6 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
           email: emailAddress,
           chartResult,
           birthData,
-          chartImage: chartImageForEmail,
           analysis: analyses.natal?.content || '',
         }),
       });
