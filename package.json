@@ -2,6 +2,9 @@
   "name": "natavium",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": "20.x"
+  },
   "dependencies": {
     "@ai-sdk/openai": "^3.0.19",
     "@anthropic-ai/sdk": "^0.71.2",
