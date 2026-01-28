@@ -1,11 +1,15 @@
 import Stripe from 'stripe';
 import { buffer } from 'micro';
+import { createClient } from '@supabase/supabase-js';
 
-// 1. Initialize Stripe
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-// 2. Critical: Disable Vercel's default body parser
-// We need the raw stream to verify the signature
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY
+);
+
+// Disable Vercel's default body parser — we need the raw buffer for signature verification
 export const config = {
   api: {
     bodyParser: false,
@@ -21,35 +25,39 @@ export default async function handler(req, res) {
   let event;
 
   try {
-    // 3. Get the raw body buffer
     const buf = await buffer(req);
-    
-    // 4. Get the signature from the headers
     const sig = req.headers['stripe-signature'];
-
-    // 5. Verify the event came from Stripe (and not a hacker)
-    // process.env.STRIPE_WEBHOOK_SECRET comes from your Dashboard
     event = stripe.webhooks.constructEvent(buf, sig, process.env.STRIPE_WEBHOOK_SECRET);
-
   } catch (err) {
-    console.error(`Webhook Error: ${err.message}`);
+    console.error(`Webhook signature verification failed: ${err.message}`);
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
-  // 6. Handle the specific event
+  // Handle checkout completion
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object;
-    
-    // THIS IS WHERE THE MAGIC HAPPENS
-    console.log('💰 Payment Successful!');
-    console.log('User Email:', session.customer_details.email);
-    console.log('Product ID:', session.metadata.productId); // Assuming you passed this in metadata
-    
-    // TODO (When we add Database):
-    // await db.users.update({ email: session.customer_details.email, hasPaid: true })
-    // TODO (Optional): Send email receipt via Resend/SendGrid
+    const orderId = session.metadata?.orderId;
+
+    if (!orderId) {
+      console.error('Webhook: No orderId in session metadata');
+      return res.json({ received: true });
+    }
+
+    const { error: updateError } = await supabase
+      .from('orders')
+      .update({
+        payment_status: 'paid',
+        stripe_session_id: session.id,
+        customer_email: session.customer_details?.email || null,
+      })
+      .eq('id', orderId);
+
+    if (updateError) {
+      console.error(`Supabase update error for order ${orderId}:`, updateError);
+    } else {
+      console.log(`Order ${orderId} marked as paid`);
+    }
   }
 
-  // 7. Return 200 OK to Stripe immediately
   res.json({ received: true });
 }
