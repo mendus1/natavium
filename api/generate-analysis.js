@@ -10,8 +10,8 @@ export const config = {
 // Product tier configurations for natal chart analysis
 const PRODUCT_CONFIG = {
   base: {
-    model: 'gpt-5.2',
-    maxTokens: 2000,
+    model: 'gpt-4o-mini',
+    maxTokens: 800,
     sections: ['bigThree', 'planets', 'houses'],
     includeTransits: false,
     includeCompatibility: false,
