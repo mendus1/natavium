@@ -88,6 +88,10 @@ const BUNDLES = {
 // =========================
 // Dashboard Tab Configuration
 // =========================
+// Bundle contents:
+// - Base: Natal only
+// - Essential: Natal + House Deep Dive + Solar Return
+// - Ultimate: Essential + Vedic + Transit + Compatibility
 const DASHBOARD_TABS = [
   {
     id: 'natal',
@@ -102,26 +106,17 @@ const DASHBOARD_TABS = [
     icon: Home,
     requiresPurchase: true,
     priceIfLocked: 2.99,
+    includedIn: ['essential', 'ultimate'],
     description: 'Detailed analysis of each of your 12 houses - career, relationships, finances, and more.',
   },
   {
-    id: 'compatibility',
-    label: 'Compatibility',
-    icon: Heart,
+    id: 'solar_return',
+    label: 'Solar Return',
+    icon: Cake,
     requiresPurchase: true,
-    priceIfLocked: 3.99,
-    includedIn: ['ultimate'],
-    comingSoon: true,
-    description: 'Compare your chart with a partner or friend to discover harmony and growth areas.',
-  },
-  {
-    id: 'transit_report',
-    label: 'Transits',
-    icon: TrendingUp,
-    requiresPurchase: true,
-    priceIfLocked: 1.99,
-    includedIn: ['ultimate'],
-    description: 'Current planetary movements affecting your chart - 3-month forecast included.',
+    priceIfLocked: 4.99,
+    includedIn: ['essential', 'ultimate'],
+    description: 'Your year-ahead forecast based on your upcoming birthday chart.',
   },
   {
     id: 'vedic_chart',
@@ -133,12 +128,23 @@ const DASHBOARD_TABS = [
     description: 'Eastern sidereal astrology perspective with Nakshatra analysis.',
   },
   {
-    id: 'solar_return',
-    label: 'Solar Return',
-    icon: Cake,
+    id: 'transit_report',
+    label: 'Transits',
+    icon: TrendingUp,
     requiresPurchase: true,
-    priceIfLocked: 4.99,
-    description: 'Your year-ahead forecast based on your upcoming birthday chart.',
+    priceIfLocked: 1.99,
+    includedIn: ['ultimate'],
+    description: 'Current planetary movements affecting your chart - 3-month forecast included.',
+  },
+  {
+    id: 'compatibility',
+    label: 'Compatibility',
+    icon: Heart,
+    requiresPurchase: true,
+    priceIfLocked: 3.99,
+    includedIn: ['ultimate'],
+    comingSoon: true,
+    description: 'Compare your chart with a partner or friend to discover harmony and growth areas.',
   },
 ];
 

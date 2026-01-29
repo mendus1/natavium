@@ -18,8 +18,12 @@ const PRICE_TO_ADDON = {
   [process.env.STRIPE_PRICE_ID_RETURN]: 'solar_return',
 };
 
-// Ultimate bundle includes these products for free
-const ULTIMATE_BUNDLE_INCLUDES = ['compatibility', 'transit_report', 'vedic_chart'];
+// Bundle contents (products included for free):
+// - Base: Natal only (no add-ons included)
+// - Essential: Natal + House Deep Dive + Solar Return
+// - Ultimate: Essential + Vedic + Transit + Compatibility
+const ESSENTIAL_BUNDLE_INCLUDES = ['house_deep_dive', 'solar_return'];
+const ULTIMATE_BUNDLE_INCLUDES = ['house_deep_dive', 'solar_return', 'vedic_chart', 'transit_report', 'compatibility'];
 
 // Disable Vercel's default body parser — we need the raw buffer for signature verification
 export const config = {
@@ -67,12 +71,17 @@ export default async function handler(req, res) {
       console.error('Failed to fetch line items:', lineItemsError);
     }
 
-    // Apply Ultimate bundle benefits
+    // Apply bundle benefits based on product type
+    let bundleIncludes = [];
     if (productType === 'ultimate') {
-      for (const addon of ULTIMATE_BUNDLE_INCLUDES) {
-        if (!purchasedAddons.includes(addon)) {
-          purchasedAddons.push(addon);
-        }
+      bundleIncludes = ULTIMATE_BUNDLE_INCLUDES;
+    } else if (productType === 'essential') {
+      bundleIncludes = ESSENTIAL_BUNDLE_INCLUDES;
+    }
+
+    for (const addon of bundleIncludes) {
+      if (!purchasedAddons.includes(addon)) {
+        purchasedAddons.push(addon);
       }
     }
 
