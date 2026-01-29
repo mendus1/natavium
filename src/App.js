@@ -2568,24 +2568,30 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
             </div>
           </div>
 
-          {/* Big Three Analysis */}
-          <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 border border-white/20">
-            <h2 className="text-2xl font-bold mb-6">Your Big Three</h2>
-            <div className="space-y-6">
-              <div className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-xl p-6 border border-yellow-500/30">
-                <h3 className="text-xl font-bold text-yellow-300 mb-2">☉ {chartResult.sun.sign} Sun</h3>
-                <p className="text-sm text-purple-300 mb-3">{chartResult.sun.degree}° in {chartResult.sun.house}{houseSuffix(chartResult.sun.house)} house</p>
-                <p className="text-purple-100">Your core identity and ego expression. The Sun in {chartResult.sun.sign} gives you a {chartResult.sun.sign === "Aries" || chartResult.sun.sign === "Leo" || chartResult.sun.sign === "Sagittarius" ? "fiery, passionate nature" : chartResult.sun.sign === "Taurus" || chartResult.sun.sign === "Virgo" || chartResult.sun.sign === "Capricorn" ? "grounded, practical approach" : chartResult.sun.sign === "Gemini" || chartResult.sun.sign === "Libra" || chartResult.sun.sign === "Aquarius" ? "intellectual, communicative style" : "intuitive, emotional depth"}.</p>
+          {/* Big Three Summary (Compact) */}
+          <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-6 border border-white/20">
+            <h2 className="text-xl font-bold mb-4">Your Big Three</h2>
+            <div className="space-y-3">
+              <div className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-xl p-4 border border-yellow-500/30">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-bold text-yellow-300">☉ {chartResult.sun.sign} Sun</h3>
+                  <span className="text-sm text-purple-300">{chartResult.sun.degree}° • {chartResult.sun.house}{houseSuffix(chartResult.sun.house)} house</span>
+                </div>
+                <p className="text-sm text-purple-200 mt-1">Core Identity</p>
               </div>
-              <div className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-xl p-6 border border-blue-500/30">
-                <h3 className="text-xl font-bold text-blue-300 mb-2">☽ {chartResult.moon.sign} Moon</h3>
-                <p className="text-sm text-purple-300 mb-3">{chartResult.moon.degree}° in {chartResult.moon.house}{houseSuffix(chartResult.moon.house)} house</p>
-                <p className="text-purple-100">Your emotional core and inner world. The Moon in {chartResult.moon.sign} shapes how you process feelings and find emotional security.</p>
+              <div className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-xl p-4 border border-blue-500/30">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-bold text-blue-300">☽ {chartResult.moon.sign} Moon</h3>
+                  <span className="text-sm text-purple-300">{chartResult.moon.degree}° • {chartResult.moon.house}{houseSuffix(chartResult.moon.house)} house</span>
+                </div>
+                <p className="text-sm text-purple-200 mt-1">Emotional Core</p>
               </div>
-              <div className="bg-gradient-to-r from-pink-500/20 to-purple-500/20 rounded-xl p-6 border border-pink-500/30">
-                <h3 className="text-xl font-bold text-pink-300 mb-2">↑ {chartResult.rising.sign} Rising</h3>
-                <p className="text-sm text-purple-300 mb-3">{chartResult.rising.degree}° Ascendant</p>
-                <p className="text-purple-100">Your rising sign is the mask you wear and how others perceive you. {chartResult.rising.sign} rising gives you a {chartResult.rising.sign === "Aries" || chartResult.rising.sign === "Leo" || chartResult.rising.sign === "Sagittarius" ? "confident, dynamic first impression" : chartResult.rising.sign === "Taurus" || chartResult.rising.sign === "Virgo" || chartResult.rising.sign === "Capricorn" ? "stable, reliable presence" : chartResult.rising.sign === "Gemini" || chartResult.rising.sign === "Libra" || chartResult.rising.sign === "Aquarius" ? "friendly, approachable demeanor" : "sensitive, caring aura"}.</p>
+              <div className="bg-gradient-to-r from-pink-500/20 to-purple-500/20 rounded-xl p-4 border border-pink-500/30">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-bold text-pink-300">↑ {chartResult.rising.sign} Rising</h3>
+                  <span className="text-sm text-purple-300">{chartResult.rising.degree}° Ascendant</span>
+                </div>
+                <p className="text-sm text-purple-200 mt-1">How Others See You</p>
               </div>
             </div>
           </div>
@@ -2640,7 +2646,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
               <div className="prose prose-invert max-w-none">
                 {/* Simple markdown-like rendering */}
                 {currentAnalysis.content.split('\n').map((line, idx) => {
-                  // H2 headers
+                  // H2 headers (## Chapter title)
                   if (line.startsWith('## ')) {
                     return (
                       <h3 key={idx} className="text-xl font-bold text-yellow-300 mt-6 mb-3">
@@ -2648,12 +2654,20 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
                       </h3>
                     );
                   }
-                  // H3 headers
+                  // H3 headers (### Section title)
                   if (line.startsWith('### ')) {
                     return (
                       <h4 key={idx} className="text-lg font-semibold text-purple-200 mt-4 mb-2">
                         {line.replace('### ', '')}
                       </h4>
+                    );
+                  }
+                  // H4 headers (#### Subsection title)
+                  if (line.startsWith('#### ')) {
+                    return (
+                      <h5 key={idx} className="text-base font-medium text-purple-300 mt-3 mb-1">
+                        {line.replace('#### ', '')}
+                      </h5>
                     );
                   }
                   // Bold text replacement and bullet points
@@ -2728,6 +2742,12 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
                         if (line.startsWith('## ')) {
                           return <h3 key={idx} className="text-xl font-bold text-yellow-300 mt-4 mb-2">{line.replace('## ', '')}</h3>;
                         }
+                        if (line.startsWith('### ')) {
+                          return <h4 key={idx} className="text-lg font-semibold text-purple-200 mt-3 mb-1">{line.replace('### ', '')}</h4>;
+                        }
+                        if (line.startsWith('#### ')) {
+                          return <h5 key={idx} className="text-base font-medium text-purple-300 mt-2 mb-1">{line.replace('#### ', '')}</h5>;
+                        }
                         if (line.trim() === '') return <div key={idx} className="h-2" />;
                         return <p key={idx} className="text-purple-100 leading-relaxed mb-2">{line.replace(/\*\*(.*?)\*\*/g, '$1')}</p>;
                       })}
@@ -2742,6 +2762,9 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
                     }
                     if (line.startsWith('### ')) {
                       return <h4 key={idx} className="text-lg font-semibold text-purple-200 mt-4 mb-2">{line.replace('### ', '')}</h4>;
+                    }
+                    if (line.startsWith('#### ')) {
+                      return <h5 key={idx} className="text-base font-medium text-purple-300 mt-3 mb-1">{line.replace('#### ', '')}</h5>;
                     }
                     if (line.startsWith('- ') || line.startsWith('* ')) {
                       return <p key={idx} className="text-purple-100 ml-4 mb-1">• {line.slice(2).replace(/\*\*(.*?)\*\*/g, '$1')}</p>;

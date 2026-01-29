@@ -87,98 +87,196 @@ function buildPrompt(chartResult, productType) {
 
   if (productType === 'base') {
     analysisRequest = `
-Please provide a natal chart analysis including:
+Please provide a natal chart analysis structured in chapters:
 
-1. **The Big Three Analysis** (Sun, Moon, Rising)
-   - Core identity and ego expression (Sun)
-   - Emotional nature and inner self (Moon)
-   - How they present to the world (Rising)
-   - How these three energies interact and potentially create internal tensions or harmony
+## Chapter 1: The Core
 
-2. **Planetary Placements Overview**
-   - Brief interpretation of each planet's sign placement
-   - Focus on the personal planets (Mercury, Venus, Mars)
+### Introduction
+A brief overview of this unique birth chart and what makes this person's cosmic blueprint special.
 
-3. **House Emphasis**
-   - Which life areas are most emphasized based on planetary placements
+### Sun Sign Analysis
+- Core identity and ego expression with the Sun in ${chartResult.sun?.sign || 'their sign'}
+- How this manifests in daily life and long-term goals
+
+### Moon Sign Analysis
+- Emotional nature and inner self with the Moon in ${chartResult.moon?.sign || 'their sign'}
+- What provides emotional security and comfort
+
+### Rising Sign Analysis
+- How they present to the world with ${chartResult.rising?.sign || 'their'} Rising
+- First impressions and natural approach to new situations
+
+### The Big Three Dynamic
+- How these three energies interact and create this unique personality
+- Potential internal tensions or harmonies between them
+
+## Chapter 2: The Planets
+
+### Personal Planets (Mercury, Venus, Mars)
+- Brief interpretation of each planet's sign placement
+- How these shape communication, love style, and drive
+
+### House Emphasis
+- Which life areas are most emphasized based on planetary placements
 
 Keep the analysis grounded and specific to these placements. Avoid generic statements.
 Total length: approximately 800-1000 words.
 `;
   } else if (productType === 'essential') {
     analysisRequest = `
-Please provide a comprehensive natal chart analysis including:
+Please provide a comprehensive natal chart analysis structured in chapters:
 
-1. **The Big Three Deep Dive** (Sun, Moon, Rising)
-   - Detailed analysis of core identity, emotional nature, and outer presentation
-   - How these three create a unique personality matrix
-   - Potential internal conflicts or harmonies between these energies
+## Chapter 1: The Core
 
-2. **All Planetary Placements**
-   - Detailed interpretation of each planet's sign and house placement
-   - Personal planets (Mercury, Venus, Mars): communication, love, drive
-   - Social planets (Jupiter, Saturn): growth, limitations, life lessons
-   - Generational planets (Uranus, Neptune, Pluto): deeper transformative themes
+### Introduction
+An overview of this unique birth chart—the themes, gifts, and growth areas that define this cosmic blueprint.
 
-3. **Major Aspects Analysis**
-   - How planets interact with each other
-   - Key strengths and challenges indicated by aspects
+### Sun Sign Deep Dive
+- Detailed analysis of core identity with the Sun in ${chartResult.sun?.sign || 'their sign'}
+- The house placement and what life area is illuminated
+- How this solar energy expresses in personality and purpose
 
-4. **Key Life Themes & Patterns**
-   - Recurring themes across the chart
-   - Soul purpose indicators
-   - Karmic patterns if evident
+### Moon Sign Deep Dive
+- Detailed analysis of emotional nature with the Moon in ${chartResult.moon?.sign || 'their sign'}
+- The house placement and emotional life domain
+- Inner needs, instincts, and what feels like "home"
 
-5. **Strengths & Challenges Breakdown**
-   - Natural talents and gifts
-   - Areas requiring conscious development
+### Rising Sign Deep Dive
+- How ${chartResult.rising?.sign || 'their'} Rising shapes outer presentation
+- The mask and the authentic self
+- Natural approach to life and new situations
 
-6. **2026 Transit Forecast**
-   - Major planetary transits affecting this chart in 2026
-   - Key periods of opportunity and challenge
-   - Areas of life most activated
+### The Big Three Integration
+- How Sun, Moon, and Rising create a unique personality matrix
+- Internal tensions that may arise and how to work with them
+- The gifts that emerge when these energies align
+
+## Chapter 2: The Planets
+
+### Personal Planets
+#### Mercury: The Mind
+- Communication style, learning approach, and mental patterns
+
+#### Venus: Love & Values
+- Relationship style, aesthetic preferences, and what brings pleasure
+
+#### Mars: Drive & Action
+- How this person pursues goals, handles conflict, and expresses passion
+
+### Social Planets
+#### Jupiter: Growth & Expansion
+- Where luck and opportunity flow, philosophical outlook
+
+#### Saturn: Structure & Lessons
+- Life's key challenges, areas requiring discipline and mastery
+
+### Outer Planets
+- Uranus, Neptune, Pluto: Generational themes and deeper transformative currents
+
+### Key Aspects
+- Major planetary interactions and what they reveal about inner dynamics
+
+## Chapter 3: The Future
+
+### 2026 Transit Forecast
+- Major planetary transits affecting this chart in 2026
+- Key periods of opportunity and challenge
+- Areas of life most activated
+- Timing recommendations for important decisions
 
 Total length: approximately 3000-3500 words.
 `;
   } else if (productType === 'ultimate') {
     analysisRequest = `
-Please provide an elite-level natal chart analysis including:
+Please provide an elite-level natal chart analysis structured in chapters:
 
-1. **The Big Three Deep Dive** (Sun, Moon, Rising)
-   - Comprehensive analysis of the personality matrix
-   - Psychological integration of these three energies
-   - Shadow aspects and growth edges
+## Chapter 1: The Core
 
-2. **Complete Planetary Analysis**
-   - In-depth interpretation of all planetary placements
-   - Personal, social, and generational planet meanings
-   - Retrograde planets if any (note: check if data indicates retrogrades)
+### Introduction
+A comprehensive overview of this birth chart—the soul's intentions, key life themes, and the unique cosmic signature that defines this incarnation.
 
-3. **Aspect Pattern Analysis**
-   - All major aspects and their psychological meaning
-   - Any grand trines, T-squares, or other configurations
-   - How aspects modify planetary expression
+### Sun Sign Deep Dive
+- Comprehensive analysis of core identity with the Sun in ${chartResult.sun?.sign || 'their sign'}
+- House placement significance and life purpose themes
+- Shadow aspects of this solar placement
+- How to fully embody this Sun sign's highest expression
 
-4. **Life Themes & Soul Purpose**
-   - North Node/South Node interpretation if available
-   - Karmic patterns and past-life indicators
-   - Soul evolution themes
+### Moon Sign Deep Dive
+- Emotional landscape with the Moon in ${chartResult.moon?.sign || 'their sign'}
+- House placement and the emotional home base
+- Childhood imprints and nurturing needs
+- The inner child and how to care for emotional well-being
 
-5. **Strengths, Challenges & Shadow Work**
-   - Natural gifts and how to maximize them
-   - Challenge areas as growth opportunities
-   - Shadow integration work suggested
+### Rising Sign Deep Dive
+- ${chartResult.rising?.sign || 'Their'} Rising and the persona presented to the world
+- How others perceive this person vs. their inner experience
+- The Ascendant as life path and approach to challenges
+- Physical and energetic qualities associated with this Rising
 
-6. **2026 Transit Forecast (Detailed)**
-   - Month-by-month overview of major transits
-   - Saturn, Jupiter, and outer planet transits
-   - Eclipse impacts if relevant
-   - Recommended timing for major decisions
+### The Big Three Matrix
+- Psychological integration of Sun, Moon, and Rising
+- The tensions and gifts created by this combination
+- Shadow work opportunities in the Big Three dynamic
+- Living authentically with this core energy pattern
 
-7. **Vedic/Sidereal Perspective**
-   - How the chart shifts in Vedic astrology (approximately 23° earlier)
-   - Key differences in interpretation
-   - Vedic insights that complement the Western reading
+## Chapter 2: The Planets
+
+### Personal Planets
+#### Mercury: Mind & Communication
+- In-depth analysis of mental patterns and communication style
+- Learning approach and information processing
+- How this Mercury placement affects relationships and work
+
+#### Venus: Love, Beauty & Values
+- Relationship patterns and attachment style
+- Aesthetic sensibilities and creative expression
+- What this person values and attracts
+
+#### Mars: Action, Desire & Will
+- How passion and anger are expressed
+- Pursuit style and competitive nature
+- Sexual energy and physical vitality
+
+### Social Planets
+#### Jupiter: Expansion & Wisdom
+- Where growth and good fortune flow naturally
+- Philosophical outlook and belief systems
+- Teaching and mentoring themes
+
+#### Saturn: Mastery & Karma
+- Life's major lessons and tests
+- Career and authority themes
+- The path to maturity and mastery
+
+### Outer Planets
+#### Uranus: Revolution & Awakening
+- Where liberation and innovation are needed
+
+#### Neptune: Dreams & Transcendence
+- Spiritual gifts and illusions to overcome
+
+#### Pluto: Power & Transformation
+- Deep psychological patterns and transformation themes
+
+### Aspect Patterns
+- Major aspects and their psychological significance
+- Any grand trines, T-squares, or other configurations
+- How aspects modify and combine planetary energies
+
+### Life Themes & Soul Purpose
+- Karmic patterns and soul evolution themes
+- The chart's overall message and life direction
+
+## Chapter 3: The Future
+
+### 2026 Transit Forecast (Detailed)
+- Month-by-month overview of major transits
+- Saturn transits: lessons and restructuring
+- Jupiter transits: opportunities and expansion
+- Outer planet transits: deeper transformation cycles
+- Eclipse impacts if relevant
+- Recommended timing for major decisions
+- Key dates and periods to watch
 
 Total length: approximately 4500-5500 words.
 `;

@@ -6,7 +6,8 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 function markdownToHtml(markdown) {
   if (!markdown) return '';
   return markdown
-    // Headers
+    // Headers (must process in order: h4 before h3 before h2)
+    .replace(/^#### (.+)$/gm, '<h4 style="color: #c4b5fd; font-size: 14px; font-weight: 600; margin: 16px 0 8px 0;">$1</h4>')
     .replace(/^### (.+)$/gm, '<h3 style="color: #fde047; font-size: 16px; margin: 20px 0 10px 0;">$1</h3>')
     .replace(/^## (.+)$/gm, '<h2 style="color: #fde047; font-size: 18px; margin: 24px 0 12px 0;">$1</h2>')
     // Bold
@@ -21,21 +22,22 @@ function markdownToHtml(markdown) {
     .replace(/<p[^>]*>\s*<\/p>/g, '');
 }
 
-// Analysis type display names
+// Analysis type display names (with chapter structure)
 const ANALYSIS_TITLES = {
-  natal: '📜 Your Natal Chart Analysis',
+  natal: '📜 Chapter 1: The Core Analysis',
   house_deep_dive: '🏠 House Deep Dive',
-  transit_report: '🌟 Transit Report',
+  transit_report: '🔮 Chapter 3: Your Future',
   vedic_chart: '🕉️ Vedic Chart Analysis',
   solar_return: '☀️ Solar Return Analysis',
   compatibility: '💕 Compatibility Analysis',
 };
 
-// Build HTML sections for all analyses (email version)
+// Build HTML sections for all analyses (email version with proper ordering)
 function buildAnalysesSections(analyses) {
   if (!analyses || typeof analyses !== 'object') return '';
 
-  const order = ['natal', 'house_deep_dive', 'transit_report', 'vedic_chart', 'solar_return', 'compatibility'];
+  // Order: Chapter 1 (natal/core), Chapter 3 (transits), then additional products
+  const order = ['natal', 'transit_report', 'house_deep_dive', 'vedic_chart', 'solar_return', 'compatibility'];
   let sections = '';
 
   for (const key of order) {
@@ -43,10 +45,12 @@ function buildAnalysesSections(analyses) {
     if (analysis?.content) {
       const title = ANALYSIS_TITLES[key] || key;
       const html = markdownToHtml(analysis.content);
+      const isChapter = key === 'natal' || key === 'transit_report';
+
       sections += `
       <!-- ${title} -->
       <div style="margin-bottom: 24px;">
-        <h2 style="color: #fde047; font-size: 18px; margin: 0 0 16px 0;">${title}</h2>
+        <h2 style="color: ${isChapter ? '#fde047' : '#c4b5fd'}; font-size: ${isChapter ? '20px' : '18px'}; margin: 0 0 16px 0; ${isChapter ? 'border-bottom: 2px solid rgba(253, 224, 71, 0.3); padding-bottom: 8px;' : ''}">${title}</h2>
         <div style="background: rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 20px; border: 1px solid rgba(139, 92, 246, 0.3);">
           ${html}
         </div>
@@ -147,44 +151,29 @@ module.exports = async function handler(req, res) {
         </table>
       </div>
 
-      <!-- Big Three -->
-      <div style="margin-bottom: 24px;">
-        <h2 style="color: #fde047; font-size: 18px; margin: 0 0 16px 0;">Your Big Three</h2>
-
-        <div style="display: flex; flex-direction: column; gap: 12px;">
+      <!-- Big Three (Compact) -->
+      <div style="margin-bottom: 20px;">
+        <h2 style="color: #fde047; font-size: 18px; margin: 0 0 12px 0;">Your Big Three</h2>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
           <!-- Sun -->
-          <div style="background: linear-gradient(135deg, rgba(234, 179, 8, 0.2), rgba(249, 115, 22, 0.2)); border-radius: 12px; padding: 16px; border: 1px solid rgba(234, 179, 8, 0.3);">
-            <div style="color: #fde047; font-size: 20px; font-weight: bold; margin-bottom: 4px;">☉ ${chartResult.sun?.sign || "—"} Sun</div>
-            <div style="color: #c4b5fd; font-size: 14px;">Core Identity • ${chartResult.sun?.degree || "—"}° in ${chartResult.sun?.house || "—"}${getHouseSuffix(chartResult.sun?.house)} house</div>
+          <div style="background: linear-gradient(135deg, rgba(234, 179, 8, 0.2), rgba(249, 115, 22, 0.2)); border-radius: 10px; padding: 12px 14px; border: 1px solid rgba(234, 179, 8, 0.3);">
+            <div style="color: #fde047; font-size: 18px; font-weight: bold;">☉ ${chartResult.sun?.sign || "—"} Sun</div>
+            <div style="color: #c4b5fd; font-size: 12px;">${chartResult.sun?.degree || "—"}° • ${chartResult.sun?.house || "—"}${getHouseSuffix(chartResult.sun?.house)} house • Core Identity</div>
           </div>
-
           <!-- Moon -->
-          <div style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2)); border-radius: 12px; padding: 16px; border: 1px solid rgba(59, 130, 246, 0.3);">
-            <div style="color: #93c5fd; font-size: 20px; font-weight: bold; margin-bottom: 4px;">☽ ${chartResult.moon?.sign || "—"} Moon</div>
-            <div style="color: #c4b5fd; font-size: 14px;">Emotional Core • ${chartResult.moon?.degree || "—"}° in ${chartResult.moon?.house || "—"}${getHouseSuffix(chartResult.moon?.house)} house</div>
+          <div style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2)); border-radius: 10px; padding: 12px 14px; border: 1px solid rgba(59, 130, 246, 0.3);">
+            <div style="color: #93c5fd; font-size: 18px; font-weight: bold;">☽ ${chartResult.moon?.sign || "—"} Moon</div>
+            <div style="color: #c4b5fd; font-size: 12px;">${chartResult.moon?.degree || "—"}° • ${chartResult.moon?.house || "—"}${getHouseSuffix(chartResult.moon?.house)} house • Emotional Core</div>
           </div>
-
           <!-- Rising -->
-          <div style="background: linear-gradient(135deg, rgba(236, 72, 153, 0.2), rgba(139, 92, 246, 0.2)); border-radius: 12px; padding: 16px; border: 1px solid rgba(236, 72, 153, 0.3);">
-            <div style="color: #f9a8d4; font-size: 20px; font-weight: bold; margin-bottom: 4px;">↑ ${chartResult.rising?.sign || "—"} Rising</div>
-            <div style="color: #c4b5fd; font-size: 14px;">How Others See You • ${chartResult.rising?.degree || "—"}° Ascendant</div>
+          <div style="background: linear-gradient(135deg, rgba(236, 72, 153, 0.2), rgba(139, 92, 246, 0.2)); border-radius: 10px; padding: 12px 14px; border: 1px solid rgba(236, 72, 153, 0.3);">
+            <div style="color: #f9a8d4; font-size: 18px; font-weight: bold;">↑ ${chartResult.rising?.sign || "—"} Rising</div>
+            <div style="color: #c4b5fd; font-size: 12px;">${chartResult.rising?.degree || "—"}° Ascendant • How Others See You</div>
           </div>
         </div>
       </div>
 
-      ${analysesSectionsHtml || `
-      <!-- 2026 Forecast -->
-      <div style="margin-bottom: 24px;">
-        <h2 style="color: #fde047; font-size: 18px; margin: 0 0 16px 0;">🔮 2026 Forecast</h2>
-        <div style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(236, 72, 153, 0.2)); border-radius: 12px; padding: 16px; border: 1px solid rgba(139, 92, 246, 0.3);">
-          <p style="color: #e2e8f0; font-size: 14px; line-height: 1.6; margin: 0 0 12px 0;">With Jupiter transiting through your chart, 2026 brings significant opportunities for growth and expansion. Your ${chartResult.sun?.sign || ""} Sun will be energized by favorable aspects.</p>
-          <p style="color: #e2e8f0; font-size: 14px; line-height: 1.6; margin: 0 0 12px 0;">Saturn's influence this year asks you to build solid foundations. This is an excellent time for career advancement and long-term planning.</p>
-          <p style="color: #c4b5fd; font-size: 13px; line-height: 1.6; margin: 0;"><strong>Key periods:</strong> Spring brings romantic opportunities • Summer favors financial decisions • Fall is ideal for personal development</p>
-        </div>
-      </div>
-      `}
-
-      <!-- All Planetary Placements -->
+      <!-- Planetary Placements (before analyses) -->
       <div style="margin-bottom: 24px;">
         <h2 style="color: #fde047; font-size: 18px; margin: 0 0 16px 0;">Planetary Placements</h2>
         <div style="background: rgba(255, 255, 255, 0.05); border-radius: 12px; overflow: hidden;">
@@ -203,6 +192,18 @@ module.exports = async function handler(req, res) {
           </table>
         </div>
       </div>
+
+      ${analysesSectionsHtml || `
+      <!-- Default Forecast (if no analyses) -->
+      <div style="margin-bottom: 24px;">
+        <h2 style="color: #fde047; font-size: 18px; margin: 0 0 16px 0; border-bottom: 2px solid rgba(253, 224, 71, 0.3); padding-bottom: 8px;">🔮 Your 2026 Forecast</h2>
+        <div style="background: rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 16px; border: 1px solid rgba(139, 92, 246, 0.3);">
+          <p style="color: #e2e8f0; font-size: 14px; line-height: 1.6; margin: 0 0 12px 0;">With Jupiter transiting through your chart, 2026 brings significant opportunities for growth and expansion. Your <strong style="color: #f9a8d4;">${chartResult.sun?.sign || ""} Sun</strong> will be energized by favorable aspects.</p>
+          <p style="color: #e2e8f0; font-size: 14px; line-height: 1.6; margin: 0 0 12px 0;">Saturn's influence this year asks you to build solid foundations. This is an excellent time for career advancement and long-term planning.</p>
+          <p style="color: #c4b5fd; font-size: 13px; line-height: 1.6; margin: 0;"><strong>Key periods:</strong> Spring brings romantic opportunities • Summer favors financial decisions • Fall is ideal for personal development</p>
+        </div>
+      </div>
+      `}
 
     </div>
 
