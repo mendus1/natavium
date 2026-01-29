@@ -1611,6 +1611,27 @@ function SuccessPage({ setIsPremium, chartResult, selectedBundle }) {
           productType: selectedBundle || 'essential',
         }));
 
+        try {
+          // Retrieve the Order ID (saved during checkout)
+          const storedOrderId = localStorage.getItem('natavium_order_id'); 
+          
+          if (storedOrderId) {
+            console.log("Saving natal analysis to database...");
+            // No await needed here - let it run in background so UI doesn't freeze
+            fetch('/api/save-analysis', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                orderId: storedOrderId,
+                analysisType: 'natal', // This specific block handles the 'natal' section
+                content: fullText
+              })
+            });
+          }
+        } catch (err) {
+          console.error("Background save failed:", err);
+        }
+
         setGenerationStatus('complete');
 
         // Redirect to chart page after brief success display
@@ -1923,6 +1944,28 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
       };
       localStorage.setItem('natavium_analyses', JSON.stringify(updatedAnalyses));
 
+      // === START NEW DATABASE SAVE ===
+      try {
+        const storedOrderId = localStorage.getItem('natavium_order_id'); 
+        
+        if (storedOrderId) {
+          console.log(`Saving ${tabId} analysis to database...`);
+          // Save in background
+          fetch('/api/save-analysis', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              orderId: storedOrderId,
+              analysisType: tabId, // <--- Using the variable from your function
+              content: fullText
+            })
+          });
+        }
+      } catch (err) {
+        console.error("Background save failed:", err);
+      }
+      // === END NEW DATABASE SAVE ===
+
     } catch (error) {
       console.error(`Failed to generate ${tabId} analysis:`, error);
     } finally {
@@ -2055,6 +2098,28 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
         [activeTab]: { content: fullText, generatedAt: new Date().toISOString() }
       };
       localStorage.setItem('natavium_analyses', JSON.stringify(updatedAnalyses));
+
+      // === START NEW DATABASE SAVE ===
+      try {
+        const storedOrderId = localStorage.getItem('natavium_order_id'); 
+        
+        if (storedOrderId) {
+          console.log(`Saving regenerated ${activeTab} analysis to database...`);
+          // Save in background
+          fetch('/api/save-analysis', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              orderId: storedOrderId,
+              analysisType: activeTab, // <--- Using the 'activeTab' variable
+              content: fullText
+            })
+          });
+        }
+      } catch (err) {
+        console.error("Background save failed:", err);
+      }
+      // === END NEW DATABASE SAVE ===
 
     } catch (error) {
       console.error('Regeneration error:', error);
