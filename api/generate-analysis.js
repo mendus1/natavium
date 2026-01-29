@@ -8,26 +8,24 @@ export const config = {
 };
 
 // Product tier configurations for natal chart analysis
-// TODO: Switch essential/ultimate to 'gpt-4o' once OpenAI quota is set up
-// TODO: Increase maxTokens for production (currently reduced for testing)
 const PRODUCT_CONFIG = {
   base: {
-    model: 'gpt-4o-mini',
-    maxTokens: 800,
+    model: 'gpt-5.2',
+    maxTokens: 2000,
     sections: ['bigThree', 'planets', 'houses'],
     includeTransits: false,
     includeCompatibility: false,
   },
   essential: {
-    model: 'gpt-4o-mini',
-    maxTokens: 1500,
+    model: 'gpt-5.2',
+    maxTokens: 6000,
     sections: ['bigThree', 'planets', 'houses', 'aspects', 'themes', 'transits'],
     includeTransits: true,
     includeCompatibility: false,
   },
   ultimate: {
-    model: 'gpt-4o-mini',
-    maxTokens: 2000,
+    model: 'gpt-5.2',
+    maxTokens: 10000,
     sections: ['bigThree', 'planets', 'houses', 'aspects', 'themes', 'transits', 'vedic'],
     includeTransits: true,
     includeCompatibility: true,
