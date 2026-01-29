@@ -1613,7 +1613,7 @@ function SuccessPage({ setIsPremium, chartResult, selectedBundle }) {
 
         try {
           // Retrieve the Order ID (saved during checkout)
-          const storedOrderId = localStorage.getItem('natavium_order_id'); 
+          const storedOrderId = localStorage.getItem('natavium_orderId'); 
           
           if (storedOrderId) {
             console.log("Saving natal analysis to database...");
@@ -1946,7 +1946,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
 
       // === START NEW DATABASE SAVE ===
       try {
-        const storedOrderId = localStorage.getItem('natavium_order_id'); 
+        const storedOrderId = localStorage.getItem('natavium_orderId'); 
         
         if (storedOrderId) {
           console.log(`Saving ${tabId} analysis to database...`);
@@ -2101,7 +2101,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
 
       // === START NEW DATABASE SAVE ===
       try {
-        const storedOrderId = localStorage.getItem('natavium_order_id'); 
+        const storedOrderId = localStorage.getItem('natavium_orderId'); 
         
         if (storedOrderId) {
           console.log(`Saving regenerated ${activeTab} analysis to database...`);
