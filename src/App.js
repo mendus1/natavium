@@ -27,6 +27,7 @@ import {
   Home,
   TrendingUp,
   Cake,
+  ShoppingCart,
 } from "lucide-react";
 
 // =========================
@@ -1798,6 +1799,8 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
   const [analyses, setAnalyses] = useState({});
   const [generatingTab, setGeneratingTab] = useState(null);
   const [upsellTab, setUpsellTab] = useState(null);
+  const [selectedAddOns, setSelectedAddOns] = useState([]);
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [purchasedProducts, setPurchasedProducts] = useState(() => {
     const saved = localStorage.getItem('natavium_purchasedProducts');
     return saved ? JSON.parse(saved) : { bundle: selectedBundle || 'essential', addOns: [] };
@@ -1850,6 +1853,15 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
       }
     };
     fetchOrderData();
+
+    // Check for add-on purchase success and clean up URL
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('addon_success') === 'true') {
+      // Clear the URL param
+      window.history.replaceState({}, '', window.location.pathname);
+      // Re-fetch order data to get updated add-ons (small delay for webhook to process)
+      setTimeout(fetchOrderData, 1500);
+    }
   }, []);
 
   // Check if a tab is accessible
@@ -1931,7 +1943,72 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
         generateAnalysisForTab(tab.id);
       }
     } else {
+      // Pre-select the clicked add-on and open modal
+      setSelectedAddOns([tab.id]);
       setUpsellTab(tab);
+    }
+  };
+
+  // Get all locked (purchasable) add-ons
+  const getLockedAddOns = () => {
+    return DASHBOARD_TABS.filter(tab =>
+      tab.requiresPurchase &&
+      !tab.comingSoon &&
+      !isTabAccessible(tab.id)
+    );
+  };
+
+  // Toggle add-on selection
+  const toggleAddOnSelection = (addOnId) => {
+    setSelectedAddOns(prev =>
+      prev.includes(addOnId)
+        ? prev.filter(id => id !== addOnId)
+        : [...prev, addOnId]
+    );
+  };
+
+  // Calculate total price for selected add-ons
+  const calculateTotal = () => {
+    return selectedAddOns.reduce((total, addOnId) => {
+      const tab = DASHBOARD_TABS.find(t => t.id === addOnId);
+      return total + (tab?.priceIfLocked || 0);
+    }, 0);
+  };
+
+  // Handle add-on checkout
+  const handleAddOnCheckout = async () => {
+    if (!selectedAddOns.length) return;
+
+    const orderId = localStorage.getItem('natavium_orderId');
+    if (!orderId) {
+      alert('No order found. Please complete your initial purchase first.');
+      return;
+    }
+
+    setCheckoutLoading(true);
+    try {
+      const response = await fetch('/api/create-addon-checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          orderId,
+          addOns: selectedAddOns,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Checkout failed');
+      }
+
+      // Redirect to Stripe
+      window.location.href = data.url;
+    } catch (error) {
+      console.error('Add-on checkout error:', error);
+      alert(error.message || 'Failed to start checkout. Please try again.');
+    } finally {
+      setCheckoutLoading(false);
     }
   };
 
@@ -2253,10 +2330,10 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
         {/* Upsell Modal */}
         {upsellTab && (
           <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div className="bg-gradient-to-br from-indigo-900 to-purple-900 rounded-2xl p-8 max-w-md w-full border border-white/20 shadow-2xl">
-              <div className="text-center mb-6">
-                {upsellTab.isComingSoon ? (
-                  <>
+            <div className="bg-gradient-to-br from-indigo-900 to-purple-900 rounded-2xl p-8 max-w-md w-full border border-white/20 shadow-2xl max-h-[90vh] overflow-y-auto">
+              {upsellTab.isComingSoon ? (
+                <>
+                  <div className="text-center mb-6">
                     <div className="w-16 h-16 bg-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
                       <Sparkles className="w-8 h-8 text-purple-300" />
                     </div>
@@ -2266,54 +2343,103 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
                       <p className="text-yellow-300 font-semibold">Coming Soon!</p>
                       <p className="text-purple-300 text-sm mt-1">This feature is currently in development.</p>
                     </div>
-                  </>
-                ) : (
-                  <>
-                    <div className="w-16 h-16 bg-yellow-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <Lock className="w-8 h-8 text-yellow-300" />
-                    </div>
-                    <h3 className="text-2xl font-bold mb-2">Unlock {upsellTab.label}</h3>
-                    <p className="text-purple-300">{upsellTab.description}</p>
-                  </>
-                )}
-              </div>
-
-              {!upsellTab.isComingSoon && (
-                <div className="bg-white/10 rounded-xl p-4 mb-6">
-                  <div className="flex justify-between items-center">
-                    <span className="font-semibold">{upsellTab.label}</span>
-                    <span className="text-2xl font-bold text-yellow-300">
-                      ${upsellTab.priceIfLocked?.toFixed(2)}
-                    </span>
                   </div>
-                  {upsellTab.includedIn && (
-                    <p className="text-purple-400 text-xs mt-2">
-                      Included free with Ultimate package
-                    </p>
+                  <button
+                    onClick={() => setUpsellTab(null)}
+                    className="w-full py-3 text-purple-300 hover:text-white transition-colors"
+                  >
+                    Got it
+                  </button>
+                </>
+              ) : (
+                <>
+                  <div className="text-center mb-6">
+                    <div className="w-16 h-16 bg-yellow-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <ShoppingCart className="w-8 h-8 text-yellow-300" />
+                    </div>
+                    <h3 className="text-2xl font-bold mb-2">Unlock Premium Features</h3>
+                    <p className="text-purple-300">Select the add-ons you'd like to unlock</p>
+                  </div>
+
+                  {/* Add-on selection list */}
+                  <div className="space-y-3 mb-6">
+                    {getLockedAddOns().map(addon => {
+                      const AddonIcon = addon.icon;
+                      const isSelected = selectedAddOns.includes(addon.id);
+                      return (
+                        <button
+                          key={addon.id}
+                          onClick={() => toggleAddOnSelection(addon.id)}
+                          className={`w-full flex items-center gap-3 p-4 rounded-xl border transition-all ${
+                            isSelected
+                              ? 'bg-yellow-500/20 border-yellow-500/50'
+                              : 'bg-white/5 border-white/10 hover:bg-white/10'
+                          }`}
+                        >
+                          <div className={`w-6 h-6 rounded-md border-2 flex items-center justify-center transition-colors ${
+                            isSelected
+                              ? 'bg-yellow-500 border-yellow-500'
+                              : 'border-white/30'
+                          }`}>
+                            {isSelected && <Check className="w-4 h-4 text-gray-900" />}
+                          </div>
+                          <AddonIcon className={`w-5 h-5 ${isSelected ? 'text-yellow-300' : 'text-purple-300'}`} />
+                          <div className="flex-1 text-left">
+                            <div className="font-semibold">{addon.label}</div>
+                            <div className="text-xs text-purple-400">{addon.description?.slice(0, 50)}...</div>
+                          </div>
+                          <div className={`font-bold ${isSelected ? 'text-yellow-300' : 'text-purple-200'}`}>
+                            ${addon.priceIfLocked?.toFixed(2)}
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Total and checkout */}
+                  {selectedAddOns.length > 0 && (
+                    <div className="bg-white/10 rounded-xl p-4 mb-4">
+                      <div className="flex justify-between items-center">
+                        <span className="text-purple-200">{selectedAddOns.length} item{selectedAddOns.length > 1 ? 's' : ''} selected</span>
+                        <span className="text-2xl font-bold text-yellow-300">
+                          ${calculateTotal().toFixed(2)}
+                        </span>
+                      </div>
+                    </div>
                   )}
-                </div>
-              )}
 
-              {!upsellTab.isComingSoon && (
-                <button
-                  onClick={() => {
-                    // TODO: Implement add-on purchase flow
-                    alert('Add-on purchase coming soon! For now, upgrade to Ultimate to get this feature.');
-                    setUpsellTab(null);
-                  }}
-                  className="w-full bg-gradient-to-r from-yellow-400 to-orange-500
-                    text-gray-900 py-4 rounded-xl font-bold hover:scale-105 transition-transform mb-3"
-                >
-                  Unlock for ${upsellTab.priceIfLocked?.toFixed(2)}
-                </button>
-              )}
+                  <button
+                    onClick={handleAddOnCheckout}
+                    disabled={selectedAddOns.length === 0 || checkoutLoading}
+                    className={`w-full py-4 rounded-xl font-bold transition-all mb-3 ${
+                      selectedAddOns.length > 0 && !checkoutLoading
+                        ? 'bg-gradient-to-r from-yellow-400 to-orange-500 text-gray-900 hover:scale-105'
+                        : 'bg-white/10 text-white/50 cursor-not-allowed'
+                    }`}
+                  >
+                    {checkoutLoading ? (
+                      <span className="flex items-center justify-center gap-2">
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        Redirecting...
+                      </span>
+                    ) : selectedAddOns.length > 0 ? (
+                      `Checkout - $${calculateTotal().toFixed(2)}`
+                    ) : (
+                      'Select items to continue'
+                    )}
+                  </button>
 
-              <button
-                onClick={() => setUpsellTab(null)}
-                className="w-full py-3 text-purple-300 hover:text-white transition-colors"
-              >
-                {upsellTab.isComingSoon ? 'Got it' : 'Maybe later'}
-              </button>
+                  <button
+                    onClick={() => {
+                      setUpsellTab(null);
+                      setSelectedAddOns([]);
+                    }}
+                    className="w-full py-3 text-purple-300 hover:text-white transition-colors"
+                  >
+                    Maybe later
+                  </button>
+                </>
+              )}
             </div>
           </div>
         )}
@@ -2670,7 +2796,10 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
                   </div>
                   <p className="text-purple-200 text-sm mb-4">{tab.description?.slice(0, 60)}...</p>
                   <button
-                    onClick={() => setUpsellTab(tab)}
+                    onClick={() => {
+                      setSelectedAddOns([tab.id]);
+                      setUpsellTab(tab);
+                    }}
                     className="w-full bg-gradient-to-r from-yellow-400/20 to-orange-500/20 border border-yellow-500/30 px-4 py-2 rounded-lg hover:from-yellow-400/30 hover:to-orange-500/30 transition-colors text-sm font-semibold text-yellow-300"
                   >
                     Unlock - ${tab.priceIfLocked?.toFixed(2)}

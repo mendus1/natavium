@@ -54,6 +54,7 @@ export default async function handler(req, res) {
     const session = event.data.object;
     const orderId = session.metadata?.orderId;
     const productType = session.metadata?.productType;
+    const isAddonPurchase = session.metadata?.isAddonPurchase === 'true';
 
     if (!orderId) {
       console.error('Webhook: No orderId in session metadata');
@@ -61,44 +62,71 @@ export default async function handler(req, res) {
     }
 
     // Extract purchased add-ons from line items
-    let purchasedAddons = [];
+    let newAddons = [];
     try {
       const lineItems = await stripe.checkout.sessions.listLineItems(session.id);
-      purchasedAddons = lineItems.data
+      newAddons = lineItems.data
         .map(item => PRICE_TO_ADDON[item.price?.id])
         .filter(Boolean);
     } catch (lineItemsError) {
       console.error('Failed to fetch line items:', lineItemsError);
     }
 
-    // Apply bundle benefits based on product type
-    let bundleIncludes = [];
-    if (productType === 'ultimate') {
-      bundleIncludes = ULTIMATE_BUNDLE_INCLUDES;
-    } else if (productType === 'essential') {
-      bundleIncludes = ESSENTIAL_BUNDLE_INCLUDES;
-    }
+    if (isAddonPurchase) {
+      // Add-on purchase: merge with existing add-ons
+      const { data: existingOrder } = await supabase
+        .from('orders')
+        .select('purchased_addons')
+        .eq('id', orderId)
+        .single();
 
-    for (const addon of bundleIncludes) {
-      if (!purchasedAddons.includes(addon)) {
-        purchasedAddons.push(addon);
+      const existingAddons = existingOrder?.purchased_addons || [];
+      const mergedAddons = [...new Set([...existingAddons, ...newAddons])];
+
+      const { error: updateError } = await supabase
+        .from('orders')
+        .update({
+          purchased_addons: mergedAddons,
+        })
+        .eq('id', orderId);
+
+      if (updateError) {
+        console.error(`Supabase update error for add-on purchase ${orderId}:`, updateError);
+      } else {
+        console.log(`Order ${orderId} updated with new add-ons: ${newAddons.join(', ')}`);
       }
-    }
-
-    const { error: updateError } = await supabase
-      .from('orders')
-      .update({
-        payment_status: 'paid',
-        stripe_session_id: session.id,
-        customer_email: session.customer_details?.email || null,
-        purchased_addons: purchasedAddons,
-      })
-      .eq('id', orderId);
-
-    if (updateError) {
-      console.error(`Supabase update error for order ${orderId}:`, updateError);
     } else {
-      console.log(`Order ${orderId} marked as paid with add-ons: ${purchasedAddons.join(', ') || 'none'}`);
+      // Initial order: apply bundle benefits
+      let purchasedAddons = [...newAddons];
+
+      let bundleIncludes = [];
+      if (productType === 'ultimate') {
+        bundleIncludes = ULTIMATE_BUNDLE_INCLUDES;
+      } else if (productType === 'essential') {
+        bundleIncludes = ESSENTIAL_BUNDLE_INCLUDES;
+      }
+
+      for (const addon of bundleIncludes) {
+        if (!purchasedAddons.includes(addon)) {
+          purchasedAddons.push(addon);
+        }
+      }
+
+      const { error: updateError } = await supabase
+        .from('orders')
+        .update({
+          payment_status: 'paid',
+          stripe_session_id: session.id,
+          customer_email: session.customer_details?.email || null,
+          purchased_addons: purchasedAddons,
+        })
+        .eq('id', orderId);
+
+      if (updateError) {
+        console.error(`Supabase update error for order ${orderId}:`, updateError);
+      } else {
+        console.log(`Order ${orderId} marked as paid with add-ons: ${purchasedAddons.join(', ') || 'none'}`);
+      }
     }
   }
 
