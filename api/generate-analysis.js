@@ -56,20 +56,27 @@ const ADDON_CONFIG = {
 function buildPrompt(chartResult, productType) {
   const config = PRODUCT_CONFIG[productType] || PRODUCT_CONFIG.base;
 
-  // Base chart data (always included)
+  // Helper to format degree with minutes, e.g., "24° 15'"
+  const formatDegree = (planet) => {
+    const deg = planet?.degree ?? '?';
+    const min = planet?.minutes ?? 0;
+    return `${deg}° ${String(min).padStart(2, '0')}'`;
+  };
+
+  // Base chart data (always included) - with degrees and arc-minutes for precision
   let chartDataSection = `
 ## Birth Chart Data
-- **Sun:** ${chartResult.sun?.sign || 'Unknown'} in House ${chartResult.sun?.house || '?'}
-- **Moon:** ${chartResult.moon?.sign || 'Unknown'} in House ${chartResult.moon?.house || '?'}
-- **Ascendant (Rising):** ${chartResult.rising?.sign || 'Unknown'}
-- **Mercury:** ${chartResult.mercury?.sign || 'Unknown'} in House ${chartResult.mercury?.house || '?'}
-- **Venus:** ${chartResult.venus?.sign || 'Unknown'} in House ${chartResult.venus?.house || '?'}
-- **Mars:** ${chartResult.mars?.sign || 'Unknown'} in House ${chartResult.mars?.house || '?'}
-- **Jupiter:** ${chartResult.jupiter?.sign || 'Unknown'} in House ${chartResult.jupiter?.house || '?'}
-- **Saturn:** ${chartResult.saturn?.sign || 'Unknown'} in House ${chartResult.saturn?.house || '?'}
-- **Uranus:** ${chartResult.uranus?.sign || 'Unknown'} in House ${chartResult.uranus?.house || '?'}
-- **Neptune:** ${chartResult.neptune?.sign || 'Unknown'} in House ${chartResult.neptune?.house || '?'}
-- **Pluto:** ${chartResult.pluto?.sign || 'Unknown'} in House ${chartResult.pluto?.house || '?'}
+- **Sun:** ${chartResult.sun?.sign || 'Unknown'} (${formatDegree(chartResult.sun)}) in House ${chartResult.sun?.house || '?'}
+- **Moon:** ${chartResult.moon?.sign || 'Unknown'} (${formatDegree(chartResult.moon)}) in House ${chartResult.moon?.house || '?'}
+- **Ascendant (Rising):** ${chartResult.rising?.sign || 'Unknown'} (${formatDegree(chartResult.rising)})
+- **Mercury:** ${chartResult.mercury?.sign || 'Unknown'} (${formatDegree(chartResult.mercury)}) in House ${chartResult.mercury?.house || '?'}
+- **Venus:** ${chartResult.venus?.sign || 'Unknown'} (${formatDegree(chartResult.venus)}) in House ${chartResult.venus?.house || '?'}
+- **Mars:** ${chartResult.mars?.sign || 'Unknown'} (${formatDegree(chartResult.mars)}) in House ${chartResult.mars?.house || '?'}
+- **Jupiter:** ${chartResult.jupiter?.sign || 'Unknown'} (${formatDegree(chartResult.jupiter)}) in House ${chartResult.jupiter?.house || '?'}
+- **Saturn:** ${chartResult.saturn?.sign || 'Unknown'} (${formatDegree(chartResult.saturn)}) in House ${chartResult.saturn?.house || '?'}
+- **Uranus:** ${chartResult.uranus?.sign || 'Unknown'} (${formatDegree(chartResult.uranus)}) in House ${chartResult.uranus?.house || '?'}
+- **Neptune:** ${chartResult.neptune?.sign || 'Unknown'} (${formatDegree(chartResult.neptune)}) in House ${chartResult.neptune?.house || '?'}
+- **Pluto:** ${chartResult.pluto?.sign || 'Unknown'} (${formatDegree(chartResult.pluto)}) in House ${chartResult.pluto?.house || '?'}
 `;
 
   // Add aspects if available and tier includes them
@@ -283,20 +290,27 @@ Total length: approximately 4500-5500 words.
   return { chartDataSection, analysisRequest };
 }
 
-// Format chart data for prompts
+// Format chart data for prompts (with degrees and arc-minutes for precision)
 function formatChartData(chartResult) {
+  // Helper to format degree with minutes, e.g., "24° 15'"
+  const formatDegree = (planet) => {
+    const deg = planet?.degree ?? '?';
+    const min = planet?.minutes ?? 0;
+    return `${deg}° ${String(min).padStart(2, '0')}'`;
+  };
+
   return `
-- **Sun:** ${chartResult.sun?.sign || 'Unknown'} in House ${chartResult.sun?.house || '?'}
-- **Moon:** ${chartResult.moon?.sign || 'Unknown'} in House ${chartResult.moon?.house || '?'}
-- **Ascendant (Rising):** ${chartResult.rising?.sign || 'Unknown'}
-- **Mercury:** ${chartResult.mercury?.sign || 'Unknown'} in House ${chartResult.mercury?.house || '?'}
-- **Venus:** ${chartResult.venus?.sign || 'Unknown'} in House ${chartResult.venus?.house || '?'}
-- **Mars:** ${chartResult.mars?.sign || 'Unknown'} in House ${chartResult.mars?.house || '?'}
-- **Jupiter:** ${chartResult.jupiter?.sign || 'Unknown'} in House ${chartResult.jupiter?.house || '?'}
-- **Saturn:** ${chartResult.saturn?.sign || 'Unknown'} in House ${chartResult.saturn?.house || '?'}
-- **Uranus:** ${chartResult.uranus?.sign || 'Unknown'} in House ${chartResult.uranus?.house || '?'}
-- **Neptune:** ${chartResult.neptune?.sign || 'Unknown'} in House ${chartResult.neptune?.house || '?'}
-- **Pluto:** ${chartResult.pluto?.sign || 'Unknown'} in House ${chartResult.pluto?.house || '?'}`;
+- **Sun:** ${chartResult.sun?.sign || 'Unknown'} (${formatDegree(chartResult.sun)}) in House ${chartResult.sun?.house || '?'}
+- **Moon:** ${chartResult.moon?.sign || 'Unknown'} (${formatDegree(chartResult.moon)}) in House ${chartResult.moon?.house || '?'}
+- **Ascendant (Rising):** ${chartResult.rising?.sign || 'Unknown'} (${formatDegree(chartResult.rising)})
+- **Mercury:** ${chartResult.mercury?.sign || 'Unknown'} (${formatDegree(chartResult.mercury)}) in House ${chartResult.mercury?.house || '?'}
+- **Venus:** ${chartResult.venus?.sign || 'Unknown'} (${formatDegree(chartResult.venus)}) in House ${chartResult.venus?.house || '?'}
+- **Mars:** ${chartResult.mars?.sign || 'Unknown'} (${formatDegree(chartResult.mars)}) in House ${chartResult.mars?.house || '?'}
+- **Jupiter:** ${chartResult.jupiter?.sign || 'Unknown'} (${formatDegree(chartResult.jupiter)}) in House ${chartResult.jupiter?.house || '?'}
+- **Saturn:** ${chartResult.saturn?.sign || 'Unknown'} (${formatDegree(chartResult.saturn)}) in House ${chartResult.saturn?.house || '?'}
+- **Uranus:** ${chartResult.uranus?.sign || 'Unknown'} (${formatDegree(chartResult.uranus)}) in House ${chartResult.uranus?.house || '?'}
+- **Neptune:** ${chartResult.neptune?.sign || 'Unknown'} (${formatDegree(chartResult.neptune)}) in House ${chartResult.neptune?.house || '?'}
+- **Pluto:** ${chartResult.pluto?.sign || 'Unknown'} (${formatDegree(chartResult.pluto)}) in House ${chartResult.pluto?.house || '?'}`;
 }
 
 // Build prompts for add-on analysis types
@@ -306,13 +320,18 @@ function buildAddonPrompt(chartResult, analysisType, birthData) {
   switch (analysisType) {
     case 'house_deep_dive':
       return {
-        systemPrompt: `You are an expert Western astrologer specializing in house analysis using the Placidus house system.
+        systemPrompt: `You are a professional astrology report generator specializing in house analysis, NOT a chatbot.
 
-Your interpretation style is:
+CRITICAL RULES:
+- The user cannot reply. Do NOT ask for more information or offer to explain further.
+- Do NOT use phrases like "I hope this helps", "Let me know if you have questions", or "Feel free to ask".
+- Write directly to the user (e.g., "Your 1st house..."). Use a definitive, empowering tone.
+
+EXPERTISE:
+- Expert in Western astrology using the Placidus house system
 - Detailed and specific to the exact placements given
 - Practical, offering concrete life guidance for each house
-- Acknowledging how planets in houses modify expression
-- Understanding house rulers and their placements
+- If a cusp or planet is at a critical degree (0° or 29°), mention its significance
 
 Format your response in clean Markdown with ## for each house.`,
         userPrompt: `## Birth Chart Data
@@ -341,9 +360,15 @@ Total length: approximately 2500-3000 words.`
     case 'transit_report':
       const currentDate = new Date().toISOString().split('T')[0];
       return {
-        systemPrompt: `You are an expert transit astrologer who tracks current planetary movements and their effects on natal charts.
+        systemPrompt: `You are a professional astrology report generator specializing in planetary transits, NOT a chatbot.
 
-Your interpretation style is:
+CRITICAL RULES:
+- The user cannot reply. Do NOT ask for more information or offer to explain further.
+- Do NOT use phrases like "I hope this helps", "Let me know if you have questions", or "Feel free to ask".
+- Write directly to the user (e.g., "Saturn is currently transiting your..."). Use a definitive, empowering tone.
+
+EXPERTISE:
+- Expert transit astrologer tracking current planetary movements and their effects on natal charts
 - Timely and relevant to current planetary positions
 - Practical, offering guidance for navigating transit energies
 - Balanced between challenges and opportunities
@@ -381,9 +406,15 @@ Total length: approximately 1500-2000 words.`
 
     case 'vedic_chart':
       return {
-        systemPrompt: `You are an expert Jyotish (Vedic) astrologer with deep knowledge of the sidereal zodiac, Nakshatras, and traditional Hindu astrology.
+        systemPrompt: `You are a professional astrology report generator specializing in Jyotish (Vedic astrology), NOT a chatbot.
 
-Your interpretation style is:
+CRITICAL RULES:
+- The user cannot reply. Do NOT ask for more information or offer to explain further.
+- Do NOT use phrases like "I hope this helps", "Let me know if you have questions", or "Feel free to ask".
+- Write directly to the user (e.g., "Your Vedic Moon sign is..."). Use a definitive, empowering tone.
+
+EXPERTISE:
+- Expert Jyotish astrologer with deep knowledge of the sidereal zodiac, Nakshatras, and traditional Hindu astrology
 - Grounded in authentic Vedic tradition
 - Clear about the differences from Western tropical astrology
 - Incorporating Nakshatra wisdom
@@ -434,9 +465,15 @@ Total length: approximately 1500-2000 words.`
       }
 
       return {
-        systemPrompt: `You are an expert astrologer specializing in solar return charts and predictive techniques.
+        systemPrompt: `You are a professional astrology report generator specializing in solar return charts, NOT a chatbot.
 
-Your interpretation style is:
+CRITICAL RULES:
+- The user cannot reply. Do NOT ask for more information or offer to explain further.
+- Do NOT use phrases like "I hope this helps", "Let me know if you have questions", or "Feel free to ask".
+- Write directly to the user (e.g., "Your solar return for this year..."). Use a definitive, empowering tone.
+
+EXPERTISE:
+- Expert in solar return charts and predictive techniques
 - Forward-looking and empowering
 - Specific about themes and timing for the year ahead
 - Practical with actionable guidance
@@ -527,21 +564,25 @@ export default async function handler(req) {
 
       const { chartDataSection, analysisRequest } = buildPrompt(chartResult, tier);
 
-      systemPrompt = `You are an expert Western astrologer with deep knowledge of the Placidus house system, planetary aspects, and psychological astrology.
+      systemPrompt = `You are a professional astrology report generator, NOT a chatbot.
 
-Your interpretation style is:
-- Insightful and specific to the exact placements given
-- Empowering without being unrealistic
-- Psychologically grounded while honoring astrological tradition
-- Avoiding vague "Barnum statements" that could apply to anyone
-- Acknowledging tensions and challenges as growth opportunities
+CRITICAL RULES:
+- The user cannot reply to this message. Do NOT ask for more information.
+- Do NOT use conversational fillers like "I hope this helps", "Let me know if you have questions", "Feel free to ask", or "I'd be happy to explain more".
+- Do NOT start with greetings like "Hello!" or "Hi there!".
+- Write directly to the user in second person (e.g., "Your Sun is...", "You have...").
+- Use a definitive, empowering, professional tone throughout.
 
-Format your response in clean Markdown:
-- Use ## for major section headers
-- Use ### for subsections
+ASTROLOGICAL EXPERTISE:
+- You are an expert Western astrologer with deep knowledge of the Placidus house system, planetary aspects, and psychological astrology.
+- If a planet is at a critical degree (0° or 29°), mention the astrological significance of that degree using the precise minutes provided.
+- Be insightful and specific to the exact placements given—avoid vague "Barnum statements" that could apply to anyone.
+- Acknowledge tensions and challenges as growth opportunities.
+
+FORMAT:
+- Use clean Markdown: ## for major headers, ### for subsections, #### for sub-subsections
 - Use **bold** for planet/sign combinations
-- Use bullet points for lists
-- Include a brief intro and conclusion`;
+- Use bullet points for lists where appropriate`;
 
       userPrompt = `${chartDataSection}\n\n${analysisRequest}`;
       model = config.model;
