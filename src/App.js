@@ -1324,7 +1324,7 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
             <div className="text-2xl font-bold mb-1">{chartResult.sun.sign} Sun</div>
             <div className="text-sm text-purple-200">Core Identity</div>
             <div className="text-xs text-purple-300 mt-2">
-              {chartResult.sun.degree}° in {chartResult.sun.house}
+              {chartResult.sun.degree}° {String(chartResult.sun.minutes || 0).padStart(2, '0')}' in {chartResult.sun.house}
               {houseSuffix(chartResult.sun.house)} house
             </div>
           </div>
@@ -1334,7 +1334,7 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
             <div className="text-2xl font-bold mb-1">{chartResult.moon.sign} Moon</div>
             <div className="text-sm text-purple-200">Emotional Core</div>
             <div className="text-xs text-purple-300 mt-2">
-              {chartResult.moon.degree}° in {chartResult.moon.house}
+              {chartResult.moon.degree}° {String(chartResult.moon.minutes || 0).padStart(2, '0')}' in {chartResult.moon.house}
               {houseSuffix(chartResult.moon.house)} house
             </div>
           </div>
@@ -1343,7 +1343,7 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
             <Star className="w-10 h-10 text-pink-300 mb-3" />
             <div className="text-2xl font-bold mb-1">{chartResult.rising.sign} Rising</div>
             <div className="text-sm text-purple-200">How Others See You</div>
-            <div className="text-xs text-purple-300 mt-2">{chartResult.rising.degree}° Ascendant</div>
+            <div className="text-xs text-purple-300 mt-2">{chartResult.rising.degree}° {String(chartResult.rising.minutes || 0).padStart(2, '0')}' Ascendant</div>
           </div>
         </div>
 
@@ -2723,21 +2723,21 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
               <div className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-xl p-4 border border-yellow-500/30">
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-bold text-yellow-300">☉ {chartResult.sun.sign} Sun</h3>
-                  <span className="text-sm text-purple-300">{chartResult.sun.degree}° • {chartResult.sun.house}{houseSuffix(chartResult.sun.house)} house</span>
+                  <span className="text-sm text-purple-300">{chartResult.sun.degree}° {String(chartResult.sun.minutes || 0).padStart(2, '0')}' • {chartResult.sun.house}{houseSuffix(chartResult.sun.house)} house</span>
                 </div>
                 <p className="text-sm text-purple-200 mt-1">Core Identity</p>
               </div>
               <div className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-xl p-4 border border-blue-500/30">
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-bold text-blue-300">☽ {chartResult.moon.sign} Moon</h3>
-                  <span className="text-sm text-purple-300">{chartResult.moon.degree}° • {chartResult.moon.house}{houseSuffix(chartResult.moon.house)} house</span>
+                  <span className="text-sm text-purple-300">{chartResult.moon.degree}° {String(chartResult.moon.minutes || 0).padStart(2, '0')}' • {chartResult.moon.house}{houseSuffix(chartResult.moon.house)} house</span>
                 </div>
                 <p className="text-sm text-purple-200 mt-1">Emotional Core</p>
               </div>
               <div className="bg-gradient-to-r from-pink-500/20 to-purple-500/20 rounded-xl p-4 border border-pink-500/30">
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-bold text-pink-300">↑ {chartResult.rising.sign} Rising</h3>
-                  <span className="text-sm text-purple-300">{chartResult.rising.degree}° Ascendant</span>
+                  <span className="text-sm text-purple-300">{chartResult.rising.degree}° {String(chartResult.rising.minutes || 0).padStart(2, '0')}' Ascendant</span>
                 </div>
                 <p className="text-sm text-purple-200 mt-1">How Others See You</p>
               </div>
@@ -2764,7 +2764,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
                     <span className="font-semibold">{planet.name}</span>
                   </div>
                   <p className="text-yellow-300 font-bold">{planet.data?.sign || "—"}</p>
-                  <p className="text-purple-300 text-xs">{planet.data?.degree || "—"}° • {planet.data?.house ? `${planet.data.house}${houseSuffix(planet.data.house)} house` : "—"}</p>
+                  <p className="text-purple-300 text-xs">{planet.data?.degree ?? "—"}° {String(planet.data?.minutes || 0).padStart(2, '0')}' • {planet.data?.house ? `${planet.data.house}${houseSuffix(planet.data.house)} house` : "—"}</p>
                   <p className="text-purple-400 text-xs mt-1">{planet.desc}</p>
                 </div>
               ))}
