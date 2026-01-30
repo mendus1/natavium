@@ -595,9 +595,9 @@ function LandingPage() {
 
         <div className="text-center pt-12 pb-8">
           <div className="flex items-center justify-center mb-6">
-            <Sparkles className="w-12 h-12 text-yellow-300 animate-pulse mr-3" />
+            <BrandStar className="w-12 h-12 animate-pulse mr-3" />
             <h1 className="text-6xl font-black">Natavium</h1>
-            <Sparkles className="w-12 h-12 text-yellow-300 animate-pulse ml-3" />
+            <BrandStar className="w-12 h-12 animate-pulse ml-3" />
           </div>
           <p className="text-2xl text-purple-200 mb-2 font-semibold">Where AI Meets Astrology</p>
           <p className="text-lg text-purple-300">Real AI analysis of YOUR unique birth chart</p>
