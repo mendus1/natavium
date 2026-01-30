@@ -984,64 +984,68 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
           </h2>
         </div>
 
-        {/* Professional Chart Wheel */}
+        {/* Premium Chart Wheel */}
         <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 mb-8 border border-white/20">
           {(() => {
-            // Zodiac data with glyphs and element colors
+            // SVG Path definitions for zodiac signs (scaled for 14px viewBox centered at 0,0)
+            const zodiacPaths = {
+              Aries: "M-5,6 L0,-6 L5,6 M-4,2 L0,-4 L4,2",
+              Taurus: "M-5,4 A5,5 0 1,1 5,4 M-6,4 L-6,6 M6,4 L6,6",
+              Gemini: "M-4,-6 L-4,6 M4,-6 L4,6 M-4,-4 L4,-4 M-4,4 L4,4",
+              Cancer: "M-5,0 A4,4 0 0,1 0,-4 A4,4 0 0,0 5,0 M5,0 A4,4 0 0,1 0,4 A4,4 0 0,0 -5,0",
+              Leo: "M-4,4 A4,4 0 1,1 0,0 M0,0 Q4,-4 4,2 Q4,6 0,6",
+              Virgo: "M-5,-5 L-5,5 M-5,0 L0,-5 L0,5 M0,0 L5,-5 L5,2 Q5,6 2,6 L4,4",
+              Libra: "M-6,4 L6,4 M-4,0 L4,0 M0,0 L0,-5 A4,4 0 0,1 4,-5",
+              Scorpio: "M-5,-5 L-5,5 M-5,0 L0,-5 L0,5 M0,0 L5,-5 L5,5 L7,3",
+              Sagittarius: "M-5,5 L5,-5 M2,-5 L5,-5 L5,-2 M-3,1 L3,-5",
+              Capricorn: "M-5,-4 Q-2,-6 0,-2 L0,4 Q0,6 3,6 A3,3 0 1,0 5,2",
+              Aquarius: "M-6,-2 L-3,2 L0,-2 L3,2 L6,-2 M-6,2 L-3,6 L0,2 L3,6 L6,2",
+              Pisces: "M-2,-6 A4,6 0 0,0 -2,6 M2,-6 A4,6 0 0,1 2,6 M-4,0 L4,0",
+            };
+
+            // SVG Path definitions for planets
+            const planetPaths = {
+              sun: "M0,0 m-4,0 a4,4 0 1,0 8,0 a4,4 0 1,0 -8,0 M0,-1.5 L0,1.5 M-1.5,0 L1.5,0",
+              moon: "M2,-5 A5,5 0 1,0 2,5 A4,4 0 1,1 2,-5",
+              mercury: "M0,-5 A3,3 0 1,1 0,1 M0,1 L0,5 M-2,3 L2,3 M-2,-6 A2,2 0 1,1 2,-6",
+              venus: "M0,-5 A4,4 0 1,1 0,3 M0,3 L0,6 M-2,5 L2,5",
+              mars: "M-3,3 A5,5 0 1,1 3,-3 M1,-3 L5,-5 L3,-1",
+              jupiter: "M-4,0 L4,0 M2,-5 L2,5 M-4,5 A5,5 0 0,1 -4,-2",
+              saturn: "M-3,-5 L-3,0 A3,3 0 0,0 3,0 L3,5 M-1,-5 L-5,-5 M0,2 L-4,2",
+            };
+
             const zodiacSigns = [
-              { name: "Aries", glyph: "♈︎", element: "fire" },
-              { name: "Taurus", glyph: "♉︎", element: "earth" },
-              { name: "Gemini", glyph: "♊︎", element: "air" },
-              { name: "Cancer", glyph: "♋︎", element: "water" },
-              { name: "Leo", glyph: "♌︎", element: "fire" },
-              { name: "Virgo", glyph: "♍︎", element: "earth" },
-              { name: "Libra", glyph: "♎︎", element: "air" },
-              { name: "Scorpio", glyph: "♏︎", element: "water" },
-              { name: "Sagittarius", glyph: "♐︎", element: "fire" },
-              { name: "Capricorn", glyph: "♑︎", element: "earth" },
-              { name: "Aquarius", glyph: "♒︎", element: "air" },
-              { name: "Pisces", glyph: "♓︎", element: "water" },
+              { name: "Aries", element: "fire" },
+              { name: "Taurus", element: "earth" },
+              { name: "Gemini", element: "air" },
+              { name: "Cancer", element: "water" },
+              { name: "Leo", element: "fire" },
+              { name: "Virgo", element: "earth" },
+              { name: "Libra", element: "air" },
+              { name: "Scorpio", element: "water" },
+              { name: "Sagittarius", element: "fire" },
+              { name: "Capricorn", element: "earth" },
+              { name: "Aquarius", element: "air" },
+              { name: "Pisces", element: "water" },
             ];
 
             const elementColors = {
-              fire: "#ef4444",
-              earth: "#22c55e",
-              air: "#facc15",
-              water: "#3b82f6",
+              fire: "#ff6b6b",
+              earth: "#4ade80",
+              air: "#fde047",
+              water: "#60a5fa"
             };
 
-            const planetGlyphs = {
-              sun: "☉",
-              moon: "☽",
-              mercury: "☿",
-              venus: "♀",
-              mars: "♂",
-              jupiter: "♃",
-              saturn: "♄",
-            };
+            const risingIndex = zodiacSigns.findIndex((s) => s.name === chartResult.rising.sign);
+            const risingOffset = 180 - risingIndex * 30 - 15;
 
-            // Find rising sign index to position it at 9 o'clock
-            const risingIndex = zodiacSigns.findIndex(
-              (s) => s.name === chartResult.rising.sign
-            );
-
-            // Calculate rotation offset so rising sign is at 9 o'clock (180°)
-            // Each sign is 30°, starting from Aries at 0°
-            const risingOffset = 180 - risingIndex * 30 - 15; // -15 centers the sign
-
-            // Helper to get position on circle
             const getPosition = (angleDeg, radius) => {
               const angleRad = (angleDeg * Math.PI) / 180;
-              return {
-                x: 200 + radius * Math.cos(angleRad),
-                y: 200 + radius * Math.sin(angleRad),
-              };
+              return { x: 200 + radius * Math.cos(angleRad), y: 200 + radius * Math.sin(angleRad) };
             };
 
-            // Calculate planet positions based on their sign and degree
             const getPlanetAngle = (sign, degree) => {
               const signIndex = zodiacSigns.findIndex((s) => s.name === sign);
-              // Base angle for sign + degree within sign + rising offset
               return signIndex * 30 + degree + risingOffset;
             };
 
@@ -1051,88 +1055,103 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
               { key: "mercury", sign: chartResult.mercury.sign, degree: chartResult.mercury.degree || 8 },
               { key: "venus", sign: chartResult.venus.sign, degree: chartResult.venus.degree || 24 },
               { key: "mars", sign: chartResult.mars.sign, degree: chartResult.mars.degree || 12 },
+              { key: "jupiter", sign: chartResult.jupiter?.sign, degree: chartResult.jupiter?.degree || 15 },
+              { key: "saturn", sign: chartResult.saturn?.sign, degree: chartResult.saturn?.degree || 20 },
             ];
 
             return (
               <div className="relative w-80 h-80 md:w-96 md:h-96 mx-auto mb-4">
-                <svg viewBox="0 0 400 400" className="w-full h-full">
+                <svg viewBox="0 0 400 400" style={{ width: '100%', height: '100%' }}>
                   <defs>
-                    {/* Glow filter for planets */}
-                    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-                      <feGaussianBlur stdDeviation="2" result="coloredBlur" />
+                    {/* Gold Glow Filter */}
+                    <filter id="goldGlowPreview" x="-100%" y="-100%" width="300%" height="300%">
+                      <feGaussianBlur stdDeviation="3" result="blur1" />
+                      <feColorMatrix in="blur1" type="matrix" values="1 0.8 0 0 0  0.9 0.7 0 0 0  0 0 0.2 0 0  0 0 0 1 0" result="goldBlur" />
                       <feMerge>
-                        <feMergeNode in="coloredBlur" />
+                        <feMergeNode in="goldBlur" />
                         <feMergeNode in="SourceGraphic" />
                       </feMerge>
                     </filter>
-                    {/* Gradient for center */}
-                    <radialGradient id="centerGradient" cx="50%" cy="50%" r="50%">
-                      <stop offset="0%" stopColor="rgba(139, 92, 246, 0.3)" />
-                      <stop offset="100%" stopColor="rgba(30, 27, 75, 0.8)" />
+
+                    {/* Planet Marker Glow */}
+                    <filter id="planetGlowPreview" x="-50%" y="-50%" width="200%" height="200%">
+                      <feGaussianBlur stdDeviation="2" result="blur3" />
+                      <feMerge>
+                        <feMergeNode in="blur3" />
+                        <feMergeNode in="SourceGraphic" />
+                      </feMerge>
+                    </filter>
+
+                    {/* Background Radial Gradient */}
+                    <radialGradient id="wheelBackgroundPreview" cx="50%" cy="50%" r="50%">
+                      <stop offset="0%" style={{ stopColor: '#0f0a1e', stopOpacity: 1 }} />
+                      <stop offset="50%" style={{ stopColor: '#1a1035', stopOpacity: 1 }} />
+                      <stop offset="85%" style={{ stopColor: '#2d1f5c', stopOpacity: 1 }} />
+                      <stop offset="100%" style={{ stopColor: '#3d2a7a', stopOpacity: 1 }} />
+                    </radialGradient>
+
+                    {/* Gold Ring Gradient */}
+                    <linearGradient id="goldRingPreview" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" style={{ stopColor: '#fde047', stopOpacity: 1 }} />
+                      <stop offset="50%" style={{ stopColor: '#fbbf24', stopOpacity: 1 }} />
+                      <stop offset="100%" style={{ stopColor: '#f59e0b', stopOpacity: 1 }} />
+                    </linearGradient>
+
+                    {/* Purple Ring Gradient */}
+                    <linearGradient id="purpleRingPreview" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" style={{ stopColor: '#a78bfa', stopOpacity: 0.8 }} />
+                      <stop offset="100%" style={{ stopColor: '#7c3aed', stopOpacity: 0.8 }} />
+                    </linearGradient>
+
+                    {/* Center Gradient */}
+                    <radialGradient id="centerGlowPreview" cx="50%" cy="50%" r="50%">
+                      <stop offset="0%" style={{ stopColor: '#a78bfa', stopOpacity: 0.4 }} />
+                      <stop offset="70%" style={{ stopColor: '#581c87', stopOpacity: 0.3 }} />
+                      <stop offset="100%" style={{ stopColor: '#1e1b4b', stopOpacity: 0.9 }} />
                     </radialGradient>
                   </defs>
 
-                  {/* Background circles */}
-                  <circle cx="200" cy="200" r="195" fill="rgba(30, 27, 75, 0.6)" />
-                  <circle cx="200" cy="200" r="195" fill="none" stroke="rgba(253, 224, 71, 0.4)" strokeWidth="2" />
-                  <circle cx="200" cy="200" r="160" fill="none" stroke="rgba(167, 139, 250, 0.3)" strokeWidth="1" />
-                  <circle cx="200" cy="200" r="120" fill="none" stroke="rgba(167, 139, 250, 0.3)" strokeWidth="1" />
-                  <circle cx="200" cy="200" r="80" fill="url(#centerGradient)" stroke="rgba(236, 72, 153, 0.4)" strokeWidth="1" />
+                  {/* Background circle with depth gradient */}
+                  <circle cx="200" cy="200" r="198" fill="url(#wheelBackgroundPreview)" />
 
-                  {/* Zodiac sign segments */}
+                  {/* Outer decorative ring */}
+                  <circle cx="200" cy="200" r="196" fill="none" stroke="url(#goldRingPreview)" strokeWidth="3" style={{ filter: 'url(#goldGlowPreview)' }} />
+                  <circle cx="200" cy="200" r="192" fill="none" stroke="rgba(167, 139, 250, 0.3)" strokeWidth="1" />
+
+                  {/* Zodiac band outer edge */}
+                  <circle cx="200" cy="200" r="160" fill="none" stroke="url(#purpleRingPreview)" strokeWidth="1.5" />
+
+                  {/* House circle */}
+                  <circle cx="200" cy="200" r="120" fill="none" stroke="rgba(167, 139, 250, 0.4)" strokeWidth="1" />
+
+                  {/* Inner planet zone */}
+                  <circle cx="200" cy="200" r="80" fill="url(#centerGlowPreview)" stroke="url(#purpleRingPreview)" strokeWidth="1.5" />
+
+                  {/* Zodiac sign dividers and glyphs */}
                   {zodiacSigns.map((sign, i) => {
                     const startAngle = i * 30 + risingOffset;
                     const midAngle = startAngle + 15;
-                    const glyphPos = getPosition(midAngle, 177);
-
-                    // Draw segment lines
+                    const glyphPos = getPosition(midAngle, 176);
                     const lineStart = getPosition(startAngle, 160);
-                    const lineEnd = getPosition(startAngle, 195);
+                    const lineEnd = getPosition(startAngle, 192);
+                    const rotation = midAngle + 90;
 
                     return (
                       <g key={sign.name}>
-                        {/* Segment divider line */}
-                        <line
-                          x1={lineStart.x}
-                          y1={lineStart.y}
-                          x2={lineEnd.x}
-                          y2={lineEnd.y}
-                          stroke="rgba(253, 224, 71, 0.3)"
-                          strokeWidth="1"
-                        />
-                        {/* Zodiac glyph */}
-                        <text
-                          x={glyphPos.x}
-                          y={glyphPos.y}
-                          textAnchor="middle"
-                          dominantBaseline="central"
-                          fill={elementColors[sign.element]}
-                          fontSize="16"
-                          fontWeight="bold"
-                        >
-                          {sign.glyph}
-                        </text>
+                        <line x1={lineStart.x} y1={lineStart.y} x2={lineEnd.x} y2={lineEnd.y} stroke="url(#goldRingPreview)" strokeWidth="1" style={{ opacity: 0.6 }} />
+                        <g transform={`translate(${glyphPos.x}, ${glyphPos.y}) rotate(${rotation}) scale(0.9)`}>
+                          <path d={zodiacPaths[sign.name]} fill="none" stroke={elementColors[sign.element]} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ filter: 'url(#planetGlowPreview)' }} />
+                        </g>
                       </g>
                     );
                   })}
 
-                  {/* House numbers (1-12) */}
+                  {/* House numbers */}
                   {Array.from({ length: 12 }, (_, i) => {
                     const houseAngle = i * 30 + risingOffset + 15;
                     const housePos = getPosition(houseAngle, 140);
                     return (
-                      <text
-                        key={`house-${i + 1}`}
-                        x={housePos.x}
-                        y={housePos.y}
-                        textAnchor="middle"
-                        dominantBaseline="central"
-                        fill="rgba(167, 139, 250, 0.7)"
-                        fontSize="11"
-                        fontWeight="500"
-                      >
-                        {i + 1}
-                      </text>
+                      <text key={`house-${i + 1}`} x={housePos.x} y={housePos.y} textAnchor="middle" dominantBaseline="central" fill="rgba(167, 139, 250, 0.8)" style={{ fontSize: '11px', fontWeight: '600', fontFamily: 'system-ui, sans-serif' }}>{i + 1}</text>
                     );
                   })}
 
@@ -1143,106 +1162,63 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
                     const outerPos = getPosition(angle, 120);
                     const isCardinal = i % 3 === 0;
                     return (
-                      <line
-                        key={`cusp-${i}`}
-                        x1={innerPos.x}
-                        y1={innerPos.y}
-                        x2={outerPos.x}
-                        y2={outerPos.y}
-                        stroke={isCardinal ? "rgba(253, 224, 71, 0.5)" : "rgba(167, 139, 250, 0.25)"}
-                        strokeWidth={isCardinal ? "2" : "1"}
-                      />
+                      <line key={`cusp-${i}`} x1={innerPos.x} y1={innerPos.y} x2={outerPos.x} y2={outerPos.y} stroke={isCardinal ? "url(#goldRingPreview)" : "rgba(167, 139, 250, 0.35)"} strokeWidth={isCardinal ? "2" : "1"} style={isCardinal ? { filter: 'url(#goldGlowPreview)' } : {}} />
                     );
                   })}
 
-                  {/* Ascendant marker (arrow at 9 o'clock) */}
-                  <g>
-                    <polygon
-                      points="5,200 25,192 25,208"
-                      fill="#facc15"
-                      filter="url(#glow)"
-                    />
-                    <text
-                      x="35"
-                      y="200"
-                      textAnchor="start"
-                      dominantBaseline="central"
-                      fill="#facc15"
-                      fontSize="10"
-                      fontWeight="bold"
-                    >
-                      ASC
-                    </text>
+                  {/* ASC/DESC axis */}
+                  {(() => {
+                    const ascPos = getPosition(180, 195);
+                    const descPos = getPosition(0, 195);
+                    return <line x1={ascPos.x} y1={ascPos.y} x2={descPos.x} y2={descPos.y} stroke="url(#goldRingPreview)" strokeWidth="2" style={{ filter: 'url(#goldGlowPreview)', opacity: 0.7 }} />;
+                  })()}
+
+                  {/* MC/IC axis */}
+                  {(() => {
+                    const mcPos = getPosition(270, 195);
+                    const icPos = getPosition(90, 195);
+                    return <line x1={mcPos.x} y1={mcPos.y} x2={icPos.x} y2={icPos.y} stroke="url(#purpleRingPreview)" strokeWidth="1.5" style={{ opacity: 0.5 }} />;
+                  })()}
+
+                  {/* Ascendant arrow marker */}
+                  <g style={{ filter: 'url(#goldGlowPreview)' }}>
+                    <polygon points="2,200 24,191 24,209" fill="url(#goldRingPreview)" />
+                    <text x="32" y="200" textAnchor="start" dominantBaseline="central" fill="#fde047" style={{ fontSize: '10px', fontWeight: 'bold', fontFamily: 'system-ui, sans-serif' }}>ASC</text>
                   </g>
 
-                  {/* Planets positioned by degree */}
-                  {planets.map((planet) => {
+                  {/* Planet markers */}
+                  {planets.filter(p => p.sign).map((planet) => {
                     const angle = getPlanetAngle(planet.sign, planet.degree);
                     const pos = getPosition(angle, 100);
                     const signData = zodiacSigns.find((s) => s.name === planet.sign);
-                    const color = signData ? elementColors[signData.element] : "#fff";
+                    const color = signData ? elementColors[signData.element] : "#fde047";
 
                     return (
-                      <g key={planet.key} filter="url(#glow)">
-                        <circle
-                          cx={pos.x}
-                          cy={pos.y}
-                          r="14"
-                          fill="rgba(30, 27, 75, 0.9)"
-                          stroke={color}
-                          strokeWidth="1.5"
-                        />
-                        <text
-                          x={pos.x}
-                          y={pos.y}
-                          textAnchor="middle"
-                          dominantBaseline="central"
-                          fill={color}
-                          fontSize="14"
-                          fontWeight="bold"
-                        >
-                          {planetGlyphs[planet.key]}
-                        </text>
+                      <g key={planet.key} style={{ filter: 'url(#planetGlowPreview)' }}>
+                        <circle cx={pos.x} cy={pos.y} r="15" fill="rgba(15, 10, 30, 0.95)" stroke={color} strokeWidth="2" />
+                        <g transform={`translate(${pos.x}, ${pos.y}) scale(0.85)`}>
+                          <path d={planetPaths[planet.key]} fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                        </g>
                       </g>
                     );
                   })}
 
-                  {/* Center decoration */}
-                  <circle cx="200" cy="200" r="25" fill="rgba(139, 92, 246, 0.2)" stroke="rgba(236, 72, 153, 0.5)" strokeWidth="1" />
-                  <text
-                    x="200"
-                    y="200"
-                    textAnchor="middle"
-                    dominantBaseline="central"
-                    fill="rgba(253, 224, 71, 0.8)"
-                    fontSize="10"
-                    fontWeight="bold"
-                  >
-                    ✦
-                  </text>
+                  {/* Center star decoration */}
+                  <circle cx="200" cy="200" r="25" fill="url(#centerGlowPreview)" stroke="url(#purpleRingPreview)" strokeWidth="1.5" />
+                  <g transform="translate(200, 200) scale(0.8)" style={{ filter: 'url(#goldGlowPreview)' }}>
+                    <path d="M0,-10 L2,-3 L10,-3 L3,2 L5,10 L0,5 L-5,10 L-3,2 L-10,-3 L-2,-3 Z" fill="url(#goldRingPreview)" style={{ opacity: 0.9 }} />
+                  </g>
                 </svg>
               </div>
             );
           })()}
 
           {/* Legend */}
-          <div className="flex flex-wrap justify-center gap-4 text-xs mb-3">
-            <div className="flex items-center gap-1">
-              <span className="w-3 h-3 rounded-full bg-red-500"></span>
-              <span className="text-purple-300">Fire</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <span className="w-3 h-3 rounded-full bg-green-500"></span>
-              <span className="text-purple-300">Earth</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <span className="w-3 h-3 rounded-full bg-yellow-400"></span>
-              <span className="text-purple-300">Air</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <span className="w-3 h-3 rounded-full bg-blue-500"></span>
-              <span className="text-purple-300">Water</span>
-            </div>
+          <div className="flex flex-wrap justify-center gap-4 text-xs mb-3 mt-2">
+            <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full" style={{ background: 'linear-gradient(135deg, #ff6b6b, #f97316)' }}></span><span className="text-purple-300">Fire</span></div>
+            <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full" style={{ background: 'linear-gradient(135deg, #4ade80, #22c55e)' }}></span><span className="text-purple-300">Earth</span></div>
+            <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full" style={{ background: 'linear-gradient(135deg, #fde047, #facc15)' }}></span><span className="text-purple-300">Air</span></div>
+            <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full" style={{ background: 'linear-gradient(135deg, #60a5fa, #3b82f6)' }}></span><span className="text-purple-300">Water</span></div>
           </div>
 
           <p className="text-center text-purple-300 italic text-sm">
