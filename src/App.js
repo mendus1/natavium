@@ -467,7 +467,7 @@ function InfoPage() {
               <div>
                 <h3 className="text-2xl font-bold mb-4">Add-On Services</h3>
                 <p className="text-purple-300 mb-6 text-sm">
-                  Expand your understanding (available after natal chart purchase)
+                  Expand your understanding (available with or after natal chart purchase)
                 </p>
 
                 <div className="grid md:grid-cols-2 gap-4">
@@ -526,7 +526,7 @@ function InfoPage() {
               <div className="bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-2xl p-6 border border-purple-500/30">
                 <div className="flex items-center justify-between mb-4">
                   <div>
-                    <h3 className="text-2xl font-black">Natavium Plus</h3>
+                    <h3 className="text-2xl font-black">Natavium Plus (Coming Soon)</h3>
                     <p className="text-purple-300 text-sm">Optional subscription</p>
                   </div>
                   <div className="text-right">
@@ -1754,7 +1754,7 @@ function SuccessPage({ setIsPremium, chartResult, selectedBundle }) {
             </div>
             <h1 className="text-4xl font-black mb-4">Creating Your Reading</h1>
             <p className="text-purple-300 text-lg mb-4">
-              GPT-4 is analyzing your unique cosmic blueprint...
+              GPT is analyzing your unique cosmic blueprint...
             </p>
 
             {/* Live streaming preview */}
@@ -1768,6 +1768,12 @@ function SuccessPage({ setIsPremium, chartResult, selectedBundle }) {
             <p className="text-purple-400 text-sm mt-4">
               {streamedText.length > 0 ? `${streamedText.length} characters generated...` : 'Starting generation...'}
             </p>
+
+            {/* Social Media Links */}
+            <div className="mt-8 pt-6 border-t border-white/10">
+              <p className="text-purple-300 text-sm mb-3">Follow us on socials</p>
+              <SocialLinks className="justify-center" iconClassName="w-5 h-5" />
+            </div>
           </>
         )}
 
