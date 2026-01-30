@@ -30,6 +30,81 @@ import {
   ShoppingCart,
 } from "lucide-react";
 
+// Custom Instagram icon (lucide deprecated it)
+const InstagramIcon = ({ className }) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+  </svg>
+);
+
+// Custom TikTok icon (not in lucide-react)
+const TikTokIcon = ({ className }) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    className={className}
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.84 6.84 0 00-1-.05A6.33 6.33 0 005 20.1a6.34 6.34 0 0010.86-4.43v-7a8.16 8.16 0 004.77 1.52v-3.4a4.85 4.85 0 01-1-.1z" />
+  </svg>
+);
+
+// Custom X/Twitter icon
+const XIcon = ({ className }) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    className={className}
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+  </svg>
+);
+
+// Social Links Component
+const SocialLinks = ({ className = "", iconClassName = "w-5 h-5" }) => (
+  <div className={`flex items-center gap-3 ${className}`}>
+    <a
+      href="https://x.com/Natavium"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="p-2 rounded-lg bg-white/10 hover:bg-white/20 hover:text-yellow-300 transition-all duration-200"
+      aria-label="Follow us on X"
+    >
+      <XIcon className={iconClassName} />
+    </a>
+    <a
+      href="https://instagram.com/natavium"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="p-2 rounded-lg bg-white/10 hover:bg-white/20 hover:text-yellow-300 transition-all duration-200"
+      aria-label="Follow us on Instagram"
+    >
+      <InstagramIcon className={iconClassName} />
+    </a>
+    <a
+      href="https://tiktok.com/@natavium"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="p-2 rounded-lg bg-white/10 hover:bg-white/20 hover:text-yellow-300 transition-all duration-200"
+      aria-label="Follow us on TikTok"
+    >
+      <TikTokIcon className={iconClassName} />
+    </a>
+  </div>
+);
+
 // =========================
 // Bundle Definitions
 // =========================
@@ -600,6 +675,9 @@ function LandingPage() {
             >
               Datenschutz
             </button>
+          </div>
+          <div className="flex justify-center mb-4">
+            <SocialLinks iconClassName="w-4 h-4" />
           </div>
           <p className="text-purple-400">© {new Date().getFullYear()} Natavium. Alle Rechte vorbehalten.</p>
         </footer>
@@ -2354,6 +2432,11 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
               )}
             </button>
           </div>
+
+          {/* Social Media Links */}
+          <div className="flex justify-center mt-4">
+            <SocialLinks iconClassName="w-4 h-4" />
+          </div>
         </div>
 
         {/* Tab Navigation */}
@@ -2918,6 +3001,16 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
             >
               Calculate New Chart
             </button>
+          </div>
+
+          {/* Social Media & Copyright */}
+          <div className="mt-8 pt-6 border-t border-white/10">
+            <div className="flex justify-center mb-4">
+              <SocialLinks iconClassName="w-4 h-4" />
+            </div>
+            <p className="text-center text-sm text-purple-400">
+              © {new Date().getFullYear()} Natavium. All rights reserved.
+            </p>
           </div>
         </div>
       </div>
