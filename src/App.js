@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import html2canvas from 'html2canvas';
 import { Routes, Route, useNavigate, useParams, Navigate } from "react-router-dom";
 import { calculateNatalChartFromLocal } from "./ephemeris";
+import BrandStar from "./components/BrandStar";
 import "./App.css";
 import {
   Sparkles,
@@ -862,7 +863,7 @@ function InputPage({ birthData, handleInputChange, calculateChart, calcError }) 
               disabled={!birthData.birthMonth || !birthData.birthDay || !birthData.birthYear || !birthData.hour || !birthData.minute || !birthData.location}
               className="flex-1 px-6 py-4 rounded-xl bg-gradient-to-r from-yellow-400 to-orange-500 text-gray-900 font-black text-lg hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Calculate Chart ✨
+              Calculate Chart <BrandStar className="w-5 h-5 inline-block ml-1" />
             </button>
           </div>
         </div>
@@ -886,7 +887,7 @@ function CalculatingPage() {
         <div className="space-y-2 text-purple-300">
           <p className="animate-pulse">⚡ Computing planetary positions...</p>
           <p className="animate-pulse">🌙 Analyzing house placements...</p>
-          <p className="animate-pulse">✨ Generating AI insights...</p>
+          <p className="animate-pulse flex items-center justify-center gap-1"><BrandStar className="w-4 h-4" /> Generating AI insights...</p>
         </div>
       </div>
     </div>
@@ -979,8 +980,8 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
 
         {/* Sun Sign Heading */}
         <div className="text-center mb-6">
-          <h2 className="text-4xl font-bold text-yellow-300">
-            ✨ You're a {chartResult.sun.sign}! ✨
+          <h2 className="text-4xl font-bold text-yellow-300 flex items-center justify-center gap-2">
+            <BrandStar className="w-8 h-8" /> You're a {chartResult.sun.sign}! <BrandStar className="w-8 h-8" />
           </h2>
         </div>
 

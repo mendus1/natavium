@@ -277,7 +277,7 @@ export default async function handler(req, res) {
 <body>
   <!-- COVER PAGE (Dark/Premium) -->
   <div class="cover-page">
-    <div class="cover-title">✨ Natavium ✨</div>
+    <div class="cover-title"><svg viewBox="0 0 24 24" style="width: 48px; height: 48px; display: inline-block; vertical-align: middle;"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z" fill="#fde047"/></svg> Natavium <svg viewBox="0 0 24 24" style="width: 48px; height: 48px; display: inline-block; vertical-align: middle;"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z" fill="#fde047"/></svg></div>
     <div class="cover-subtitle">Your Complete Natal Chart</div>
 
     <div class="cover-big-three">

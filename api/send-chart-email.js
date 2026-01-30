@@ -125,7 +125,7 @@ module.exports = async function handler(req, res) {
   <div style="max-width: 600px; margin: 0 auto; padding: 40px 20px;">
     <!-- Header -->
     <div style="text-align: center; margin-bottom: 32px;">
-      <h1 style="color: #fde047; font-size: 32px; margin: 0 0 8px 0;">✨ Natavium ✨</h1>
+      <h1 style="color: #fde047; font-size: 32px; margin: 0 0 8px 0;"><svg viewBox="0 0 24 24" style="width: 28px; height: 28px; display: inline-block; vertical-align: middle;"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z" fill="#fde047"/></svg> Natavium <svg viewBox="0 0 24 24" style="width: 28px; height: 28px; display: inline-block; vertical-align: middle;"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z" fill="#fde047"/></svg></h1>
       <p style="color: #c4b5fd; font-size: 16px; margin: 0;">Your Natal Chart Results</p>
     </div>
 
