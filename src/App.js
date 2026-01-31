@@ -4,6 +4,7 @@ import { Routes, Route, useNavigate, useParams, Navigate } from "react-router-do
 import { calculateNatalChartFromLocal } from "./ephemeris";
 import BrandStar from "./components/BrandStar";
 import "./App.css";
+import "./theme-cosmic.css";
 import {
   Sparkles,
   Lock,
