@@ -1,4 +1,5 @@
-import { SwissEphemeris, Planet } from "@swisseph/browser";
+import { SwissEphemeris } from "@swisseph/browser";
+import { Planet } from "@swisseph/core";
 import tzLookup from "tz-lookup";
 import { DateTime } from "luxon";
 
