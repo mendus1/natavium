@@ -571,8 +571,8 @@ function LandingPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 text-white p-6">
-      <div className="max-w-4xl mx-auto">
+    <div className="theme-cosmic min-h-screen text-white p-6">
+      <div className="max-w-4xl mx-auto relative z-10">
         <div className="flex justify-between items-center mb-8">
           <div />
           <div className="flex gap-3">
