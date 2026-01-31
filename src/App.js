@@ -16,8 +16,6 @@ import {
   Calendar,
   MapPin,
   Clock,
-  BookOpen,
-  DollarSign,
   Check,
   X,
   Info,
