@@ -1,4 +1,4 @@
-import { SwissEphemeris, Planet, HouseSystem } from "@swisseph/browser";
+import { SwissEphemeris, Planet } from "@swisseph/browser";
 import tzLookup from "tz-lookup";
 import { DateTime } from "luxon";
 
@@ -218,7 +218,8 @@ export async function calculateNatalChart(birthDateUTC, latitude, longitude) {
   const jd = swe.dateToJulianDay(birthDateUTC);
 
   // Houses (Placidus)
-  const houses = swe.calculateHouses(jd, latitude, longitude, HouseSystem.Placidus);
+  // Use string 'P' for Placidus house system
+  const houses = swe.calculateHouses(jd, latitude, longitude, 'P');
   const cusps12 = sanitizeCusps(houses.cusps);
 
   // Planets
