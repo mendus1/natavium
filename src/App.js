@@ -568,122 +568,291 @@ function InfoPage() {
 // =========================
 function LandingPage() {
   const navigate = useNavigate();
-
+  
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 text-white p-6">
-      <div className="max-w-4xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <div />
-          <div className="flex gap-3">
+  <div className="min-h-screen cosmic-bg text-white">
+    {/* Cosmic background layers */}
+    <div className="cosmic-grid"></div>
+    <div className="cosmic-constellation"></div>
+    
+    {/* Content */}
+    <div className="relative z-10">
+      {/* Sticky Navigation */}
+      <nav className="sticky top-0 z-50 backdrop-blur-md bg-slate-900/50 border-b border-slate-700/30">
+        <div className="max-w-7xl mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <BrandStar className="w-8 h-8 text-amber-500" />
+              <span className="text-2xl font-bold tracking-tight text-white">Natavium</span>
+            </div>
+            
+            <div className="hidden md:flex items-center gap-8">
+              <button
+                onClick={() => navigate("/input")}
+                className="text-slate-300 hover:text-cyan-400 transition-colors text-sm font-medium"
+              >
+                Example
+              </button>
+              <button
+                onClick={() => navigate("/info/services")}
+                className="text-slate-300 hover:text-cyan-400 transition-colors text-sm font-medium"
+              >
+                Pricing
+              </button>
+              <button
+                onClick={() => navigate("/info/systems")}
+                className="text-slate-300 hover:text-cyan-400 transition-colors text-sm font-medium"
+              >
+                Learn
+              </button>
+            </div>
+            
             <button
-              onClick={() => navigate("/info/services")}
-              className="flex items-center px-4 py-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors text-sm"
+              onClick={() => navigate("/input")}
+              className="bg-gradient-to-r from-amber-500 to-yellow-600 text-slate-900 px-6 py-2.5 rounded-xl text-sm font-bold hover:shadow-lg hover:shadow-amber-500/30 transition-all duration-200"
             >
-              <DollarSign className="w-4 h-4 mr-2" />
-              Pricing
-            </button>
-
-            <button
-              onClick={() => navigate("/info/systems")}
-              className="flex items-center px-4 py-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors text-sm"
-            >
-              <BookOpen className="w-4 h-4 mr-2" />
-              Learn More
+              Get my reading
             </button>
           </div>
         </div>
-
-        <div className="text-center pt-12 pb-8">
-          <div className="flex items-center justify-center mb-6">
-            <BrandStar className="w-12 h-12 animate-pulse mr-3" />
-            <h1 className="text-6xl font-black">Natavium</h1>
-            <BrandStar className="w-12 h-12 animate-pulse ml-3" />
-          </div>
-          <p className="text-2xl text-purple-200 mb-2 font-semibold">Where AI Meets Astrology</p>
-          <p className="text-lg text-purple-300">Real AI analysis of YOUR unique birth chart</p>
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-6 mb-12">
-          <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20">
-            <Star className="w-10 h-10 text-yellow-300 mb-4" />
-            <h3 className="text-xl font-bold mb-2">True Personalization</h3>
-            <p className="text-purple-200 text-sm">
-              Millions of combinations based on your exact birth moment.
-            </p>
-          </div>
-
-          <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20">
-            <Zap className="w-10 h-10 text-yellow-300 mb-4" />
-            <h3 className="text-xl font-bold mb-2">AI-Powered</h3>
-            <p className="text-purple-200 text-sm">
-              GPT-4 synthesizes your placements - real analysis, not templates.
-            </p>
-          </div>
-
-          <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20">
-            <Heart className="w-10 h-10 text-yellow-300 mb-4" />
-            <h3 className="text-xl font-bold mb-2">Own Forever</h3>
-            <p className="text-purple-200 text-sm">$4.99 one-time. No subscription required.</p>
-          </div>
-        </div>
-
-        <div className="text-center mb-12">
+      </nav>
+      
+      {/* Hero Section */}
+      <section className="max-w-7xl mx-auto px-6 pt-20 pb-16">
+        <div className="max-w-3xl mx-auto text-center">
+          <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight text-balance">
+            Clarity for your next move — based on your chart.
+          </h1>
+          <p className="text-xl text-slate-300 mb-10 leading-relaxed text-pretty">
+            Professional astrology analysis powered by AI. No mystical fluff, just actionable insights from your unique birth chart.
+          </p>
           <button
             onClick={() => navigate("/input")}
-            className="bg-gradient-to-r from-yellow-400 to-orange-500 text-gray-900 px-12 py-5 rounded-full text-2xl font-black hover:scale-105 transition-transform shadow-2xl"
+            className="bg-gradient-to-r from-amber-500 to-yellow-600 text-slate-900 px-10 py-4 rounded-xl text-lg font-bold hover:shadow-xl hover:shadow-amber-500/30 transition-all duration-200 hover:scale-105"
           >
-            Discover Your Chart →
+            Get my reading
           </button>
-          <p className="text-purple-300 mt-4 text-sm">Free preview • Full analysis $4.99</p>
+          <p className="text-slate-400 mt-4 text-sm">$4.99 one-time • No subscription</p>
         </div>
-
-        <div className="bg-white/5 rounded-2xl p-8 border border-white/10">
-          <h3 className="text-2xl font-bold mb-6 text-center">Why Natavium?</h3>
-          <div className="grid md:grid-cols-2 gap-4 text-sm">
-            <div>
-              <div className="font-bold text-red-300 mb-2">❌ Other Apps:</div>
-              <ul className="space-y-2 text-purple-200">
-                <li>• $7-15/month subscriptions</li>
-                <li>• Template-based readings</li>
-                <li>• Generic sun-sign horoscopes</li>
-              </ul>
+      </section>
+      
+      {/* Sample Preview Card */}
+      <section className="max-w-5xl mx-auto px-6 pb-20">
+        <div className="bg-slate-800/60 backdrop-blur-lg rounded-2xl border border-slate-700/50 p-8 shadow-2xl">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-2xl font-bold text-white">Next 5 Days</h3>
+            <span className="text-sm text-slate-400">Sample Preview</span>
+          </div>
+          
+          <div className="space-y-4">
+            {/* Transit chips */}
+            <div className="flex flex-wrap gap-3">
+              <div className="bg-slate-700/50 px-4 py-2 rounded-lg border border-slate-600/50">
+                <div className="flex items-center gap-2">
+                  <Sun className="w-4 h-4 text-amber-400" />
+                  <span className="text-sm font-medium text-slate-200">Sun sextile Venus</span>
+                </div>
+                <p className="text-xs text-slate-400 mt-1">Social harmony peaks</p>
+              </div>
+              
+              <div className="bg-slate-700/50 px-4 py-2 rounded-lg border border-slate-600/50">
+                <div className="flex items-center gap-2">
+                  <Moon className="w-4 h-4 text-slate-300" />
+                  <span className="text-sm font-medium text-slate-200">Moon enters Scorpio</span>
+                </div>
+                <p className="text-xs text-slate-400 mt-1">Deep emotions surface</p>
+              </div>
+              
+              <div className="bg-slate-700/50 px-4 py-2 rounded-lg border border-slate-600/50">
+                <div className="flex items-center gap-2">
+                  <Zap className="w-4 h-4 text-cyan-400" />
+                  <span className="text-sm font-medium text-slate-200">Mercury trine Jupiter</span>
+                </div>
+                <p className="text-xs text-slate-400 mt-1">Great for communication</p>
+              </div>
             </div>
-
-            <div>
-              <div className="font-bold text-green-300 mb-2">✅ Natavium:</div>
-              <ul className="space-y-2 text-purple-200">
-                <li>• $4.99 one-time payment</li>
-                <li>• Real AI synthesis</li>
-                <li>• True personalization</li>
-              </ul>
-            </div>
+            
+            <p className="text-slate-300 text-sm leading-relaxed">
+              Your personalized reading will show exactly how current planetary movements interact with YOUR natal chart — not generic daily horoscopes.
+            </p>
           </div>
         </div>
-
-        {/* Footer with legal links */}
-        <footer className="mt-12 pt-8 border-t border-white/10 text-center text-sm text-purple-300">
-          <div className="flex justify-center gap-6 mb-4">
+      </section>
+      
+      {/* Benefits */}
+      <section className="max-w-7xl mx-auto px-6 pb-20">
+        <div className="grid md:grid-cols-3 gap-6">
+          <div className="bg-slate-800/40 backdrop-blur-sm rounded-xl border border-slate-700/40 p-8 hover:border-slate-600/60 transition-colors">
+            <div className="w-12 h-12 rounded-lg bg-slate-700/50 flex items-center justify-center mb-4">
+              <Star className="w-6 h-6 text-amber-400" strokeWidth={1.5} />
+            </div>
+            <h3 className="text-xl font-bold mb-3 text-white">True Personalization</h3>
+            <p className="text-slate-300 text-sm leading-relaxed">
+              Your birth chart has millions of possible combinations. We analyze YOUR unique cosmic blueprint, not generic sun signs.
+            </p>
+          </div>
+          
+          <div className="bg-slate-800/40 backdrop-blur-sm rounded-xl border border-slate-700/40 p-8 hover:border-slate-600/60 transition-colors">
+            <div className="w-12 h-12 rounded-lg bg-slate-700/50 flex items-center justify-center mb-4">
+              <Zap className="w-6 h-6 text-cyan-400" strokeWidth={1.5} />
+            </div>
+            <h3 className="text-xl font-bold mb-3 text-white">AI-Powered Synthesis</h3>
+            <p className="text-slate-300 text-sm leading-relaxed">
+              GPT-4 analyzes how all your placements interact. Real synthesis of contradictions, not cookie-cutter templates.
+            </p>
+          </div>
+          
+          <div className="bg-slate-800/40 backdrop-blur-sm rounded-xl border border-slate-700/40 p-8 hover:border-slate-600/60 transition-colors">
+            <div className="w-12 h-12 rounded-lg bg-slate-700/50 flex items-center justify-center mb-4">
+              <Lock className="w-6 h-6 text-amber-400" strokeWidth={1.5} />
+            </div>
+            <h3 className="text-xl font-bold mb-3 text-white">Own Forever</h3>
+            <p className="text-slate-300 text-sm leading-relaxed">
+              $4.99 one-time payment. Your chart and insights are yours to keep — no monthly fees, no subscriptions.
+            </p>
+          </div>
+        </div>
+      </section>
+      
+      {/* How It Works */}
+      <section className="max-w-5xl mx-auto px-6 pb-20">
+        <h2 className="text-3xl font-bold text-center mb-12 text-white">How it works</h2>
+        <div className="grid md:grid-cols-3 gap-8">
+          <div className="text-center">
+            <div className="w-16 h-16 rounded-full bg-slate-700/50 border border-slate-600/50 flex items-center justify-center mx-auto mb-4 text-2xl font-bold text-amber-400">
+              1
+            </div>
+            <h3 className="text-lg font-bold mb-2 text-white">Enter your birth info</h3>
+            <p className="text-slate-400 text-sm leading-relaxed">
+              Provide your birth date, time, and location for accurate planetary calculations.
+            </p>
+          </div>
+          
+          <div className="text-center">
+            <div className="w-16 h-16 rounded-full bg-slate-700/50 border border-slate-600/50 flex items-center justify-center mx-auto mb-4 text-2xl font-bold text-amber-400">
+              2
+            </div>
+            <h3 className="text-lg font-bold mb-2 text-white">AI analyzes your chart</h3>
+            <p className="text-slate-400 text-sm leading-relaxed">
+              Our AI synthesizes all placements, aspects, and patterns unique to your chart.
+            </p>
+          </div>
+          
+          <div className="text-center">
+            <div className="w-16 h-16 rounded-full bg-slate-700/50 border border-slate-600/50 flex items-center justify-center mx-auto mb-4 text-2xl font-bold text-amber-400">
+              3
+            </div>
+            <h3 className="text-lg font-bold mb-2 text-white">Get your insights</h3>
+            <p className="text-slate-400 text-sm leading-relaxed">
+              Receive a detailed PDF with your chart wheel, placements, and personalized analysis.
+            </p>
+          </div>
+        </div>
+      </section>
+      
+      {/* Pricing */}
+      <section className="max-w-3xl mx-auto px-6 pb-20">
+        <div className="bg-gradient-to-br from-amber-500/10 to-yellow-600/10 backdrop-blur-sm rounded-2xl border border-amber-500/30 p-10">
+          <div className="text-center mb-6">
+            <h2 className="text-4xl font-bold mb-2 text-white">$4.99</h2>
+            <p className="text-slate-300 text-sm">One-time payment • Own forever</p>
+          </div>
+          
+          <div className="grid md:grid-cols-2 gap-3 mb-8">
+            <div className="flex items-start gap-2">
+              <Check className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
+              <span className="text-slate-200 text-sm">Complete birth chart wheel</span>
+            </div>
+            <div className="flex items-start gap-2">
+              <Check className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
+              <span className="text-slate-200 text-sm">3000+ word AI analysis</span>
+            </div>
+            <div className="flex items-start gap-2">
+              <Check className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
+              <span className="text-slate-200 text-sm">All 10 planetary placements</span>
+            </div>
+            <div className="flex items-start gap-2">
+              <Check className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
+              <span className="text-slate-200 text-sm">House positions & aspects</span>
+            </div>
+            <div className="flex items-start gap-2">
+              <Check className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
+              <span className="text-slate-200 text-sm">2026 forecast included</span>
+            </div>
+            <div className="flex items-start gap-2">
+              <Check className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
+              <span className="text-slate-200 text-sm">Downloadable PDF</span>
+            </div>
+          </div>
+          
+          <button
+            onClick={() => navigate("/input")}
+            className="w-full bg-gradient-to-r from-amber-500 to-yellow-600 text-slate-900 px-8 py-4 rounded-xl text-lg font-bold hover:shadow-xl hover:shadow-amber-500/30 transition-all duration-200"
+          >
+            Get my reading
+          </button>
+        </div>
+      </section>
+      
+      {/* FAQ */}
+      <section className="max-w-3xl mx-auto px-6 pb-20">
+        <h2 className="text-3xl font-bold text-center mb-12 text-white">Frequently asked questions</h2>
+        <div className="space-y-6">
+          <div className="bg-slate-800/40 backdrop-blur-sm rounded-xl border border-slate-700/40 p-6">
+            <h3 className="text-lg font-bold mb-2 text-white">What if I don't know my birth time?</h3>
+            <p className="text-slate-300 text-sm leading-relaxed">
+              You can still get a reading, but it will be less accurate. We recommend checking your birth certificate or asking family members for the most precise results.
+            </p>
+          </div>
+          
+          <div className="bg-slate-800/40 backdrop-blur-sm rounded-xl border border-slate-700/40 p-6">
+            <h3 className="text-lg font-bold mb-2 text-white">How is this different from other astrology apps?</h3>
+            <p className="text-slate-300 text-sm leading-relaxed">
+              Most apps use templates and generic sun-sign readings. Natavium uses AI to analyze YOUR specific chart — all 10 planets, houses, and aspects together. It's like the difference between a form letter and a personal analysis.
+            </p>
+          </div>
+          
+          <div className="bg-slate-800/40 backdrop-blur-sm rounded-xl border border-slate-700/40 p-6">
+            <h3 className="text-lg font-bold mb-2 text-white">Is this scientifically accurate?</h3>
+            <p className="text-slate-300 text-sm leading-relaxed">
+              We use Swiss Ephemeris for planetary calculations — the gold standard in astronomical accuracy. The interpretation is based on traditional astrological principles, synthesized by AI. Think of it as a tool for self-reflection, not fortune-telling.
+            </p>
+          </div>
+        </div>
+      </section>
+      
+      {/* Footer */}
+      <footer className="max-w-7xl mx-auto px-6 py-12 border-t border-slate-700/30">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="flex items-center gap-2">
+            <BrandStar className="w-6 h-6 text-amber-500" />
+            <span className="text-lg font-bold text-white">Natavium</span>
+          </div>
+          
+          <div className="flex items-center gap-6 text-sm">
             <button
               onClick={() => navigate("/impressum")}
-              className="hover:text-white transition-colors"
+              className="text-slate-400 hover:text-cyan-400 transition-colors"
             >
               Impressum
             </button>
-            <span className="text-white/30">|</span>
             <button
               onClick={() => navigate("/datenschutz")}
-              className="hover:text-white transition-colors"
+              className="text-slate-400 hover:text-cyan-400 transition-colors"
             >
               Datenschutz
             </button>
           </div>
-          <div className="flex justify-center mb-4">
-            <SocialLinks iconClassName="w-4 h-4" />
-          </div>
-          <p className="text-purple-400">© {new Date().getFullYear()} Natavium. Alle Rechte vorbehalten.</p>
-        </footer>
-      </div>
+          
+          <SocialLinks iconClassName="w-5 h-5" />
+        </div>
+        
+        <div className="text-center mt-8 text-sm text-slate-500">
+          © {new Date().getFullYear()} Natavium. Alle Rechte vorbehalten.
+        </div>
+      </footer>
     </div>
+  </div>
   );
 }
 
