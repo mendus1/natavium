@@ -77,6 +77,11 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* When theme-v2 is also applied, disable the old background so cosmic-full can take over */
+.theme-cosmic.theme-v2 {
+  background: none;
+}
+
 /* Starfield background effect - subtle, very low opacity */
 .theme-cosmic::before {
   content: '';
@@ -99,6 +104,11 @@
   z-index: 0;
 }
 
+/* Disable old starfield when theme-v2 is applied (cosmic-full has its own) */
+.theme-cosmic.theme-v2::before {
+  display: none;
+}
+
 /* Subtle noise texture overlay */
 .theme-cosmic::after {
   content: '';
@@ -114,6 +124,11 @@
   pointer-events: none;
   z-index: 0;
   opacity: 0.5;
+}
+
+/* Disable old grid overlay when theme-v2 is applied */
+.theme-cosmic.theme-v2::after {
+  display: none;
 }
 
 /* Ensure content is above background effects */
