@@ -3485,7 +3485,7 @@ export default function Natavium() {
   // Theme state - persist to localStorage
   const [theme, setTheme] = useState(() => {
     const saved = localStorage.getItem("natavium_theme");
-    return saved || 'theme-original'; // default to original purple theme
+    return saved || 'theme-v2'; // default to V2 dark cosmic theme
   });
 
   // Persist theme to localStorage
