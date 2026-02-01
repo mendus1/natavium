@@ -571,14 +571,14 @@ function LandingPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="theme-cosmic theme-v2 cosmic-full min-h-screen text-white p-6">
-      <div className="max-w-4xl mx-auto relative z-10">
+    <div className="theme-cosmic min-h-screen text-white p-6">
+      <div className="max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <div />
           <div className="flex gap-3">
             <button
               onClick={() => navigate("/info/services")}
-              className="btn-secondary flex items-center text-sm"
+              className="flex items-center text-sm px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 transition-colors"
             >
               <DollarSign className="w-4 h-4 mr-2" />
               Pricing
@@ -586,7 +586,7 @@ function LandingPage() {
 
             <button
               onClick={() => navigate("/info/systems")}
-              className="btn-secondary flex items-center text-sm"
+              className="flex items-center text-sm px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 transition-colors"
             >
               <BookOpen className="w-4 h-4 mr-2" />
               Learn More
@@ -594,87 +594,86 @@ function LandingPage() {
           </div>
         </div>
 
-        <div className="text-center section-lg arc-accent-wide">
+        <div className="text-center py-16">
           <div className="flex items-center justify-center mb-6">
-            <BrandStar className="w-12 h-12 animate-pulse mr-3" color="var(--accent)" />
-            <h1 className="h1 text-5xl md:text-6xl" style={{ color: 'var(--accent)' }}>Natavium</h1>
-            <BrandStar className="w-12 h-12 animate-pulse ml-3" color="var(--accent)" />
+            <BrandStar className="w-12 h-12 animate-pulse mr-3" color="#fde047" />
+            <h1 className="text-5xl md:text-6xl font-black text-yellow-300">Natavium</h1>
+            <BrandStar className="w-12 h-12 animate-pulse ml-3" color="#fde047" />
           </div>
-          <p className="lead text-xl mb-2">Where AI Meets Astrology</p>
-          <p className="text-muted">Real AI analysis of YOUR unique birth chart</p>
+          <p className="text-xl text-purple-200 mb-2">Where AI Meets Astrology</p>
+          <p className="text-purple-300">Real AI analysis of YOUR unique birth chart</p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6 mb-12 horizon-line">
-          <div className="card">
-            <Star className="w-10 h-10 mb-4" style={{ color: 'var(--accent)' }} />
-            <h3 className="h3">True Personalization</h3>
-            <p className="text-muted text-small">
+        <div className="grid md:grid-cols-3 gap-6 mb-12">
+          <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 hover:bg-white/15 transition-colors">
+            <Star className="w-10 h-10 text-yellow-300 mb-4" />
+            <h3 className="text-xl font-bold mb-2">True Personalization</h3>
+            <p className="text-purple-200 text-sm">
               Millions of combinations based on your exact birth moment.
             </p>
           </div>
 
-          <div className="card">
-            <Zap className="w-10 h-10 mb-4" style={{ color: 'var(--accent)' }} />
-            <h3 className="h3">AI-Powered</h3>
-            <p className="text-muted text-small">
+          <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 hover:bg-white/15 transition-colors">
+            <Zap className="w-10 h-10 text-yellow-300 mb-4" />
+            <h3 className="text-xl font-bold mb-2">AI-Powered</h3>
+            <p className="text-purple-200 text-sm">
               GPT-4 synthesizes your placements - real analysis, not templates.
             </p>
           </div>
 
-          <div className="card">
-            <Heart className="w-10 h-10 mb-4" style={{ color: 'var(--accent)' }} />
-            <h3 className="h3">Own Forever</h3>
-            <p className="text-muted text-small">$4.99 one-time. No subscription required.</p>
+          <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 hover:bg-white/15 transition-colors">
+            <Heart className="w-10 h-10 text-yellow-300 mb-4" />
+            <h3 className="text-xl font-bold mb-2">Own Forever</h3>
+            <p className="text-purple-200 text-sm">$4.99 one-time. No subscription required.</p>
           </div>
         </div>
 
         <div className="text-center mb-12">
           <button
             onClick={() => navigate("/input")}
-            className="btn-primary text-xl px-10 py-4"
+            className="bg-gradient-to-r from-yellow-400 to-orange-500 text-purple-900 font-bold text-xl px-10 py-4 rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition-all"
           >
             Discover Your Chart →
           </button>
-          <p className="text-muted mt-4 text-small">Free preview • Full analysis $4.99</p>
+          <p className="text-purple-300 mt-4 text-sm">Free preview • Full analysis $4.99</p>
         </div>
 
-        <div className="card-static card-ticked">
-          <h2 className="h2 text-center mb-4">Why Natavium?</h2>
-          <div className="grid md:grid-cols-2 gap-4 text-small">
+        <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-white/20">
+          <h2 className="text-2xl font-bold text-center mb-6">Why Natavium?</h2>
+          <div className="grid md:grid-cols-2 gap-6 text-sm">
             <div>
-              <div className="font-bold mb-2" style={{ color: '#f87171' }}>❌ Other Apps:</div>
-              <ul className="list-clean">
-                <li>$7-15/month subscriptions</li>
-                <li>Template-based readings</li>
-                <li>Generic sun-sign horoscopes</li>
+              <div className="font-bold text-red-400 mb-2">❌ Other Apps:</div>
+              <ul className="space-y-2 text-purple-200">
+                <li>• $7-15/month subscriptions</li>
+                <li>• Template-based readings</li>
+                <li>• Generic sun-sign horoscopes</li>
               </ul>
             </div>
 
             <div>
-              <div className="font-bold mb-2" style={{ color: '#4ade80' }}>✅ Natavium:</div>
-              <ul className="list-clean">
-                <li>$4.99 one-time payment</li>
-                <li>Real AI synthesis</li>
-                <li>True personalization</li>
+              <div className="font-bold text-green-400 mb-2">✅ Natavium:</div>
+              <ul className="space-y-2 text-purple-200">
+                <li>• $4.99 one-time payment</li>
+                <li>• Real AI synthesis</li>
+                <li>• True personalization</li>
               </ul>
             </div>
           </div>
         </div>
 
         {/* Footer with legal links */}
-        <footer className="mt-5 pt-4 text-center">
-          <hr className="divider mb-4" />
+        <footer className="mt-12 pt-8 text-center border-t border-white/10">
           <div className="flex justify-center gap-6 mb-4">
             <button
               onClick={() => navigate("/impressum")}
-              className="link-muted text-small"
+              className="text-purple-300 hover:text-white text-sm transition-colors"
             >
               Impressum
             </button>
-            <span className="text-subtle">|</span>
+            <span className="text-purple-400">|</span>
             <button
               onClick={() => navigate("/datenschutz")}
-              className="link-muted text-small"
+              className="text-purple-300 hover:text-white text-sm transition-colors"
             >
               Datenschutz
             </button>
@@ -682,7 +681,7 @@ function LandingPage() {
           <div className="flex justify-center mb-4">
             <SocialLinks iconClassName="w-4 h-4" />
           </div>
-          <p className="text-subtle text-xs">© {new Date().getFullYear()} Natavium. Alle Rechte vorbehalten.</p>
+          <p className="text-purple-400 text-xs">© {new Date().getFullYear()} Natavium. Alle Rechte vorbehalten.</p>
         </footer>
       </div>
     </div>
