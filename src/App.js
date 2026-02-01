@@ -3,18 +3,6 @@ import html2canvas from 'html2canvas';
 import { Routes, Route, useNavigate, useParams, Navigate } from "react-router-dom";
 import { calculateNatalChartFromLocal } from "./ephemeris";
 import BrandStar from "./components/BrandStar";
-import "./App.css";
-import "./theme-cosmic.css";
-import "./theme-tokens.css";
-
-// Theme Context for global theme switching
-const ThemeContext = createContext({
-  theme: 'theme-original',
-  setTheme: () => {},
-  toggleTheme: () => {},
-});
-
-export const useTheme = () => useContext(ThemeContext);
 import {
   Sparkles,
   Lock,
@@ -41,6 +29,18 @@ import {
   Cake,
   ShoppingCart,
 } from "lucide-react";
+import "./App.css";
+import "./theme-cosmic.css";
+import "./theme-tokens.css";
+
+// Theme Context for global theme switching
+const ThemeContext = createContext({
+  theme: 'theme-original',
+  setTheme: () => {},
+  toggleTheme: () => {},
+});
+
+export const useTheme = () => useContext(ThemeContext);
 
 // Custom Instagram icon (lucide deprecated it)
 const InstagramIcon = ({ className }) => (
