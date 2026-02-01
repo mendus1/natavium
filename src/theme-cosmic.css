@@ -489,3 +489,226 @@
     font-size: 1.5rem;
   }
 }
+
+/* ================================================================
+   THEME V2 - Component Styles
+   Scoped under .theme-v2 for refined button, link, and input styling
+   ================================================================ */
+
+/* Design tokens for Theme V2 */
+.theme-v2 {
+  /* Core colors */
+  --bg: #070812;
+  --bg2: #0B1030;
+  --surface: #12142A;
+  --surface2: #171A35;
+  --text: #F2F3FF;
+  --muted: rgba(242, 243, 255, 0.70);
+  --muted2: rgba(242, 243, 255, 0.55);
+
+  /* Accents */
+  --accent: #D6B35A;
+  --accent-hover: #E5C878;
+  --accent2: #69D2FF;
+
+  /* Borders */
+  --border: rgba(255, 255, 255, 0.10);
+  --border-hover: rgba(255, 255, 255, 0.18);
+
+  /* Shadows */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.35);
+  --shadow-lift: 0 6px 20px rgba(0, 0, 0, 0.4);
+
+  /* Radius - medium, not pill-shaped */
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+
+/* ================================
+   Theme V2: Buttons
+   ================================ */
+
+/* Primary Button - gold/brass background, dark text */
+.theme-v2 .btn-primary,
+.theme-v2 button.primary,
+.theme-v2 [data-btn="primary"] {
+  background: var(--accent);
+  color: var(--bg);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  border: none;
+  border-radius: var(--radius);
+  padding: 12px 24px;
+  cursor: pointer;
+  transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+  box-shadow: none;
+}
+
+.theme-v2 .btn-primary:hover,
+.theme-v2 button.primary:hover,
+.theme-v2 [data-btn="primary"]:hover {
+  background: var(--accent-hover);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
+}
+
+.theme-v2 .btn-primary:active,
+.theme-v2 button.primary:active,
+.theme-v2 [data-btn="primary"]:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.theme-v2 .btn-primary:focus-visible,
+.theme-v2 button.primary:focus-visible,
+.theme-v2 [data-btn="primary"]:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Secondary Button - transparent/dark surface with border */
+.theme-v2 .btn-secondary,
+.theme-v2 button.secondary,
+.theme-v2 [data-btn="secondary"] {
+  background: transparent;
+  color: var(--text);
+  font-weight: 500;
+  font-size: 0.9375rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 24px;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+  box-shadow: none;
+}
+
+.theme-v2 .btn-secondary:hover,
+.theme-v2 button.secondary:hover,
+.theme-v2 [data-btn="secondary"]:hover {
+  background: var(--surface);
+  border-color: var(--border-hover);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.theme-v2 .btn-secondary:active,
+.theme-v2 button.secondary:active,
+.theme-v2 [data-btn="secondary"]:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+
+.theme-v2 .btn-secondary:focus-visible,
+.theme-v2 button.secondary:focus-visible,
+.theme-v2 [data-btn="secondary"]:focus-visible {
+  outline: 2px solid var(--accent2);
+  outline-offset: 2px;
+}
+
+/* ================================
+   Theme V2: Links
+   ================================ */
+.theme-v2 a {
+  color: var(--accent2);
+  text-decoration: none;
+  transition: text-decoration 0.15s ease, opacity 0.15s ease;
+}
+
+.theme-v2 a:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.theme-v2 a:focus-visible {
+  outline: 2px solid var(--accent2);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Muted links (for less prominent navigation) */
+.theme-v2 a.muted,
+.theme-v2 .link-muted {
+  color: var(--muted);
+}
+
+.theme-v2 a.muted:hover,
+.theme-v2 .link-muted:hover {
+  color: var(--accent2);
+}
+
+/* ================================
+   Theme V2: Inputs
+   ================================ */
+.theme-v2 input[type="text"],
+.theme-v2 input[type="email"],
+.theme-v2 input[type="password"],
+.theme-v2 input[type="number"],
+.theme-v2 input[type="date"],
+.theme-v2 input[type="time"],
+.theme-v2 input[type="search"],
+.theme-v2 textarea,
+.theme-v2 select,
+.theme-v2 .input {
+  background: var(--surface2);
+  color: var(--text);
+  font-size: 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.theme-v2 input[type="text"]:hover,
+.theme-v2 input[type="email"]:hover,
+.theme-v2 input[type="password"]:hover,
+.theme-v2 input[type="number"]:hover,
+.theme-v2 input[type="date"]:hover,
+.theme-v2 input[type="time"]:hover,
+.theme-v2 input[type="search"]:hover,
+.theme-v2 textarea:hover,
+.theme-v2 select:hover,
+.theme-v2 .input:hover {
+  border-color: var(--border-hover);
+}
+
+.theme-v2 input[type="text"]:focus,
+.theme-v2 input[type="email"]:focus,
+.theme-v2 input[type="password"]:focus,
+.theme-v2 input[type="number"]:focus,
+.theme-v2 input[type="date"]:focus,
+.theme-v2 input[type="time"]:focus,
+.theme-v2 input[type="search"]:focus,
+.theme-v2 textarea:focus,
+.theme-v2 select:focus,
+.theme-v2 .input:focus {
+  outline: none;
+  border-color: var(--accent2);
+  box-shadow: 0 0 0 2px rgba(105, 210, 255, 0.15);
+}
+
+.theme-v2 input::placeholder,
+.theme-v2 textarea::placeholder {
+  color: var(--muted2);
+}
+
+/* Select dropdown styling */
+.theme-v2 select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23F2F3FF' fill-opacity='0.55' d='M2 4l4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 40px;
+}
+
+/* Disabled state */
+.theme-v2 input:disabled,
+.theme-v2 textarea:disabled,
+.theme-v2 select:disabled,
+.theme-v2 button:disabled,
+.theme-v2 .btn-primary:disabled,
+.theme-v2 .btn-secondary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
