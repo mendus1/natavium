@@ -1,10 +1,20 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, createContext, useContext } from "react";
 import html2canvas from 'html2canvas';
 import { Routes, Route, useNavigate, useParams, Navigate } from "react-router-dom";
 import { calculateNatalChartFromLocal } from "./ephemeris";
 import BrandStar from "./components/BrandStar";
 import "./App.css";
 import "./theme-cosmic.css";
+import "./theme-tokens.css";
+
+// Theme Context for global theme switching
+const ThemeContext = createContext({
+  theme: 'theme-original',
+  setTheme: () => {},
+  toggleTheme: () => {},
+});
+
+export const useTheme = () => useContext(ThemeContext);
 import {
   Sparkles,
   Lock,
@@ -571,14 +581,15 @@ function LandingPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="theme-cosmic min-h-screen text-white p-6">
+    <div className="min-h-screen p-6">
       <div className="max-w-4xl mx-auto">
+        {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <div />
           <div className="flex gap-3">
             <button
               onClick={() => navigate("/info/services")}
-              className="flex items-center text-sm px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 transition-colors"
+              className="t-btn-secondary"
             >
               <DollarSign className="w-4 h-4 mr-2" />
               Pricing
@@ -586,7 +597,7 @@ function LandingPage() {
 
             <button
               onClick={() => navigate("/info/systems")}
-              className="flex items-center text-sm px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 transition-colors"
+              className="t-btn-secondary"
             >
               <BookOpen className="w-4 h-4 mr-2" />
               Learn More
@@ -594,56 +605,60 @@ function LandingPage() {
           </div>
         </div>
 
+        {/* Hero */}
         <div className="text-center py-16">
           <div className="flex items-center justify-center mb-6">
-            <BrandStar className="w-12 h-12 animate-pulse mr-3" color="#fde047" />
-            <h1 className="text-5xl md:text-6xl font-black text-yellow-300">Natavium</h1>
-            <BrandStar className="w-12 h-12 animate-pulse ml-3" color="#fde047" />
+            <BrandStar className="w-12 h-12 animate-pulse mr-3" color="var(--accent)" />
+            <h1 className="t-heading-xl">Natavium</h1>
+            <BrandStar className="w-12 h-12 animate-pulse ml-3" color="var(--accent)" />
           </div>
-          <p className="text-xl text-purple-200 mb-2">Where AI Meets Astrology</p>
-          <p className="text-purple-300">Real AI analysis of YOUR unique birth chart</p>
+          <p className="text-xl t-text-muted mb-2">Where AI Meets Astrology</p>
+          <p className="t-text-subtle">Real AI analysis of YOUR unique birth chart</p>
         </div>
 
+        {/* Feature Cards */}
         <div className="grid md:grid-cols-3 gap-6 mb-12">
-          <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 hover:bg-white/15 transition-colors">
-            <Star className="w-10 h-10 text-yellow-300 mb-4" />
-            <h3 className="text-xl font-bold mb-2">True Personalization</h3>
-            <p className="text-purple-200 text-sm">
+          <div className="t-card">
+            <Star className="w-10 h-10 t-icon mb-4" />
+            <h3 className="t-heading-md mb-2">True Personalization</h3>
+            <p className="t-text-muted t-text-sm">
               Millions of combinations based on your exact birth moment.
             </p>
           </div>
 
-          <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 hover:bg-white/15 transition-colors">
-            <Zap className="w-10 h-10 text-yellow-300 mb-4" />
-            <h3 className="text-xl font-bold mb-2">AI-Powered</h3>
-            <p className="text-purple-200 text-sm">
+          <div className="t-card">
+            <Zap className="w-10 h-10 t-icon mb-4" />
+            <h3 className="t-heading-md mb-2">AI-Powered</h3>
+            <p className="t-text-muted t-text-sm">
               GPT-4 synthesizes your placements - real analysis, not templates.
             </p>
           </div>
 
-          <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 hover:bg-white/15 transition-colors">
-            <Heart className="w-10 h-10 text-yellow-300 mb-4" />
-            <h3 className="text-xl font-bold mb-2">Own Forever</h3>
-            <p className="text-purple-200 text-sm">$4.99 one-time. No subscription required.</p>
+          <div className="t-card">
+            <Heart className="w-10 h-10 t-icon mb-4" />
+            <h3 className="t-heading-md mb-2">Own Forever</h3>
+            <p className="t-text-muted t-text-sm">$4.99 one-time. No subscription required.</p>
           </div>
         </div>
 
+        {/* CTA */}
         <div className="text-center mb-12">
           <button
             onClick={() => navigate("/input")}
-            className="bg-gradient-to-r from-yellow-400 to-orange-500 text-purple-900 font-bold text-xl px-10 py-4 rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition-all"
+            className="t-btn-primary t-btn-primary-lg"
           >
             Discover Your Chart →
           </button>
-          <p className="text-purple-300 mt-4 text-sm">Free preview • Full analysis $4.99</p>
+          <p className="t-text-muted mt-4 t-text-sm">Free preview • Full analysis $4.99</p>
         </div>
 
-        <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-white/20">
-          <h2 className="text-2xl font-bold text-center mb-6">Why Natavium?</h2>
-          <div className="grid md:grid-cols-2 gap-6 text-sm">
+        {/* Comparison */}
+        <div className="t-card-static">
+          <h2 className="t-heading-lg text-center mb-6">Why Natavium?</h2>
+          <div className="grid md:grid-cols-2 gap-6 t-text-sm">
             <div>
-              <div className="font-bold text-red-400 mb-2">❌ Other Apps:</div>
-              <ul className="space-y-2 text-purple-200">
+              <div className="font-bold t-error mb-2">❌ Other Apps:</div>
+              <ul className="space-y-2 t-text-muted">
                 <li>• $7-15/month subscriptions</li>
                 <li>• Template-based readings</li>
                 <li>• Generic sun-sign horoscopes</li>
@@ -651,8 +666,8 @@ function LandingPage() {
             </div>
 
             <div>
-              <div className="font-bold text-green-400 mb-2">✅ Natavium:</div>
-              <ul className="space-y-2 text-purple-200">
+              <div className="font-bold t-success mb-2">✅ Natavium:</div>
+              <ul className="space-y-2 t-text-muted">
                 <li>• $4.99 one-time payment</li>
                 <li>• Real AI synthesis</li>
                 <li>• True personalization</li>
@@ -661,27 +676,22 @@ function LandingPage() {
           </div>
         </div>
 
-        {/* Footer with legal links */}
-        <footer className="mt-12 pt-8 text-center border-t border-white/10">
+        {/* Footer */}
+        <footer className="mt-12 pt-8 text-center">
+          <hr className="t-divider" />
           <div className="flex justify-center gap-6 mb-4">
-            <button
-              onClick={() => navigate("/impressum")}
-              className="text-purple-300 hover:text-white text-sm transition-colors"
-            >
+            <button onClick={() => navigate("/impressum")} className="t-link t-text-sm">
               Impressum
             </button>
-            <span className="text-purple-400">|</span>
-            <button
-              onClick={() => navigate("/datenschutz")}
-              className="text-purple-300 hover:text-white text-sm transition-colors"
-            >
+            <span className="t-text-subtle">|</span>
+            <button onClick={() => navigate("/datenschutz")} className="t-link t-text-sm">
               Datenschutz
             </button>
           </div>
           <div className="flex justify-center mb-4">
             <SocialLinks iconClassName="w-4 h-4" />
           </div>
-          <p className="text-purple-400 text-xs">© {new Date().getFullYear()} Natavium. Alle Rechte vorbehalten.</p>
+          <p className="t-text-subtle t-text-xs">© {new Date().getFullYear()} Natavium. Alle Rechte vorbehalten.</p>
         </footer>
       </div>
     </div>
@@ -3472,6 +3482,21 @@ function PrivacyPage() {
 }
 
 export default function Natavium() {
+  // Theme state - persist to localStorage
+  const [theme, setTheme] = useState(() => {
+    const saved = localStorage.getItem("natavium_theme");
+    return saved || 'theme-original'; // default to original purple theme
+  });
+
+  // Persist theme to localStorage
+  useEffect(() => {
+    localStorage.setItem("natavium_theme", theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(prev => prev === 'theme-original' ? 'theme-v2' : 'theme-original');
+  };
+
   // Load initial state from localStorage
   const [birthData, setBirthData] = useState(() => {
     const saved = localStorage.getItem("natavium_birthData");
@@ -3608,51 +3633,55 @@ export default function Natavium() {
   // Routes
   // =========================
   return (
-    <Routes>
-      <Route path="/" element={<LandingPage />} />
-      <Route path="/input" element={
-        <InputPage
-          birthData={birthData}
-          handleInputChange={handleInputChange}
-          calculateChart={calculateChart}
-          calcError={calcError}
-        />
-      } />
-      <Route path="/calculating" element={<CalculatingPage />} />
-      <Route path="/preview" element={
-        <PreviewPage
-          chartResult={chartResult}
-          birthData={birthData}
-          selectedBundle={selectedBundle}
-          setSelectedBundle={setSelectedBundle}
-        />
-      } />
-      <Route path="/payment" element={
-        <PaymentPage
-          handlePayment={handlePayment}
-          selectedBundle={selectedBundle}
-        />
-      } />
-      <Route path="/success" element={
-        <SuccessPage
-          setIsPremium={setIsPremium}
-          chartResult={chartResult}
-          selectedBundle={selectedBundle}
-        />
-      } />
-      <Route path="/chart" element={
-        <ChartPage
-          chartResult={chartResult}
-          birthData={birthData}
-          isPremium={isPremium}
-          selectedBundle={selectedBundle}
-        />
-      } />
-      <Route path="/info/:page" element={<InfoPage />} />
-      <Route path="/info" element={<InfoPage />} />
-      <Route path="/impressum" element={<ImpressumPage />} />
-      <Route path="/datenschutz" element={<PrivacyPage />} />
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+    <ThemeContext.Provider value={{ theme, setTheme, toggleTheme }}>
+      <div className={theme}>
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/input" element={
+            <InputPage
+              birthData={birthData}
+              handleInputChange={handleInputChange}
+              calculateChart={calculateChart}
+              calcError={calcError}
+            />
+          } />
+          <Route path="/calculating" element={<CalculatingPage />} />
+          <Route path="/preview" element={
+            <PreviewPage
+              chartResult={chartResult}
+              birthData={birthData}
+              selectedBundle={selectedBundle}
+              setSelectedBundle={setSelectedBundle}
+            />
+          } />
+          <Route path="/payment" element={
+            <PaymentPage
+              handlePayment={handlePayment}
+              selectedBundle={selectedBundle}
+            />
+          } />
+          <Route path="/success" element={
+            <SuccessPage
+              setIsPremium={setIsPremium}
+              chartResult={chartResult}
+              selectedBundle={selectedBundle}
+            />
+          } />
+          <Route path="/chart" element={
+            <ChartPage
+              chartResult={chartResult}
+              birthData={birthData}
+              isPremium={isPremium}
+              selectedBundle={selectedBundle}
+            />
+          } />
+          <Route path="/info/:page" element={<InfoPage />} />
+          <Route path="/info" element={<InfoPage />} />
+          <Route path="/impressum" element={<ImpressumPage />} />
+          <Route path="/datenschutz" element={<PrivacyPage />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </div>
+    </ThemeContext.Provider>
   );
 }
