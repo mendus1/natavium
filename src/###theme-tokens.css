@@ -1,0 +1,461 @@
+/* ================================================================
+   UNIFIED THEME SYSTEM
+
+   Both themes implement the same CSS variables.
+   Switch themes by changing the class on the root element:
+   - .theme-original = Purple gradient (current production)
+   - .theme-v2 = Dark starfield (new design)
+
+   Components reference ONLY these variables, never hardcoded colors.
+   ================================================================ */
+
+/* ================================
+   THEME: Original (Purple Gradient)
+   ================================ */
+.theme-original {
+  /* Page background */
+  --page-bg: linear-gradient(to bottom right, #312e81, #581c87, #be185d);
+
+  /* Text colors */
+  --text-primary: #ffffff;
+  --text-muted: #c4b5fd;
+  --text-subtle: #a78bfa;
+
+  /* Accent colors */
+  --accent: #fde047;
+  --accent-hover: #fef08a;
+  --accent-secondary: #f97316;
+
+  /* Card/Surface */
+  --card-bg: rgba(255, 255, 255, 0.1);
+  --card-bg-hover: rgba(255, 255, 255, 0.15);
+  --card-border: rgba(255, 255, 255, 0.2);
+  --card-border-hover: rgba(255, 255, 255, 0.3);
+
+  /* Buttons - Primary */
+  --btn-primary-bg: linear-gradient(to right, #facc15, #f97316);
+  --btn-primary-bg-hover: linear-gradient(to right, #fde047, #fb923c);
+  --btn-primary-text: #581c87;
+
+  /* Buttons - Secondary */
+  --btn-secondary-bg: rgba(255, 255, 255, 0.1);
+  --btn-secondary-bg-hover: rgba(255, 255, 255, 0.2);
+  --btn-secondary-text: #ffffff;
+  --btn-secondary-border: rgba(255, 255, 255, 0.2);
+
+  /* Inputs */
+  --input-bg: rgba(255, 255, 255, 0.2);
+  --input-border: rgba(255, 255, 255, 0.3);
+  --input-border-focus: #fde047;
+  --input-text: #ffffff;
+  --input-placeholder: rgba(255, 255, 255, 0.5);
+
+  /* Borders & Dividers */
+  --border-default: rgba(255, 255, 255, 0.1);
+  --border-hover: rgba(255, 255, 255, 0.2);
+
+  /* Shadows */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.15);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.25);
+
+  /* Radius */
+  --radius: 1rem;
+  --radius-lg: 1.5rem;
+  --radius-full: 9999px;
+
+  /* Status colors */
+  --success: #4ade80;
+  --error: #f87171;
+  --warning: #fbbf24;
+
+  /* Backdrop blur (for glass effect) */
+  --backdrop-blur: blur(12px);
+}
+
+/* ================================
+   THEME: V2 (Dark Starfield)
+   ================================ */
+.theme-v2 {
+  /* Page background */
+  --page-bg: linear-gradient(180deg, #070812 0%, #0a0d1a 50%, #080b14 100%);
+
+  /* Text colors */
+  --text-primary: #F2F3FF;
+  --text-muted: rgba(242, 243, 255, 0.70);
+  --text-subtle: rgba(242, 243, 255, 0.55);
+
+  /* Accent colors */
+  --accent: #D6B35A;
+  --accent-hover: #E5C878;
+  --accent-secondary: #69D2FF;
+
+  /* Card/Surface */
+  --card-bg: #12142A;
+  --card-bg-hover: #171A35;
+  --card-border: rgba(255, 255, 255, 0.10);
+  --card-border-hover: rgba(255, 255, 255, 0.18);
+
+  /* Buttons - Primary */
+  --btn-primary-bg: #D6B35A;
+  --btn-primary-bg-hover: #E5C878;
+  --btn-primary-text: #070812;
+
+  /* Buttons - Secondary */
+  --btn-secondary-bg: transparent;
+  --btn-secondary-bg-hover: #12142A;
+  --btn-secondary-text: #F2F3FF;
+  --btn-secondary-border: rgba(255, 255, 255, 0.10);
+
+  /* Inputs */
+  --input-bg: #171A35;
+  --input-border: rgba(255, 255, 255, 0.10);
+  --input-border-focus: #69D2FF;
+  --input-text: #F2F3FF;
+  --input-placeholder: rgba(242, 243, 255, 0.55);
+
+  /* Borders & Dividers */
+  --border-default: rgba(255, 255, 255, 0.10);
+  --border-hover: rgba(255, 255, 255, 0.18);
+
+  /* Shadows */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 6px 20px rgba(0, 0, 0, 0.4);
+
+  /* Radius */
+  --radius: 12px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+
+  /* Status colors */
+  --success: #4ade80;
+  --error: #f87171;
+  --warning: #fbbf24;
+
+  /* Backdrop blur (minimal for v2) */
+  --backdrop-blur: blur(0px);
+}
+
+/* ================================
+   BASE STYLES (Applied to themed root)
+   ================================ */
+.theme-original,
+.theme-v2 {
+  min-height: 100vh;
+  background: var(--page-bg);
+  color: var(--text-primary);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ================================
+   V2 STARFIELD BACKGROUND
+   ================================ */
+.theme-v2 {
+  position: relative;
+}
+
+.theme-v2::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    /* Large sparse stars */
+    radial-gradient(1.5px 1.5px at 10% 15%, rgba(255, 255, 255, 0.7) 50%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 85% 8%, rgba(255, 255, 255, 0.6) 50%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 45% 25%, rgba(255, 255, 255, 0.5) 50%, transparent 100%),
+    radial-gradient(1px 1px at 70% 35%, rgba(255, 255, 255, 0.65) 50%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 25% 45%, rgba(255, 255, 255, 0.55) 50%, transparent 100%),
+    radial-gradient(1px 1px at 90% 55%, rgba(255, 255, 255, 0.6) 50%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 15% 65%, rgba(255, 255, 255, 0.5) 50%, transparent 100%),
+    radial-gradient(1px 1px at 60% 72%, rgba(255, 255, 255, 0.7) 50%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 35% 85%, rgba(255, 255, 255, 0.55) 50%, transparent 100%),
+    radial-gradient(1px 1px at 78% 90%, rgba(255, 255, 255, 0.6) 50%, transparent 100%),
+    /* Medium density stars */
+    radial-gradient(1px 1px at 5% 5%, rgba(255, 255, 255, 0.4) 50%, transparent 100%),
+    radial-gradient(1px 1px at 95% 20%, rgba(255, 255, 255, 0.35) 50%, transparent 100%),
+    radial-gradient(1px 1px at 55% 12%, rgba(255, 255, 255, 0.45) 50%, transparent 100%),
+    radial-gradient(1px 1px at 30% 30%, rgba(255, 255, 255, 0.4) 50%, transparent 100%),
+    radial-gradient(1px 1px at 82% 42%, rgba(255, 255, 255, 0.35) 50%, transparent 100%),
+    radial-gradient(1px 1px at 18% 52%, rgba(255, 255, 255, 0.45) 50%, transparent 100%),
+    radial-gradient(1px 1px at 65% 58%, rgba(255, 255, 255, 0.4) 50%, transparent 100%),
+    radial-gradient(1px 1px at 42% 68%, rgba(255, 255, 255, 0.35) 50%, transparent 100%),
+    radial-gradient(1px 1px at 88% 75%, rgba(255, 255, 255, 0.45) 50%, transparent 100%),
+    radial-gradient(1px 1px at 8% 88%, rgba(255, 255, 255, 0.4) 50%, transparent 100%),
+    /* Small faint stars */
+    radial-gradient(0.5px 0.5px at 20% 10%, rgba(255, 255, 255, 0.3) 50%, transparent 100%),
+    radial-gradient(0.5px 0.5px at 75% 18%, rgba(255, 255, 255, 0.25) 50%, transparent 100%),
+    radial-gradient(0.5px 0.5px at 40% 38%, rgba(255, 255, 255, 0.3) 50%, transparent 100%),
+    radial-gradient(0.5px 0.5px at 92% 48%, rgba(255, 255, 255, 0.25) 50%, transparent 100%),
+    radial-gradient(0.5px 0.5px at 12% 78%, rgba(255, 255, 255, 0.3) 50%, transparent 100%),
+    radial-gradient(0.5px 0.5px at 58% 82%, rgba(255, 255, 255, 0.25) 50%, transparent 100%);
+  z-index: 0;
+}
+
+.theme-v2::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(1px 1px at 3% 22%, rgba(255, 255, 255, 0.5) 50%, transparent 100%),
+    radial-gradient(1px 1px at 97% 35%, rgba(255, 255, 255, 0.45) 50%, transparent 100%),
+    radial-gradient(1px 1px at 52% 5%, rgba(255, 255, 255, 0.5) 50%, transparent 100%),
+    radial-gradient(1px 1px at 22% 58%, rgba(255, 255, 255, 0.45) 50%, transparent 100%),
+    radial-gradient(1px 1px at 73% 62%, rgba(255, 255, 255, 0.5) 50%, transparent 100%),
+    radial-gradient(1px 1px at 38% 78%, rgba(255, 255, 255, 0.45) 50%, transparent 100%),
+    radial-gradient(1px 1px at 83% 88%, rgba(255, 255, 255, 0.5) 50%, transparent 100%);
+  z-index: 0;
+}
+
+.theme-v2 > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ================================
+   ORIGINAL THEME STARFIELD (subtle)
+   ================================ */
+.theme-original::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(1px 1px at 20% 30%, rgba(255, 255, 255, 0.05), transparent),
+    radial-gradient(1px 1px at 80% 20%, rgba(255, 255, 255, 0.04), transparent),
+    radial-gradient(1px 1px at 33% 80%, rgba(255, 255, 255, 0.05), transparent),
+    radial-gradient(1px 1px at 15% 90%, rgba(255, 255, 255, 0.04), transparent),
+    radial-gradient(1px 1px at 45% 15%, rgba(255, 255, 255, 0.03), transparent),
+    radial-gradient(1px 1px at 75% 45%, rgba(255, 255, 255, 0.04), transparent);
+  z-index: 0;
+}
+
+.theme-original > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ================================
+   COMPONENT: Cards
+   ================================ */
+.t-card {
+  background: var(--card-bg);
+  backdrop-filter: var(--backdrop-blur);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.t-card:hover {
+  background: var(--card-bg-hover);
+  border-color: var(--card-border-hover);
+}
+
+.t-card-static {
+  background: var(--card-bg);
+  backdrop-filter: var(--backdrop-blur);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+}
+
+/* ================================
+   COMPONENT: Buttons
+   ================================ */
+.t-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-sm);
+}
+
+.t-btn-primary:hover {
+  background: var(--btn-primary-bg-hover);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.t-btn-primary:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Large variant */
+.t-btn-primary-lg {
+  font-size: 1.25rem;
+  padding: 1rem 2.5rem;
+  border-radius: var(--radius-full);
+}
+
+.t-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--btn-secondary-bg);
+  color: var(--btn-secondary-text);
+  font-weight: 500;
+  font-size: 0.875rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--btn-secondary-border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.t-btn-secondary:hover {
+  background: var(--btn-secondary-bg-hover);
+  border-color: var(--border-hover);
+}
+
+/* ================================
+   COMPONENT: Typography
+   ================================ */
+.t-heading-xl {
+  font-size: 3rem;
+  font-weight: 900;
+  color: var(--accent);
+  line-height: 1.1;
+}
+
+.t-heading-lg {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.t-heading-md {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.3;
+}
+
+.t-text {
+  color: var(--text-primary);
+}
+
+.t-text-muted {
+  color: var(--text-muted);
+}
+
+.t-text-subtle {
+  color: var(--text-subtle);
+}
+
+.t-text-accent {
+  color: var(--accent);
+}
+
+.t-text-sm {
+  font-size: 0.875rem;
+}
+
+.t-text-xs {
+  font-size: 0.75rem;
+}
+
+/* ================================
+   COMPONENT: Links
+   ================================ */
+.t-link {
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.2s ease;
+  cursor: pointer;
+  background: none;
+  border: none;
+  font: inherit;
+}
+
+.t-link:hover {
+  color: var(--text-primary);
+}
+
+/* ================================
+   COMPONENT: Divider
+   ================================ */
+.t-divider {
+  border: none;
+  height: 1px;
+  background: var(--border-default);
+  margin: 1.5rem 0;
+}
+
+/* ================================
+   COMPONENT: Inputs
+   ================================ */
+.t-input,
+.t-select {
+  background: var(--input-bg);
+  color: var(--input-text);
+  border: 1px solid var(--input-border);
+  border-radius: var(--radius);
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  width: 100%;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.t-input:focus,
+.t-select:focus {
+  outline: none;
+  border-color: var(--input-border-focus);
+  box-shadow: 0 0 0 2px rgba(253, 224, 71, 0.2);
+}
+
+.t-input::placeholder {
+  color: var(--input-placeholder);
+}
+
+.t-select {
+  appearance: none;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23ffffff' fill-opacity='0.5' d='M2 4l4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  padding-right: 2.5rem;
+}
+
+/* ================================
+   COMPONENT: Icon containers
+   ================================ */
+.t-icon {
+  color: var(--accent);
+}
+
+/* ================================
+   UTILITY: Status colors
+   ================================ */
+.t-success { color: var(--success); }
+.t-error { color: var(--error); }
+.t-warning { color: var(--warning); }
+
+/* ================================
+   RESPONSIVE
+   ================================ */
+@media (max-width: 768px) {
+  .t-heading-xl {
+    font-size: 2.5rem;
+  }
+
+  .t-btn-primary-lg {
+    font-size: 1.125rem;
+    padding: 0.875rem 2rem;
+  }
+}
