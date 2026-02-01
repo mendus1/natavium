@@ -571,7 +571,7 @@ function LandingPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="theme-cosmic theme-v2 min-h-screen text-white p-6">
+    <div className="theme-cosmic theme-v2 cosmic-full min-h-screen text-white p-6">
       <div className="max-w-4xl mx-auto relative z-10">
         <div className="flex justify-between items-center mb-8">
           <div />
@@ -594,7 +594,7 @@ function LandingPage() {
           </div>
         </div>
 
-        <div className="text-center section-lg">
+        <div className="text-center section-lg arc-accent-wide">
           <div className="flex items-center justify-center mb-6">
             <BrandStar className="w-12 h-12 animate-pulse mr-3" color="var(--accent)" />
             <h1 className="h1 text-5xl md:text-6xl" style={{ color: 'var(--accent)' }}>Natavium</h1>
@@ -604,7 +604,7 @@ function LandingPage() {
           <p className="text-muted">Real AI analysis of YOUR unique birth chart</p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6 mb-12">
+        <div className="grid md:grid-cols-3 gap-6 mb-12 horizon-line">
           <div className="card">
             <Star className="w-10 h-10 mb-4" style={{ color: 'var(--accent)' }} />
             <h3 className="h3">True Personalization</h3>
@@ -638,7 +638,7 @@ function LandingPage() {
           <p className="text-muted mt-4 text-small">Free preview • Full analysis $4.99</p>
         </div>
 
-        <div className="card-static">
+        <div className="card-static card-ticked">
           <h2 className="h2 text-center mb-4">Why Natavium?</h2>
           <div className="grid md:grid-cols-2 gap-4 text-small">
             <div>

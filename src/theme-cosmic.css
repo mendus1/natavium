@@ -1019,3 +1019,256 @@
 .theme-v2 .px-3 { padding-left: 24px; padding-right: 24px; }
 .theme-v2 .px-4 { padding-left: 32px; padding-right: 32px; }
 .theme-v2 .px-5 { padding-left: 48px; padding-right: 48px; }
+
+/* ================================
+   Theme V2: Cosmic Motifs
+   Subtle background textures and accents
+   ================================ */
+
+/* Constellation grid background - very faint radial lines */
+.theme-v2 .cosmic-grid {
+  position: relative;
+}
+
+.theme-v2 .cosmic-grid::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    /* Faint radial arcs from center */
+    radial-gradient(ellipse 120% 80% at 50% 0%, transparent 60%, rgba(105, 210, 255, 0.03) 70%, transparent 75%),
+    radial-gradient(ellipse 100% 60% at 50% 100%, transparent 60%, rgba(214, 179, 90, 0.02) 70%, transparent 75%),
+    /* Subtle concentric circles */
+    radial-gradient(circle at 50% 50%, transparent 30%, rgba(255, 255, 255, 0.015) 30.5%, transparent 31%),
+    radial-gradient(circle at 50% 50%, transparent 50%, rgba(255, 255, 255, 0.01) 50.5%, transparent 51%),
+    radial-gradient(circle at 50% 50%, transparent 70%, rgba(255, 255, 255, 0.008) 70.5%, transparent 71%);
+  z-index: 0;
+}
+
+.theme-v2 .cosmic-grid > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Degree tick marks - decorative thin lines for headers */
+.theme-v2 .degree-ticks {
+  position: relative;
+}
+
+.theme-v2 .degree-ticks::before,
+.theme-v2 .degree-ticks::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 24px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(214, 179, 90, 0.25), transparent);
+  transform: translateY(-50%);
+}
+
+.theme-v2 .degree-ticks::before {
+  left: -32px;
+}
+
+.theme-v2 .degree-ticks::after {
+  right: -32px;
+}
+
+/* Degree ticks - small variant for inline elements */
+.theme-v2 .degree-ticks-sm::before,
+.theme-v2 .degree-ticks-sm::after {
+  width: 12px;
+}
+
+.theme-v2 .degree-ticks-sm::before {
+  left: -20px;
+}
+
+.theme-v2 .degree-ticks-sm::after {
+  right: -20px;
+}
+
+/* Celestial arc accent - curved line above element */
+.theme-v2 .arc-accent {
+  position: relative;
+}
+
+.theme-v2 .arc-accent::before {
+  content: '';
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 20px;
+  border-top: 1px solid rgba(214, 179, 90, 0.15);
+  border-radius: 50% 50% 0 0;
+  pointer-events: none;
+}
+
+/* Wider arc variant */
+.theme-v2 .arc-accent-wide::before {
+  width: 120px;
+  height: 30px;
+}
+
+/* Card with subtle corner ticks (like chart degree markers) */
+.theme-v2 .card-ticked {
+  position: relative;
+}
+
+.theme-v2 .card-ticked::before,
+.theme-v2 .card-ticked::after {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-color: rgba(214, 179, 90, 0.2);
+  border-style: solid;
+  pointer-events: none;
+}
+
+.theme-v2 .card-ticked::before {
+  top: 8px;
+  left: 8px;
+  border-width: 1px 0 0 1px;
+}
+
+.theme-v2 .card-ticked::after {
+  bottom: 8px;
+  right: 8px;
+  border-width: 0 1px 1px 0;
+}
+
+/* Section with faint horizon line */
+.theme-v2 .horizon-line {
+  position: relative;
+}
+
+.theme-v2 .horizon-line::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(105, 210, 255, 0.08) 20%,
+    rgba(214, 179, 90, 0.1) 50%,
+    rgba(105, 210, 255, 0.08) 80%,
+    transparent
+  );
+  pointer-events: none;
+}
+
+/* Meridian line - vertical accent */
+.theme-v2 .meridian-line {
+  position: relative;
+}
+
+.theme-v2 .meridian-line::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    rgba(214, 179, 90, 0.06) 30%,
+    rgba(214, 179, 90, 0.06) 70%,
+    transparent
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Ecliptic path - very subtle curved background element */
+.theme-v2 .ecliptic-bg {
+  position: relative;
+  overflow: hidden;
+}
+
+.theme-v2 .ecliptic-bg::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: -20%;
+  right: -20%;
+  height: 200px;
+  transform: translateY(-50%) rotate(-3deg);
+  border-top: 1px solid rgba(214, 179, 90, 0.04);
+  border-bottom: 1px solid rgba(105, 210, 255, 0.03);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.theme-v2 .ecliptic-bg > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Zodiac ring hint - very faint circular border */
+.theme-v2 .zodiac-ring {
+  position: relative;
+}
+
+.theme-v2 .zodiac-ring::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 90%;
+  max-width: 400px;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Combine multiple motifs for full cosmic background */
+.theme-v2 .cosmic-full {
+  position: relative;
+  overflow: hidden;
+}
+
+.theme-v2 .cosmic-full::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    /* Faint concentric arcs */
+    radial-gradient(ellipse 150% 100% at 50% -20%, transparent 50%, rgba(214, 179, 90, 0.015) 51%, transparent 52%),
+    radial-gradient(ellipse 150% 100% at 50% 120%, transparent 50%, rgba(105, 210, 255, 0.01) 51%, transparent 52%),
+    /* Very subtle grid dots */
+    radial-gradient(circle at center, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 40px 40px;
+  z-index: 0;
+}
+
+.theme-v2 .cosmic-full::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 80%;
+  max-width: 600px;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border: 1px solid rgba(255, 255, 255, 0.02);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.theme-v2 .cosmic-full > * {
+  position: relative;
+  z-index: 1;
+}
