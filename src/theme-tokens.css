@@ -528,18 +528,35 @@
   border-color: rgba(255, 255, 255, 0.15);
 }
 
-/* Solid card - gradient background matching cosmic theme */
+/* Solid card - readable over starry sky with subtle gold metallic sheen */
 .card-solid {
-  background: linear-gradient(145deg, rgba(46, 16, 101, 0.6) 0%, rgba(20, 15, 45, 0.8) 100%);
-  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  background:
+    linear-gradient(135deg,
+      rgba(214, 179, 90, 0.14) 0%,
+      rgba(214, 179, 90, 0.06) 35%,
+      rgba(105, 210, 255, 0.03) 70%,
+      rgba(18, 20, 42, 0.92) 100%
+    ),
+    rgba(18, 20, 42, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.10);
   border-radius: var(--radius);
   padding: 1.5rem;
-  transition: all 0.3s ease;
+  transition: background 0.3s ease, border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+  backdrop-filter: blur(8px); /* optional; remove if you dislike the glass effect */
 }
 
 .card-solid:hover {
-  background: linear-gradient(145deg, rgba(56, 20, 120, 0.65) 0%, rgba(25, 20, 55, 0.85) 100%);
-  border-color: rgba(255, 255, 255, 0.22);
+  background:
+    linear-gradient(135deg,
+      rgba(214, 179, 90, 0.18) 0%,
+      rgba(214, 179, 90, 0.08) 35%,
+      rgba(105, 210, 255, 0.04) 70%,
+      rgba(18, 20, 42, 0.94) 100%
+    ),
+    rgba(18, 20, 42, 0.94);
+  border-color: rgba(255, 255, 255, 0.16);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  transform: translateY(-1px);
 }
 
 /* Comparison Table - Premium Style with gradient */
