@@ -78,39 +78,39 @@
    ================================ */
 .theme-v2 {
   /* Page background */
-  --page-bg: linear-gradient(180deg, #070812 0%, #0a0d1a 50%, #080b14 100%);
+  --page-bg: radial-gradient(circle at 50% 0%, #2e1065 0%, #050508 60%);
 
   /* Text colors */
-  --text-primary: #F2F3FF;
-  --text-muted: rgba(242, 243, 255, 0.70);
-  --text-subtle: rgba(242, 243, 255, 0.55);
+  --text-primary: #ffffff;
+  --text-muted: rgba(255, 255, 255, 0.5);
+  --text-subtle: #94a3b8;
 
   /* Accent colors */
-  --accent: #D6B35A;
-  --accent-hover: #E5C878;
+  --accent: #fbbf24;
+  --accent-hover: #fde047;
   --accent-secondary: #69D2FF;
 
   /* Card/Surface */
-  --card-bg: #12142A;
-  --card-bg-hover: #171A35;
-  --card-border: rgba(255, 255, 255, 0.10);
-  --card-border-hover: rgba(255, 255, 255, 0.18);
+  --card-bg: rgba(30, 27, 75, 0.4);
+  --card-bg-hover: rgba(49, 46, 129, 0.5);
+  --card-border: rgba(255, 255, 255, 0.1);
+  --card-border-hover: rgba(255, 255, 255, 0.2);
 
   /* Buttons - Primary */
-  --btn-primary-bg: #D6B35A;
-  --btn-primary-bg-hover: #E5C878;
-  --btn-primary-text: #070812;
+  --btn-primary-bg: #fbbf24;
+  --btn-primary-bg-hover: #fde047;
+  --btn-primary-text: #050508;
 
   /* Buttons - Secondary */
   --btn-secondary-bg: transparent;
-  --btn-secondary-bg-hover: #12142A;
-  --btn-secondary-text: #F2F3FF;
-  --btn-secondary-border: rgba(255, 255, 255, 0.10);
+  --btn-secondary-bg-hover: rgba(30, 27, 75, 0.4);
+  --btn-secondary-text: #ffffff;
+  --btn-secondary-border: rgba(255, 255, 255, 0.1);
 
   /* Inputs */
-  --input-bg: #171A35;
-  --input-border: rgba(255, 255, 255, 0.10);
-  --input-border-focus: #69D2FF;
+  --input-bg: rgba(30, 27, 75, 0.35);
+  --input-border: rgba(255, 255, 255, 0.1);
+  --input-border-focus: rgba(255, 255, 255, 0.2);
   --input-text: #F2F3FF;
   --input-placeholder: rgba(242, 243, 255, 0.55);
 
@@ -124,7 +124,7 @@
   --shadow-lg: 0 6px 20px rgba(0, 0, 0, 0.4);
 
   /* Radius */
-  --radius: 12px;
+  --radius: 16px;
   --radius-lg: 16px;
   --radius-full: 9999px;
 
