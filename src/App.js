@@ -3,6 +3,7 @@ import html2canvas from 'html2canvas';
 import { Routes, Route, useNavigate, useParams, Navigate } from "react-router-dom";
 import { calculateNatalChartFromLocal } from "./ephemeris";
 import BrandStar from "./components/BrandStar";
+import LogoRed from "./LogoRed.png";
 import {
   Sparkles,
   Lock,
@@ -585,9 +586,9 @@ function LandingPage() {
       {/* Header with Logo/Title on left, Nav on right */}
       <header className="max-w-5xl mx-auto flex justify-between items-center mb-8">
         <div className="flex items-center">
-          <BrandStar className="w-14 h-14 mr-3" color="#D69E2E" />
+          <img src={LogoRed} alt="Natavium Logo" className="w-14 h-14 mr-3 object-contain" />
           <h1 className="font-serif text-5xl md:text-6xl font-semibold gold-gradient-text leading-none">Natavium</h1>
-        </div>
+        </div>  
         <nav className="flex gap-4">
           <button
             onClick={() => navigate("/info/services")}
