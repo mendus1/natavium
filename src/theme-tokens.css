@@ -185,7 +185,7 @@
   position: fixed;
   inset: 0;
   pointer-events: none;
-  background-image: url('./starsBG2.png');
+  background-image: url('./starsBG1.jpg');
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
@@ -455,4 +455,90 @@
     font-size: 1.125rem;
     padding: 0.875rem 2rem;
   }
+}
+
+/* ================================
+   LUXURY / EDITORIAL STYLES
+   ================================ */
+
+/* Gold gradient text effect */
+.gold-gradient-text {
+  background: linear-gradient(135deg, #FAE8B4 0%, #D69E2E 50%, #FAE8B4 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Gold gradient button */
+.gold-gradient-btn {
+  background: linear-gradient(135deg, #FAE8B4 0%, #D69E2E 100%);
+  color: #1a1a2e;
+  font-weight: 600;
+  border: none;
+  border-radius: var(--radius);
+  padding: 1rem 2.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(214, 158, 46, 0.25);
+}
+
+.gold-gradient-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(214, 158, 46, 0.35);
+}
+
+.gold-gradient-btn-lg {
+  font-size: 1.125rem;
+  padding: 1.25rem 3rem;
+  border-radius: 9999px;
+  letter-spacing: 0.025em;
+}
+
+/* Serif headings for luxury feel */
+.font-serif {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+}
+
+/* Large display heading */
+.heading-display {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 4.5rem;
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+@media (min-width: 768px) {
+  .heading-display {
+    font-size: 6rem;
+  }
+}
+
+/* Refined glass card */
+.card-glass {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.card-glass:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Thin-stroke gold icon */
+.icon-gold {
+  color: #D69E2E;
+  stroke-width: 1px;
+}
+
+/* Luxury subheading */
+.subheading-luxury {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.5rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }

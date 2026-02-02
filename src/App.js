@@ -581,119 +581,145 @@ function LandingPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen p-6">
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-8">
-          <div />
-          <div className="flex gap-3">
-            <button
-              onClick={() => navigate("/info/services")}
-              className="t-btn-secondary"
-            >
-              <DollarSign className="w-4 h-4 mr-2" />
-              Pricing
-            </button>
-
-            <button
-              onClick={() => navigate("/info/systems")}
-              className="t-btn-secondary"
-            >
-              <BookOpen className="w-4 h-4 mr-2" />
-              Learn More
-            </button>
-          </div>
-        </div>
-
-        {/* Hero */}
-        <div className="text-center py-16">
-          <div className="flex items-center justify-center mb-6">
-            <BrandStar className="w-12 h-12 animate-pulse mr-3" color="var(--accent)" />
-            <h1 className="t-heading-xl">Natavium</h1>
-            <BrandStar className="w-12 h-12 animate-pulse ml-3" color="var(--accent)" />
-          </div>
-          <p className="text-xl t-text-muted mb-2">Where AI Meets Astrology</p>
-          <p className="t-text-subtle">Real AI analysis of YOUR unique birth chart</p>
-        </div>
-
-        {/* Feature Cards */}
-        <div className="grid md:grid-cols-3 gap-6 mb-12">
-          <div className="t-card">
-            <Star className="w-10 h-10 t-icon mb-4" />
-            <h3 className="t-heading-md mb-2">True Personalization</h3>
-            <p className="t-text-muted t-text-sm">
-              Millions of combinations based on your exact birth moment.
-            </p>
-          </div>
-
-          <div className="t-card">
-            <Zap className="w-10 h-10 t-icon mb-4" />
-            <h3 className="t-heading-md mb-2">AI-Powered</h3>
-            <p className="t-text-muted t-text-sm">
-              GPT-4 synthesizes your placements - real analysis, not templates.
-            </p>
-          </div>
-
-          <div className="t-card">
-            <Heart className="w-10 h-10 t-icon mb-4" />
-            <h3 className="t-heading-md mb-2">Own Forever</h3>
-            <p className="t-text-muted t-text-sm">$4.99 one-time. No subscription required.</p>
-          </div>
-        </div>
-
-        {/* CTA */}
-        <div className="text-center mb-12">
+    <div className="min-h-screen px-6 py-8">
+      {/* Header */}
+      <header className="max-w-4xl mx-auto flex justify-between items-center mb-16">
+        <div />
+        <nav className="flex gap-4">
           <button
-            onClick={() => navigate("/input")}
-            className="t-btn-primary t-btn-primary-lg"
+            onClick={() => navigate("/info/services")}
+            className="t-btn-secondary text-sm"
           >
-            Discover Your Chart →
+            <DollarSign className="w-4 h-4 mr-2 icon-gold" strokeWidth={1} />
+            Pricing
           </button>
-          <p className="t-text-muted mt-4 t-text-sm">Free preview • Full analysis $4.99</p>
+
+          <button
+            onClick={() => navigate("/info/systems")}
+            className="t-btn-secondary text-sm"
+          >
+            <BookOpen className="w-4 h-4 mr-2 icon-gold" strokeWidth={1} />
+            Learn More
+          </button>
+        </nav>
+      </header>
+
+      {/* Hero Section */}
+      <section className="max-w-4xl mx-auto text-center py-20">
+        <div className="flex items-center justify-center mb-8">
+          <BrandStar className="w-10 h-10 mr-4 opacity-60" color="#D69E2E" />
+          <h1 className="heading-display gold-gradient-text">Natavium</h1>
+          <BrandStar className="w-10 h-10 ml-4 opacity-60" color="#D69E2E" />
+        </div>
+        <p className="font-serif text-2xl md:text-3xl t-text-muted mb-4 tracking-wide">
+          Where AI Meets Astrology
+        </p>
+        <p className="t-text-subtle text-lg max-w-xl mx-auto leading-relaxed">
+          Real AI analysis of your unique birth chart — not templates, not generic horoscopes.
+        </p>
+      </section>
+
+      {/* CTA */}
+      <section className="max-w-4xl mx-auto text-center mb-24">
+        <button
+          onClick={() => navigate("/input")}
+          className="gold-gradient-btn gold-gradient-btn-lg"
+        >
+          Discover Your Chart
+        </button>
+        <p className="t-text-muted mt-6 text-sm tracking-wide">
+          Free preview • Full analysis from $4.99
+        </p>
+      </section>
+
+      {/* Feature Cards */}
+      <section className="max-w-4xl mx-auto grid md:grid-cols-3 gap-8 mb-24">
+        <div className="card-glass text-center py-8 px-6">
+          <Star className="w-8 h-8 icon-gold mx-auto mb-5" strokeWidth={1} />
+          <h3 className="font-serif text-xl mb-3 t-text-primary">True Personalization</h3>
+          <p className="t-text-muted text-sm leading-relaxed">
+            Millions of combinations based on your exact birth moment.
+          </p>
         </div>
 
-        {/* Comparison */}
-        <div className="t-card-static">
-          <h2 className="t-heading-lg text-center mb-6">Why Natavium?</h2>
-          <div className="grid md:grid-cols-2 gap-6 t-text-sm">
+        <div className="card-glass text-center py-8 px-6">
+          <Zap className="w-8 h-8 icon-gold mx-auto mb-5" strokeWidth={1} />
+          <h3 className="font-serif text-xl mb-3 t-text-primary">AI-Powered</h3>
+          <p className="t-text-muted text-sm leading-relaxed">
+            GPT-4 synthesizes your placements — real analysis, not templates.
+          </p>
+        </div>
+
+        <div className="card-glass text-center py-8 px-6">
+          <Heart className="w-8 h-8 icon-gold mx-auto mb-5" strokeWidth={1} />
+          <h3 className="font-serif text-xl mb-3 t-text-primary">Own Forever</h3>
+          <p className="t-text-muted text-sm leading-relaxed">
+            One-time payment. No subscription required.
+          </p>
+        </div>
+      </section>
+
+      {/* Comparison */}
+      <section className="max-w-3xl mx-auto mb-24">
+        <div className="card-glass py-10 px-8">
+          <h2 className="font-serif text-3xl text-center mb-10 t-text-primary">Why Natavium?</h2>
+          <div className="grid md:grid-cols-2 gap-10 text-sm">
             <div>
-              <div className="font-bold t-error mb-2">❌ Other Apps:</div>
-              <ul className="space-y-2 t-text-muted">
-                <li>• $7-15/month subscriptions</li>
-                <li>• Template-based readings</li>
-                <li>• Generic sun-sign horoscopes</li>
+              <div className="font-semibold t-error mb-4 text-base">Other Apps</div>
+              <ul className="space-y-3 t-text-muted">
+                <li className="flex items-start">
+                  <span className="mr-3 opacity-50">—</span>
+                  $7-15/month subscriptions
+                </li>
+                <li className="flex items-start">
+                  <span className="mr-3 opacity-50">—</span>
+                  Template-based readings
+                </li>
+                <li className="flex items-start">
+                  <span className="mr-3 opacity-50">—</span>
+                  Generic sun-sign horoscopes
+                </li>
               </ul>
             </div>
 
             <div>
-              <div className="font-bold t-success mb-2">✅ Natavium:</div>
-              <ul className="space-y-2 t-text-muted">
-                <li>• $4.99 one-time payment</li>
-                <li>• Real AI synthesis</li>
-                <li>• True personalization</li>
+              <div className="font-semibold gold-gradient-text mb-4 text-base">Natavium</div>
+              <ul className="space-y-3 t-text-muted">
+                <li className="flex items-start">
+                  <Star className="w-4 h-4 mr-3 icon-gold flex-shrink-0 mt-0.5" strokeWidth={1} />
+                  $4.99 one-time payment
+                </li>
+                <li className="flex items-start">
+                  <Star className="w-4 h-4 mr-3 icon-gold flex-shrink-0 mt-0.5" strokeWidth={1} />
+                  Real AI synthesis
+                </li>
+                <li className="flex items-start">
+                  <Star className="w-4 h-4 mr-3 icon-gold flex-shrink-0 mt-0.5" strokeWidth={1} />
+                  True personalization
+                </li>
               </ul>
             </div>
           </div>
         </div>
+      </section>
 
-        {/* Footer */}
-        <footer className="mt-12 pt-8 text-center">
-          <hr className="t-divider" />
-          <div className="flex justify-center gap-6 mb-4">
-            <button onClick={() => navigate("/impressum")} className="t-link t-text-sm">
-              Impressum
-            </button>
-            <span className="t-text-subtle">|</span>
-            <button onClick={() => navigate("/datenschutz")} className="t-link t-text-sm">
-              Datenschutz
-            </button>
-          </div>
-          <div className="flex justify-center mb-4">
-            <SocialLinks iconClassName="w-4 h-4" />
-          </div>
-          <p className="t-text-subtle t-text-xs">© {new Date().getFullYear()} Natavium. Alle Rechte vorbehalten.</p>
-        </footer>
-      </div>
+      {/* Footer */}
+      <footer className="max-w-4xl mx-auto pt-8 text-center border-t border-white/10">
+        <div className="flex justify-center gap-8 mb-6">
+          <button onClick={() => navigate("/impressum")} className="t-link text-sm">
+            Impressum
+          </button>
+          <button onClick={() => navigate("/datenschutz")} className="t-link text-sm">
+            Datenschutz
+          </button>
+        </div>
+        <div className="flex justify-center mb-6">
+          <SocialLinks iconClassName="w-4 h-4" />
+        </div>
+        <p className="t-text-subtle text-xs tracking-wide">
+          © {new Date().getFullYear()} Natavium. Alle Rechte vorbehalten.
+        </p>
+      </footer>
     </div>
   );
 }
