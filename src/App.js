@@ -587,7 +587,7 @@ function LandingPage() {
       <header className="max-w-5xl mx-auto flex justify-between items-center mb-8">
         <div className="flex items-center">
           <img src={LogoRed} alt="Natavium Logo" className="w-14 h-14 mr-3 object-contain" />
-          <h1 className="font-serif text-5xl md:text-6xl font-semibold gold-gradient-text leading-none pt-2">Natavium</h1>
+          <h1 className="font-serif text-5xl md:text-6xl font-semibold gold-gradient-text leading-none pt-3">Natavium</h1>
         </div>  
         <nav className="flex gap-4">
           <button
