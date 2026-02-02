@@ -185,7 +185,7 @@
   position: fixed;
   inset: 0;
   pointer-events: none;
-  background-image: url('./starsBG.png');
+  background-image: url('./starsBG.jpg');
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
