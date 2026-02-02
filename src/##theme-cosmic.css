@@ -10,66 +10,67 @@
    ================================ */
 .theme-cosmic {
   /* Background colors - inky midnight with subtle vertical gradient */
-  --cosmic-bg: #070812;
-  --cosmic-bg2: #0B1030;
-  --cosmic-bg-primary: #070812;
-  --cosmic-bg-secondary: #0B1030;
-  --cosmic-bg-tertiary: #070812;
+  --cosmic-bg: #050508;
+  --cosmic-bg2: #0f0518;
+  --cosmic-bg-primary: #050508;
+  --cosmic-bg-secondary: #0f0518;
+  --cosmic-bg-tertiary: #050508;
 
   /* Surface colors - dark slate panels */
-  --cosmic-surface: #12142A;
-  --cosmic-surface2: #171A35;
-  --cosmic-bg-card: #12142A;
-  --cosmic-bg-card-hover: #171A35;
-  --cosmic-bg-elevated: #171A35;
+  --cosmic-surface: rgba(30, 27, 75, 0.4);
+  --cosmic-surface2: rgba(49, 46, 129, 0.5);
+  --cosmic-bg-card: rgba(30, 27, 75, 0.4);
+  --cosmic-bg-card-hover: rgba(49, 46, 129, 0.5);
+  --cosmic-bg-elevated: rgba(49, 46, 129, 0.5);
 
   /* Text colors - high contrast off-white */
-  --cosmic-text: #F2F3FF;
-  --cosmic-text-primary: #F2F3FF;
-  --cosmic-text-secondary: rgba(242, 243, 255, 0.85);
-  --cosmic-text-muted: rgba(242, 243, 255, 0.70);
-  --cosmic-text-subtle: rgba(242, 243, 255, 0.55);
+  --cosmic-text: #ffffff;
+  --cosmic-text-primary: #ffffff;
+  --cosmic-text-secondary: #94a3b8;
+  --cosmic-text-muted: rgba(255, 255, 255, 0.5);
+  --cosmic-text-subtle: rgba(255, 255, 255, 0.5);
 
   /* Accent colors - warm gold/brass primary, restrained cyan secondary */
-  --cosmic-accent: #D6B35A;
-  --cosmic-accent-gold: #D6B35A;
-  --cosmic-accent-gold-light: #E5C878;
-  --cosmic-accent-gold-dark: #B8983D;
+  --cosmic-accent: #fbbf24;
+  --cosmic-accent-gold: #fbbf24;
+  --cosmic-accent-gold-light: #fde047;
+  --cosmic-accent-gold-dark: #d97706;
   --cosmic-accent2: #69D2FF;
   --cosmic-accent-cyan: #69D2FF;
   --cosmic-accent-cyan-muted: rgba(105, 210, 255, 0.7);
 
   /* Border colors - thin, low-opacity light borders */
-  --cosmic-border: rgba(255, 255, 255, 0.10);
+  --cosmic-border: rgba(255, 255, 255, 0.1);
   --cosmic-border-subtle: rgba(255, 255, 255, 0.08);
-  --cosmic-border-medium: rgba(255, 255, 255, 0.12);
+  --cosmic-border-medium: rgba(255, 255, 255, 0.2);
   --cosmic-border-accent: rgba(214, 179, 90, 0.3);
 
   /* Gradients */
-  --cosmic-gradient-bg: linear-gradient(180deg, #070812 0%, #0B1030 50%, #070812 100%);
-  --cosmic-gradient-cta: linear-gradient(135deg, #D6B35A 0%, #E5C878 100%);
+  --cosmic-gradient-bg: radial-gradient(circle at 50% 0%, #2e1065 0%, #050508 60%);
+  --cosmic-gradient-cta: linear-gradient(135deg, #fde047 0%, #d97706 100%);
   --cosmic-gradient-card: linear-gradient(135deg, #12142A 0%, #0B1030 100%);
 
   /* Shadows - soft premium shadow */
-  --cosmic-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  --cosmic-shadow: 0 0 20px rgba(124, 58, 237, 0.15);
   --cosmic-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
   --cosmic-shadow-md: 0 6px 16px rgba(0, 0, 0, 0.4);
   --cosmic-shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.45);
-  --cosmic-shadow-glow: 0 0 24px rgba(214, 179, 90, 0.25);
+  --cosmic-shadow-glow: 0 0 20px rgba(124, 58, 237, 0.15);
 
   /* Radius - medium (14px base) */
-  --cosmic-radius: 14px;
-  --cosmic-radius-sm: 8px;
+  --cosmic-radius: 16px;
+  --cosmic-radius-sm: 12px;
   --cosmic-radius-md: 14px;
-  --cosmic-radius-lg: 18px;
-  --cosmic-radius-xl: 24px;
+  --cosmic-radius-lg: 16px;
+  --cosmic-radius-xl: 20px;
 }
 
 /* ================================
    Base Styles
    ================================ */
 .theme-cosmic {
-  background: var(--cosmic-gradient-bg);
+  background-color: var(--cosmic-bg);
+  background-image: var(--cosmic-gradient-bg);
   color: var(--cosmic-text);
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   line-height: 1.6;
@@ -86,22 +87,13 @@
 .theme-cosmic::before {
   content: '';
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-image:
-    radial-gradient(1px 1px at 20% 30%, rgba(255, 255, 255, 0.06), transparent),
-    radial-gradient(1px 1px at 60% 70%, rgba(255, 255, 255, 0.04), transparent),
-    radial-gradient(1px 1px at 50% 50%, rgba(255, 255, 255, 0.05), transparent),
-    radial-gradient(1px 1px at 80% 10%, rgba(255, 255, 255, 0.03), transparent),
-    radial-gradient(1px 1px at 90% 60%, rgba(255, 255, 255, 0.04), transparent),
-    radial-gradient(1px 1px at 33% 80%, rgba(255, 255, 255, 0.05), transparent),
-    radial-gradient(1px 1px at 15% 90%, rgba(255, 255, 255, 0.04), transparent),
-    radial-gradient(1px 1px at 45% 15%, rgba(255, 255, 255, 0.03), transparent),
-    radial-gradient(1px 1px at 75% 45%, rgba(255, 255, 255, 0.04), transparent);
-  pointer-events: none;
+  inset: 0;
+  background: 
+    radial-gradient(circle at 100% 50%, #172554 0%, transparent 40%),
+    radial-gradient(circle at 0% 80%, #4c0519 0%, transparent 30%);
+  opacity: 0.6;
   z-index: 0;
+  pointer-events: none;
 }
 
 /* Disable old starfield when theme-v2 is applied (cosmic-full has its own) */
@@ -113,17 +105,11 @@
 .theme-cosmic::after {
   content: '';
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.01) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.01) 1px, transparent 1px);
-  background-size: 80px 80px;
-  pointer-events: none;
+  inset: 0;
+  opacity: 0.04;
   z-index: 0;
-  opacity: 0.5;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='1'/%3E%3C/svg%3E");
 }
 
 /* Disable old grid overlay when theme-v2 is applied */
@@ -1331,9 +1317,8 @@
 /* ================================
    Glass Card Override (Deep Purple Glass)
    ================================ */
-/* Keeps layout rules intact; only visual surface effects */
-.theme-v2 .cosmic-card,
-.theme-v2 .card {
+.theme-cosmic .cosmic-card,
+.theme-cosmic .card {
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-top: 1px solid rgba(255, 255, 255, 0.15);
