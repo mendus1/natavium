@@ -636,29 +636,7 @@ function LandingPage() {
   </p>
 </section>
 
-      {/* Hero Section */}
-      <section className="max-w-4xl mx-auto text-center py-12">
-        <h2 className="font-serif text-3xl md:text-4xl t-text-primary mb-4">
-          Clarity for your next move
-        </h2>
-        <p className="text-xl md:text-2xl t-text-muted max-w-2xl mx-auto mb-10">
-          Powerful AI-astrology based on your birth chart
-        </p>
-        <p className="text-xl md:text-2xl t-text-muted max-w-2xl mx-auto mb-10">
-          Career, relationships, and personal growth—timed to what’s happening now
-        </p>
-        <button
-          onClick={() => navigate("/input")}
-          className="gold-gradient-btn gold-gradient-btn-lg"
-        >
-          Discover Your Chart
-        </button>
-        <p className="t-text-muted mt-4 text-sm tracking-wide">
-          Free preview • Full analysis from $4.99
-        </p>
-      </section>
-
-      {/* Feature Cards */}
+    {/* Feature Cards */}
       <section className="max-w-4xl mx-auto grid md:grid-cols-3 gap-6 mb-12">
         <div className="card-solid text-center py-8 px-6">
           <Star className="w-8 h-8 icon-gold mx-auto mb-4" strokeWidth={1} />
