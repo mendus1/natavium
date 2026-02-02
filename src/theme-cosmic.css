@@ -792,8 +792,7 @@
 }
 
 .theme-v2 h2,
-.theme-v2 .h2 {
-  font-size: 1.75rem;
+.theme-v2 .h2 { 
   font-weight: 600;
   letter-spacing: -0.02em;
   line-height: 1.25;

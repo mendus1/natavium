@@ -610,18 +610,18 @@ function LandingPage() {
       {/* Hero Section */}
       <section className="max-w-5xl mx-auto text-center py-16 md:py-24 px-4">
         {/* Big hero headline (dominates page) */}
-          <h2 className="font-serif text-5xl md:text-7xl font-semibold t-text-primary leading-tight tracking-tight mb-6">
+          <h2 className="font-serif text-5xl md:text-7xl font-semibold t-text-primary leading-tight tracking-tight mb-6 text-center">
             Clarity for your next move
           </h2>
 
         {/* Tagline (slightly smaller, still prominent) */}
-          <p className="text-xl md:text-2xl t-text-muted max-w-3xl mx-auto mb-4">
+          <p className="text-xl md:text-2xl t-text-muted max-w-3xl mx-auto mb-4 text-center">
             Powerful AI-astrology based on your birth chart
           </p>
 
         {/* Supporting line (smaller + softer so it doesn't compete) */}
-          <p className="text-base md:text-lg t-text-muted max-w-3xl mx-auto mb-10">
-            Career, relationships, and personal growth—timed to what’s happening now
+          <p className="text-base md:text-lg t-text-muted max-w-3xl mx-auto mb-10 text-center">
+            Career, relationships, and personal growth—timed to what's happening now
           </p>
   
   <button
