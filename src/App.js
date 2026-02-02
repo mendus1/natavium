@@ -615,12 +615,12 @@ function LandingPage() {
           </h2>
 
         {/* Tagline (slightly smaller, still prominent) */}
-          <p className="text-xl md:text-2xl t-text-muted max-w-3xl mx-auto mb-4 text-center">
+          <p className="text-xl md:text-2xl t-text-muted mb-4 text-center">
             Powerful AI-astrology based on your birth chart
           </p>
 
         {/* Supporting line (smaller + softer so it doesn't compete) */}
-          <p className="text-base md:text-lg t-text-muted max-w-3xl mx-auto mb-10 text-center">
+          <p className="text-base md:text-lg t-text-muted mb-10 text-center">
             Career, relationships, and personal growth—timed to what's happening now
           </p>
   
@@ -640,25 +640,25 @@ function LandingPage() {
       <section className="max-w-4xl mx-auto grid md:grid-cols-3 gap-6 mb-12">
         <div className="card-solid text-center py-8 px-6">
           <Star className="w-8 h-8 icon-gold mx-auto mb-4" strokeWidth={1} />
-          <h3 className="font-serif text-xl mb-2 t-text-primary">True Personalization</h3>
+          <h3 className="font-serif text-xl mb-2 t-text-primary">Personalized Birth Chart</h3>
           <p className="t-text-muted text-sm leading-relaxed">
-            Millions of combinations based on your exact birth moment.
+            Built from exact planetary positions at your birth—so it’s about you, not just your Sun sign.
           </p>
         </div>
 
         <div className="card-solid text-center py-8 px-6">
           <Zap className="w-8 h-8 icon-gold mx-auto mb-4" strokeWidth={1} />
-          <h3 className="font-serif text-xl mb-2 t-text-primary">AI-Powered</h3>
+          <h3 className="font-serif text-xl mb-2 t-text-primary">Powerful AI</h3>
           <p className="t-text-muted text-sm leading-relaxed">
-            GPT-4 synthesizes your placements — real analysis, not templates.
+            The latest AI models analyse your planetary placements + transits into a coherent story. No templates.
           </p>
         </div>
 
         <div className="card-solid text-center py-8 px-6">
           <Heart className="w-8 h-8 icon-gold mx-auto mb-4" strokeWidth={1} />
-          <h3 className="font-serif text-xl mb-2 t-text-primary">Own Forever</h3>
+          <h3 className="font-serif text-xl mb-2 t-text-primary">One-Time Unlocks</h3>
           <p className="t-text-muted text-sm leading-relaxed">
-            One-time payment. No subscription required.
+            Subscriptions are not required. Pay for exactly what you want. 
           </p>
         </div>
       </section>
