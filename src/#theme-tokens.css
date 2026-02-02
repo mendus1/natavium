@@ -87,7 +87,7 @@
 
   /* Accent colors */
   --accent: var(--cosmic-accent);
-  --accent-hover: #E5C878;
+  --accent-hover: #fde047;
   --accent-secondary: var(--cosmic-accent-cyan);
 
   /* Card/Surface */
@@ -98,7 +98,7 @@
 
   /* Buttons - Primary */
   --btn-primary-bg: var(--cosmic-accent);
-  --btn-primary-bg-hover: #E5C878;
+  --btn-primary-bg-hover: #fde047;
   --btn-primary-text: var(--cosmic-bg);
 
   /* Buttons - Secondary */
@@ -108,9 +108,9 @@
   --btn-secondary-border: var(--cosmic-border);
 
   /* Inputs */
-  --input-bg: rgba(18, 20, 42, 0.35);
+  --input-bg: rgba(30, 27, 75, 0.35);
   --input-border: var(--cosmic-border);
-  --input-border-focus: var(--cosmic-accent-cyan);
+  --input-border-focus: var(--cosmic-border-medium);
   --input-text: #F2F3FF;
   --input-placeholder: rgba(242, 243, 255, 0.55);
 
@@ -134,25 +134,25 @@
   --warning: #fbbf24;
 
   /* Backdrop blur (minimal for v2) */
-  --backdrop-blur: blur(16px);
-  --cosmic-bg: #070812;
-  --cosmic-bg2: #0B1030;
-  --cosmic-surface: rgba(18, 20, 42, 0.4);
-  --cosmic-surface2: rgba(23, 26, 53, 0.5);
-  --cosmic-bg-card: rgba(18, 20, 42, 0.4);
-  --cosmic-text: #F2F3FF;
-  --cosmic-text-secondary: rgba(242, 243, 255, 0.85);
-  --cosmic-text-muted: rgba(242, 243, 255, 0.70);
-  --cosmic-accent: #D6B35A;
-  --cosmic-accent-gold: #D6B35A;
+  --backdrop-blur: blur(0px);
+  --cosmic-bg: #050508;
+  --cosmic-bg2: #0f0518;
+  --cosmic-surface: rgba(30, 27, 75, 0.4);
+  --cosmic-surface2: rgba(49, 46, 129, 0.5);
+  --cosmic-bg-card: rgba(30, 27, 75, 0.4);
+  --cosmic-text: #ffffff;
+  --cosmic-text-secondary: #94a3b8;
+  --cosmic-text-muted: rgba(255, 255, 255, 0.5);
+  --cosmic-accent: #fbbf24;
+  --cosmic-accent-gold: #fbbf24;
   --cosmic-accent-cyan: #69D2FF;
-  --cosmic-gradient-bg: linear-gradient(180deg, #070812 0%, #0B1030 50%, #070812 100%);
-  --cosmic-gradient-cta: linear-gradient(135deg, #D6B35A 0%, #E5C878 100%);
+  --cosmic-gradient-bg: radial-gradient(circle at 50% 0%, #2e1065 0%, #050508 60%);
+  --cosmic-gradient-cta: linear-gradient(135deg, #fde047 0%, #d97706 100%);
   --cosmic-border: rgba(255, 255, 255, 0.1);
-  --cosmic-border-medium: rgba(255, 255, 255, 0.12);
-  --cosmic-shadow-glow: 0 0 24px rgba(214, 179, 90, 0.25);
-  --cosmic-radius: 14px;
-  --focus-ring: 0 0 0 3px rgba(105, 210, 255, 0.25);
+  --cosmic-border-medium: rgba(255, 255, 255, 0.2);
+  --cosmic-shadow-glow: 0 0 20px rgba(124, 58, 237, 0.15);
+  --cosmic-radius: 16px;
+  --focus-ring: 0 0 0 3px rgba(124, 58, 237, 0.25);
   --shadow-soft: var(--cosmic-shadow-glow);
   --blur-amount: 16px;
 }
@@ -186,39 +186,39 @@
   inset: 0;
   pointer-events: none;
   background-image:
-    radial-gradient(circle at 100% 50%, #0B1030 0%, transparent 40%),
-    radial-gradient(circle at 0% 80%, #070812 0%, transparent 30%),
+    radial-gradient(circle at 100% 50%, #172554 0%, transparent 40%),
+    radial-gradient(circle at 0% 80%, #4c0519 0%, transparent 30%),
     /* Large sparse stars */
-    radial-gradient(1.5px 1.5px at 10% 15%, rgba(255, 255, 255, 0.07) 50%, transparent 100%),
-    radial-gradient(1.5px 1.5px at 85% 8%, rgba(255, 255, 255, 0.06) 50%, transparent 100%),
-    radial-gradient(1.5px 1.5px at 45% 25%, rgba(255, 255, 255, 0.05) 50%, transparent 100%),
-    radial-gradient(1px 1px at 70% 35%, rgba(255, 255, 255, 0.065) 50%, transparent 100%),
-    radial-gradient(1.5px 1.5px at 25% 45%, rgba(255, 255, 255, 0.055) 50%, transparent 100%),
-    radial-gradient(1px 1px at 90% 55%, rgba(255, 255, 255, 0.06) 50%, transparent 100%),
-    radial-gradient(1.5px 1.5px at 15% 65%, rgba(255, 255, 255, 0.05) 50%, transparent 100%),
-    radial-gradient(1px 1px at 60% 72%, rgba(255, 255, 255, 0.07) 50%, transparent 100%),
-    radial-gradient(1.5px 1.5px at 35% 85%, rgba(255, 255, 255, 0.055) 50%, transparent 100%),
-    radial-gradient(1px 1px at 78% 90%, rgba(255, 255, 255, 0.06) 50%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 10% 15%, rgba(255, 255, 255, 0.7) 50%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 85% 8%, rgba(255, 255, 255, 0.6) 50%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 45% 25%, rgba(255, 255, 255, 0.5) 50%, transparent 100%),
+    radial-gradient(1px 1px at 70% 35%, rgba(255, 255, 255, 0.65) 50%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 25% 45%, rgba(255, 255, 255, 0.55) 50%, transparent 100%),
+    radial-gradient(1px 1px at 90% 55%, rgba(255, 255, 255, 0.6) 50%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 15% 65%, rgba(255, 255, 255, 0.5) 50%, transparent 100%),
+    radial-gradient(1px 1px at 60% 72%, rgba(255, 255, 255, 0.7) 50%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 35% 85%, rgba(255, 255, 255, 0.55) 50%, transparent 100%),
+    radial-gradient(1px 1px at 78% 90%, rgba(255, 255, 255, 0.6) 50%, transparent 100%),
     /* Medium density stars */
-    radial-gradient(1px 1px at 5% 5%, rgba(255, 255, 255, 0.04) 50%, transparent 100%),
-    radial-gradient(1px 1px at 95% 20%, rgba(255, 255, 255, 0.035) 50%, transparent 100%),
-    radial-gradient(1px 1px at 55% 12%, rgba(255, 255, 255, 0.045) 50%, transparent 100%),
-    radial-gradient(1px 1px at 30% 30%, rgba(255, 255, 255, 0.04) 50%, transparent 100%),
-    radial-gradient(1px 1px at 82% 42%, rgba(255, 255, 255, 0.035) 50%, transparent 100%),
-    radial-gradient(1px 1px at 18% 52%, rgba(255, 255, 255, 0.045) 50%, transparent 100%),
-    radial-gradient(1px 1px at 65% 58%, rgba(255, 255, 255, 0.04) 50%, transparent 100%),
-    radial-gradient(1px 1px at 42% 68%, rgba(255, 255, 255, 0.035) 50%, transparent 100%),
-    radial-gradient(1px 1px at 88% 75%, rgba(255, 255, 255, 0.045) 50%, transparent 100%),
-    radial-gradient(1px 1px at 8% 88%, rgba(255, 255, 255, 0.04) 50%, transparent 100%),
+    radial-gradient(1px 1px at 5% 5%, rgba(255, 255, 255, 0.4) 50%, transparent 100%),
+    radial-gradient(1px 1px at 95% 20%, rgba(255, 255, 255, 0.35) 50%, transparent 100%),
+    radial-gradient(1px 1px at 55% 12%, rgba(255, 255, 255, 0.45) 50%, transparent 100%),
+    radial-gradient(1px 1px at 30% 30%, rgba(255, 255, 255, 0.4) 50%, transparent 100%),
+    radial-gradient(1px 1px at 82% 42%, rgba(255, 255, 255, 0.35) 50%, transparent 100%),
+    radial-gradient(1px 1px at 18% 52%, rgba(255, 255, 255, 0.45) 50%, transparent 100%),
+    radial-gradient(1px 1px at 65% 58%, rgba(255, 255, 255, 0.4) 50%, transparent 100%),
+    radial-gradient(1px 1px at 42% 68%, rgba(255, 255, 255, 0.35) 50%, transparent 100%),
+    radial-gradient(1px 1px at 88% 75%, rgba(255, 255, 255, 0.45) 50%, transparent 100%),
+    radial-gradient(1px 1px at 8% 88%, rgba(255, 255, 255, 0.4) 50%, transparent 100%),
     /* Small faint stars */
-    radial-gradient(0.5px 0.5px at 20% 10%, rgba(255, 255, 255, 0.03) 50%, transparent 100%),
-    radial-gradient(0.5px 0.5px at 75% 18%, rgba(255, 255, 255, 0.025) 50%, transparent 100%),
-    radial-gradient(0.5px 0.5px at 40% 38%, rgba(255, 255, 255, 0.03) 50%, transparent 100%),
-    radial-gradient(0.5px 0.5px at 92% 48%, rgba(255, 255, 255, 0.025) 50%, transparent 100%),
-    radial-gradient(0.5px 0.5px at 12% 78%, rgba(255, 255, 255, 0.03) 50%, transparent 100%),
-    radial-gradient(0.5px 0.5px at 58% 82%, rgba(255, 255, 255, 0.025) 50%, transparent 100%);
+    radial-gradient(0.5px 0.5px at 20% 10%, rgba(255, 255, 255, 0.3) 50%, transparent 100%),
+    radial-gradient(0.5px 0.5px at 75% 18%, rgba(255, 255, 255, 0.25) 50%, transparent 100%),
+    radial-gradient(0.5px 0.5px at 40% 38%, rgba(255, 255, 255, 0.3) 50%, transparent 100%),
+    radial-gradient(0.5px 0.5px at 92% 48%, rgba(255, 255, 255, 0.25) 50%, transparent 100%),
+    radial-gradient(0.5px 0.5px at 12% 78%, rgba(255, 255, 255, 0.3) 50%, transparent 100%),
+    radial-gradient(0.5px 0.5px at 58% 82%, rgba(255, 255, 255, 0.25) 50%, transparent 100%);
   z-index: 0;
-  opacity: 1;
+  opacity: 0.6;
 }
 
 
@@ -229,15 +229,15 @@
   pointer-events: none;
   background-image:
     url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='1'/%3E%3C/svg%3E"),
-    radial-gradient(1px 1px at 3% 22%, rgba(255, 255, 255, 0.05) 50%, transparent 100%),
-    radial-gradient(1px 1px at 97% 35%, rgba(255, 255, 255, 0.045) 50%, transparent 100%),
-    radial-gradient(1px 1px at 52% 5%, rgba(255, 255, 255, 0.05) 50%, transparent 100%),
-    radial-gradient(1px 1px at 22% 58%, rgba(255, 255, 255, 0.045) 50%, transparent 100%),
-    radial-gradient(1px 1px at 73% 62%, rgba(255, 255, 255, 0.05) 50%, transparent 100%),
-    radial-gradient(1px 1px at 38% 78%, rgba(255, 255, 255, 0.045) 50%, transparent 100%),
-    radial-gradient(1px 1px at 83% 88%, rgba(255, 255, 255, 0.05) 50%, transparent 100%);
+    radial-gradient(1px 1px at 3% 22%, rgba(255, 255, 255, 0.5) 50%, transparent 100%),
+    radial-gradient(1px 1px at 97% 35%, rgba(255, 255, 255, 0.45) 50%, transparent 100%),
+    radial-gradient(1px 1px at 52% 5%, rgba(255, 255, 255, 0.5) 50%, transparent 100%),
+    radial-gradient(1px 1px at 22% 58%, rgba(255, 255, 255, 0.45) 50%, transparent 100%),
+    radial-gradient(1px 1px at 73% 62%, rgba(255, 255, 255, 0.5) 50%, transparent 100%),
+    radial-gradient(1px 1px at 38% 78%, rgba(255, 255, 255, 0.45) 50%, transparent 100%),
+    radial-gradient(1px 1px at 83% 88%, rgba(255, 255, 255, 0.5) 50%, transparent 100%);
   z-index: 0;
-  opacity: 0.02;
+  opacity: 0.04;
 }
 
 
@@ -445,7 +445,7 @@
 .t-select:focus {
   outline: none;
   border-color: var(--input-border-focus);
-  box-shadow: 0 0 0 2px rgba(214, 179, 90, 0.2);
+  box-shadow: 0 0 0 2px rgba(253, 224, 71, 0.2);
 }
 
 .t-input::placeholder {
