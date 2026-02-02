@@ -537,7 +537,7 @@
       rgba(105, 210, 255, 0.03) 70%,
       rgba(18, 20, 42, 0.92) 100%
     ),
-    rgba(18, 20, 42, 0.92);
+    rgba(18, 20, 42, 0.75);
   border: 1px solid rgba(255, 255, 255, 0.10);
   border-radius: var(--radius);
   padding: 1.5rem;
@@ -559,12 +559,20 @@
   transform: translateY(-1px);
 }
 
-/* Comparison Table - Premium Style with gradient */
+/* Comparison Table - Credible Cosmic (dark slate base + subtle gold sheen) */
 .comparison-table {
-  background: linear-gradient(145deg, rgba(46, 16, 101, 0.6) 0%, rgba(20, 15, 45, 0.8) 100%);
-  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  background:
+    linear-gradient(135deg,
+      rgba(214, 179, 90, 0.10) 0%,
+      rgba(214, 179, 90, 0.04) 35%,
+      rgba(105, 210, 255, 0.02) 70%,
+      rgba(18, 20, 42, 0.94) 100%
+    ),
+    rgba(18, 20, 42, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.10);
   border-radius: var(--radius);
   overflow: hidden;
+  backdrop-filter: blur(8px); /* optional */
 }
 
 .comparison-row {
@@ -578,16 +586,33 @@
 }
 
 .comparison-row.comparison-header {
-  background: rgba(255, 255, 255, 0.03);
+  background:
+    linear-gradient(90deg,
+      rgba(214, 179, 90, 0.10) 0%,
+      rgba(214, 179, 90, 0.04) 40%,
+      rgba(255, 255, 255, 0.02) 100%
+    );
+  border-bottom: 1px solid rgba(255, 255, 255, 0.10);
 }
 
 .comparison-cell {
   padding: 1rem 1.25rem;
   font-size: 0.9375rem;
+  color: var(--text);
+}
+
+.comparison-row.comparison-header .comparison-cell {
+  font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
 .comparison-row:not(.comparison-header):hover {
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+/* Optional: subtle vertical separators between columns */
+.comparison-cell + .comparison-cell {
+  border-left: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 /* Thin-stroke gold icon */
