@@ -528,24 +528,24 @@
   border-color: rgba(255, 255, 255, 0.15);
 }
 
-/* Solid card - more opaque for readability */
+/* Solid card - gradient background matching cosmic theme */
 .card-solid {
-  background: rgba(20, 15, 40, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: linear-gradient(145deg, rgba(46, 16, 101, 0.6) 0%, rgba(20, 15, 45, 0.8) 100%);
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
   border-radius: var(--radius);
   padding: 1.5rem;
   transition: all 0.3s ease;
 }
 
 .card-solid:hover {
-  background: rgba(25, 20, 50, 0.9);
-  border-color: rgba(255, 255, 255, 0.18);
+  background: linear-gradient(145deg, rgba(56, 20, 120, 0.65) 0%, rgba(25, 20, 55, 0.85) 100%);
+  border-color: rgba(255, 255, 255, 0.22);
 }
 
-/* Comparison Table - Premium Style */
+/* Comparison Table - Premium Style with gradient */
 .comparison-table {
-  background: rgba(20, 15, 40, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: linear-gradient(145deg, rgba(46, 16, 101, 0.6) 0%, rgba(20, 15, 45, 0.8) 100%);
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
   border-radius: var(--radius);
   overflow: hidden;
 }
