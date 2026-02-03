@@ -683,12 +683,12 @@ function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="max-w-4xl mx-auto pt-6 text-center border-t border-white/10">
+      <footer className="max-w-4xl mx-auto pt-8 pb-4 text-center border-t border-white/10">
         <div className="flex justify-center gap-8 mb-4">
-          <button onClick={() => navigate("/impressum")} className="t-link text-sm">
+          <button onClick={() => navigate("/impressum")} className="text-sm t-text-muted hover:text-[#D6B35A] transition-colors">
             Impressum
           </button>
-          <button onClick={() => navigate("/datenschutz")} className="t-link text-sm">
+          <button onClick={() => navigate("/datenschutz")} className="text-sm t-text-muted hover:text-[#D6B35A] transition-colors">
             Datenschutz
           </button>
         </div>
@@ -3286,22 +3286,22 @@ function ImpressumPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 text-white p-6">
+    <div className="min-h-screen text-white p-6">
       <div className="max-w-4xl mx-auto">
         <button
           onClick={() => navigate(-1)}
-          className="mb-6 px-4 py-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors flex items-center"
+          className="mb-6 px-4 py-2 bg-[#12142A]/80 border border-white/10 rounded-lg hover:bg-[#12142A] hover:border-white/20 transition-all flex items-center t-text-muted hover:text-white"
         >
           <X className="w-4 h-4 mr-2" />
           Zurück
         </button>
 
-        <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 border border-white/20">
-          <h1 className="text-3xl font-black mb-8">Impressum</h1>
+        <div className="card-solid rounded-2xl p-8">
+          <h1 className="font-serif text-3xl md:text-4xl font-semibold gold-gradient-text mb-8">Impressum</h1>
 
-          <div className="space-y-6 text-purple-200">
+          <div className="space-y-6 t-text-muted">
             <section>
-              <h2 className="text-xl font-bold text-white mb-2">Angaben gemäß § 5 TMG</h2>
+              <h2 className="text-xl font-semibold text-white mb-2">Angaben gemäß § 5 TMG</h2>
               <p>xxxx (Vor- und Nachname / Firmenname)</p>
               <p>xxxx (Straße und Hausnummer)</p>
               <p>xxxx (PLZ und Ort)</p>
@@ -3309,28 +3309,28 @@ function ImpressumPage() {
             </section>
 
             <section>
-              <h2 className="text-xl font-bold text-white mb-2">Kontakt</h2>
+              <h2 className="text-xl font-semibold text-white mb-2">Kontakt</h2>
               <p>Telefon: xxxx</p>
               <p>E-Mail: xxxx</p>
             </section>
 
             <section>
-              <h2 className="text-xl font-bold text-white mb-2">Umsatzsteuer-ID</h2>
+              <h2 className="text-xl font-semibold text-white mb-2">Umsatzsteuer-ID</h2>
               <p>Umsatzsteuer-Identifikationsnummer gemäß § 27 a Umsatzsteuergesetz:</p>
               <p>xxxx</p>
             </section>
 
             <section>
-              <h2 className="text-xl font-bold text-white mb-2">Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV</h2>
+              <h2 className="text-xl font-semibold text-white mb-2">Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV</h2>
               <p>xxxx (Name)</p>
               <p>xxxx (Anschrift)</p>
             </section>
 
             <section>
-              <h2 className="text-xl font-bold text-white mb-2">EU-Streitschlichtung</h2>
+              <h2 className="text-xl font-semibold text-white mb-2">EU-Streitschlichtung</h2>
               <p>
                 Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit:{" "}
-                <a href="https://ec.europa.eu/consumers/odr/" target="_blank" rel="noopener noreferrer" className="text-yellow-300 hover:underline">
+                <a href="https://ec.europa.eu/consumers/odr/" target="_blank" rel="noopener noreferrer" className="text-[#D6B35A] hover:text-[#E5C878] hover:underline transition-colors">
                   https://ec.europa.eu/consumers/odr/
                 </a>
               </p>
@@ -3338,7 +3338,7 @@ function ImpressumPage() {
             </section>
 
             <section>
-              <h2 className="text-xl font-bold text-white mb-2">Verbraucherstreitbeilegung/Universalschlichtungsstelle</h2>
+              <h2 className="text-xl font-semibold text-white mb-2">Verbraucherstreitbeilegung/Universalschlichtungsstelle</h2>
               <p>
                 Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer
                 Verbraucherschlichtungsstelle teilzunehmen.
@@ -3358,23 +3358,23 @@ function PrivacyPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 text-white p-6">
+    <div className="min-h-screen text-white p-6">
       <div className="max-w-4xl mx-auto">
         <button
           onClick={() => navigate(-1)}
-          className="mb-6 px-4 py-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors flex items-center"
+          className="mb-6 px-4 py-2 bg-[#12142A]/80 border border-white/10 rounded-lg hover:bg-[#12142A] hover:border-white/20 transition-all flex items-center t-text-muted hover:text-white"
         >
           <X className="w-4 h-4 mr-2" />
           Zurück
         </button>
 
-        <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 border border-white/20">
-          <h1 className="text-3xl font-black mb-8">Datenschutzerklärung</h1>
+        <div className="card-solid rounded-2xl p-8">
+          <h1 className="font-serif text-3xl md:text-4xl font-semibold gold-gradient-text mb-8">Datenschutzerklärung</h1>
 
-          <div className="space-y-6 text-purple-200">
+          <div className="space-y-6 t-text-muted">
             <section>
-              <h2 className="text-xl font-bold text-white mb-2">1. Datenschutz auf einen Blick</h2>
-              <h3 className="text-lg font-semibold text-white mt-4 mb-2">Allgemeine Hinweise</h3>
+              <h2 className="text-xl font-semibold text-white mb-2">1. Datenschutz auf einen Blick</h2>
+              <h3 className="text-lg font-medium text-white/90 mt-4 mb-2">Allgemeine Hinweise</h3>
               <p>
                 Die folgenden Hinweise geben einen einfachen Überblick darüber, was mit Ihren personenbezogenen
                 Daten passiert, wenn Sie diese Website besuchen. Personenbezogene Daten sind alle Daten, mit
@@ -3383,7 +3383,7 @@ function PrivacyPage() {
             </section>
 
             <section>
-              <h2 className="text-xl font-bold text-white mb-2">2. Verantwortliche Stelle</h2>
+              <h2 className="text-xl font-semibold text-white mb-2">2. Verantwortliche Stelle</h2>
               <p>Die verantwortliche Stelle für die Datenverarbeitung auf dieser Website ist:</p>
               <p className="mt-2">xxxx (Name)</p>
               <p>xxxx (Straße und Hausnummer)</p>
@@ -3393,9 +3393,9 @@ function PrivacyPage() {
             </section>
 
             <section>
-              <h2 className="text-xl font-bold text-white mb-2">3. Datenerfassung auf dieser Website</h2>
+              <h2 className="text-xl font-semibold text-white mb-2">3. Datenerfassung auf dieser Website</h2>
 
-              <h3 className="text-lg font-semibold text-white mt-4 mb-2">Welche Daten werden erfasst?</h3>
+              <h3 className="text-lg font-medium text-white/90 mt-4 mb-2">Welche Daten werden erfasst?</h3>
               <p>
                 Wir erheben und verarbeiten folgende personenbezogene Daten, die Sie uns freiwillig zur
                 Verfügung stellen:
@@ -3407,13 +3407,13 @@ function PrivacyPage() {
                 <li>Zahlungsinformationen (werden durch unseren Zahlungsdienstleister verarbeitet)</li>
               </ul>
 
-              <h3 className="text-lg font-semibold text-white mt-4 mb-2">Zweck der Datenverarbeitung</h3>
+              <h3 className="text-lg font-medium text-white/90 mt-4 mb-2">Zweck der Datenverarbeitung</h3>
               <p>
                 Ihre Daten werden ausschließlich zur Erstellung und Lieferung Ihres personalisierten
                 Horoskops sowie zur Abwicklung der Zahlung verwendet.
               </p>
 
-              <h3 className="text-lg font-semibold text-white mt-4 mb-2">Rechtsgrundlage</h3>
+              <h3 className="text-lg font-medium text-white/90 mt-4 mb-2">Rechtsgrundlage</h3>
               <p>
                 Die Verarbeitung erfolgt auf Grundlage von Art. 6 Abs. 1 lit. b DSGVO (Vertragserfüllung)
                 sowie Art. 6 Abs. 1 lit. a DSGVO (Einwilligung).
@@ -3421,7 +3421,7 @@ function PrivacyPage() {
             </section>
 
             <section>
-              <h2 className="text-xl font-bold text-white mb-2">4. Speicherdauer</h2>
+              <h2 className="text-xl font-semibold text-white mb-2">4. Speicherdauer</h2>
               <p>
                 Ihre Daten werden nur so lange gespeichert, wie es für die Erfüllung des Vertragszwecks
                 erforderlich ist oder gesetzliche Aufbewahrungsfristen dies vorschreiben.
@@ -3429,7 +3429,7 @@ function PrivacyPage() {
             </section>
 
             <section>
-              <h2 className="text-xl font-bold text-white mb-2">5. Ihre Rechte</h2>
+              <h2 className="text-xl font-semibold text-white mb-2">5. Ihre Rechte</h2>
               <p>Sie haben jederzeit das Recht:</p>
               <ul className="list-disc list-inside mt-2 space-y-1">
                 <li>Auskunft über Ihre gespeicherten Daten zu erhalten (Art. 15 DSGVO)</li>
@@ -3443,18 +3443,18 @@ function PrivacyPage() {
             </section>
 
             <section>
-              <h2 className="text-xl font-bold text-white mb-2">6. Zahlungsdienstleister</h2>
+              <h2 className="text-xl font-semibold text-white mb-2">6. Zahlungsdienstleister</h2>
               <p>
                 Für die Abwicklung von Zahlungen nutzen wir den Dienst Stripe. Stripe verarbeitet Ihre
                 Zahlungsdaten gemäß deren eigener Datenschutzerklärung:{" "}
-                <a href="https://stripe.com/de/privacy" target="_blank" rel="noopener noreferrer" className="text-yellow-300 hover:underline">
+                <a href="https://stripe.com/de/privacy" target="_blank" rel="noopener noreferrer" className="text-[#D6B35A] hover:text-[#E5C878] hover:underline transition-colors">
                   https://stripe.com/de/privacy
                 </a>
               </p>
             </section>
 
             <section>
-              <h2 className="text-xl font-bold text-white mb-2">7. Hosting</h2>
+              <h2 className="text-xl font-semibold text-white mb-2">7. Hosting</h2>
               <p>
                 Diese Website wird bei xxxx (Hosting-Anbieter) gehostet. Der Hoster erhebt in sog.
                 Logfiles folgende Daten, die Ihr Browser übermittelt: IP-Adresse, Datum und Uhrzeit der
@@ -3465,7 +3465,7 @@ function PrivacyPage() {
             </section>
 
             <section>
-              <h2 className="text-xl font-bold text-white mb-2">8. Cookies</h2>
+              <h2 className="text-xl font-semibold text-white mb-2">8. Cookies</h2>
               <p>
                 Diese Website verwendet technisch notwendige Cookies, um die Funktionsfähigkeit der
                 Website zu gewährleisten. Diese Cookies werden nur für die Dauer Ihrer Sitzung gespeichert.
@@ -3473,7 +3473,7 @@ function PrivacyPage() {
             </section>
 
             <section>
-              <h2 className="text-xl font-bold text-white mb-2">9. Beschwerderecht</h2>
+              <h2 className="text-xl font-semibold text-white mb-2">9. Beschwerderecht</h2>
               <p>
                 Sie haben das Recht, sich bei einer Datenschutz-Aufsichtsbehörde über die Verarbeitung
                 Ihrer personenbezogenen Daten durch uns zu beschweren.
