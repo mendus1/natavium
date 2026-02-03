@@ -17,7 +17,6 @@ import {
   MapPin,
   Clock,
   BookOpen,
-  DollarSign,
   Check,
   X,
   Info,
@@ -273,22 +272,22 @@ function InfoPage() {
   const infoPage = page || "systems";
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 text-white p-6">
+    <div className="min-h-screen text-white p-6">
       <div className="max-w-4xl mx-auto">
         <button
           onClick={() => navigate("/")}
-          className="mb-6 px-4 py-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors flex items-center"
+          className="mb-6 px-4 py-2 bg-[#12142A]/80 border border-white/10 rounded-lg hover:bg-white/10 transition-colors flex items-center"
         >
           <X className="w-4 h-4 mr-2" />
           Close
         </button>
 
-        <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 border border-white/20">
-          <div className="flex gap-4 mb-8 border-b border-white/20 pb-4 overflow-x-auto">
+        <div className="card-solid rounded-2xl p-8">
+          <div className="flex gap-4 mb-8 border-b border-white/10 pb-4 overflow-x-auto">
             <button
               onClick={() => navigate("/info/systems")}
               className={`px-4 py-2 rounded-lg font-semibold whitespace-nowrap transition-colors ${
-                infoPage === "systems" ? "bg-white/20" : "hover:bg-white/10"
+                infoPage === "systems" ? "bg-[#D6B35A]/20 text-[#D6B35A]" : "hover:bg-white/10"
               }`}
             >
               Astrology Systems
@@ -297,7 +296,7 @@ function InfoPage() {
             <button
               onClick={() => navigate("/info/approach")}
               className={`px-4 py-2 rounded-lg font-semibold whitespace-nowrap transition-colors ${
-                infoPage === "approach" ? "bg-white/20" : "hover:bg-white/10"
+                infoPage === "approach" ? "bg-[#D6B35A]/20 text-[#D6B35A]" : "hover:bg-white/10"
               }`}
             >
               Our Approach
@@ -306,7 +305,7 @@ function InfoPage() {
             <button
               onClick={() => navigate("/info/services")}
               className={`px-4 py-2 rounded-lg font-semibold whitespace-nowrap transition-colors ${
-                infoPage === "services" ? "bg-white/20" : "hover:bg-white/10"
+                infoPage === "services" ? "bg-[#D6B35A]/20 text-[#D6B35A]" : "hover:bg-white/10"
               }`}
             >
               Services & Pricing
@@ -316,54 +315,54 @@ function InfoPage() {
           {infoPage === "systems" && (
             <div className="space-y-8">
               <div>
-                <h2 className="text-3xl font-black mb-6">Understanding Astrology Systems</h2>
-                <p className="text-purple-200 mb-8">
+                <h2 className="font-serif text-3xl font-semibold gold-gradient-text mb-6">Understanding Astrology Systems</h2>
+                <p className="t-text-muted mb-8">
                   Different astrological traditions offer unique perspectives on the same cosmic data.
                 </p>
               </div>
 
               <div className="space-y-6">
-                <div className="bg-white/5 rounded-xl p-6">
-                  <h3 className="text-2xl font-bold text-yellow-300 mb-3">
-                    ⭐ Western (Tropical) Astrology
+                <div className="bg-[#12142A]/60 rounded-xl p-6 border border-white/10">
+                  <h3 className="text-2xl font-bold text-[#D6B35A] mb-3">
+                    Western (Tropical) Astrology
                   </h3>
-                  <p className="text-purple-200 mb-3">
-                    <strong>Most Popular System</strong> - Based on Earth's seasons. The zodiac begins
+                  <p className="t-text-muted mb-3">
+                    <strong className="text-white">Most Popular System</strong> - Based on Earth's seasons. The zodiac begins
                     when the Sun enters 0° Aries at the Spring Equinox.
                   </p>
-                  <p className="text-purple-200 mb-3">
-                    <strong>Best for:</strong> Personality analysis, psychological insight,
+                  <p className="t-text-muted mb-3">
+                    <strong className="text-white">Best for:</strong> Personality analysis, psychological insight,
                     understanding character traits and life purpose.
                   </p>
-                  <p className="text-purple-200">
+                  <p className="t-text-muted">
                     This is the system used in Western horoscopes. It focuses on who you ARE rather
                     than what will happen to you.
                   </p>
                 </div>
 
-                <div className="bg-white/5 rounded-xl p-6">
-                  <h3 className="text-2xl font-bold text-yellow-300 mb-3">
-                    🕉️ Vedic (Sidereal) Astrology
+                <div className="bg-[#12142A]/60 rounded-xl p-6 border border-white/10">
+                  <h3 className="text-2xl font-bold text-[#69D2FF] mb-3">
+                    Vedic (Sidereal) Astrology
                   </h3>
-                  <p className="text-purple-200 mb-3">
-                    <strong>Ancient Indian System</strong> - Based on actual star positions. About
+                  <p className="t-text-muted mb-3">
+                    <strong className="text-white">Ancient Indian System</strong> - Based on actual star positions. About
                     23-24° behind Western astrology.
                   </p>
-                  <p className="text-purple-200 mb-3">
-                    <strong>Key difference:</strong> Your Vedic Sun sign is often DIFFERENT from
+                  <p className="t-text-muted mb-3">
+                    <strong className="text-white">Key difference:</strong> Your Vedic Sun sign is often DIFFERENT from
                     Western!
                   </p>
-                  <p className="text-purple-200">
-                    <strong>Best for:</strong> Predictive astrology, timing life events,
+                  <p className="t-text-muted">
+                    <strong className="text-white">Best for:</strong> Predictive astrology, timing life events,
                     understanding karma and destiny.
                   </p>
                 </div>
               </div>
 
-              <div className="bg-purple-500/20 rounded-xl p-6 border border-purple-500/30">
+              <div className="bg-[#D6B35A]/10 rounded-xl p-6 border border-[#D6B35A]/30">
                 <h3 className="text-xl font-bold mb-3">Which System Should I Use?</h3>
-                <p className="text-purple-200">
-                  Start with <strong>Western (Tropical)</strong> - it's most accessible. Once you
+                <p className="t-text-muted">
+                  Start with <strong className="text-white">Western (Tropical)</strong> - it's most accessible. Once you
                   understand your Western chart, explore Vedic for a different perspective.
                 </p>
               </div>
@@ -373,57 +372,57 @@ function InfoPage() {
           {infoPage === "approach" && (
             <div className="space-y-6">
               <div>
-                <h2 className="text-3xl font-black mb-6">Our Scientific Approach</h2>
-                <p className="text-purple-200 mb-8">
+                <h2 className="font-serif text-3xl font-semibold gold-gradient-text mb-6">Our Scientific Approach</h2>
+                <p className="t-text-muted mb-8">
                   Transparency matters. Here's exactly how Natavium works.
                 </p>
               </div>
 
-              <div className="bg-white/5 rounded-xl p-6">
-                <h3 className="text-xl font-bold text-yellow-300 mb-3">📐 Chart Calculations</h3>
-                <p className="text-purple-200 mb-3">
-                  We use the <strong>Swiss Ephemeris</strong> - the gold standard in astronomical
+              <div className="bg-[#12142A]/60 rounded-xl p-6 border border-white/10">
+                <h3 className="text-xl font-bold text-[#D6B35A] mb-3">Chart Calculations</h3>
+                <p className="t-text-muted mb-3">
+                  We use the <strong className="text-white">Swiss Ephemeris</strong> - the gold standard in astronomical
                   calculations. Planetary positions are accurate to the arc-second.
                 </p>
-                <p className="text-purple-200">
+                <p className="t-text-muted">
                   Your birth time and location are converted to precise coordinates, then we
                   calculate where each planet was at that exact moment.
                 </p>
               </div>
 
-              <div className="bg-white/5 rounded-xl p-6">
-                <h3 className="text-xl font-bold text-yellow-300 mb-3">🤖 AI-Generated Readings</h3>
-                <p className="text-purple-200 mb-3">
-                  Unlike template-based apps, Natavium uses <strong>GPT-4</strong> to actually
+              <div className="bg-[#12142A]/60 rounded-xl p-6 border border-white/10">
+                <h3 className="text-xl font-bold text-[#D6B35A] mb-3">AI-Generated Readings</h3>
+                <p className="t-text-muted mb-3">
+                  Unlike template-based apps, Natavium uses <strong className="text-white">GPT-4</strong> to actually
                   analyze YOUR specific chart.
                 </p>
-                <p className="text-purple-200">
+                <p className="t-text-muted">
                   The AI considers how all your placements interact - synthesizing contradictions
                   and identifying patterns unique to YOUR combination.
                 </p>
               </div>
 
-              <div className="bg-white/5 rounded-xl p-6">
-                <h3 className="text-xl font-bold text-yellow-300 mb-3">🔒 Privacy & Data</h3>
-                <p className="text-purple-200 mb-3">
-                  <strong>Your birth data is private.</strong> We never share or sell your
+              <div className="bg-[#12142A]/60 rounded-xl p-6 border border-white/10">
+                <h3 className="text-xl font-bold text-[#D6B35A] mb-3">Privacy & Data</h3>
+                <p className="t-text-muted mb-3">
+                  <strong className="text-white">Your birth data is private.</strong> We never share or sell your
                   information. Data is encrypted and stored securely.
                 </p>
               </div>
 
-              <div className="bg-white/5 rounded-xl p-6">
-                <h3 className="text-xl font-bold text-yellow-300 mb-3">
-                  ⚖️ What Astrology Can and Cannot Do
+              <div className="bg-[#12142A]/60 rounded-xl p-6 border border-white/10">
+                <h3 className="text-xl font-bold text-[#D6B35A] mb-3">
+                  What Astrology Can and Cannot Do
                 </h3>
-                <p className="text-purple-200 mb-2">
-                  <strong>Astrology CAN:</strong> Provide insight into personality patterns, life
+                <p className="t-text-muted mb-2">
+                  <strong className="text-white">Astrology CAN:</strong> Provide insight into personality patterns, life
                   themes, timing of opportunities, relationship dynamics.
                 </p>
-                <p className="text-purple-200 mb-2">
-                  <strong>Astrology CANNOT:</strong> Predict specific events with certainty,
+                <p className="t-text-muted mb-2">
+                  <strong className="text-white">Astrology CANNOT:</strong> Predict specific events with certainty,
                   override free will, diagnose medical conditions.
                 </p>
-                <p className="text-purple-200">
+                <p className="t-text-muted">
                   Think of astrology as a map, not a mandate. It shows terrain, but YOU choose the
                   path.
                 </p>
@@ -434,44 +433,44 @@ function InfoPage() {
           {infoPage === "services" && (
             <div className="space-y-8">
               <div>
-                <h2 className="text-3xl font-black mb-6">Services & Pricing</h2>
-                <p className="text-purple-200 mb-8">Build your cosmic toolkit at your own pace.</p>
+                <h2 className="font-serif text-3xl font-semibold gold-gradient-text mb-6">Services & Pricing</h2>
+                <p className="t-text-muted mb-8">Build your cosmic toolkit at your own pace.</p>
               </div>
 
-              <div className="bg-gradient-to-br from-yellow-500/20 to-orange-500/20 rounded-2xl p-8 border-2 border-yellow-500/50">
+              <div className="bg-[#D6B35A]/10 rounded-2xl p-8 border border-[#D6B35A]/30">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-3xl font-black text-yellow-300">Your Natal Chart</h3>
+                  <h3 className="text-3xl font-bold gold-gradient-text">Your Natal Chart</h3>
                   <div className="text-right">
-                    <div className="text-4xl font-black text-yellow-300">$4.99</div>
-                    <div className="text-sm text-purple-200">One-time</div>
+                    <div className="text-4xl font-bold gold-gradient-text">$4.99</div>
+                    <div className="text-sm t-text-muted">One-time</div>
                   </div>
                 </div>
 
-                <p className="text-purple-200 mb-6">Complete birth chart analysis</p>
+                <p className="t-text-muted mb-6">Complete birth chart analysis</p>
 
                 <div className="grid md:grid-cols-2 gap-3 mb-6">
                   <div className="flex items-start text-sm">
-                    <Check className="w-5 h-5 text-yellow-300 mr-2 flex-shrink-0 mt-0.5" />
+                    <Check className="w-5 h-5 text-[#D6B35A] mr-2 flex-shrink-0 mt-0.5" />
                     <span>Complete birth chart wheel</span>
                   </div>
                   <div className="flex items-start text-sm">
-                    <Check className="w-5 h-5 text-yellow-300 mr-2 flex-shrink-0 mt-0.5" />
+                    <Check className="w-5 h-5 text-[#D6B35A] mr-2 flex-shrink-0 mt-0.5" />
                     <span>3000+ word AI analysis</span>
                   </div>
                   <div className="flex items-start text-sm">
-                    <Check className="w-5 h-5 text-yellow-300 mr-2 flex-shrink-0 mt-0.5" />
+                    <Check className="w-5 h-5 text-[#D6B35A] mr-2 flex-shrink-0 mt-0.5" />
                     <span>All 10 planetary placements</span>
                   </div>
                   <div className="flex items-start text-sm">
-                    <Check className="w-5 h-5 text-yellow-300 mr-2 flex-shrink-0 mt-0.5" />
+                    <Check className="w-5 h-5 text-[#D6B35A] mr-2 flex-shrink-0 mt-0.5" />
                     <span>House positions & aspects</span>
                   </div>
                   <div className="flex items-start text-sm">
-                    <Check className="w-5 h-5 text-yellow-300 mr-2 flex-shrink-0 mt-0.5" />
+                    <Check className="w-5 h-5 text-[#D6B35A] mr-2 flex-shrink-0 mt-0.5" />
                     <span>2026 forecast included</span>
                   </div>
                   <div className="flex items-start text-sm">
-                    <Check className="w-5 h-5 text-yellow-300 mr-2 flex-shrink-0 mt-0.5" />
+                    <Check className="w-5 h-5 text-[#D6B35A] mr-2 flex-shrink-0 mt-0.5" />
                     <span>Downloadable PDF</span>
                   </div>
                 </div>
@@ -479,90 +478,90 @@ function InfoPage() {
 
               <div>
                 <h3 className="text-2xl font-bold mb-4">Add-On Services</h3>
-                <p className="text-purple-300 mb-6 text-sm">
+                <p className="t-text-muted mb-6 text-sm">
                   Expand your understanding (available with or after natal chart purchase)
                 </p>
 
                 <div className="grid md:grid-cols-2 gap-4">
-                  <div className="bg-white/5 rounded-xl p-5">
+                  <div className="bg-[#12142A]/60 rounded-xl p-5 border border-white/10">
                     <div className="flex items-center justify-between mb-3">
                       <h4 className="text-lg font-bold">Compatibility</h4>
-                      <span className="text-xl font-bold text-purple-300">$3.99</span>
+                      <span className="text-xl font-bold text-[#69D2FF]">$3.99</span>
                     </div>
-                    <p className="text-sm text-purple-200">
+                    <p className="text-sm t-text-muted">
                       Compare your chart with partner or friend. Shows harmony and growth areas.
                     </p>
                   </div>
 
-                  <div className="bg-white/5 rounded-xl p-5">
+                  <div className="bg-[#12142A]/60 rounded-xl p-5 border border-white/10">
                     <div className="flex items-center justify-between mb-3">
                       <h4 className="text-lg font-bold">House Deep Dive</h4>
-                      <span className="text-xl font-bold text-purple-300">$2.99</span>
+                      <span className="text-xl font-bold text-[#69D2FF]">$2.99</span>
                     </div>
-                    <p className="text-sm text-purple-200">
+                    <p className="text-sm t-text-muted">
                       Detailed analysis of each house in your chart and what it means.
                     </p>
                   </div>
 
-                  <div className="bg-white/5 rounded-xl p-5">
+                  <div className="bg-[#12142A]/60 rounded-xl p-5 border border-white/10">
                     <div className="flex items-center justify-between mb-3">
                       <h4 className="text-lg font-bold">Solar Return</h4>
-                      <span className="text-xl font-bold text-purple-300">$4.99</span>
+                      <span className="text-xl font-bold text-[#69D2FF]">$4.99</span>
                     </div>
-                    <p className="text-sm text-purple-200">
+                    <p className="text-sm t-text-muted">
                       Your year ahead forecast. Birthday prediction for coming year.
                     </p>
                   </div>
 
-                  <div className="bg-white/5 rounded-xl p-5">
+                  <div className="bg-[#12142A]/60 rounded-xl p-5 border border-white/10">
                     <div className="flex items-center justify-between mb-3">
                       <h4 className="text-lg font-bold">Vedic Chart</h4>
-                      <span className="text-xl font-bold text-purple-300">$2.99</span>
+                      <span className="text-xl font-bold text-[#69D2FF]">$2.99</span>
                     </div>
-                    <p className="text-sm text-purple-200">
+                    <p className="text-sm t-text-muted">
                       Eastern astrology perspective. Often reveals different signs!
                     </p>
                   </div>
 
-                  <div className="bg-white/5 rounded-xl p-5">
+                  <div className="bg-[#12142A]/60 rounded-xl p-5 border border-white/10">
                     <div className="flex items-center justify-between mb-3">
                       <h4 className="text-lg font-bold">Transit Report</h4>
-                      <span className="text-xl font-bold text-purple-300">$1.99</span>
+                      <span className="text-xl font-bold text-[#69D2FF]">$1.99</span>
                     </div>
-                    <p className="text-sm text-purple-200">
+                    <p className="text-sm t-text-muted">
                       Current planetary movements affecting YOUR chart this month.
                     </p>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-2xl p-6 border border-purple-500/30">
+              <div className="bg-[#69D2FF]/10 rounded-2xl p-6 border border-[#69D2FF]/30">
                 <div className="flex items-center justify-between mb-4">
                   <div>
-                    <h3 className="text-2xl font-black">Natavium Plus (Coming Soon)</h3>
-                    <p className="text-purple-300 text-sm">Optional subscription</p>
+                    <h3 className="text-2xl font-bold">Natavium Plus (Coming Soon)</h3>
+                    <p className="t-text-muted text-sm">Optional subscription</p>
                   </div>
                   <div className="text-right">
-                    <div className="text-3xl font-black text-purple-300">$2.99</div>
-                    <div className="text-sm text-purple-200">/month</div>
+                    <div className="text-3xl font-bold text-[#69D2FF]">$2.99</div>
+                    <div className="text-sm t-text-muted">/month</div>
                   </div>
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-2 text-sm">
                   <div className="flex items-center">
-                    <Check className="w-4 h-4 text-purple-300 mr-2" />
+                    <Check className="w-4 h-4 text-[#69D2FF] mr-2" />
                     <span>Daily personalized horoscope</span>
                   </div>
                   <div className="flex items-center">
-                    <Check className="w-4 h-4 text-purple-300 mr-2" />
+                    <Check className="w-4 h-4 text-[#69D2FF] mr-2" />
                     <span>Weekly transit updates</span>
                   </div>
                   <div className="flex items-center">
-                    <Check className="w-4 h-4 text-purple-300 mr-2" />
+                    <Check className="w-4 h-4 text-[#69D2FF] mr-2" />
                     <span>Unlimited compatibility reports</span>
                   </div>
                   <div className="flex items-center">
-                    <Check className="w-4 h-4 text-purple-300 mr-2" />
+                    <Check className="w-4 h-4 text-[#69D2FF] mr-2" />
                     <span>All chart systems</span>
                   </div>
                 </div>
@@ -590,13 +589,6 @@ function LandingPage() {
           <h1 className="font-serif text-5xl md:text-6xl font-semibold gold-gradient-text leading-none pt-3">Natavium</h1>
         </div>  
         <nav className="flex gap-4">
-          <button
-            onClick={() => navigate("/info/services")}
-            className="t-btn-secondary text-sm"
-          >
-            <DollarSign className="w-4 h-4 mr-2 icon-gold" strokeWidth={1} />
-            Pricing
-          </button>
           <button
             onClick={() => navigate("/info/systems")}
             className="t-btn-secondary text-sm"
@@ -1012,6 +1004,72 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
 
         {/* Premium Chart Wheel */}
         <div className="card-solid rounded-2xl p-8 mb-8">
+          {/* Personalized Archetype - above wheel */}
+          {(() => {
+            // Sun sign base archetypes
+            const sunArchetypes = {
+              Aries: ["Bold Pioneer", "Fearless Warrior", "Dynamic Leader"],
+              Taurus: ["Grounded Builder", "Patient Cultivator", "Steadfast Creator"],
+              Gemini: ["Curious Messenger", "Witty Explorer", "Clever Connector"],
+              Cancer: ["Nurturing Protector", "Intuitive Guardian", "Emotional Anchor"],
+              Leo: ["Radiant Leader", "Generous Star", "Confident Creator"],
+              Virgo: ["Precise Perfectionist", "Helpful Analyst", "Practical Healer"],
+              Libra: ["Harmonious Diplomat", "Aesthetic Peacemaker", "Balanced Judge"],
+              Scorpio: ["Intense Transformer", "Magnetic Detective", "Powerful Phoenix"],
+              Sagittarius: ["Adventurous Philosopher", "Optimistic Explorer", "Free Spirit"],
+              Capricorn: ["Ambitious Achiever", "Disciplined Climber", "Wise Authority"],
+              Aquarius: ["Visionary Rebel", "Independent Innovator", "Humanitarian Genius"],
+              Pisces: ["Dreamy Mystic", "Compassionate Artist", "Intuitive Empath"],
+            };
+
+            // Element mappings
+            const signElements = {
+              Aries: "fire", Leo: "fire", Sagittarius: "fire",
+              Taurus: "earth", Virgo: "earth", Capricorn: "earth",
+              Gemini: "air", Libra: "air", Aquarius: "air",
+              Cancer: "water", Scorpio: "water", Pisces: "water",
+            };
+
+            // Moon element modifiers
+            const moonModifiers = {
+              fire: ["Passionate", "Bold", "Fiery"],
+              earth: ["Grounded", "Practical", "Steady"],
+              air: ["Intellectual", "Social", "Thoughtful"],
+              water: ["Sensitive", "Intuitive", "Deep"],
+            };
+
+            const sunSign = chartResult.sun.sign;
+            const moonSign = chartResult.moon.sign;
+            const risingSign = chartResult.rising.sign;
+
+            const moonElement = signElements[moonSign];
+
+            // Get base archetype from sun sign
+            const baseArchetypes = sunArchetypes[sunSign] || ["Cosmic Soul"];
+            const baseArchetype = baseArchetypes[0];
+
+            // Get moon modifier
+            const moonMods = moonModifiers[moonElement] || ["Intuitive"];
+            const moonMod = moonMods[0];
+
+            // Combine into a unique archetype title
+            const baseWords = baseArchetype.split(" ");
+            const archetypeNoun = baseWords[baseWords.length - 1];
+
+            const archetype = `The ${moonMod} ${archetypeNoun}`;
+
+            return (
+              <div className="text-center mb-6 pb-6 border-b border-white/10">
+                <p className="font-serif text-2xl font-semibold gold-gradient-text italic">
+                  "{archetype}"
+                </p>
+                <p className="text-xs t-text-muted mt-2">
+                  {sunSign} Sun • {moonSign} Moon • {risingSign} Rising
+                </p>
+              </div>
+            );
+          })()}
+
           {(() => {
             // SVG Path definitions for zodiac signs (scaled for 14px viewBox centered at 0,0)
             const zodiacPaths = {
@@ -1250,79 +1308,12 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
           <p className="text-center t-text-muted italic text-sm">
             {chartResult.rising.sign} Rising • Planets positioned by degree
           </p>
-
-          {/* Personalized Archetype */}
-          {(() => {
-            // Sun sign base archetypes
-            const sunArchetypes = {
-              Aries: ["Bold Pioneer", "Fearless Warrior", "Dynamic Leader"],
-              Taurus: ["Grounded Builder", "Patient Cultivator", "Steadfast Creator"],
-              Gemini: ["Curious Messenger", "Witty Explorer", "Clever Connector"],
-              Cancer: ["Nurturing Protector", "Intuitive Guardian", "Emotional Anchor"],
-              Leo: ["Radiant Leader", "Generous Star", "Confident Creator"],
-              Virgo: ["Precise Perfectionist", "Helpful Analyst", "Practical Healer"],
-              Libra: ["Harmonious Diplomat", "Aesthetic Peacemaker", "Balanced Judge"],
-              Scorpio: ["Intense Transformer", "Magnetic Detective", "Powerful Phoenix"],
-              Sagittarius: ["Adventurous Philosopher", "Optimistic Explorer", "Free Spirit"],
-              Capricorn: ["Ambitious Achiever", "Disciplined Climber", "Wise Authority"],
-              Aquarius: ["Visionary Rebel", "Independent Innovator", "Humanitarian Genius"],
-              Pisces: ["Dreamy Mystic", "Compassionate Artist", "Intuitive Empath"],
-            };
-
-            // Element mappings
-            const signElements = {
-              Aries: "fire", Leo: "fire", Sagittarius: "fire",
-              Taurus: "earth", Virgo: "earth", Capricorn: "earth",
-              Gemini: "air", Libra: "air", Aquarius: "air",
-              Cancer: "water", Scorpio: "water", Pisces: "water",
-            };
-
-            // Moon element modifiers
-            const moonModifiers = {
-              fire: ["Passionate", "Bold", "Fiery"],
-              earth: ["Grounded", "Practical", "Steady"],
-              air: ["Intellectual", "Social", "Thoughtful"],
-              water: ["Sensitive", "Intuitive", "Deep"],
-            };
-
-            const sunSign = chartResult.sun.sign;
-            const moonSign = chartResult.moon.sign;
-            const risingSign = chartResult.rising.sign;
-
-            const moonElement = signElements[moonSign];
-
-            // Get base archetype from sun sign
-            const baseArchetypes = sunArchetypes[sunSign] || ["Cosmic Soul"];
-            const baseArchetype = baseArchetypes[0];
-
-            // Get moon modifier
-            const moonMods = moonModifiers[moonElement] || ["Intuitive"];
-            const moonMod = moonMods[0];
-
-            // Combine into a unique archetype title
-            // Format: "The [Moon Modifier] [Base Archetype Noun]"
-            const baseWords = baseArchetype.split(" ");
-            const archetypeNoun = baseWords[baseWords.length - 1]; // Get the noun (Builder, Leader, etc.)
-
-            const archetype = `The ${moonMod} ${archetypeNoun}`;
-
-            return (
-              <div className="text-center mt-6 pt-6 border-t border-white/10">
-                <p className="font-serif text-2xl font-semibold gold-gradient-text italic">
-                  "{archetype}"
-                </p>
-                <p className="text-xs t-text-muted mt-2">
-                  {sunSign} Sun • {moonSign} Moon • {risingSign} Rising
-                </p>
-              </div>
-            );
-          })()}
         </div>
 
         {/* Big Three */}
         <div className="grid md:grid-cols-3 gap-4 mb-8">
-          <div className="card-solid rounded-2xl p-6">
-            <Sun className="w-10 h-10 icon-gold mb-3" />
+          <div className="card-solid rounded-2xl p-6 text-center">
+            <Sun className="w-10 h-10 icon-gold mb-3 mx-auto" />
             <div className="text-2xl font-bold mb-1">{chartResult.sun.sign} Sun</div>
             <div className="text-sm t-text-muted">Core Identity</div>
             <div className="text-xs t-text-muted mt-2">
@@ -1331,8 +1322,8 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
             </div>
           </div>
 
-          <div className="card-solid rounded-2xl p-6">
-            <Moon className="w-10 h-10 text-[#69D2FF] mb-3" />
+          <div className="card-solid rounded-2xl p-6 text-center">
+            <Moon className="w-10 h-10 text-[#69D2FF] mb-3 mx-auto" />
             <div className="text-2xl font-bold mb-1">{chartResult.moon.sign} Moon</div>
             <div className="text-sm t-text-muted">Emotional Core</div>
             <div className="text-xs t-text-muted mt-2">
@@ -1341,8 +1332,8 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
             </div>
           </div>
 
-          <div className="card-solid rounded-2xl p-6">
-            <Star className="w-10 h-10 icon-gold mb-3" />
+          <div className="card-solid rounded-2xl p-6 text-center">
+            <Star className="w-10 h-10 icon-gold mb-3 mx-auto" />
             <div className="text-2xl font-bold mb-1">{chartResult.rising.sign} Rising</div>
             <div className="text-sm t-text-muted">How Others See You</div>
             <div className="text-xs t-text-muted mt-2">{chartResult.rising.degree}° {String(chartResult.rising.minutes || 0).padStart(2, '0')}' Ascendant</div>
