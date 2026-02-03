@@ -324,10 +324,61 @@ function InfoPage() {
               <div className="space-y-6">
                 <div className="bg-[#12142A]/60 rounded-xl p-6 border border-white/10">
                   <h3 className="text-2xl font-bold text-[#D6B35A] mb-3">
+                    Astrology At A Glance
+                  </h3>
+                  <p className="t-text-muted mb-3">
+                    <strong className="text-white">Astrology captures the sky at a specific moment, such as your birth, in a chart wheel.</strong> 
+                  </p>
+                  <p className="t-text-muted">
+                    This wheel divides the sky in two main ways: zodiac signs, which are 12 equal 30° slices along the apparent path of the sun, and houses, which are 12 slices based on your local horizon and meridian at the birth time and location. Houses can shift rapidly throughout the day. Planets, including the Sun and Moon, are placed in the chart according to their measured positions.
+                  </p>
+                  <p className="t-text-muted">
+                    Astrological interpretations stem from patterns like the signs planets occupy, the houses they fall into, and the angles between planets, known as aspects. For quick clarity, signs relate to the sun’s path, while houses pertain to your local sky at that moment. 
+                  </p>
+                </div>
+
+                                <div className="bg-[#12142A]/60 rounded-xl p-6 border border-white/10">
+                  <h3 className="text-2xl font-bold text-[#D6B35A] mb-3">
                     Western (Tropical) Astrology
                   </h3>
                   <p className="t-text-muted mb-3">
-                    <strong className="text-white">Most Popular System</strong> - Based on Earth's seasons. The zodiac begins
+                    <strong className="text-white">The Most Popular System</strong> - Based on Earth's seasons. The zodiac begins
+                    when the Sun enters 0° Aries at the Spring Equinox.
+                  </p>
+                  <p className="t-text-muted mb-3">
+                    <strong className="text-white">Best for:</strong> Personality analysis, psychological insight,
+                    understanding character traits and life purpose.
+                  </p>
+                  <p className="t-text-muted">
+                    This is the system used in Western horoscopes. It focuses on who you ARE rather
+                    than what will happen to you.
+                  </p>
+                </div>
+
+                                <div className="bg-[#12142A]/60 rounded-xl p-6 border border-white/10">
+                  <h3 className="text-2xl font-bold text-[#D6B35A] mb-3">
+                    Western (Tropical) Astrology
+                  </h3>
+                  <p className="t-text-muted mb-3">
+                    <strong className="text-white">The Most Popular System</strong> - Based on Earth's seasons. The zodiac begins
+                    when the Sun enters 0° Aries at the Spring Equinox.
+                  </p>
+                  <p className="t-text-muted mb-3">
+                    <strong className="text-white">Best for:</strong> Personality analysis, psychological insight,
+                    understanding character traits and life purpose.
+                  </p>
+                  <p className="t-text-muted">
+                    This is the system used in Western horoscopes. It focuses on who you ARE rather
+                    than what will happen to you.
+                  </p>
+                </div>
+
+                                <div className="bg-[#12142A]/60 rounded-xl p-6 border border-white/10">
+                  <h3 className="text-2xl font-bold text-[#D6B35A] mb-3">
+                    Western (Tropical) Astrology
+                  </h3>
+                  <p className="t-text-muted mb-3">
+                    <strong className="text-white">The Most Popular System</strong> - Based on Earth's seasons. The zodiac begins
                     when the Sun enters 0° Aries at the Spring Equinox.
                   </p>
                   <p className="t-text-muted mb-3">
