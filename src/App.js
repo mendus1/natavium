@@ -718,28 +718,28 @@ function InputPage({ birthData, handleInputChange, calculateChart, calcError }) 
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 text-white p-6 flex items-center justify-center">
+    <div className="min-h-screen text-white p-6 flex items-center justify-center">
       <div className="max-w-2xl w-full">
         <div className="text-center mb-8">
-          <h2 className="text-4xl font-black mb-2">Enter Your Birth Details</h2>
-          <p className="text-purple-300">Exact time and location create your unique chart</p>
+          <h2 className="font-serif text-4xl md:text-5xl font-semibold gold-gradient-text mb-3">Enter Your Birth Details</h2>
+          <p className="text-base t-text-muted">Exact time and location create your unique chart</p>
         </div>
 
-        <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 border border-white/20">
+        <div className="card-solid rounded-2xl p-8">
           <div className="mb-6">
-            <label className="flex items-center text-lg font-semibold mb-3">
-              <Calendar className="w-5 h-5 mr-2 text-yellow-300" />
+            <label className="flex items-center text-base font-semibold mb-3 t-text-primary">
+              <Calendar className="w-5 h-5 mr-2 icon-gold" />
               Birth Date
             </label>
             <div className="flex gap-3">
               <select
                 value={birthData.birthMonth}
                 onChange={(e) => handleInputChange("birthMonth", e.target.value)}
-                className="flex-1 px-4 py-3 rounded-xl bg-white/20 border border-white/30 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400 appearance-none cursor-pointer"
+                className="flex-1 px-4 py-3 rounded-lg bg-[#12142A] border border-white/10 text-white focus:outline-none focus:border-[#69D2FF] focus:ring-1 focus:ring-[#69D2FF]/30 appearance-none cursor-pointer"
               >
-                <option value="" className="bg-purple-900">Month</option>
+                <option value="" className="bg-[#12142A]">Month</option>
                 {["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"].map((month, i) => (
-                  <option key={month} value={String(i + 1)} className="bg-purple-900">
+                  <option key={month} value={String(i + 1)} className="bg-[#12142A]">
                     {month}
                   </option>
                 ))}
@@ -747,11 +747,11 @@ function InputPage({ birthData, handleInputChange, calculateChart, calcError }) 
               <select
                 value={birthData.birthDay}
                 onChange={(e) => handleInputChange("birthDay", e.target.value)}
-                className="w-24 px-4 py-3 rounded-xl bg-white/20 border border-white/30 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400 appearance-none cursor-pointer"
+                className="w-24 px-4 py-3 rounded-lg bg-[#12142A] border border-white/10 text-white focus:outline-none focus:border-[#69D2FF] focus:ring-1 focus:ring-[#69D2FF]/30 appearance-none cursor-pointer"
               >
-                <option value="" className="bg-purple-900">Day</option>
+                <option value="" className="bg-[#12142A]">Day</option>
                 {Array.from({ length: 31 }, (_, i) => (
-                  <option key={i + 1} value={String(i + 1)} className="bg-purple-900">
+                  <option key={i + 1} value={String(i + 1)} className="bg-[#12142A]">
                     {i + 1}
                   </option>
                 ))}
@@ -759,13 +759,13 @@ function InputPage({ birthData, handleInputChange, calculateChart, calcError }) 
               <select
                 value={birthData.birthYear}
                 onChange={(e) => handleInputChange("birthYear", e.target.value)}
-                className="w-28 px-4 py-3 rounded-xl bg-white/20 border border-white/30 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400 appearance-none cursor-pointer"
+                className="w-28 px-4 py-3 rounded-lg bg-[#12142A] border border-white/10 text-white focus:outline-none focus:border-[#69D2FF] focus:ring-1 focus:ring-[#69D2FF]/30 appearance-none cursor-pointer"
               >
-                <option value="" className="bg-purple-900">Year</option>
+                <option value="" className="bg-[#12142A]">Year</option>
                 {Array.from({ length: 100 }, (_, i) => {
                   const year = new Date().getFullYear() - i;
                   return (
-                    <option key={year} value={String(year)} className="bg-purple-900">
+                    <option key={year} value={String(year)} className="bg-[#12142A]">
                       {year}
                     </option>
                   );
@@ -775,19 +775,19 @@ function InputPage({ birthData, handleInputChange, calculateChart, calcError }) 
           </div>
 
           <div className="mb-6">
-            <label className="flex items-center text-lg font-semibold mb-3">
-              <Clock className="w-5 h-5 mr-2 text-yellow-300" />
+            <label className="flex items-center text-base font-semibold mb-3 t-text-primary">
+              <Clock className="w-5 h-5 mr-2 icon-gold" />
               Birth Time
             </label>
             <div className="flex gap-3">
               <select
                 value={birthData.hour}
                 onChange={(e) => handleInputChange("hour", e.target.value)}
-                className="flex-1 px-4 py-3 rounded-xl bg-white/20 border border-white/30 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400 appearance-none cursor-pointer"
+                className="flex-1 px-4 py-3 rounded-lg bg-[#12142A] border border-white/10 text-white focus:outline-none focus:border-[#69D2FF] focus:ring-1 focus:ring-[#69D2FF]/30 appearance-none cursor-pointer"
               >
-                <option value="" className="bg-purple-900">Hour</option>
+                <option value="" className="bg-[#12142A]">Hour</option>
                 {[12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((h) => (
-                  <option key={h} value={h} className="bg-purple-900">
+                  <option key={h} value={h} className="bg-[#12142A]">
                     {h}
                   </option>
                 ))}
@@ -795,23 +795,23 @@ function InputPage({ birthData, handleInputChange, calculateChart, calcError }) 
               <select
                 value={birthData.minute}
                 onChange={(e) => handleInputChange("minute", e.target.value)}
-                className="flex-1 px-4 py-3 rounded-xl bg-white/20 border border-white/30 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400 appearance-none cursor-pointer"
+                className="flex-1 px-4 py-3 rounded-lg bg-[#12142A] border border-white/10 text-white focus:outline-none focus:border-[#69D2FF] focus:ring-1 focus:ring-[#69D2FF]/30 appearance-none cursor-pointer"
               >
-                <option value="" className="bg-purple-900">Min</option>
+                <option value="" className="bg-[#12142A]">Min</option>
                 {Array.from({ length: 60 }, (_, i) => (
-                  <option key={i} value={i} className="bg-purple-900">
+                  <option key={i} value={i} className="bg-[#12142A]">
                     {i.toString().padStart(2, "0")}
                   </option>
                 ))}
               </select>
-              <div className="flex rounded-xl overflow-hidden border border-white/30">
+              <div className="flex rounded-lg overflow-hidden border border-white/10">
                 <button
                   type="button"
                   onClick={() => handleInputChange("period", "AM")}
                   className={`px-4 py-3 font-semibold transition-colors ${
                     birthData.period === "AM"
-                      ? "bg-yellow-400 text-gray-900"
-                      : "bg-white/20 text-white hover:bg-white/30"
+                      ? "bg-[#D6B35A] text-[#070812]"
+                      : "bg-[#12142A] text-white hover:bg-[#171A35]"
                   }`}
                 >
                   AM
@@ -821,20 +821,20 @@ function InputPage({ birthData, handleInputChange, calculateChart, calcError }) 
                   onClick={() => handleInputChange("period", "PM")}
                   className={`px-4 py-3 font-semibold transition-colors ${
                     birthData.period === "PM"
-                      ? "bg-yellow-400 text-gray-900"
-                      : "bg-white/20 text-white hover:bg-white/30"
+                      ? "bg-[#D6B35A] text-[#070812]"
+                      : "bg-[#12142A] text-white hover:bg-[#171A35]"
                   }`}
                 >
                   PM
                 </button>
               </div>
             </div>
-            <p className="text-xs text-purple-300 mt-2">Check birth certificate for exact time</p>
+            <p className="text-xs t-text-muted mt-2">Check birth certificate for exact time</p>
           </div>
 
           <div className="mb-8">
-            <label className="flex items-center text-lg font-semibold mb-3">
-              <MapPin className="w-5 h-5 mr-2 text-yellow-300" />
+            <label className="flex items-center text-base font-semibold mb-3 t-text-primary">
+              <MapPin className="w-5 h-5 mr-2 icon-gold" />
               Birth Location
             </label>
             <input
@@ -842,20 +842,20 @@ function InputPage({ birthData, handleInputChange, calculateChart, calcError }) 
               value={birthData.location}
               onChange={(e) => handleInputChange("location", e.target.value)}
               placeholder="e.g., Welland, Ontario"
-              className="w-full px-4 py-3 rounded-xl bg-white/20 border border-white/30 text-white placeholder-purple-300 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+              className="w-full px-4 py-3 rounded-lg bg-[#12142A] border border-white/10 text-white placeholder-white/40 focus:outline-none focus:border-[#69D2FF] focus:ring-1 focus:ring-[#69D2FF]/30"
             />
-            <p className="text-xs text-purple-300 mt-2">City name auto-detected • Timezone calculated automatically</p>
+            <p className="text-xs t-text-muted mt-2">City name auto-detected • Timezone calculated automatically</p>
 
             {/* Quick city presets */}
             <div className="mt-3">
-              <p className="text-xs text-purple-300 mb-2">Quick select:</p>
+              <p className="text-xs t-text-muted mb-2">Quick select:</p>
               <div className="flex flex-wrap gap-2">
                 {["New York", "Los Angeles", "Chicago", "London", "Toronto", "Sydney"].map((city) => (
                   <button
                     key={city}
                     type="button"
                     onClick={() => handleInputChange("location", city)}
-                    className="px-2 py-1 text-xs bg-white/10 rounded-lg hover:bg-white/20 transition-colors"
+                    className="px-2 py-1 text-xs bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 hover:border-white/20 transition-colors"
                   >
                     {city}
                   </button>
@@ -865,29 +865,30 @@ function InputPage({ birthData, handleInputChange, calculateChart, calcError }) 
           </div>
 
           {calcError && (
-            <div className="bg-red-500/20 border border-red-500/50 rounded-xl p-4 mb-6 text-sm text-red-200">
+            <div className="bg-red-500/15 border border-red-500/40 rounded-lg p-4 mb-6 text-sm text-red-300">
               ⚠️ Error: {calcError}
             </div>
           )}
 
-          <div className="bg-purple-500/20 rounded-xl p-4 mb-6 text-sm text-purple-200">
+          <div className="bg-[#69D2FF]/10 border border-[#69D2FF]/20 rounded-lg p-4 mb-6 text-sm text-[#69D2FF]">
             🔒 Your data is private and secure
           </div>
 
           <div className="flex gap-4">
             <button
-              onClick={() => navigate("/")}
-              className="flex-1 px-6 py-3 rounded-xl bg-white/10 border border-white/30 font-semibold hover:bg-white/20 transition-colors"
+              onClick={() => calculateChart(navigate, 'tropical')}
+              disabled={!birthData.birthMonth || !birthData.birthDay || !birthData.birthYear || !birthData.hour || !birthData.minute || !birthData.location}
+              className="flex-1 gold-gradient-btn rounded-xl py-4 text-base disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
             >
-              ← Back
+              Calculate Tropical Chart
             </button>
 
             <button
-              onClick={() => calculateChart(navigate)}
+              onClick={() => calculateChart(navigate, 'sidereal')}
               disabled={!birthData.birthMonth || !birthData.birthDay || !birthData.birthYear || !birthData.hour || !birthData.minute || !birthData.location}
-              className="flex-1 px-6 py-4 rounded-xl bg-gradient-to-r from-yellow-400 to-orange-500 text-gray-900 font-black text-lg hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 gold-gradient-btn rounded-xl py-4 text-base disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
             >
-              Calculate Chart <BrandStar className="w-5 h-5 inline-block ml-1" />
+              Calculate Sidereal Chart
             </button>
           </div>
         </div>
@@ -3534,6 +3535,7 @@ export default function Natavium() {
     return localStorage.getItem("natavium_isPremium") === "true";
   });
   const [selectedBundle, setSelectedBundle] = useState("essential"); // default to most popular
+  const [zodiacType, setZodiacType] = useState("tropical"); // 'tropical' or 'sidereal'
 
   // Persist state to localStorage
   useEffect(() => {
@@ -3596,7 +3598,8 @@ export default function Natavium() {
     };
   };
 
-  const calculateChart = async (navigate) => {
+  const calculateChart = async (navigate, zodiac = 'tropical') => {
+    setZodiacType(zodiac);
     navigate("/calculating");
     setCalcError(null);
 
