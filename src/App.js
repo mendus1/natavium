@@ -994,24 +994,24 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 text-white p-6 pb-16">
+    <div className="min-h-screen text-white p-6 pb-16">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-8">
-          <h1 className="text-5xl font-black mb-2">Your Natal Chart</h1>
-          <p className="text-xl text-purple-300">
+          <h1 className="font-serif text-4xl md:text-5xl font-semibold gold-gradient-text mb-2">Your Natal Chart</h1>
+          <p className="text-lg t-text-muted">
             {displayDate} • {birthData.time} • {birthData.location}
           </p>
         </div>
 
         {/* Sun Sign Heading */}
         <div className="text-center mb-6">
-          <h2 className="text-4xl font-bold text-yellow-300 flex items-center justify-center gap-2">
-            <BrandStar className="w-8 h-8" /> You're a {chartResult.sun.sign}! <BrandStar className="w-8 h-8" />
+          <h2 className="font-serif text-3xl md:text-4xl font-semibold gold-gradient-text flex items-center justify-center gap-2">
+            <BrandStar className="w-8 h-8 icon-gold" /> You're a {chartResult.sun.sign}! <BrandStar className="w-8 h-8 icon-gold" />
           </h2>
         </div>
 
         {/* Premium Chart Wheel */}
-        <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 mb-8 border border-white/20">
+        <div className="card-solid rounded-2xl p-8 mb-8">
           {(() => {
             // SVG Path definitions for zodiac signs (scaled for 14px viewBox centered at 0,0)
             const zodiacPaths = {
@@ -1241,13 +1241,13 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
 
           {/* Legend */}
           <div className="flex flex-wrap justify-center gap-4 text-xs mb-3 mt-2">
-            <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full" style={{ background: 'linear-gradient(135deg, #ff6b6b, #f97316)' }}></span><span className="text-purple-300">Fire</span></div>
-            <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full" style={{ background: 'linear-gradient(135deg, #4ade80, #22c55e)' }}></span><span className="text-purple-300">Earth</span></div>
-            <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full" style={{ background: 'linear-gradient(135deg, #fde047, #facc15)' }}></span><span className="text-purple-300">Air</span></div>
-            <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full" style={{ background: 'linear-gradient(135deg, #60a5fa, #3b82f6)' }}></span><span className="text-purple-300">Water</span></div>
+            <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full" style={{ background: 'linear-gradient(135deg, #ff6b6b, #f97316)' }}></span><span className="t-text-muted">Fire</span></div>
+            <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full" style={{ background: 'linear-gradient(135deg, #4ade80, #22c55e)' }}></span><span className="t-text-muted">Earth</span></div>
+            <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full" style={{ background: 'linear-gradient(135deg, #fde047, #facc15)' }}></span><span className="t-text-muted">Air</span></div>
+            <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full" style={{ background: 'linear-gradient(135deg, #60a5fa, #3b82f6)' }}></span><span className="t-text-muted">Water</span></div>
           </div>
 
-          <p className="text-center text-purple-300 italic text-sm">
+          <p className="text-center t-text-muted italic text-sm">
             {chartResult.rising.sign} Rising • Planets positioned by degree
           </p>
 
@@ -1308,10 +1308,10 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
 
             return (
               <div className="text-center mt-6 pt-6 border-t border-white/10">
-                <p className="text-2xl font-semibold text-purple-200 italic">
+                <p className="font-serif text-2xl font-semibold gold-gradient-text italic">
                   "{archetype}"
                 </p>
-                <p className="text-xs text-purple-400 mt-2">
+                <p className="text-xs t-text-muted mt-2">
                   {sunSign} Sun • {moonSign} Moon • {risingSign} Rising
                 </p>
               </div>
@@ -1321,42 +1321,42 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
 
         {/* Big Three */}
         <div className="grid md:grid-cols-3 gap-4 mb-8">
-          <div className="bg-gradient-to-br from-yellow-500/20 to-orange-500/20 rounded-2xl p-6 border border-yellow-500/30">
-            <Sun className="w-10 h-10 text-yellow-300 mb-3" />
+          <div className="card-solid rounded-2xl p-6">
+            <Sun className="w-10 h-10 icon-gold mb-3" />
             <div className="text-2xl font-bold mb-1">{chartResult.sun.sign} Sun</div>
-            <div className="text-sm text-purple-200">Core Identity</div>
-            <div className="text-xs text-purple-300 mt-2">
+            <div className="text-sm t-text-muted">Core Identity</div>
+            <div className="text-xs t-text-muted mt-2">
               {chartResult.sun.degree}° {String(chartResult.sun.minutes || 0).padStart(2, '0')}' in {chartResult.sun.house}
               {houseSuffix(chartResult.sun.house)} house
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-2xl p-6 border border-blue-500/30">
-            <Moon className="w-10 h-10 text-blue-300 mb-3" />
+          <div className="card-solid rounded-2xl p-6">
+            <Moon className="w-10 h-10 text-[#69D2FF] mb-3" />
             <div className="text-2xl font-bold mb-1">{chartResult.moon.sign} Moon</div>
-            <div className="text-sm text-purple-200">Emotional Core</div>
-            <div className="text-xs text-purple-300 mt-2">
+            <div className="text-sm t-text-muted">Emotional Core</div>
+            <div className="text-xs t-text-muted mt-2">
               {chartResult.moon.degree}° {String(chartResult.moon.minutes || 0).padStart(2, '0')}' in {chartResult.moon.house}
               {houseSuffix(chartResult.moon.house)} house
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-pink-500/20 to-purple-500/20 rounded-2xl p-6 border border-pink-500/30">
-            <Star className="w-10 h-10 text-pink-300 mb-3" />
+          <div className="card-solid rounded-2xl p-6">
+            <Star className="w-10 h-10 icon-gold mb-3" />
             <div className="text-2xl font-bold mb-1">{chartResult.rising.sign} Rising</div>
-            <div className="text-sm text-purple-200">How Others See You</div>
-            <div className="text-xs text-purple-300 mt-2">{chartResult.rising.degree}° {String(chartResult.rising.minutes || 0).padStart(2, '0')}' Ascendant</div>
+            <div className="text-sm t-text-muted">How Others See You</div>
+            <div className="text-xs t-text-muted mt-2">{chartResult.rising.degree}° {String(chartResult.rising.minutes || 0).padStart(2, '0')}' Ascendant</div>
           </div>
         </div>
 
         {/* AI-Generated Teaser with paywall */}
-        <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 mb-8 border border-white/20">
-          <h2 className="text-3xl font-bold mb-6">Your Cosmic Blueprint</h2>
+        <div className="card-solid rounded-2xl p-8 mb-8">
+          <h2 className="font-serif text-3xl font-semibold gold-gradient-text mb-6">Your Cosmic Blueprint</h2>
 
           {teaserLoading ? (
             <div className="flex flex-col items-center justify-center py-8">
-              <Loader2 className="w-10 h-10 text-yellow-300 animate-spin mb-4" />
-              <p className="text-purple-300">Analyzing your unique cosmic signature...</p>
+              <Loader2 className="w-10 h-10 icon-gold animate-spin mb-4" />
+              <p className="t-text-muted">Analyzing your unique cosmic signature...</p>
             </div>
           ) : teaserError ? (
             <div className="space-y-4">
@@ -1364,12 +1364,12 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
                 Your {chartResult.sun.sign} Sun combined with {chartResult.moon.sign} Moon and {chartResult.rising.sign} Rising
                 creates a unique cosmic blueprint that shapes your personality, emotions, and how others perceive you.
               </p>
-              <p className="text-purple-300 text-sm">Full AI analysis available in paid packages below.</p>
+              <p className="t-text-muted text-sm">Full AI analysis available in paid packages below.</p>
             </div>
           ) : teaser ? (
             <div className="space-y-4">
               {teaser.split('\n\n').map((paragraph, idx) => (
-                <p key={idx} className="text-lg leading-relaxed text-purple-100">
+                <p key={idx} className="text-lg leading-relaxed text-white/90">
                   {paragraph}
                 </p>
               ))}
@@ -1386,18 +1386,18 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
             </div>
 
             {/* Gradient overlay */}
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-purple-900 pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#12142A] pointer-events-none" />
           </div>
 
           <div className="text-center mt-4">
-            <Lock className="w-8 h-8 text-yellow-300 mx-auto mb-2" />
-            <p className="text-purple-200 text-sm">Select a package below to unlock your full reading</p>
+            <Lock className="w-8 h-8 icon-gold mx-auto mb-2" />
+            <p className="t-text-muted text-sm">Select a package below to unlock your full reading</p>
           </div>
         </div>
 
         {/* Bundle Selection */}
         <div className="mb-8">
-          <h2 className="text-2xl font-bold text-center mb-6">Choose Your Package</h2>
+          <h2 className="font-serif text-2xl font-semibold gold-gradient-text text-center mb-6">Choose Your Package</h2>
 
           <div className="grid md:grid-cols-3 gap-4">
             {Object.values(BUNDLES).map((bundle) => {
@@ -1405,22 +1405,22 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
               const isSelected = selectedBundle === bundle.id;
               const colorClasses = {
                 yellow: {
-                  border: isSelected ? "border-yellow-400" : "border-white/20",
-                  bg: isSelected ? "bg-yellow-500/20" : "bg-white/5",
-                  icon: "text-yellow-300",
-                  price: "text-yellow-300",
+                  border: isSelected ? "border-[#D6B35A]" : "border-white/10",
+                  bg: isSelected ? "bg-[#D6B35A]/15" : "bg-[#12142A]/80",
+                  icon: "icon-gold",
+                  price: "gold-gradient-text",
                 },
                 purple: {
-                  border: isSelected ? "border-purple-400" : "border-white/20",
-                  bg: isSelected ? "bg-purple-500/20" : "bg-white/5",
-                  icon: "text-purple-300",
-                  price: "text-purple-300",
+                  border: isSelected ? "border-[#69D2FF]" : "border-white/10",
+                  bg: isSelected ? "bg-[#69D2FF]/15" : "bg-[#12142A]/80",
+                  icon: "text-[#69D2FF]",
+                  price: "text-[#69D2FF]",
                 },
                 pink: {
-                  border: isSelected ? "border-pink-400" : "border-white/20",
-                  bg: isSelected ? "bg-pink-500/20" : "bg-white/5",
-                  icon: "text-pink-300",
-                  price: "text-pink-300",
+                  border: isSelected ? "border-[#D6B35A]" : "border-white/10",
+                  bg: isSelected ? "bg-[#D6B35A]/10" : "bg-[#12142A]/80",
+                  icon: "icon-gold",
+                  price: "gold-gradient-text",
                 },
               };
               const colors = colorClasses[bundle.color];
@@ -1435,12 +1435,12 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
                       setSelectedAddOns([]);
                     }
                   }}
-                  className={`relative p-6 rounded-2xl border-2 transition-all text-left ${colors.border} ${colors.bg} ${
-                    isSelected ? "scale-105 shadow-xl" : "hover:bg-white/10"
+                  className={`relative p-6 rounded-2xl border transition-all text-left backdrop-blur-sm ${colors.border} ${colors.bg} ${
+                    isSelected ? "scale-105 shadow-lg" : "hover:bg-white/10"
                   }`}
                 >
                   {bundle.popular && (
-                    <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-bold px-3 py-1 rounded-full">
+                    <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 gold-gradient-btn text-xs font-bold px-3 py-1 rounded-full">
                       MOST POPULAR
                     </div>
                   )}
@@ -1456,11 +1456,11 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
                         }}
                         className="p-1 hover:bg-white/10 rounded-full transition-colors"
                       >
-                        <Info className="w-5 h-5 animate-info-pulse" />
+                        <Info className="w-5 h-5 t-text-muted animate-info-pulse" />
                       </button>
 
                       {showTooltip === bundle.id && (
-                        <div className="absolute right-0 top-8 w-64 bg-gray-900 border border-white/20 rounded-xl p-4 shadow-xl z-20">
+                        <div className="absolute right-0 top-8 w-64 bg-[#12142A] border border-white/15 rounded-xl p-4 shadow-xl z-20">
                           <h4 className="font-bold mb-2">{bundle.name} includes:</h4>
                           <ul className="space-y-1 text-xs">
                             {bundle.features.map((feature, idx) => (
@@ -1482,12 +1482,12 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
                   </div>
 
                   <h3 className="text-xl font-bold mb-1">{bundle.name}</h3>
-                  <p className="text-sm text-purple-300 mb-3">{bundle.description}</p>
+                  <p className="text-sm t-text-muted mb-3">{bundle.description}</p>
 
                   <div className={`text-3xl font-black ${colors.price}`}>
                     ${bundle.price.toFixed(2)}
                   </div>
-                  <p className="text-xs text-purple-400">One-time payment</p>
+                  <p className="text-xs t-text-muted">One-time payment</p>
 
                   {isSelected && (
                     <div className="absolute top-3 right-3">
@@ -1505,10 +1505,10 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
         {/* Add-On Customization Section - Only show for Base package */}
         {selectedBundle === "base" && (
           <div className="mb-8">
-            <h2 className="text-2xl font-bold text-center mb-2">Customize Your Base Package</h2>
-            <p className="text-center text-purple-300 text-sm mb-6">Add any services you want</p>
+            <h2 className="font-serif text-2xl font-semibold gold-gradient-text text-center mb-2">Customize Your Base Package</h2>
+            <p className="text-center t-text-muted text-sm mb-6">Add any services you want</p>
 
-            <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
+            <div className="card-solid rounded-2xl p-6">
               <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
               {ADD_ONS.map((addOn) => {
                 const isSelected = selectedAddOns.includes(addOn.id);
@@ -1518,23 +1518,23 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
                     onClick={() => toggleAddOn(addOn.id)}
                     className={`relative p-4 rounded-xl border transition-all text-left ${
                       isSelected
-                        ? "bg-purple-500/20 border-purple-400"
-                        : "bg-white/5 border-white/10 hover:bg-white/10"
+                        ? "bg-[#D6B35A]/15 border-[#D6B35A]"
+                        : "bg-[#12142A]/60 border-white/10 hover:bg-white/10"
                     }`}
                   >
                     <div className="flex items-start justify-between mb-2">
                       <div
                         className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
                           isSelected
-                            ? "bg-purple-500 border-purple-500"
+                            ? "bg-[#D6B35A] border-[#D6B35A]"
                             : "border-white/30"
                         }`}
                       >
-                        {isSelected && <Check className="w-3 h-3 text-white" />}
+                        {isSelected && <Check className="w-3 h-3 text-[#12142A]" />}
                       </div>
                     </div>
                     <h4 className="font-semibold text-sm mb-1">{addOn.name}</h4>
-                    <p className="text-purple-300 text-xs font-bold">+${addOn.price.toFixed(2)}</p>
+                    <p className="text-[#D6B35A] text-xs font-bold">+${addOn.price.toFixed(2)}</p>
                   </button>
                 );
               })}
@@ -1542,10 +1542,10 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
 
               {selectedAddOns.length > 0 && (
                 <div className="mt-4 pt-4 border-t border-white/10 flex items-center justify-between">
-                  <span className="text-purple-300 text-sm">
+                  <span className="t-text-muted text-sm">
                     {selectedAddOns.length} add-on{selectedAddOns.length > 1 ? "s" : ""} selected
                   </span>
-                  <span className="text-yellow-300 font-bold">
+                  <span className="text-[#D6B35A] font-bold">
                     +${addOnsTotal.toFixed(2)}
                   </span>
                 </div>
@@ -1584,12 +1584,12 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
                 alert("Network error. Please try again.");
               }
             }}
-            className="bg-gradient-to-r from-yellow-400 to-orange-500 text-gray-900 px-12 py-4 rounded-full text-xl font-black hover:scale-105 transition-transform shadow-2xl"
+            className="gold-gradient-btn gold-gradient-btn-lg hover:scale-105 transition-transform shadow-2xl"
           >
             Proceed to Payment — ${totalPrice.toFixed(2)}
           </button>
-          <p className="text-purple-300 mt-3 text-sm">
-            🔒 Secure checkout • Instant access • Yours forever
+          <p className="t-text-muted mt-3 text-sm">
+            Secure checkout • Instant access • Yours forever
           </p>
         </div>
       </div>
