@@ -336,22 +336,34 @@ function InfoPage() {
                     Astrological interpretations stem from patterns like the signs planets occupy, the houses they fall into, and the angles between planets, known as aspects. For quick clarity, signs relate to the sun’s path, while houses pertain to your local sky at that moment. 
                   </p>
                 </div>
-
-                                <div className="bg-[#12142A]/60 rounded-xl p-6 border border-white/10">
+                <div className="bg-[#12142A]/60 rounded-xl p-6 border border-white/10">
                   <h3 className="text-2xl font-bold text-[#D6B35A] mb-3">
-                    Western (Tropical) Astrology
+                    Sun-Sign Astrology
                   </h3>
                   <p className="t-text-muted mb-3">
-                    <strong className="text-white">The Most Popular System</strong> - Based on Earth's seasons. The zodiac begins
-                    when the Sun enters 0° Aries at the Spring Equinox.
-                  </p>
-                  <p className="t-text-muted mb-3">
-                    <strong className="text-white">Best for:</strong> Personality analysis, psychological insight,
-                    understanding character traits and life purpose.
+                    <strong className="text-white">This is the kind of general astrology you find in magazines.</strong>
                   </p>
                   <p className="t-text-muted">
-                    This is the system used in Western horoscopes. It focuses on who you ARE rather
-                    than what will happen to you.
+                    Sun-sign astrology is the simplified style presented as daily horoscopes. It focuses exclusively on the Sun's sign at your birth.
+                  </p>
+                  <p className="t-text-muted">
+                    Elements like the Moon, rising sign, houses, and aspects are not considered. This leads to very broad and general interpretations.
+                  </p>
+                </div>
+                <div className="bg-[#12142A]/60 rounded-xl p-6 border border-white/10">
+                  <h3 className="text-2xl font-bold text-[#D6B35A] mb-3">
+                    Natal-Chart Astrology
+                  </h3>
+                  <p className="t-text-muted mb-3">
+                    <strong className="text-white">This is the basis of most personalized astrology systems.</strong>
+                  </p>
+                  <p className="t-text-muted">
+                    Unlike Sun-sign astrology natal-chart astrology (which Natavium specializes in) is based on a specific person's birth date/time and location.
+                  </p>
+                  <p className="t-text-muted">
+                    Positions of the Sun, Moon, planets, key chart points, houses, and aspects are determined for specific birth times and places. 
+                    This means analyses are more targeted. Natavium computes placements using Swiss Ephemeris (which itself uses NASA data).
+                    Natal-charts are the basis of both Tropical and Sidereal astrological systems.
                   </p>
                 </div>
 
@@ -360,52 +372,46 @@ function InfoPage() {
                     Western (Tropical) Astrology
                   </h3>
                   <p className="t-text-muted mb-3">
-                    <strong className="text-white">The Most Popular System</strong> - Based on Earth's seasons. The zodiac begins
-                    when the Sun enters 0° Aries at the Spring Equinox.
-                  </p>
-                  <p className="t-text-muted mb-3">
-                    <strong className="text-white">Best for:</strong> Personality analysis, psychological insight,
-                    understanding character traits and life purpose.
+                    <strong className="text-white">This system (which Natavium offers) is the most popular.</strong>
                   </p>
                   <p className="t-text-muted">
-                    This is the system used in Western horoscopes. It focuses on who you ARE rather
-                    than what will happen to you.
+                    This Systems anchors the zodiac at 0° Aries, defined by the March equinox or vernal point, making the system season-based as signs are measured from this equinox.
+                  </p>
+                  <p className="t-text-muted">
+                    The 1st house begins at the Ascendant, the eastern horizon at birth, rather than at 0° Aries—houses and signs are distinct layers.
+                    Similarly, you're considered an Aries if the Sun is in the tropical sign of Aries, not because it's in the 1st house.
                   </p>
                 </div>
 
                                 <div className="bg-[#12142A]/60 rounded-xl p-6 border border-white/10">
                   <h3 className="text-2xl font-bold text-[#D6B35A] mb-3">
-                    Western (Tropical) Astrology
+                    Western (Sidereal) Astrology
                   </h3>
                   <p className="t-text-muted mb-3">
-                    <strong className="text-white">The Most Popular System</strong> - Based on Earth's seasons. The zodiac begins
-                    when the Sun enters 0° Aries at the Spring Equinox.
-                  </p>
-                  <p className="t-text-muted mb-3">
-                    <strong className="text-white">Best for:</strong> Personality analysis, psychological insight,
-                    understanding character traits and life purpose.
+                    <strong className="text-white">This system (which Natavium offers) anchors the zodiac to the fixed stars instead of the equinox.</strong>
                   </p>
                   <p className="t-text-muted">
-                    This is the system used in Western horoscopes. It focuses on who you ARE rather
-                    than what will happen to you.
+                    Western sidereal astrology uses the same planets and 360° circle as tropical but accounts for Earth's axial precession. This results in a gradual 
+                    drift between tropical and sidereal systems over centuries. The offset, called the ayanamsa, allows conversion between them.
+                  </p>
+                  <p className="t-text-muted">
+                    Importantly, sidereal shifts the sign labels and degrees, not the houses. This means your "sign" may differ from more popular tropical Western astrology. Some say sidereal is more accurate. Other that it is simply a different reference system.
                   </p>
                 </div>
 
                 <div className="bg-[#12142A]/60 rounded-xl p-6 border border-white/10">
                   <h3 className="text-2xl font-bold text-[#69D2FF] mb-3">
-                    Vedic (Sidereal) Astrology
+                    Vedic (Jyotish) Sidereal Astrology
                   </h3>
                   <p className="t-text-muted mb-3">
-                    <strong className="text-white">Ancient Indian System</strong> - Based on actual star positions. About
-                    23-24° behind Western astrology.
-                  </p>
-                  <p className="t-text-muted mb-3">
-                    <strong className="text-white">Key difference:</strong> Your Vedic Sun sign is often DIFFERENT from
-                    Western!
+                    <strong className="text-white">This is a traditional Indian system with a unique interpretative framwework.</strong>
                   </p>
                   <p className="t-text-muted">
-                    <strong className="text-white">Best for:</strong> Predictive astrology, timing life events,
-                    understanding karma and destiny.
+                    Jyotish employs a sidereal zodiac aligned with the stars rather than the tropical equinox-based system. It commonly uses the Lahiri ayanamsa for its offset calculations.
+                  </p>
+                  <p className="t-text-muted">
+                    Beyond core elements shared with Western systems, it incorporates nakshatras (lunar mansions) and dashas (planetary timing periods), which are less central in modern Western astrology. 
+                    The system offer predictive astrology, timing life events, and understanding karma and destiny. Natavium will soon offer Jyotish Astrology
                   </p>
                 </div>
               </div>
