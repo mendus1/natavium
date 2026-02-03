@@ -3535,7 +3535,6 @@ export default function Natavium() {
     return localStorage.getItem("natavium_isPremium") === "true";
   });
   const [selectedBundle, setSelectedBundle] = useState("essential"); // default to most popular
-  const [zodiacType, setZodiacType] = useState("tropical"); // 'tropical' or 'sidereal'
 
   // Persist state to localStorage
   useEffect(() => {
@@ -3599,7 +3598,6 @@ export default function Natavium() {
   };
 
   const calculateChart = async (navigate, zodiac = 'tropical') => {
-    setZodiacType(zodiac);
     navigate("/calculating");
     setCalcError(null);
 
@@ -3630,8 +3628,10 @@ export default function Natavium() {
 
       console.log("Chart result:", chart);
       console.log("Chart ID:", chartId);
+      console.log("Zodiac type:", zodiac);
 
-      setChartResult({ ...chart, chartId });
+      // Store chart with zodiac type for downstream processing (analysis, add-ons)
+      setChartResult({ ...chart, chartId, zodiacType: zodiac });
       navigate("/preview", { replace: true });
     } catch (error) {
       console.error("Chart calculation error:", error);
