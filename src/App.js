@@ -419,8 +419,8 @@ function InfoPage() {
               <div className="bg-[#D6B35A]/10 rounded-xl p-6 border border-[#D6B35A]/30">
                 <h3 className="text-xl font-bold mb-3">Which System Should I Use?</h3>
                 <p className="t-text-muted">
-                  Start with <strong className="text-white">Western (Tropical)</strong> - it's most accessible. Once you
-                  understand your Western chart, explore Vedic for a different perspective.
+                  We suggest start with <strong className="text-white">Western (Tropical)</strong> - it's most accessible and your sign will likely match what you've always thought it was. If you're looking for
+                  something new, perhaps <strong className="text-white">Western (Sidereal)</strong>. You may even get a new sign! Vedic analyses will be available soon.
                 </p>
               </div>
             </div>
@@ -438,11 +438,11 @@ function InfoPage() {
               <div className="bg-[#12142A]/60 rounded-xl p-6 border border-white/10">
                 <h3 className="text-xl font-bold text-[#D6B35A] mb-3">Chart Calculations</h3>
                 <p className="t-text-muted mb-3">
-                  We use the <strong className="text-white">Swiss Ephemeris</strong> - the gold standard in astronomical
+                  We use the <strong className="text-white">Swiss Ephemeris</strong> - which are based on NASA data and the gold standard in astronomical
                   calculations. Planetary positions are accurate to the arc-second.
                 </p>
                 <p className="t-text-muted">
-                  Your birth time and location are converted to precise coordinates, then we
+                  Your birth time and location are converted to precise coordinates for the system you chose, then we
                   calculate where each planet was at that exact moment.
                 </p>
               </div>
@@ -450,11 +450,11 @@ function InfoPage() {
               <div className="bg-[#12142A]/60 rounded-xl p-6 border border-white/10">
                 <h3 className="text-xl font-bold text-[#D6B35A] mb-3">AI-Generated Readings</h3>
                 <p className="t-text-muted mb-3">
-                  Unlike template-based apps, Natavium uses <strong className="text-white">GPT-4</strong> to actually
+                  Unlike template-based apps, Natavium uses <strong className="text-white">powerful AI models</strong> to actually
                   analyze YOUR specific chart.
                 </p>
                 <p className="t-text-muted">
-                  The AI considers how all your placements interact - synthesizing contradictions
+                  The AI considers, within the chosen system, how all your placements interact - synthesizing contradictions
                   and identifying patterns unique to YOUR combination.
                 </p>
               </div>
