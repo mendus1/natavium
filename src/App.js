@@ -1785,43 +1785,43 @@ function SuccessPage({ setIsPremium, chartResult, selectedBundle }) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 text-white flex items-center justify-center p-6">
+    <div className="min-h-screen text-white flex items-center justify-center p-6">
       <div className="text-center max-w-md">
         {generationStatus === 'starting' && (
           <>
             <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
               <Check className="w-10 h-10 text-green-400" />
             </div>
-            <h1 className="text-4xl font-black mb-4">Payment Successful!</h1>
-            <p className="text-purple-300 text-lg">Preparing your personalized reading...</p>
+            <h1 className="font-serif text-4xl font-semibold gold-gradient-text mb-4">Payment Successful!</h1>
+            <p className="t-text-muted text-lg">Preparing your personalized reading...</p>
           </>
         )}
 
         {generationStatus === 'generating' && (
           <>
-            <div className="w-20 h-20 bg-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Sparkles className="w-10 h-10 text-yellow-300 animate-pulse" />
+            <div className="w-20 h-20 bg-[#D6B35A]/20 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Sparkles className="w-10 h-10 text-[#D6B35A] animate-pulse" />
             </div>
-            <h1 className="text-4xl font-black mb-4">Creating Your Reading</h1>
-            <p className="text-purple-300 text-lg mb-4">
+            <h1 className="font-serif text-4xl font-semibold gold-gradient-text mb-4">Creating Your Reading</h1>
+            <p className="t-text-muted text-lg mb-4">
               GPT is analyzing your unique cosmic blueprint...
             </p>
 
             {/* Live streaming preview */}
             {streamedText && (
-              <div className="mt-4 bg-white/5 rounded-xl p-4 max-h-48 overflow-y-auto text-left">
-                <p className="text-purple-200 text-sm whitespace-pre-wrap">
+              <div className="mt-4 bg-white/5 rounded-xl p-4 max-h-48 overflow-y-auto text-left border border-white/10">
+                <p className="text-white/70 text-sm whitespace-pre-wrap">
                   {streamedText.slice(0, 500)}{streamedText.length > 500 ? '...' : ''}
                 </p>
               </div>
             )}
-            <p className="text-purple-400 text-sm mt-4">
+            <p className="t-text-muted text-sm mt-4">
               {streamedText.length > 0 ? `${streamedText.length} characters generated...` : 'Starting generation...'}
             </p>
 
             {/* Social Media Links */}
             <div className="mt-8 pt-6 border-t border-white/10">
-              <p className="text-purple-300 text-sm mb-3">Follow us on socials</p>
+              <p className="t-text-muted text-sm mb-3">Follow us on socials</p>
               <SocialLinks className="justify-center" iconClassName="w-5 h-5" />
             </div>
           </>
@@ -1832,8 +1832,8 @@ function SuccessPage({ setIsPremium, chartResult, selectedBundle }) {
             <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
               <Check className="w-10 h-10 text-green-400" />
             </div>
-            <h1 className="text-4xl font-black mb-4">Your Reading is Ready!</h1>
-            <p className="text-purple-300 text-lg">Taking you to your personalized analysis...</p>
+            <h1 className="font-serif text-4xl font-semibold gold-gradient-text mb-4">Your Reading is Ready!</h1>
+            <p className="t-text-muted text-lg">Taking you to your personalized analysis...</p>
           </>
         )}
 
@@ -1842,15 +1842,15 @@ function SuccessPage({ setIsPremium, chartResult, selectedBundle }) {
             <div className="w-20 h-20 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
               <X className="w-10 h-10 text-red-400" />
             </div>
-            <h1 className="text-4xl font-black mb-4">Generation Error</h1>
+            <h1 className="font-serif text-4xl font-semibold mb-4">Generation Error</h1>
             <p className="text-red-300 text-lg mb-4">{error}</p>
             <button
               onClick={() => navigate('/chart', { replace: true })}
-              className="bg-gradient-to-r from-yellow-400 to-orange-500 text-gray-900 px-6 py-3 rounded-xl font-bold hover:scale-105 transition-transform"
+              className="gold-gradient-btn px-6 py-3 rounded-xl font-bold"
             >
               Continue to Chart
             </button>
-            <p className="text-purple-400 text-sm mt-4">
+            <p className="t-text-muted text-sm mt-4">
               Don't worry - you can regenerate your reading from the chart page.
             </p>
           </>
@@ -1869,39 +1869,39 @@ function PaymentPage({ handlePayment, selectedBundle }) {
   const IconComponent = bundle.icon;
 
   const colorClasses = {
-    yellow: { bg: "bg-yellow-500/20", border: "border-yellow-500/30", icon: "text-yellow-300", price: "text-yellow-300" },
-    purple: { bg: "bg-purple-500/20", border: "border-purple-500/30", icon: "text-purple-300", price: "text-purple-300" },
-    pink: { bg: "bg-pink-500/20", border: "border-pink-500/30", icon: "text-pink-300", price: "text-pink-300" },
+    yellow: { bg: "bg-[#D6B35A]/10", border: "border-[#D6B35A]/30", icon: "text-[#D6B35A]", price: "text-[#D6B35A]" },
+    purple: { bg: "bg-[#69D2FF]/10", border: "border-[#69D2FF]/30", icon: "text-[#69D2FF]", price: "text-[#69D2FF]" },
+    pink: { bg: "bg-white/5", border: "border-white/10", icon: "text-white", price: "text-white" },
   };
   const colors = colorClasses[bundle.color];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 text-white p-6 flex items-center justify-center">
-      <div className="max-w-md w-full bg-white/10 backdrop-blur-lg rounded-3xl p-8 border border-white/20">
+    <div className="min-h-screen text-white p-6 flex items-center justify-center">
+      <div className="max-w-md w-full card-solid rounded-2xl p-8">
         <div className="text-center mb-6">
           <IconComponent className={`w-16 h-16 ${colors.icon} mx-auto mb-4`} />
-          <h2 className="text-3xl font-bold mb-2">Complete Your Purchase</h2>
-          <p className="text-purple-300">One-time • No subscription</p>
+          <h2 className="font-serif text-3xl font-semibold mb-2 gold-gradient-text">Complete Your Purchase</h2>
+          <p className="t-text-muted">One-time • No subscription</p>
         </div>
 
         {/* Order Summary */}
         <div className={`${colors.bg} rounded-2xl p-6 mb-6 border ${colors.border}`}>
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h3 className="text-xl font-bold">{bundle.name} Package</h3>
-              <p className="text-sm text-purple-300">{bundle.description}</p>
+              <h3 className="text-xl font-semibold">{bundle.name} Package</h3>
+              <p className="text-sm t-text-muted">{bundle.description}</p>
             </div>
-            <div className={`text-3xl font-black ${colors.price}`}>
+            <div className={`text-3xl font-bold ${colors.price}`}>
               ${bundle.price.toFixed(2)}
             </div>
           </div>
 
           <div className="border-t border-white/10 pt-4 space-y-2">
-            <h4 className="text-sm font-semibold text-purple-200 mb-2">What's included:</h4>
+            <h4 className="text-sm font-semibold t-text-muted mb-2">What's included:</h4>
             {bundle.features.filter(f => f.included).slice(0, 5).map((feature, idx) => (
               <div key={idx} className="flex items-start text-sm">
                 <Check className="w-4 h-4 text-green-400 mr-2 flex-shrink-0 mt-0.5" />
-                <span className="text-purple-100">{feature.text}</span>
+                <span className="text-white/80">{feature.text}</span>
               </div>
             ))}
           </div>
@@ -1910,26 +1910,26 @@ function PaymentPage({ handlePayment, selectedBundle }) {
         {/* Order Total */}
         <div className="bg-white/5 rounded-xl p-4 mb-6 border border-white/10">
           <div className="flex items-center justify-between">
-            <span className="text-purple-200">Order Total</span>
-            <span className="text-2xl font-black text-white">${bundle.price.toFixed(2)}</span>
+            <span className="t-text-muted">Order Total</span>
+            <span className="text-2xl font-bold text-white">${bundle.price.toFixed(2)}</span>
           </div>
         </div>
 
         <button
           onClick={() => handlePayment(navigate)}
-          className="w-full bg-gradient-to-r from-yellow-400 to-orange-500 text-gray-900 px-6 py-4 rounded-xl text-lg font-black hover:scale-105 transition-transform shadow-xl mb-4"
+          className="w-full gold-gradient-btn px-6 py-4 rounded-xl text-lg font-bold shadow-xl mb-4"
         >
           Pay ${bundle.price.toFixed(2)} Now
         </button>
 
         <button
           onClick={() => navigate("/preview")}
-          className="w-full text-purple-300 hover:text-white transition-colors text-sm"
+          className="w-full t-text-muted hover:text-white transition-colors text-sm"
         >
           ← Change package
         </button>
 
-        <p className="text-xs text-center text-purple-400 mt-6">
+        <p className="text-xs text-center t-text-muted mt-6">
           🔒 Secure payment via Stripe • Instant access after payment
         </p>
       </div>
@@ -2384,13 +2384,13 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 text-white p-6">
+    <div className="min-h-screen text-white p-6">
       {/* Email Modal */}
       {showEmailModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-gradient-to-br from-indigo-900 to-purple-900 rounded-2xl p-6 max-w-md w-full border border-white/20 shadow-2xl">
+          <div className="card-solid rounded-2xl p-6 max-w-md w-full shadow-2xl">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xl font-bold">Email Your Chart</h3>
+              <h3 className="text-xl font-semibold">Email Your Chart</h3>
               <button
                 onClick={() => {
                   setShowEmailModal(false);
@@ -2409,11 +2409,11 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
                   <Check className="w-8 h-8 text-green-400" />
                 </div>
                 <p className="text-lg font-semibold text-green-400">Email Sent!</p>
-                <p className="text-purple-300 text-sm mt-2">Check your inbox for your chart results.</p>
+                <p className="t-text-muted text-sm mt-2">Check your inbox for your chart results.</p>
               </div>
             ) : (
               <>
-                <p className="text-purple-300 text-sm mb-4">
+                <p className="t-text-muted text-sm mb-4">
                   We'll send your complete chart results including all planetary placements to your email.
                 </p>
 
@@ -2424,7 +2424,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
                     value={emailAddress}
                     onChange={(e) => setEmailAddress(e.target.value)}
                     placeholder="your@email.com"
-                    className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-purple-400 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
+                    className="w-full px-4 py-3 rounded-xl bg-[#12142A]/80 border border-white/10 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[#D6B35A] focus:border-transparent"
                     disabled={emailStatus === "sending"}
                   />
                   {emailError && (
@@ -2435,7 +2435,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
                 <button
                   onClick={handleSendEmail}
                   disabled={!emailAddress || emailStatus === "sending"}
-                  className="w-full bg-gradient-to-r from-yellow-400 to-orange-500 text-gray-900 px-6 py-3 rounded-xl font-bold hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-2"
+                  className="w-full gold-gradient-btn px-6 py-3 rounded-xl font-bold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   {emailStatus === "sending" ? (
                     <>
@@ -2457,23 +2457,23 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
 
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-8">
-          <h1 className="text-5xl font-black mb-2">Your Complete Natal Chart</h1>
-          <p className="text-xl text-purple-300 mb-4">
+          <h1 className="font-serif text-4xl md:text-5xl font-semibold gold-gradient-text mb-2">Your Complete Natal Chart</h1>
+          <p className="text-lg t-text-muted mb-4">
             {displayDate} • {birthData.time} • {birthData.location}
           </p>
 
           <div className="flex justify-center gap-4">
             <button
               onClick={() => setShowEmailModal(true)}
-              className="flex items-center px-4 py-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors text-sm"
+              className="flex items-center px-4 py-2 bg-[#12142A]/80 border border-white/10 rounded-lg hover:bg-[#12142A] hover:border-white/20 transition-all text-sm"
             >
-              <Mail className="w-4 h-4 mr-2" />
+              <Mail className="w-4 h-4 mr-2 icon-gold" />
               Email Results
             </button>
             <button
               onClick={handleDownloadPDF}
               disabled={pdfGenerating}
-              className="flex items-center px-4 py-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors text-sm disabled:opacity-50"
+              className="flex items-center px-4 py-2 bg-[#12142A]/80 border border-white/10 rounded-lg hover:bg-[#12142A] hover:border-white/20 transition-all text-sm disabled:opacity-50"
             >
               {pdfGenerating ? (
                 <>
@@ -2482,7 +2482,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
                 </>
               ) : (
                 <>
-                  <Download className="w-4 h-4 mr-2" />
+                  <Download className="w-4 h-4 mr-2 icon-gold" />
                   Download PDF
                 </>
               )}
@@ -2496,7 +2496,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
         </div>
 
         {/* Tab Navigation */}
-        <nav className="flex gap-1 overflow-x-auto bg-white/5 rounded-2xl p-2 mb-6 scrollbar-hide">
+        <nav className="flex gap-1 overflow-x-auto bg-[#12142A]/60 rounded-2xl p-2 mb-6 scrollbar-hide border border-white/10">
           {DASHBOARD_TABS.map((tab) => {
             const accessible = isTabAccessible(tab.id);
             const TabIcon = tab.icon;
@@ -2510,10 +2510,10 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
                 className={`flex items-center gap-2 px-4 py-3 rounded-xl font-semibold
                   whitespace-nowrap transition-all min-w-fit ${
                   isActive
-                    ? 'bg-gradient-to-r from-yellow-400/20 to-orange-500/20 text-yellow-300 border border-yellow-500/30'
+                    ? 'bg-[#D6B35A]/20 text-[#D6B35A] border border-[#D6B35A]/30'
                     : accessible
-                      ? 'hover:bg-white/10 text-purple-200'
-                      : 'text-purple-400 opacity-60 hover:opacity-80'
+                      ? 'hover:bg-white/10 t-text-muted hover:text-white'
+                      : 't-text-muted opacity-60 hover:opacity-80'
                 }`}
               >
                 {isGenerating ? (
@@ -2523,7 +2523,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
                 )}
                 <span>{tab.label}</span>
                 {tab.comingSoon && (
-                  <span className="text-[10px] bg-purple-500/30 px-1.5 py-0.5 rounded text-purple-200">Soon</span>
+                  <span className="text-[10px] bg-[#69D2FF]/20 px-1.5 py-0.5 rounded text-[#69D2FF]">Soon</span>
                 )}
                 {!accessible && !tab.comingSoon && <Lock className="w-3 h-3 ml-1" />}
               </button>
@@ -2534,23 +2534,23 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
         {/* Upsell Modal */}
         {upsellTab && (
           <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div className="bg-gradient-to-br from-indigo-900 to-purple-900 rounded-2xl p-8 max-w-md w-full border border-white/20 shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div className="card-solid rounded-2xl p-8 max-w-md w-full shadow-2xl max-h-[90vh] overflow-y-auto">
               {upsellTab.isComingSoon ? (
                 <>
                   <div className="text-center mb-6">
-                    <div className="w-16 h-16 bg-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <Sparkles className="w-8 h-8 text-purple-300" />
+                    <div className="w-16 h-16 bg-[#69D2FF]/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Sparkles className="w-8 h-8 text-[#69D2FF]" />
                     </div>
-                    <h3 className="text-2xl font-bold mb-2">{upsellTab.label}</h3>
-                    <p className="text-purple-300 mb-4">{upsellTab.description}</p>
-                    <div className="bg-purple-500/20 rounded-xl p-4 mb-4">
-                      <p className="text-yellow-300 font-semibold">Coming Soon!</p>
-                      <p className="text-purple-300 text-sm mt-1">This feature is currently in development.</p>
+                    <h3 className="text-2xl font-semibold mb-2">{upsellTab.label}</h3>
+                    <p className="t-text-muted mb-4">{upsellTab.description}</p>
+                    <div className="bg-[#69D2FF]/10 rounded-xl p-4 mb-4 border border-[#69D2FF]/20">
+                      <p className="text-[#D6B35A] font-semibold">Coming Soon!</p>
+                      <p className="t-text-muted text-sm mt-1">This feature is currently in development.</p>
                     </div>
                   </div>
                   <button
                     onClick={() => setUpsellTab(null)}
-                    className="w-full py-3 text-purple-300 hover:text-white transition-colors"
+                    className="w-full py-3 t-text-muted hover:text-white transition-colors"
                   >
                     Got it
                   </button>
@@ -2558,11 +2558,11 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
               ) : (
                 <>
                   <div className="text-center mb-6">
-                    <div className="w-16 h-16 bg-yellow-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <ShoppingCart className="w-8 h-8 text-yellow-300" />
+                    <div className="w-16 h-16 bg-[#D6B35A]/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <ShoppingCart className="w-8 h-8 text-[#D6B35A]" />
                     </div>
-                    <h3 className="text-2xl font-bold mb-2">Unlock Premium Features</h3>
-                    <p className="text-purple-300">Select the add-ons you'd like to unlock</p>
+                    <h3 className="text-2xl font-semibold mb-2">Unlock Premium Features</h3>
+                    <p className="t-text-muted">Select the add-ons you'd like to unlock</p>
                   </div>
 
                   {/* Add-on selection list */}
@@ -2576,23 +2576,23 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
                           onClick={() => toggleAddOnSelection(addon.id)}
                           className={`w-full flex items-center gap-3 p-4 rounded-xl border transition-all ${
                             isSelected
-                              ? 'bg-yellow-500/20 border-yellow-500/50'
+                              ? 'bg-[#D6B35A]/20 border-[#D6B35A]/50'
                               : 'bg-white/5 border-white/10 hover:bg-white/10'
                           }`}
                         >
                           <div className={`w-6 h-6 rounded-md border-2 flex items-center justify-center transition-colors ${
                             isSelected
-                              ? 'bg-yellow-500 border-yellow-500'
+                              ? 'bg-[#D6B35A] border-[#D6B35A]'
                               : 'border-white/30'
                           }`}>
-                            {isSelected && <Check className="w-4 h-4 text-gray-900" />}
+                            {isSelected && <Check className="w-4 h-4 text-[#12142A]" />}
                           </div>
-                          <AddonIcon className={`w-5 h-5 ${isSelected ? 'text-yellow-300' : 'text-purple-300'}`} />
+                          <AddonIcon className={`w-5 h-5 ${isSelected ? 'text-[#D6B35A]' : 't-text-muted'}`} />
                           <div className="flex-1 text-left">
                             <div className="font-semibold">{addon.label}</div>
-                            <div className="text-xs text-purple-400">{addon.description?.slice(0, 50)}...</div>
+                            <div className="text-xs t-text-muted">{addon.description?.slice(0, 50)}...</div>
                           </div>
-                          <div className={`font-bold ${isSelected ? 'text-yellow-300' : 'text-purple-200'}`}>
+                          <div className={`font-bold ${isSelected ? 'text-[#D6B35A]' : 't-text-muted'}`}>
                             ${addon.priceIfLocked?.toFixed(2)}
                           </div>
                         </button>
@@ -2602,10 +2602,10 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
 
                   {/* Total and checkout */}
                   {selectedAddOns.length > 0 && (
-                    <div className="bg-white/10 rounded-xl p-4 mb-4">
+                    <div className="bg-white/10 rounded-xl p-4 mb-4 border border-white/10">
                       <div className="flex justify-between items-center">
-                        <span className="text-purple-200">{selectedAddOns.length} item{selectedAddOns.length > 1 ? 's' : ''} selected</span>
-                        <span className="text-2xl font-bold text-yellow-300">
+                        <span className="t-text-muted">{selectedAddOns.length} item{selectedAddOns.length > 1 ? 's' : ''} selected</span>
+                        <span className="text-2xl font-bold text-[#D6B35A]">
                           ${calculateTotal().toFixed(2)}
                         </span>
                       </div>
@@ -2617,7 +2617,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
                     disabled={selectedAddOns.length === 0 || checkoutLoading}
                     className={`w-full py-4 rounded-xl font-bold transition-all mb-3 ${
                       selectedAddOns.length > 0 && !checkoutLoading
-                        ? 'bg-gradient-to-r from-yellow-400 to-orange-500 text-gray-900 hover:scale-105'
+                        ? 'gold-gradient-btn'
                         : 'bg-white/10 text-white/50 cursor-not-allowed'
                     }`}
                   >
@@ -2638,7 +2638,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
                       setUpsellTab(null);
                       setSelectedAddOns([]);
                     }}
-                    className="w-full py-3 text-purple-300 hover:text-white transition-colors"
+                    className="w-full py-3 t-text-muted hover:text-white transition-colors"
                   >
                     Maybe later
                   </button>
@@ -2651,12 +2651,12 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
         {/* Chart content - shown on Natal tab */}
         {activeTab === 'natal' && (
           <>
-            <div className="bg-green-500/20 border border-green-500/50 rounded-2xl p-6 mb-8 text-center">
-              <div className="text-4xl mb-2">🎉</div>
-              <h2 className="text-2xl font-bold mb-2">Welcome to Your Cosmic Journey!</h2>
-              <p className="text-green-200">Your complete analysis is unlocked.</p>
+            <div className="bg-[#D6B35A]/10 border border-[#D6B35A]/30 rounded-2xl p-6 mb-8 text-center">
+              <div className="text-4xl mb-2">✨</div>
+              <h2 className="text-2xl font-semibold mb-2 gold-gradient-text">Welcome to Your Cosmic Journey!</h2>
+              <p className="t-text-muted">Your complete analysis is unlocked.</p>
               {chartResult.chartId && (
-                <p className="text-green-300/70 text-xs mt-2">Chart ID: {chartResult.chartId}</p>
+                <p className="t-text-muted text-xs mt-2">Chart ID: {chartResult.chartId}</p>
               )}
             </div>
           </>
@@ -2666,8 +2666,8 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
         {activeTab === 'natal' && (
         <div className="space-y-8">
           {/* Premium Chart Wheel */}
-          <div id="natal-chart-container" className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 border border-white/20">
-            <h2 className="text-2xl font-bold text-center mb-6">Your Natal Chart</h2>
+          <div id="natal-chart-container" className="card-solid rounded-2xl p-8">
+            <h2 className="font-serif text-2xl font-semibold text-center mb-6 gold-gradient-text">Your Natal Chart</h2>
             {(() => {
               // SVG Path definitions for zodiac signs (scaled for 14px viewBox centered at 0,0)
               const zodiacPaths = {
@@ -3024,44 +3024,44 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
               );
             })()}
             <div className="flex flex-wrap justify-center gap-4 text-xs mt-2">
-              <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full" style={{ background: 'linear-gradient(135deg, #ff6b6b, #f97316)' }}></span><span className="text-purple-300">Fire</span></div>
-              <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full" style={{ background: 'linear-gradient(135deg, #4ade80, #22c55e)' }}></span><span className="text-purple-300">Earth</span></div>
-              <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full" style={{ background: 'linear-gradient(135deg, #fde047, #facc15)' }}></span><span className="text-purple-300">Air</span></div>
-              <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full" style={{ background: 'linear-gradient(135deg, #60a5fa, #3b82f6)' }}></span><span className="text-purple-300">Water</span></div>
+              <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full" style={{ background: 'linear-gradient(135deg, #ff6b6b, #f97316)' }}></span><span className="t-text-muted">Fire</span></div>
+              <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full" style={{ background: 'linear-gradient(135deg, #4ade80, #22c55e)' }}></span><span className="t-text-muted">Earth</span></div>
+              <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full" style={{ background: 'linear-gradient(135deg, #fde047, #facc15)' }}></span><span className="t-text-muted">Air</span></div>
+              <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full" style={{ background: 'linear-gradient(135deg, #60a5fa, #3b82f6)' }}></span><span className="t-text-muted">Water</span></div>
             </div>
           </div>
 
           {/* Big Three Summary (Compact) */}
-          <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-6 border border-white/20">
-            <h2 className="text-xl font-bold mb-4">Your Big Three</h2>
+          <div className="card-solid rounded-2xl p-6">
+            <h2 className="text-xl font-semibold mb-4">Your Big Three</h2>
             <div className="space-y-3">
-              <div className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-xl p-4 border border-yellow-500/30">
+              <div className="bg-[#D6B35A]/10 rounded-xl p-4 border border-[#D6B35A]/30">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-bold text-yellow-300">☉ {chartResult.sun.sign} Sun</h3>
-                  <span className="text-sm text-purple-300">{chartResult.sun.degree}° {String(chartResult.sun.minutes || 0).padStart(2, '0')}' • {chartResult.sun.house}{houseSuffix(chartResult.sun.house)} house</span>
+                  <h3 className="text-lg font-semibold text-[#D6B35A]">☉ {chartResult.sun.sign} Sun</h3>
+                  <span className="text-sm t-text-muted">{chartResult.sun.degree}° {String(chartResult.sun.minutes || 0).padStart(2, '0')}' • {chartResult.sun.house}{houseSuffix(chartResult.sun.house)} house</span>
                 </div>
-                <p className="text-sm text-purple-200 mt-1">Core Identity</p>
+                <p className="text-sm t-text-muted mt-1">Core Identity</p>
               </div>
-              <div className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-xl p-4 border border-blue-500/30">
+              <div className="bg-[#69D2FF]/10 rounded-xl p-4 border border-[#69D2FF]/30">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-bold text-blue-300">☽ {chartResult.moon.sign} Moon</h3>
-                  <span className="text-sm text-purple-300">{chartResult.moon.degree}° {String(chartResult.moon.minutes || 0).padStart(2, '0')}' • {chartResult.moon.house}{houseSuffix(chartResult.moon.house)} house</span>
+                  <h3 className="text-lg font-semibold text-[#69D2FF]">☽ {chartResult.moon.sign} Moon</h3>
+                  <span className="text-sm t-text-muted">{chartResult.moon.degree}° {String(chartResult.moon.minutes || 0).padStart(2, '0')}' • {chartResult.moon.house}{houseSuffix(chartResult.moon.house)} house</span>
                 </div>
-                <p className="text-sm text-purple-200 mt-1">Emotional Core</p>
+                <p className="text-sm t-text-muted mt-1">Emotional Core</p>
               </div>
-              <div className="bg-gradient-to-r from-pink-500/20 to-purple-500/20 rounded-xl p-4 border border-pink-500/30">
+              <div className="bg-white/5 rounded-xl p-4 border border-white/10">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-bold text-pink-300">↑ {chartResult.rising.sign} Rising</h3>
-                  <span className="text-sm text-purple-300">{chartResult.rising.degree}° {String(chartResult.rising.minutes || 0).padStart(2, '0')}' Ascendant</span>
+                  <h3 className="text-lg font-semibold text-white">↑ {chartResult.rising.sign} Rising</h3>
+                  <span className="text-sm t-text-muted">{chartResult.rising.degree}° {String(chartResult.rising.minutes || 0).padStart(2, '0')}' Ascendant</span>
                 </div>
-                <p className="text-sm text-purple-200 mt-1">How Others See You</p>
+                <p className="text-sm t-text-muted mt-1">How Others See You</p>
               </div>
             </div>
           </div>
 
           {/* Planetary Placements */}
-          <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 border border-white/20">
-            <h2 className="text-2xl font-bold mb-6">Planetary Placements</h2>
+          <div className="card-solid rounded-2xl p-8">
+            <h2 className="font-serif text-2xl font-semibold mb-6 gold-gradient-text">Planetary Placements</h2>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               {[
                 { name: "Mercury", glyph: "☿", data: chartResult.mercury, desc: "Communication" },
@@ -3073,28 +3073,28 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
                 { name: "Neptune", glyph: "♆", data: chartResult.neptune, desc: "Dreams" },
                 { name: "Pluto", glyph: "♇", data: chartResult.pluto, desc: "Transformation" },
               ].map((planet) => (
-                <div key={planet.name} className="bg-white/5 rounded-lg p-4">
+                <div key={planet.name} className="bg-white/5 rounded-lg p-4 border border-white/5">
                   <div className="flex items-center gap-2 mb-1">
                     <span className="text-lg">{planet.glyph}</span>
                     <span className="font-semibold">{planet.name}</span>
                   </div>
-                  <p className="text-yellow-300 font-bold">{planet.data?.sign || "—"}</p>
-                  <p className="text-purple-300 text-xs">{planet.data?.degree ?? "—"}° {String(planet.data?.minutes || 0).padStart(2, '0')}' • {planet.data?.house ? `${planet.data.house}${houseSuffix(planet.data.house)} house` : "—"}</p>
-                  <p className="text-purple-400 text-xs mt-1">{planet.desc}</p>
+                  <p className="text-[#D6B35A] font-bold">{planet.data?.sign || "—"}</p>
+                  <p className="t-text-muted text-xs">{planet.data?.degree ?? "—"}° {String(planet.data?.minutes || 0).padStart(2, '0')}' • {planet.data?.house ? `${planet.data.house}${houseSuffix(planet.data.house)} house` : "—"}</p>
+                  <p className="t-text-muted text-xs mt-1">{planet.desc}</p>
                 </div>
               ))}
             </div>
           </div>
 
           {/* AI-Generated Full Analysis */}
-          <div className="bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-3xl p-8 border border-purple-500/30">
+          <div className="card-solid rounded-2xl p-8">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-yellow-300">
-                <Sparkles className="w-6 h-6 inline mr-2" />
+              <h2 className="font-serif text-2xl font-semibold gold-gradient-text">
+                <Sparkles className="w-6 h-6 inline mr-2 icon-gold" />
                 Your Personalized Reading
               </h2>
               {purchasedProducts.bundle && (
-                <span className="text-xs text-purple-400">
+                <span className="text-xs t-text-muted">
                   {purchasedProducts.bundle.charAt(0).toUpperCase() + purchasedProducts.bundle.slice(1)} Package
                 </span>
               )}
@@ -3102,8 +3102,8 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
 
             {analysisLoading || generatingTab === 'natal' ? (
               <div className="flex flex-col items-center justify-center py-12">
-                <Loader2 className="w-10 h-10 text-yellow-300 animate-spin mb-4" />
-                <p className="text-purple-300">Generating your reading...</p>
+                <Loader2 className="w-10 h-10 text-[#D6B35A] animate-spin mb-4" />
+                <p className="t-text-muted">Generating your reading...</p>
               </div>
             ) : currentAnalysis?.content ? (
               <div className="prose prose-invert max-w-none">
@@ -3112,7 +3112,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
                   // H2 headers (## Chapter title)
                   if (line.startsWith('## ')) {
                     return (
-                      <h3 key={idx} className="text-xl font-bold text-yellow-300 mt-6 mb-3">
+                      <h3 key={idx} className="text-xl font-semibold text-[#D6B35A] mt-6 mb-3">
                         {line.replace('## ', '')}
                       </h3>
                     );
@@ -3120,7 +3120,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
                   // H3 headers (### Section title)
                   if (line.startsWith('### ')) {
                     return (
-                      <h4 key={idx} className="text-lg font-semibold text-purple-200 mt-4 mb-2">
+                      <h4 key={idx} className="text-lg font-semibold text-white/90 mt-4 mb-2">
                         {line.replace('### ', '')}
                       </h4>
                     );
@@ -3128,7 +3128,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
                   // H4 headers (#### Subsection title)
                   if (line.startsWith('#### ')) {
                     return (
-                      <h5 key={idx} className="text-base font-medium text-purple-300 mt-3 mb-1">
+                      <h5 key={idx} className="text-base font-medium t-text-muted mt-3 mb-1">
                         {line.replace('#### ', '')}
                       </h5>
                     );
@@ -3136,7 +3136,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
                   // Bold text replacement and bullet points
                   if (line.startsWith('- ') || line.startsWith('* ')) {
                     return (
-                      <p key={idx} className="text-purple-100 ml-4 mb-1">
+                      <p key={idx} className="text-white/80 ml-4 mb-1">
                         • {line.slice(2).replace(/\*\*(.*?)\*\*/g, '$1')}
                       </p>
                     );
@@ -3147,7 +3147,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
                   }
                   // Regular paragraphs
                   return (
-                    <p key={idx} className="text-purple-100 leading-relaxed mb-3">
+                    <p key={idx} className="text-white/80 leading-relaxed mb-3">
                       {line.replace(/\*\*(.*?)\*\*/g, '$1')}
                     </p>
                   );
@@ -3155,10 +3155,10 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
               </div>
             ) : (
               <div className="text-center py-8">
-                <p className="text-purple-300 mb-4">Your personalized AI reading hasn't been generated yet.</p>
+                <p className="t-text-muted mb-4">Your personalized AI reading hasn't been generated yet.</p>
                 <button
                   onClick={() => generateAnalysisForTab('natal')}
-                  className="bg-gradient-to-r from-yellow-400 to-orange-500 text-gray-900 px-6 py-3 rounded-xl font-bold hover:scale-105 transition-transform"
+                  className="gold-gradient-btn px-6 py-3 rounded-xl font-bold"
                 >
                   Generate My Reading
                 </button>
@@ -3167,13 +3167,13 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
 
             {currentAnalysis?.content && (
               <div className="mt-8 pt-6 border-t border-white/10 flex justify-between items-center">
-                <p className="text-purple-400 text-xs">
+                <p className="t-text-muted text-xs">
                   Generated {currentAnalysis.generatedAt ? new Date(currentAnalysis.generatedAt).toLocaleDateString() : 'recently'}
                 </p>
                 <button
                   onClick={regenerateAnalysis}
                   disabled={analysisLoading || generatingTab}
-                  className="text-purple-300 hover:text-white text-sm flex items-center gap-2 disabled:opacity-50"
+                  className="t-text-muted hover:text-white text-sm flex items-center gap-2 disabled:opacity-50"
                 >
                   <Sparkles className="w-4 h-4" />
                   Regenerate
@@ -3187,32 +3187,32 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
         {/* Other Tab Content - Reusable Analysis Display */}
         {activeTab !== 'natal' && (
           <div className="space-y-8">
-            <div className="bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-3xl p-8 border border-purple-500/30">
+            <div className="card-solid rounded-2xl p-8">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-yellow-300">
-                  <Sparkles className="w-6 h-6 inline mr-2" />
+                <h2 className="font-serif text-2xl font-semibold gold-gradient-text">
+                  <Sparkles className="w-6 h-6 inline mr-2 icon-gold" />
                   {DASHBOARD_TABS.find(t => t.id === activeTab)?.label} Analysis
                 </h2>
               </div>
 
               {generatingTab === activeTab ? (
                 <div className="flex flex-col items-center justify-center py-12">
-                  <Loader2 className="w-10 h-10 text-yellow-300 animate-spin mb-4" />
-                  <p className="text-purple-300">Generating your {DASHBOARD_TABS.find(t => t.id === activeTab)?.label.toLowerCase()} analysis...</p>
+                  <Loader2 className="w-10 h-10 text-[#D6B35A] animate-spin mb-4" />
+                  <p className="t-text-muted">Generating your {DASHBOARD_TABS.find(t => t.id === activeTab)?.label.toLowerCase()} analysis...</p>
                   {currentAnalysis?.content && (
                     <div className="mt-6 w-full prose prose-invert max-w-none opacity-70">
                       {currentAnalysis.content.split('\n').slice(0, 10).map((line, idx) => {
                         if (line.startsWith('## ')) {
-                          return <h3 key={idx} className="text-xl font-bold text-yellow-300 mt-4 mb-2">{line.replace('## ', '')}</h3>;
+                          return <h3 key={idx} className="text-xl font-semibold text-[#D6B35A] mt-4 mb-2">{line.replace('## ', '')}</h3>;
                         }
                         if (line.startsWith('### ')) {
-                          return <h4 key={idx} className="text-lg font-semibold text-purple-200 mt-3 mb-1">{line.replace('### ', '')}</h4>;
+                          return <h4 key={idx} className="text-lg font-semibold text-white/90 mt-3 mb-1">{line.replace('### ', '')}</h4>;
                         }
                         if (line.startsWith('#### ')) {
-                          return <h5 key={idx} className="text-base font-medium text-purple-300 mt-2 mb-1">{line.replace('#### ', '')}</h5>;
+                          return <h5 key={idx} className="text-base font-medium t-text-muted mt-2 mb-1">{line.replace('#### ', '')}</h5>;
                         }
                         if (line.trim() === '') return <div key={idx} className="h-2" />;
-                        return <p key={idx} className="text-purple-100 leading-relaxed mb-2">{line.replace(/\*\*(.*?)\*\*/g, '$1')}</p>;
+                        return <p key={idx} className="text-white/80 leading-relaxed mb-2">{line.replace(/\*\*(.*?)\*\*/g, '$1')}</p>;
                       })}
                     </div>
                   )}
@@ -3221,27 +3221,27 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
                 <div className="prose prose-invert max-w-none">
                   {currentAnalysis.content.split('\n').map((line, idx) => {
                     if (line.startsWith('## ')) {
-                      return <h3 key={idx} className="text-xl font-bold text-yellow-300 mt-6 mb-3">{line.replace('## ', '')}</h3>;
+                      return <h3 key={idx} className="text-xl font-semibold text-[#D6B35A] mt-6 mb-3">{line.replace('## ', '')}</h3>;
                     }
                     if (line.startsWith('### ')) {
-                      return <h4 key={idx} className="text-lg font-semibold text-purple-200 mt-4 mb-2">{line.replace('### ', '')}</h4>;
+                      return <h4 key={idx} className="text-lg font-semibold text-white/90 mt-4 mb-2">{line.replace('### ', '')}</h4>;
                     }
                     if (line.startsWith('#### ')) {
-                      return <h5 key={idx} className="text-base font-medium text-purple-300 mt-3 mb-1">{line.replace('#### ', '')}</h5>;
+                      return <h5 key={idx} className="text-base font-medium t-text-muted mt-3 mb-1">{line.replace('#### ', '')}</h5>;
                     }
                     if (line.startsWith('- ') || line.startsWith('* ')) {
-                      return <p key={idx} className="text-purple-100 ml-4 mb-1">• {line.slice(2).replace(/\*\*(.*?)\*\*/g, '$1')}</p>;
+                      return <p key={idx} className="text-white/80 ml-4 mb-1">• {line.slice(2).replace(/\*\*(.*?)\*\*/g, '$1')}</p>;
                     }
                     if (line.trim() === '') return <div key={idx} className="h-2" />;
-                    return <p key={idx} className="text-purple-100 leading-relaxed mb-3">{line.replace(/\*\*(.*?)\*\*/g, '$1')}</p>;
+                    return <p key={idx} className="text-white/80 leading-relaxed mb-3">{line.replace(/\*\*(.*?)\*\*/g, '$1')}</p>;
                   })}
                 </div>
               ) : (
                 <div className="text-center py-8">
-                  <p className="text-purple-300 mb-4">Your {DASHBOARD_TABS.find(t => t.id === activeTab)?.label.toLowerCase()} analysis hasn't been generated yet.</p>
+                  <p className="t-text-muted mb-4">Your {DASHBOARD_TABS.find(t => t.id === activeTab)?.label.toLowerCase()} analysis hasn't been generated yet.</p>
                   <button
                     onClick={() => generateAnalysisForTab(activeTab)}
-                    className="bg-gradient-to-r from-yellow-400 to-orange-500 text-gray-900 px-6 py-3 rounded-xl font-bold hover:scale-105 transition-transform"
+                    className="gold-gradient-btn px-6 py-3 rounded-xl font-bold"
                   >
                     Generate Analysis
                   </button>
@@ -3250,13 +3250,13 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
 
               {currentAnalysis?.content && !generatingTab && (
                 <div className="mt-8 pt-6 border-t border-white/10 flex justify-between items-center">
-                  <p className="text-purple-400 text-xs">
+                  <p className="t-text-muted text-xs">
                     Generated {currentAnalysis.generatedAt ? new Date(currentAnalysis.generatedAt).toLocaleDateString() : 'recently'}
                   </p>
                   <button
                     onClick={regenerateAnalysis}
                     disabled={analysisLoading || generatingTab}
-                    className="text-purple-300 hover:text-white text-sm flex items-center gap-2 disabled:opacity-50"
+                    className="t-text-muted hover:text-white text-sm flex items-center gap-2 disabled:opacity-50"
                   >
                     <Sparkles className="w-4 h-4" />
                     Regenerate
@@ -3268,25 +3268,25 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
         )}
 
         {/* Footer Navigation */}
-        <div className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-2xl p-8 border border-purple-500/30 mt-8">
-          <h3 className="text-2xl font-bold mb-6 text-center">Explore More</h3>
+        <div className="card-solid rounded-2xl p-8 mt-8">
+          <h3 className="font-serif text-2xl font-semibold mb-6 text-center gold-gradient-text">Explore More</h3>
 
           <div className="grid md:grid-cols-3 gap-4 mb-8">
             {DASHBOARD_TABS.filter(tab => tab.id !== 'natal' && !isTabAccessible(tab.id) && !tab.comingSoon).slice(0, 3).map(tab => {
               const TabIcon = tab.icon;
               return (
-                <div key={tab.id} className="bg-white/10 rounded-xl p-6">
+                <div key={tab.id} className="bg-white/5 rounded-xl p-6 border border-white/10">
                   <div className="flex items-center gap-2 mb-2">
-                    <TabIcon className="w-5 h-5 text-yellow-300" />
-                    <h4 className="text-xl font-bold">{tab.label}</h4>
+                    <TabIcon className="w-5 h-5 text-[#D6B35A]" />
+                    <h4 className="text-xl font-semibold">{tab.label}</h4>
                   </div>
-                  <p className="text-purple-200 text-sm mb-4">{tab.description?.slice(0, 60)}...</p>
+                  <p className="t-text-muted text-sm mb-4">{tab.description?.slice(0, 60)}...</p>
                   <button
                     onClick={() => {
                       setSelectedAddOns([tab.id]);
                       setUpsellTab(tab);
                     }}
-                    className="w-full bg-gradient-to-r from-yellow-400/20 to-orange-500/20 border border-yellow-500/30 px-4 py-2 rounded-lg hover:from-yellow-400/30 hover:to-orange-500/30 transition-colors text-sm font-semibold text-yellow-300"
+                    className="w-full bg-[#D6B35A]/10 border border-[#D6B35A]/30 px-4 py-2 rounded-lg hover:bg-[#D6B35A]/20 transition-colors text-sm font-semibold text-[#D6B35A]"
                   >
                     Unlock - ${tab.priceIfLocked?.toFixed(2)}
                   </button>
@@ -3298,7 +3298,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
           <div className="text-center flex flex-col sm:flex-row gap-4 justify-center">
             <button
               onClick={() => navigate("/")}
-              className="px-6 py-3 rounded-xl bg-white/10 border border-white/20 hover:bg-white/20 transition-colors"
+              className="px-6 py-3 rounded-xl bg-[#12142A]/80 border border-white/10 hover:bg-[#12142A] hover:border-white/20 transition-all"
             >
               Back to Home
             </button>
@@ -3312,7 +3312,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
                 localStorage.removeItem("natavium_purchasedProducts");
                 navigate("/input");
               }}
-              className="px-6 py-3 rounded-xl bg-purple-500/20 border border-purple-500/30 hover:bg-purple-500/30 transition-colors"
+              className="px-6 py-3 rounded-xl bg-[#69D2FF]/10 border border-[#69D2FF]/30 hover:bg-[#69D2FF]/20 transition-colors text-[#69D2FF]"
             >
               Calculate New Chart
             </button>
@@ -3323,7 +3323,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
             <div className="flex justify-center mb-4">
               <SocialLinks iconClassName="w-4 h-4" />
             </div>
-            <p className="text-center text-sm text-purple-400">
+            <p className="text-center text-sm t-text-muted">
               © {new Date().getFullYear()} Natavium. All rights reserved.
             </p>
           </div>
