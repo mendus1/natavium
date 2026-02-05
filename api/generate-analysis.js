@@ -32,8 +32,12 @@ const PRODUCT_CONFIG = {
   },
 };
 
-// Configurations for add-on analysis types
+// Configurations for add-on analysis types (without zodiac prefix)
 const ADDON_CONFIG = {
+  natal: {
+    model: 'gpt-4o-mini',
+    maxTokens: 1000,
+  },
   house_deep_dive: {
     model: 'gpt-4o-mini',
     maxTokens: 1500,
@@ -42,15 +46,47 @@ const ADDON_CONFIG = {
     model: 'gpt-4o-mini',
     maxTokens: 1200,
   },
-  vedic_chart: {
-    model: 'gpt-4o-mini',
-    maxTokens: 1500,
-  },
   solar_return: {
     model: 'gpt-4o-mini',
     maxTokens: 1500,
   },
 };
+
+// Helper to parse zodiac system and base analysis type from prefixed analysisType
+// e.g., 'tropical_natal' -> { zodiacSystem: 'tropical', baseType: 'natal' }
+function parseAnalysisType(analysisType) {
+  if (!analysisType) {
+    return { zodiacSystem: 'tropical', baseType: 'natal' };
+  }
+
+  if (analysisType.startsWith('tropical_')) {
+    return { zodiacSystem: 'tropical', baseType: analysisType.replace('tropical_', '') };
+  }
+
+  if (analysisType.startsWith('sidereal_')) {
+    return { zodiacSystem: 'sidereal', baseType: analysisType.replace('sidereal_', '') };
+  }
+
+  // Legacy unprefixed -> assume tropical
+  return { zodiacSystem: 'tropical', baseType: analysisType };
+}
+
+// Get zodiac system description for prompts
+function getZodiacSystemContext(zodiacSystem) {
+  if (zodiacSystem === 'sidereal') {
+    return `
+ZODIAC SYSTEM: SIDEREAL (Fagan-Bradley ayanamsa)
+- This chart uses the SIDEREAL zodiac, which is based on the fixed stars.
+- Positions are approximately 24° earlier than the tropical zodiac.
+- Interpret placements using the sidereal zodiac tradition.
+- Focus on the observable constellations rather than seasonal divisions.`;
+  }
+  return `
+ZODIAC SYSTEM: TROPICAL (Western)
+- This chart uses the TROPICAL zodiac, the standard in Western astrology.
+- Positions are based on the vernal equinox (0° Aries = spring equinox).
+- Interpret placements using traditional Western psychological astrology.`;
+}
 
 // Build the prompt based on product tier
 function buildPrompt(chartResult, productType) {
@@ -404,55 +440,6 @@ For each of the next 3 months:
 Total length: approximately 1500-2000 words.`
       };
 
-    case 'vedic_chart':
-      return {
-        systemPrompt: `You are a professional astrology report generator specializing in Jyotish (Vedic astrology), NOT a chatbot.
-
-CRITICAL RULES:
-- The user cannot reply. Do NOT ask for more information or offer to explain further.
-- Do NOT use phrases like "I hope this helps", "Let me know if you have questions", or "Feel free to ask".
-- Write directly to the user (e.g., "Your Vedic Moon sign is..."). Use a definitive, empowering tone.
-
-EXPERTISE:
-- Expert Jyotish astrologer with deep knowledge of the sidereal zodiac, Nakshatras, and traditional Hindu astrology
-- Grounded in authentic Vedic tradition
-- Clear about the differences from Western tropical astrology
-- Incorporating Nakshatra wisdom
-- Respectful of the spiritual dimensions of Jyotish
-
-Format your response in clean Markdown.`,
-        userPrompt: `## Western/Tropical Birth Chart Data
-${chartData}
-
-Please provide a Vedic astrology perspective on this chart.
-
-**Important:** Convert all positions to sidereal using Lahiri ayanamsa (subtract approximately 24° from tropical positions for 2024-2026 births, or calculate based on birth year).
-
-Include:
-
-### Vedic Placements
-- Sidereal Sun sign (Rashi) and interpretation
-- Sidereal Moon sign - crucial in Vedic astrology
-- Sidereal Ascendant (Lagna)
-- Key planetary differences from Western interpretation
-
-### Moon's Nakshatra
-- Which of the 27 Nakshatras the Moon occupies
-- The deity, symbol, and qualities of this Nakshatra
-- How it influences emotional nature and life path
-
-### Key Vedic Insights
-- Yogas (planetary combinations) if evident
-- Strength of key planets (dig bala, own sign, exaltation)
-- Areas where Vedic and Western perspectives align or differ
-
-### Spiritual Dimensions
-- Dharma indicators
-- Karmic patterns suggested by the chart
-
-Total length: approximately 1500-2000 words.`
-      };
-
     case 'solar_return':
       // Calculate next birthday based on birth data
       const birthMonth = birthData?.birthMonth || 1;
@@ -530,6 +517,10 @@ export default async function handler(req) {
   try {
     const { chartResult, productType = 'base', analysisType = 'natal', birthData } = await req.json();
 
+    // Parse zodiac system from prefixed analysisType (e.g., 'tropical_natal' -> 'tropical')
+    const { zodiacSystem, baseType } = parseAnalysisType(analysisType);
+    const zodiacContext = getZodiacSystemContext(zodiacSystem);
+
     // Validate required data
     if (!chartResult) {
       return new Response(JSON.stringify({ error: 'No chart data provided' }), {
@@ -538,7 +529,11 @@ export default async function handler(req) {
       });
     }
 
-    if (!chartResult.sun?.sign || !chartResult.moon?.sign || !chartResult.rising?.sign) {
+    // Extract the correct chart data based on zodiac system
+    // Supports both old flat format and new { tropical, sidereal, meta } format
+    const activeChart = chartResult[zodiacSystem] || chartResult;
+
+    if (!activeChart.sun?.sign || !activeChart.moon?.sign || !activeChart.rising?.sign) {
       return new Response(JSON.stringify({ error: 'Incomplete chart data: missing Sun, Moon, or Rising' }), {
         status: 400,
         headers: { 'Content-Type': 'application/json' },
@@ -547,22 +542,24 @@ export default async function handler(req) {
 
     let systemPrompt, userPrompt, model, maxTokens;
 
-    // Handle add-on analysis types
-    if (analysisType !== 'natal' && ADDON_CONFIG[analysisType]) {
-      const addonConfig = ADDON_CONFIG[analysisType];
-      const prompts = buildAddonPrompt(chartResult, analysisType, birthData);
+    // Handle add-on analysis types (non-natal)
+    if (baseType !== 'natal' && ADDON_CONFIG[baseType]) {
+      const addonConfig = ADDON_CONFIG[baseType];
+      const prompts = buildAddonPrompt(activeChart, baseType, birthData);
 
-      systemPrompt = prompts.systemPrompt;
+      systemPrompt = prompts.systemPrompt + '\n' + zodiacContext;
       userPrompt = prompts.userPrompt;
       model = addonConfig.model;
       maxTokens = addonConfig.maxTokens;
     } else {
-      // Handle natal chart analysis (existing tier-based logic)
+      // Handle natal chart analysis (tier-based logic)
+      // Extract base bundle type from prefixed productType (e.g., 'tropical_essential' -> 'essential')
+      const baseBundleType = productType?.replace(/^(tropical|sidereal)_/, '') || productType;
       const validProductTypes = ['base', 'essential', 'ultimate'];
-      const tier = validProductTypes.includes(productType) ? productType : 'base';
+      const tier = validProductTypes.includes(baseBundleType) ? baseBundleType : 'base';
       const config = PRODUCT_CONFIG[tier];
 
-      const { chartDataSection, analysisRequest } = buildPrompt(chartResult, tier);
+      const { chartDataSection, analysisRequest } = buildPrompt(activeChart, tier);
 
       systemPrompt = `You are a professional astrology report generator, NOT a chatbot.
 
@@ -572,9 +569,10 @@ CRITICAL RULES:
 - Do NOT start with greetings like "Hello!" or "Hi there!".
 - Write directly to the user in second person (e.g., "Your Sun is...", "You have...").
 - Use a definitive, empowering, professional tone throughout.
+${zodiacContext}
 
 ASTROLOGICAL EXPERTISE:
-- You are an expert Western astrologer with deep knowledge of the Placidus house system, planetary aspects, and psychological astrology.
+- You are an expert astrologer with deep knowledge of the Placidus house system, planetary aspects, and psychological astrology.
 - If a planet is at a critical degree (0° or 29°), mention the astrological significance of that degree using the precise minutes provided.
 - Be insightful and specific to the exact placements given—avoid vague "Barnum statements" that could apply to anyone.
 - Acknowledge tensions and challenges as growth opportunities.

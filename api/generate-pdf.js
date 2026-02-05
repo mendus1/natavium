@@ -35,28 +35,48 @@ function markdownToHtml(markdown) {
 }
 
 // Analysis type display names and chapter structure
+// Now supports prefixed keys like 'tropical_natal', 'sidereal_house_deep_dive'
 const ANALYSIS_TITLES = {
   natal: 'Chapter 1: The Core Analysis',
+  tropical_natal: 'Chapter 1: The Core Analysis (Tropical)',
+  sidereal_natal: 'Chapter 1: The Core Analysis (Sidereal)',
   house_deep_dive: 'House Deep Dive',
+  tropical_house_deep_dive: 'House Deep Dive (Tropical)',
+  sidereal_house_deep_dive: 'House Deep Dive (Sidereal)',
   transit_report: 'Chapter 3: Your Future — Transits & Forecast',
-  vedic_chart: 'Vedic Chart Perspective',
+  tropical_transit_report: 'Transits & Forecast (Tropical)',
+  sidereal_transit_report: 'Transits & Forecast (Sidereal)',
   solar_return: 'Solar Return Analysis',
+  tropical_solar_return: 'Solar Return (Tropical)',
+  sidereal_solar_return: 'Solar Return (Sidereal)',
   compatibility: 'Compatibility Analysis',
+  tropical_compatibility: 'Compatibility (Tropical)',
+  sidereal_compatibility: 'Compatibility (Sidereal)',
 };
 
 // Build HTML sections for all analyses (with proper chapter ordering)
 function buildAnalysesSections(analyses) {
   if (!analyses || typeof analyses !== 'object') return '';
 
-  // Ordered by: Chapter 1 (natal/core), Chapter 2 (planets - from natal), Chapter 3 (transits/forecast)
-  // Then additional products: house_deep_dive, vedic_chart, solar_return, compatibility
-  const order = ['natal', 'transit_report', 'house_deep_dive', 'vedic_chart', 'solar_return', 'compatibility'];
+  // Build ordered list of keys to check (both prefixed and unprefixed)
+  const baseOrder = ['natal', 'transit_report', 'house_deep_dive', 'solar_return', 'compatibility'];
+  const prefixes = ['tropical_', 'sidereal_', ''];
+  const order = [];
+  for (const base of baseOrder) {
+    for (const prefix of prefixes) {
+      order.push(`${prefix}${base}`);
+    }
+  }
   let sections = '';
+  const seen = new Set();
 
   for (const key of order) {
     const analysis = analyses[key];
-    if (analysis?.content) {
-      const title = ANALYSIS_TITLES[key] || key;
+    // Skip duplicates (e.g., if both 'natal' and 'tropical_natal' exist)
+    const baseKey = key.replace(/^(tropical|sidereal)_/, '');
+    if (analysis?.content && !seen.has(baseKey)) {
+      seen.add(baseKey);
+      const title = ANALYSIS_TITLES[key] || ANALYSIS_TITLES[baseKey] || key;
       const html = markdownToHtml(analysis.content);
       const isChapter = key === 'natal' || key === 'transit_report';
 
@@ -85,11 +105,16 @@ export default async function handler(req, res) {
   let browser = null;
 
   try {
-    const { chartResult, birthData, chartImage, analyses } = req.body;
+    const { chartResult, birthData, chartImage, analyses, zodiacSystem = 'tropical' } = req.body;
 
     if (!chartResult || !birthData) {
       return res.status(400).json({ error: "Missing chart or birth data" });
     }
+
+    // Extract the correct chart data based on zodiac system
+    // Supports both old flat format and new { tropical, sidereal, meta } format
+    const activeChart = chartResult[zodiacSystem] || chartResult;
+    const zodiacLabel = zodiacSystem === 'sidereal' ? 'Sidereal (Fagan-Bradley)' : 'Tropical';
 
     // Build all analysis sections
     const analysesSectionsHtml = buildAnalysesSections(analyses);
@@ -119,18 +144,18 @@ export default async function handler(req, res) {
       "July", "August", "September", "October", "November", "December"];
     const birthDate = `${months[parseInt(birthData.birthMonth, 10) - 1]} ${birthData.birthDay}, ${birthData.birthYear}`;
 
-    // Build planetary placements rows
+    // Build planetary placements rows (using activeChart based on zodiac system)
     const planets = [
-      { name: "Sun", glyph: "☉", data: chartResult.sun },
-      { name: "Moon", glyph: "☽", data: chartResult.moon },
-      { name: "Mercury", glyph: "☿", data: chartResult.mercury },
-      { name: "Venus", glyph: "♀", data: chartResult.venus },
-      { name: "Mars", glyph: "♂", data: chartResult.mars },
-      { name: "Jupiter", glyph: "♃", data: chartResult.jupiter },
-      { name: "Saturn", glyph: "♄", data: chartResult.saturn },
-      { name: "Uranus", glyph: "♅", data: chartResult.uranus },
-      { name: "Neptune", glyph: "♆", data: chartResult.neptune },
-      { name: "Pluto", glyph: "♇", data: chartResult.pluto },
+      { name: "Sun", glyph: "☉", data: activeChart.sun },
+      { name: "Moon", glyph: "☽", data: activeChart.moon },
+      { name: "Mercury", glyph: "☿", data: activeChart.mercury },
+      { name: "Venus", glyph: "♀", data: activeChart.venus },
+      { name: "Mars", glyph: "♂", data: activeChart.mars },
+      { name: "Jupiter", glyph: "♃", data: activeChart.jupiter },
+      { name: "Saturn", glyph: "♄", data: activeChart.saturn },
+      { name: "Uranus", glyph: "♅", data: activeChart.uranus },
+      { name: "Neptune", glyph: "♆", data: activeChart.neptune },
+      { name: "Pluto", glyph: "♇", data: activeChart.pluto },
     ];
 
     const planetRows = planets
@@ -278,17 +303,17 @@ export default async function handler(req, res) {
   <!-- COVER PAGE (Dark/Premium) -->
   <div class="cover-page">
     <div class="cover-title"><svg viewBox="0 0 24 24" style="width: 48px; height: 48px; display: inline-block; vertical-align: middle;"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z" fill="#fde047"/></svg> Natavium <svg viewBox="0 0 24 24" style="width: 48px; height: 48px; display: inline-block; vertical-align: middle;"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z" fill="#fde047"/></svg></div>
-    <div class="cover-subtitle">Your Complete Natal Chart</div>
+    <div class="cover-subtitle">Your Complete ${zodiacLabel} Chart</div>
 
     <div class="cover-big-three">
       <div class="cover-sign-label">Sun Sign</div>
-      <div class="cover-sign">☉ ${chartResult.sun?.sign || "—"}</div>
+      <div class="cover-sign">☉ ${activeChart.sun?.sign || "—"}</div>
 
       <div class="cover-sign-label">Moon Sign</div>
-      <div class="cover-sign">☽ ${chartResult.moon?.sign || "—"}</div>
+      <div class="cover-sign">☽ ${activeChart.moon?.sign || "—"}</div>
 
       <div class="cover-sign-label">Rising Sign</div>
-      <div class="cover-sign">↑ ${chartResult.rising?.sign || "—"}</div>
+      <div class="cover-sign">↑ ${activeChart.rising?.sign || "—"}</div>
     </div>
 
     <div class="cover-birth-info">
@@ -317,16 +342,16 @@ export default async function handler(req, res) {
         <div class="section-title">Your Big Three</div>
         <div class="big-three">
           <div class="planet-card sun-card">
-            <div class="planet-name">☉ ${chartResult.sun?.sign || "—"} Sun</div>
-            <div class="planet-detail">${chartResult.sun?.degree || "—"}° in ${chartResult.sun?.house || "—"}${getHouseSuffix(chartResult.sun?.house)} house • Core Identity</div>
+            <div class="planet-name">☉ ${activeChart.sun?.sign || "—"} Sun</div>
+            <div class="planet-detail">${activeChart.sun?.degree || "—"}° in ${activeChart.sun?.house || "—"}${getHouseSuffix(activeChart.sun?.house)} house • Core Identity</div>
           </div>
           <div class="planet-card moon-card">
-            <div class="planet-name">☽ ${chartResult.moon?.sign || "—"} Moon</div>
-            <div class="planet-detail">${chartResult.moon?.degree || "—"}° in ${chartResult.moon?.house || "—"}${getHouseSuffix(chartResult.moon?.house)} house • Emotional Core</div>
+            <div class="planet-name">☽ ${activeChart.moon?.sign || "—"} Moon</div>
+            <div class="planet-detail">${activeChart.moon?.degree || "—"}° in ${activeChart.moon?.house || "—"}${getHouseSuffix(activeChart.moon?.house)} house • Emotional Core</div>
           </div>
           <div class="planet-card rising-card">
-            <div class="planet-name">↑ ${chartResult.rising?.sign || "—"} Rising</div>
-            <div class="planet-detail">${chartResult.rising?.degree || "—"}° Ascendant • How Others See You</div>
+            <div class="planet-name">↑ ${activeChart.rising?.sign || "—"} Rising</div>
+            <div class="planet-detail">${activeChart.rising?.degree || "—"}° Ascendant • How Others See You</div>
           </div>
         </div>
       </div>
@@ -353,7 +378,7 @@ export default async function handler(req, res) {
       <div class="section">
         <div class="chapter-header"><h2>Your 2026 Forecast</h2></div>
         <div class="analysis-content">
-          <p>With Jupiter transiting through your chart, 2026 brings significant opportunities for growth and expansion. Your <strong>${chartResult.sun?.sign || ""} Sun</strong> will be energized by favorable aspects, encouraging you to step into leadership roles and pursue long-held ambitions.</p>
+          <p>With Jupiter transiting through your chart, 2026 brings significant opportunities for growth and expansion. Your <strong>${activeChart.sun?.sign || ""} Sun</strong> will be energized by favorable aspects, encouraging you to step into leadership roles and pursue long-held ambitions.</p>
           <p>Saturn's influence this year asks you to build solid foundations. This is an excellent time for career advancement, particularly in areas that require discipline and long-term planning.</p>
           <p><strong>Key periods:</strong> Spring brings romantic opportunities • Summer favors financial decisions • Fall is ideal for personal development</p>
         </div>
@@ -388,7 +413,7 @@ export default async function handler(req, res) {
     return res.status(200).json({
       success: true,
       pdf: pdfBase64,
-      filename: `natavium-chart-${chartResult.sun?.sign?.toLowerCase() || "natal"}-${Date.now()}.pdf`
+      filename: `natavium-${zodiacSystem}-chart-${activeChart.sun?.sign?.toLowerCase() || "natal"}-${Date.now()}.pdf`
     });
 
   } catch (err) {

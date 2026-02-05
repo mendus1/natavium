@@ -19,7 +19,7 @@ export default async function handler(req, res) {
   try {
     const { data: order, error } = await supabase
       .from('orders')
-      .select('id, product_type, purchased_addons, payment_status, chart_data')
+      .select('id, product_type, purchased_addons, payment_status, chart_data, zodiac_system')
       .eq('id', id)
       .single();
 
@@ -37,6 +37,7 @@ export default async function handler(req, res) {
       productType: order.product_type,
       purchasedAddons: order.purchased_addons || [],
       chartData: order.chart_data,
+      zodiacSystem: order.zodiac_system || 'tropical',
     });
   } catch (err) {
     console.error('Get order error:', err);

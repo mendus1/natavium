@@ -19,6 +19,26 @@ function normalizeDeg(x) {
   return ((x % 360) + 360) % 360;
 }
 
+// -----------------------------
+// Fagan-Bradley Ayanamsa Calculation
+// -----------------------------
+// The ayanamsa is the angular difference between the tropical and sidereal zodiacs.
+// Fagan-Bradley uses a reference point of 24.042044° at J1900.0 (JD 2415020.0)
+// with precession rate of 50.29 arcseconds per year.
+function calculateFaganBradleyAyanamsa(julianDay) {
+  const jd1900 = 2415020.0;
+  const ayanamsa1900 = 24.042044;
+  const precessionRate = 50.29; // arcseconds per year
+  const yearsSince1900 = (julianDay - jd1900) / 365.25;
+  return ayanamsa1900 + (precessionRate * yearsSince1900) / 3600;
+}
+
+// Convert tropical longitude to sidereal by subtracting the ayanamsa
+function toSiderealLongitude(tropicalLongitude, ayanamsa) {
+  const sidereal = tropicalLongitude - ayanamsa;
+  return ((sidereal % 360) + 360) % 360;
+}
+
 // Convert longitude (0-360°) to sign and degree
 function longitudeToSign(longitude) {
   const normalized = normalizeDeg(longitude);
@@ -69,6 +89,45 @@ function getHouseFromCusps(planetLongitude, cusps12) {
     }
   }
   return 1;
+}
+
+// -----------------------------
+// Build chart object from planet positions
+// -----------------------------
+// ayanamsaOffset: 0 for tropical, actual ayanamsa value for sidereal
+function buildChartFromPositions(positions, houses, cusps12, ayanamsaOffset) {
+  const adjustLongitude = (lon) => {
+    if (ayanamsaOffset === 0) return normalizeDeg(lon);
+    return toSiderealLongitude(lon, ayanamsaOffset);
+  };
+
+  const buildPlanetData = (pos) => ({
+    ...longitudeToSign(adjustLongitude(pos.longitude)),
+    house: getHouseFromCusps(pos.longitude, cusps12), // House from tropical position (geometric)
+    longitude: adjustLongitude(pos.longitude),
+  });
+
+  return {
+    sun: buildPlanetData(positions.sun),
+    moon: buildPlanetData(positions.moon),
+    mercury: buildPlanetData(positions.mercury),
+    venus: buildPlanetData(positions.venus),
+    mars: buildPlanetData(positions.mars),
+    jupiter: buildPlanetData(positions.jupiter),
+    saturn: buildPlanetData(positions.saturn),
+    uranus: buildPlanetData(positions.uranus),
+    neptune: buildPlanetData(positions.neptune),
+    pluto: buildPlanetData(positions.pluto),
+    rising: {
+      ...longitudeToSign(adjustLongitude(houses.ascendant)),
+      longitude: adjustLongitude(houses.ascendant),
+    },
+    houses: {
+      cusps: cusps12, // Cusps stay the same (geometric/tropical)
+      ascendant: adjustLongitude(houses.ascendant),
+      mc: adjustLongitude(houses.mc),
+    },
+  };
 }
 
 // -----------------------------
@@ -303,7 +362,61 @@ export async function calculateNatalChart(birthDateUTC, latitude, longitude) {
 }
 
 // -----------------------------
-// Convenience function: local birth time + location string -> chart
+// Dual zodiac calculation (tropical + sidereal)
+// Returns both systems in a single object
+// -----------------------------
+export async function calculateDualNatalChart(birthDateUTC, latitude, longitude) {
+  const swe = await initEphemeris();
+
+  // Convert to Julian Day (using UTC Date)
+  const jd = swe.dateToJulianDay(birthDateUTC);
+
+  // Houses (Placidus) - calculated once, same for both systems
+  const houses = swe.calculateHouses(jd, latitude, longitude, HouseSystem.Placidus);
+  const cusps12 = sanitizeCusps(houses.cusps);
+
+  // Calculate all planet positions (tropical/default)
+  const positions = {
+    sun: swe.calculatePosition(jd, Planet.Sun),
+    moon: swe.calculatePosition(jd, Planet.Moon),
+    mercury: swe.calculatePosition(jd, Planet.Mercury),
+    venus: swe.calculatePosition(jd, Planet.Venus),
+    mars: swe.calculatePosition(jd, Planet.Mars),
+    jupiter: swe.calculatePosition(jd, Planet.Jupiter),
+    saturn: swe.calculatePosition(jd, Planet.Saturn),
+    uranus: swe.calculatePosition(jd, Planet.Uranus),
+    neptune: swe.calculatePosition(jd, Planet.Neptune),
+    pluto: swe.calculatePosition(jd, Planet.Pluto),
+  };
+
+  // Calculate Fagan-Bradley ayanamsa for this moment
+  const ayanamsa = calculateFaganBradleyAyanamsa(jd);
+
+  // Build tropical chart (no offset)
+  const tropical = {
+    ...buildChartFromPositions(positions, houses, cusps12, 0),
+    julianDay: jd,
+  };
+
+  // Build sidereal chart (apply ayanamsa offset)
+  const sidereal = {
+    ...buildChartFromPositions(positions, houses, cusps12, ayanamsa),
+    julianDay: jd,
+  };
+
+  return {
+    tropical,
+    sidereal,
+    meta: {
+      ayanamsa,
+      julianDay: jd,
+    },
+  };
+}
+
+// -----------------------------
+// Convenience function: local birth time + location string -> dual chart
+// Returns { tropical, sidereal, meta } format
 // -----------------------------
 export async function calculateNatalChartFromLocal({
   year,
@@ -327,15 +440,19 @@ export async function calculateNatalChartFromLocal({
     timeZone: location.timeZone,
   });
 
-  const chart = await calculateNatalChart(
+  // Calculate both tropical and sidereal charts
+  const dualChart = await calculateDualNatalChart(
     birthDateUTC,
     location.latitude,
     location.longitude
   );
 
+  // Return with combined meta information
   return {
-    ...chart,
+    tropical: dualChart.tropical,
+    sidereal: dualChart.sidereal,
     meta: {
+      ...dualChart.meta,
       locationName: location.name,
       latitude: location.latitude,
       longitude: location.longitude,

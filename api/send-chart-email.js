@@ -23,27 +23,47 @@ function markdownToHtml(markdown) {
 }
 
 // Analysis type display names (with chapter structure)
+// Supports both prefixed (tropical_natal) and unprefixed (natal) keys
 const ANALYSIS_TITLES = {
   natal: '📜 Chapter 1: The Core Analysis',
+  tropical_natal: '📜 Chapter 1: The Core Analysis (Tropical)',
+  sidereal_natal: '📜 Chapter 1: The Core Analysis (Sidereal)',
   house_deep_dive: '🏠 House Deep Dive',
+  tropical_house_deep_dive: '🏠 House Deep Dive (Tropical)',
+  sidereal_house_deep_dive: '🏠 House Deep Dive (Sidereal)',
   transit_report: '🔮 Chapter 3: Your Future',
-  vedic_chart: '🕉️ Vedic Chart Analysis',
+  tropical_transit_report: '🔮 Transits & Forecast (Tropical)',
+  sidereal_transit_report: '🔮 Transits & Forecast (Sidereal)',
   solar_return: '☀️ Solar Return Analysis',
+  tropical_solar_return: '☀️ Solar Return (Tropical)',
+  sidereal_solar_return: '☀️ Solar Return (Sidereal)',
   compatibility: '💕 Compatibility Analysis',
+  tropical_compatibility: '💕 Compatibility (Tropical)',
+  sidereal_compatibility: '💕 Compatibility (Sidereal)',
 };
 
 // Build HTML sections for all analyses (email version with proper ordering)
 function buildAnalysesSections(analyses) {
   if (!analyses || typeof analyses !== 'object') return '';
 
-  // Order: Chapter 1 (natal/core), Chapter 3 (transits), then additional products
-  const order = ['natal', 'transit_report', 'house_deep_dive', 'vedic_chart', 'solar_return', 'compatibility'];
+  // Build ordered list of keys to check (both prefixed and unprefixed)
+  const baseOrder = ['natal', 'transit_report', 'house_deep_dive', 'solar_return', 'compatibility'];
+  const prefixes = ['tropical_', 'sidereal_', ''];
+  const order = [];
+  for (const base of baseOrder) {
+    for (const prefix of prefixes) {
+      order.push(`${prefix}${base}`);
+    }
+  }
   let sections = '';
+  const seen = new Set();
 
   for (const key of order) {
     const analysis = analyses[key];
-    if (analysis?.content) {
-      const title = ANALYSIS_TITLES[key] || key;
+    const baseKey = key.replace(/^(tropical|sidereal)_/, '');
+    if (analysis?.content && !seen.has(baseKey)) {
+      seen.add(baseKey);
+      const title = ANALYSIS_TITLES[key] || ANALYSIS_TITLES[baseKey] || key;
       const html = markdownToHtml(analysis.content);
       const isChapter = key === 'natal' || key === 'transit_report';
 
@@ -68,11 +88,15 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const { email, chartResult, birthData, analyses } = req.body;
+    const { email, chartResult, birthData, analyses, zodiacSystem = 'tropical' } = req.body;
 
     if (!email || !chartResult || !birthData) {
       return res.status(400).json({ error: "Missing required fields" });
     }
+
+    // Extract the correct chart data based on zodiac system
+    const activeChart = chartResult[zodiacSystem] || chartResult;
+    const zodiacLabel = zodiacSystem === 'sidereal' ? 'Sidereal (Fagan-Bradley)' : 'Tropical';
 
     // Build all analysis sections
     const analysesSectionsHtml = buildAnalysesSections(analyses);
@@ -86,16 +110,16 @@ module.exports = async function handler(req, res) {
 
     // Build planetary placements table rows
     const planets = [
-      { name: "Sun", data: chartResult.sun, emoji: "☉" },
-      { name: "Moon", data: chartResult.moon, emoji: "☽" },
-      { name: "Mercury", data: chartResult.mercury, emoji: "☿" },
-      { name: "Venus", data: chartResult.venus, emoji: "♀" },
-      { name: "Mars", data: chartResult.mars, emoji: "♂" },
-      { name: "Jupiter", data: chartResult.jupiter, emoji: "♃" },
-      { name: "Saturn", data: chartResult.saturn, emoji: "♄" },
-      { name: "Uranus", data: chartResult.uranus, emoji: "♅" },
-      { name: "Neptune", data: chartResult.neptune, emoji: "♆" },
-      { name: "Pluto", data: chartResult.pluto, emoji: "♇" },
+      { name: "Sun", data: activeChart.sun, emoji: "☉" },
+      { name: "Moon", data: activeChart.moon, emoji: "☽" },
+      { name: "Mercury", data: activeChart.mercury, emoji: "☿" },
+      { name: "Venus", data: activeChart.venus, emoji: "♀" },
+      { name: "Mars", data: activeChart.mars, emoji: "♂" },
+      { name: "Jupiter", data: activeChart.jupiter, emoji: "♃" },
+      { name: "Saturn", data: activeChart.saturn, emoji: "♄" },
+      { name: "Uranus", data: activeChart.uranus, emoji: "♅" },
+      { name: "Neptune", data: activeChart.neptune, emoji: "♆" },
+      { name: "Pluto", data: activeChart.pluto, emoji: "♇" },
     ];
 
     const planetRows = planets
@@ -126,7 +150,7 @@ module.exports = async function handler(req, res) {
     <!-- Header -->
     <div style="text-align: center; margin-bottom: 32px;">
       <h1 style="color: #fde047; font-size: 32px; margin: 0 0 8px 0;"><svg viewBox="0 0 24 24" style="width: 28px; height: 28px; display: inline-block; vertical-align: middle;"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z" fill="#fde047"/></svg> Natavium <svg viewBox="0 0 24 24" style="width: 28px; height: 28px; display: inline-block; vertical-align: middle;"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z" fill="#fde047"/></svg></h1>
-      <p style="color: #c4b5fd; font-size: 16px; margin: 0;">Your Natal Chart Results</p>
+      <p style="color: #c4b5fd; font-size: 16px; margin: 0;">Your ${zodiacLabel} Natal Chart Results</p>
     </div>
 
     <!-- Main Card -->
@@ -157,18 +181,18 @@ module.exports = async function handler(req, res) {
         <div style="display: flex; flex-direction: column; gap: 8px;">
           <!-- Sun -->
           <div style="background: linear-gradient(135deg, rgba(234, 179, 8, 0.2), rgba(249, 115, 22, 0.2)); border-radius: 10px; padding: 12px 14px; border: 1px solid rgba(234, 179, 8, 0.3);">
-            <div style="color: #fde047; font-size: 18px; font-weight: bold;">☉ ${chartResult.sun?.sign || "—"} Sun</div>
-            <div style="color: #c4b5fd; font-size: 12px;">${chartResult.sun?.degree || "—"}° • ${chartResult.sun?.house || "—"}${getHouseSuffix(chartResult.sun?.house)} house • Core Identity</div>
+            <div style="color: #fde047; font-size: 18px; font-weight: bold;">☉ ${activeChart.sun?.sign || "—"} Sun</div>
+            <div style="color: #c4b5fd; font-size: 12px;">${activeChart.sun?.degree || "—"}° • ${activeChart.sun?.house || "—"}${getHouseSuffix(activeChart.sun?.house)} house • Core Identity</div>
           </div>
           <!-- Moon -->
           <div style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2)); border-radius: 10px; padding: 12px 14px; border: 1px solid rgba(59, 130, 246, 0.3);">
-            <div style="color: #93c5fd; font-size: 18px; font-weight: bold;">☽ ${chartResult.moon?.sign || "—"} Moon</div>
-            <div style="color: #c4b5fd; font-size: 12px;">${chartResult.moon?.degree || "—"}° • ${chartResult.moon?.house || "—"}${getHouseSuffix(chartResult.moon?.house)} house • Emotional Core</div>
+            <div style="color: #93c5fd; font-size: 18px; font-weight: bold;">☽ ${activeChart.moon?.sign || "—"} Moon</div>
+            <div style="color: #c4b5fd; font-size: 12px;">${activeChart.moon?.degree || "—"}° • ${activeChart.moon?.house || "—"}${getHouseSuffix(activeChart.moon?.house)} house • Emotional Core</div>
           </div>
           <!-- Rising -->
           <div style="background: linear-gradient(135deg, rgba(236, 72, 153, 0.2), rgba(139, 92, 246, 0.2)); border-radius: 10px; padding: 12px 14px; border: 1px solid rgba(236, 72, 153, 0.3);">
-            <div style="color: #f9a8d4; font-size: 18px; font-weight: bold;">↑ ${chartResult.rising?.sign || "—"} Rising</div>
-            <div style="color: #c4b5fd; font-size: 12px;">${chartResult.rising?.degree || "—"}° Ascendant • How Others See You</div>
+            <div style="color: #f9a8d4; font-size: 18px; font-weight: bold;">↑ ${activeChart.rising?.sign || "—"} Rising</div>
+            <div style="color: #c4b5fd; font-size: 12px;">${activeChart.rising?.degree || "—"}° Ascendant • How Others See You</div>
           </div>
         </div>
       </div>
@@ -198,7 +222,7 @@ module.exports = async function handler(req, res) {
       <div style="margin-bottom: 24px;">
         <h2 style="color: #fde047; font-size: 18px; margin: 0 0 16px 0; border-bottom: 2px solid rgba(253, 224, 71, 0.3); padding-bottom: 8px;">🔮 Your 2026 Forecast</h2>
         <div style="background: rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 16px; border: 1px solid rgba(139, 92, 246, 0.3);">
-          <p style="color: #e2e8f0; font-size: 14px; line-height: 1.6; margin: 0 0 12px 0;">With Jupiter transiting through your chart, 2026 brings significant opportunities for growth and expansion. Your <strong style="color: #f9a8d4;">${chartResult.sun?.sign || ""} Sun</strong> will be energized by favorable aspects.</p>
+          <p style="color: #e2e8f0; font-size: 14px; line-height: 1.6; margin: 0 0 12px 0;">With Jupiter transiting through your chart, 2026 brings significant opportunities for growth and expansion. Your <strong style="color: #f9a8d4;">${activeChart.sun?.sign || ""} Sun</strong> will be energized by favorable aspects.</p>
           <p style="color: #e2e8f0; font-size: 14px; line-height: 1.6; margin: 0 0 12px 0;">Saturn's influence this year asks you to build solid foundations. This is an excellent time for career advancement and long-term planning.</p>
           <p style="color: #c4b5fd; font-size: 13px; line-height: 1.6; margin: 0;"><strong>Key periods:</strong> Spring brings romantic opportunities • Summer favors financial decisions • Fall is ideal for personal development</p>
         </div>
@@ -227,7 +251,7 @@ module.exports = async function handler(req, res) {
     const { data, error } = await resend.emails.send({
       from: "Natavium <onboarding@resend.dev>",
       to: [email],
-      subject: `Your Natal Chart - ${chartResult.sun?.sign || ""} Sun, ${chartResult.moon?.sign || ""} Moon, ${chartResult.rising?.sign || ""} Rising`,
+      subject: `Your ${zodiacLabel} Natal Chart - ${activeChart.sun?.sign || ""} Sun, ${activeChart.moon?.sign || ""} Moon, ${activeChart.rising?.sign || ""} Rising`,
       html: emailHtml,
     });
 

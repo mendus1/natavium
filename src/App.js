@@ -207,15 +207,6 @@ const DASHBOARD_TABS = [
     description: 'Your year-ahead forecast based on your upcoming birthday chart.',
   },
   {
-    id: 'vedic_chart',
-    label: 'Vedic',
-    icon: Sun,
-    requiresPurchase: true,
-    priceIfLocked: 2.99,
-    includedIn: ['ultimate'],
-    description: 'Eastern sidereal astrology perspective with Nakshatra analysis.',
-  },
-  {
     id: 'transit_report',
     label: 'Transits',
     icon: TrendingUp,
@@ -443,7 +434,8 @@ function InfoPage() {
                 </p>
                 <p className="t-text-muted">
                   Your birth time and location are converted to precise coordinates for the system you chose, then we
-                  calculate where each planet was at that exact moment.
+                  calculate where each planet was at that exact moment. For Western Sidereal analysis we use the Fagan-Bradley Ayanamsa.
+                  When Vedic charts are introduced the Lahiri Ayanamsa will be used.
                 </p>
               </div>
 
@@ -976,7 +968,6 @@ const ADD_ONS = [
   { id: "compatibility", name: "Compatibility", price: 3.99, description: "Compare charts with a partner" },
   { id: "house_deep_dive", name: "House Deep Dive", price: 2.99, description: "Detailed house analysis" },
   { id: "solar_return", name: "Solar Return", price: 4.99, description: "Your year ahead forecast" },
-  { id: "vedic_chart", name: "Vedic Chart", price: 2.99, description: "Eastern astrology perspective" },
   { id: "transit_report", name: "Transit Report", price: 1.99, description: "Current planetary influences" },
 ];
 
@@ -986,6 +977,12 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
   const [teaser, setTeaser] = useState(null);
   const [teaserLoading, setTeaserLoading] = useState(false);
   const [teaserError, setTeaserError] = useState(null);
+
+  // Get the active chart based on selected zodiac system
+  // Supports both old flat format and new { tropical, sidereal, meta } format
+  const zodiacType = chartResult?.zodiacType || 'tropical';
+  const activeChart = chartResult?.tropical ? chartResult[zodiacType] : chartResult;
+  const zodiacLabel = zodiacType === 'sidereal' ? 'Sidereal' : 'Tropical';
 
   // Fetch AI teaser on mount
   useEffect(() => {
@@ -1055,8 +1052,9 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
         {/* Sun Sign Heading */}
         <div className="text-center mb-6">
           <h2 className="font-serif text-3xl md:text-4xl font-semibold gold-gradient-text flex items-center justify-center gap-2">
-            <BrandStar className="w-8 h-8 icon-gold" /> You're a {chartResult.sun.sign}! <BrandStar className="w-8 h-8 icon-gold" />
+            <BrandStar className="w-8 h-8 icon-gold" /> You're a {activeChart.sun.sign}! <BrandStar className="w-8 h-8 icon-gold" />
           </h2>
+          <p className="text-sm t-text-muted mt-1">({zodiacLabel} Zodiac)</p>
         </div>
 
         {/* Premium Chart Wheel */}
@@ -1095,9 +1093,9 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
               water: ["Sensitive", "Intuitive", "Deep"],
             };
 
-            const sunSign = chartResult.sun.sign;
-            const moonSign = chartResult.moon.sign;
-            const risingSign = chartResult.rising.sign;
+            const sunSign = activeChart.sun.sign;
+            const moonSign = activeChart.moon.sign;
+            const risingSign = activeChart.rising.sign;
 
             const moonElement = signElements[moonSign];
 
@@ -1177,7 +1175,7 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
               water: "#60a5fa"
             };
 
-            const risingIndex = zodiacSigns.findIndex((s) => s.name === chartResult.rising.sign);
+            const risingIndex = zodiacSigns.findIndex((s) => s.name === activeChart.rising.sign);
             const risingOffset = 180 - risingIndex * 30 - 15;
 
             const getPosition = (angleDeg, radius) => {
@@ -1191,13 +1189,13 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
             };
 
             const planets = [
-              { key: "sun", ...chartResult.sun },
-              { key: "moon", ...chartResult.moon },
-              { key: "mercury", sign: chartResult.mercury.sign, degree: chartResult.mercury.degree || 8 },
-              { key: "venus", sign: chartResult.venus.sign, degree: chartResult.venus.degree || 24 },
-              { key: "mars", sign: chartResult.mars.sign, degree: chartResult.mars.degree || 12 },
-              { key: "jupiter", sign: chartResult.jupiter?.sign, degree: chartResult.jupiter?.degree || 15 },
-              { key: "saturn", sign: chartResult.saturn?.sign, degree: chartResult.saturn?.degree || 20 },
+              { key: "sun", ...activeChart.sun },
+              { key: "moon", ...activeChart.moon },
+              { key: "mercury", sign: activeChart.mercury.sign, degree: activeChart.mercury.degree || 8 },
+              { key: "venus", sign: activeChart.venus.sign, degree: activeChart.venus.degree || 24 },
+              { key: "mars", sign: activeChart.mars.sign, degree: activeChart.mars.degree || 12 },
+              { key: "jupiter", sign: activeChart.jupiter?.sign, degree: activeChart.jupiter?.degree || 15 },
+              { key: "saturn", sign: activeChart.saturn?.sign, degree: activeChart.saturn?.degree || 20 },
             ];
 
             return (
@@ -1363,7 +1361,7 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
           </div>
 
           <p className="text-center t-text-muted italic text-sm">
-            {chartResult.rising.sign} Rising • Planets positioned by degree
+            {activeChart.rising.sign} Rising • Planets positioned by degree
           </p>
         </div>
 
@@ -1371,29 +1369,29 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
         <div className="grid md:grid-cols-3 gap-4 mb-8">
           <div className="card-solid rounded-2xl p-6 text-center">
             <Sun className="w-10 h-10 icon-gold mb-3 mx-auto" />
-            <div className="text-2xl font-bold mb-1">{chartResult.sun.sign} Sun</div>
+            <div className="text-2xl font-bold mb-1">{activeChart.sun.sign} Sun</div>
             <div className="text-sm t-text-muted">Core Identity</div>
             <div className="text-xs t-text-muted mt-2">
-              {chartResult.sun.degree}° {String(chartResult.sun.minutes || 0).padStart(2, '0')}' in {chartResult.sun.house}
-              {houseSuffix(chartResult.sun.house)} house
+              {activeChart.sun.degree}° {String(activeChart.sun.minutes || 0).padStart(2, '0')}' in {activeChart.sun.house}
+              {houseSuffix(activeChart.sun.house)} house
             </div>
           </div>
 
           <div className="card-solid rounded-2xl p-6 text-center">
             <Moon className="w-10 h-10 text-[#69D2FF] mb-3 mx-auto" />
-            <div className="text-2xl font-bold mb-1">{chartResult.moon.sign} Moon</div>
+            <div className="text-2xl font-bold mb-1">{activeChart.moon.sign} Moon</div>
             <div className="text-sm t-text-muted">Emotional Core</div>
             <div className="text-xs t-text-muted mt-2">
-              {chartResult.moon.degree}° {String(chartResult.moon.minutes || 0).padStart(2, '0')}' in {chartResult.moon.house}
-              {houseSuffix(chartResult.moon.house)} house
+              {activeChart.moon.degree}° {String(activeChart.moon.minutes || 0).padStart(2, '0')}' in {activeChart.moon.house}
+              {houseSuffix(activeChart.moon.house)} house
             </div>
           </div>
 
           <div className="card-solid rounded-2xl p-6 text-center">
             <Star className="w-10 h-10 icon-gold mb-3 mx-auto" />
-            <div className="text-2xl font-bold mb-1">{chartResult.rising.sign} Rising</div>
+            <div className="text-2xl font-bold mb-1">{activeChart.rising.sign} Rising</div>
             <div className="text-sm t-text-muted">How Others See You</div>
-            <div className="text-xs t-text-muted mt-2">{chartResult.rising.degree}° {String(chartResult.rising.minutes || 0).padStart(2, '0')}' Ascendant</div>
+            <div className="text-xs t-text-muted mt-2">{activeChart.rising.degree}° {String(activeChart.rising.minutes || 0).padStart(2, '0')}' Ascendant</div>
           </div>
         </div>
 
@@ -1409,7 +1407,7 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
           ) : teaserError ? (
             <div className="space-y-4">
               <p className="text-lg leading-relaxed">
-                Your {chartResult.sun.sign} Sun combined with {chartResult.moon.sign} Moon and {chartResult.rising.sign} Rising
+                Your {activeChart.sun.sign} Sun combined with {activeChart.moon.sign} Moon and {activeChart.rising.sign} Rising
                 creates a unique cosmic blueprint that shapes your personality, emotions, and how others perceive you.
               </p>
               <p className="t-text-muted text-sm">Full AI analysis available in paid packages below.</p>
@@ -1428,7 +1426,7 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
             {/* Blurred premium preview */}
             <div className="blur-sm select-none opacity-50">
               <h3 className="text-xl font-bold mb-2">
-                Mercury in {chartResult.mercury.sign}
+                Mercury in {activeChart.mercury.sign}
               </h3>
               <p className="text-sm">Your communication style reveals hidden patterns...</p>
             </div>
@@ -1610,7 +1608,12 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
                 const res = await fetch("/api/create-checkout-session", {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ bundle: selectedBundle, addOns: selectedAddOns, chartData: chartResult }),
+                  body: JSON.stringify({
+                    bundle: selectedBundle,
+                    addOns: selectedAddOns,
+                    chartData: chartResult,
+                    zodiacSystem: zodiacType,
+                  }),
                 });
 
                 const data = await res.json();
@@ -1948,6 +1951,12 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
   const [emailError, setEmailError] = useState("");
   const [pdfGenerating, setPdfGenerating] = useState(false);
   const [analysisLoading, setAnalysisLoading] = useState(false);
+
+  // Get the active chart based on selected zodiac system
+  // Supports both old flat format and new { tropical, sidereal, meta } format
+  const zodiacType = chartResult?.zodiacType || 'tropical';
+  const activeChart = chartResult?.tropical ? chartResult[zodiacType] : chartResult;
+  const zodiacLabel = zodiacType === 'sidereal' ? 'Sidereal' : 'Tropical';
 
   // Tab and dashboard state
   const [activeTab, setActiveTab] = useState('natal');
@@ -2457,7 +2466,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
 
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-8">
-          <h1 className="font-serif text-4xl md:text-5xl font-semibold gold-gradient-text mb-2">Your Complete Natal Chart</h1>
+          <h1 className="font-serif text-4xl md:text-5xl font-semibold gold-gradient-text mb-2">Your Complete {zodiacLabel} Chart</h1>
           <p className="text-lg t-text-muted mb-4">
             {displayDate} • {birthData.time} • {birthData.location}
           </p>
@@ -2722,7 +2731,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
                 water: "#60a5fa"
               };
 
-              const risingIndex = zodiacSigns.findIndex((s) => s.name === chartResult.rising.sign);
+              const risingIndex = zodiacSigns.findIndex((s) => s.name === activeChart.rising.sign);
               const risingOffset = 180 - risingIndex * 30 - 15;
 
               const getPosition = (angleDeg, radius) => {
@@ -2737,13 +2746,13 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
 
               // All planets including outer planets
               const planets = [
-                { key: "sun", ...chartResult.sun },
-                { key: "moon", ...chartResult.moon },
-                { key: "mercury", sign: chartResult.mercury.sign, degree: chartResult.mercury.degree || 8 },
-                { key: "venus", sign: chartResult.venus.sign, degree: chartResult.venus.degree || 24 },
-                { key: "mars", sign: chartResult.mars.sign, degree: chartResult.mars.degree || 12 },
-                { key: "jupiter", sign: chartResult.jupiter?.sign, degree: chartResult.jupiter?.degree || 15 },
-                { key: "saturn", sign: chartResult.saturn?.sign, degree: chartResult.saturn?.degree || 20 },
+                { key: "sun", ...activeChart.sun },
+                { key: "moon", ...activeChart.moon },
+                { key: "mercury", sign: activeChart.mercury.sign, degree: activeChart.mercury.degree || 8 },
+                { key: "venus", sign: activeChart.venus.sign, degree: activeChart.venus.degree || 24 },
+                { key: "mars", sign: activeChart.mars.sign, degree: activeChart.mars.degree || 12 },
+                { key: "jupiter", sign: activeChart.jupiter?.sign, degree: activeChart.jupiter?.degree || 15 },
+                { key: "saturn", sign: activeChart.saturn?.sign, degree: activeChart.saturn?.degree || 20 },
               ];
 
               return (
@@ -3037,22 +3046,22 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
             <div className="space-y-3">
               <div className="bg-[#D6B35A]/10 rounded-xl p-4 border border-[#D6B35A]/30">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-[#D6B35A]">☉ {chartResult.sun.sign} Sun</h3>
-                  <span className="text-sm t-text-muted">{chartResult.sun.degree}° {String(chartResult.sun.minutes || 0).padStart(2, '0')}' • {chartResult.sun.house}{houseSuffix(chartResult.sun.house)} house</span>
+                  <h3 className="text-lg font-semibold text-[#D6B35A]">☉ {activeChart.sun.sign} Sun</h3>
+                  <span className="text-sm t-text-muted">{activeChart.sun.degree}° {String(activeChart.sun.minutes || 0).padStart(2, '0')}' • {activeChart.sun.house}{houseSuffix(activeChart.sun.house)} house</span>
                 </div>
                 <p className="text-sm t-text-muted mt-1">Core Identity</p>
               </div>
               <div className="bg-[#69D2FF]/10 rounded-xl p-4 border border-[#69D2FF]/30">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-[#69D2FF]">☽ {chartResult.moon.sign} Moon</h3>
-                  <span className="text-sm t-text-muted">{chartResult.moon.degree}° {String(chartResult.moon.minutes || 0).padStart(2, '0')}' • {chartResult.moon.house}{houseSuffix(chartResult.moon.house)} house</span>
+                  <h3 className="text-lg font-semibold text-[#69D2FF]">☽ {activeChart.moon.sign} Moon</h3>
+                  <span className="text-sm t-text-muted">{activeChart.moon.degree}° {String(activeChart.moon.minutes || 0).padStart(2, '0')}' • {activeChart.moon.house}{houseSuffix(activeChart.moon.house)} house</span>
                 </div>
                 <p className="text-sm t-text-muted mt-1">Emotional Core</p>
               </div>
               <div className="bg-white/5 rounded-xl p-4 border border-white/10">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-white">↑ {chartResult.rising.sign} Rising</h3>
-                  <span className="text-sm t-text-muted">{chartResult.rising.degree}° {String(chartResult.rising.minutes || 0).padStart(2, '0')}' Ascendant</span>
+                  <h3 className="text-lg font-semibold text-white">↑ {activeChart.rising.sign} Rising</h3>
+                  <span className="text-sm t-text-muted">{activeChart.rising.degree}° {String(activeChart.rising.minutes || 0).padStart(2, '0')}' Ascendant</span>
                 </div>
                 <p className="text-sm t-text-muted mt-1">How Others See You</p>
               </div>
@@ -3064,14 +3073,14 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
             <h2 className="font-serif text-2xl font-semibold mb-6 gold-gradient-text">Planetary Placements</h2>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               {[
-                { name: "Mercury", glyph: "☿", data: chartResult.mercury, desc: "Communication" },
-                { name: "Venus", glyph: "♀", data: chartResult.venus, desc: "Love & Beauty" },
-                { name: "Mars", glyph: "♂", data: chartResult.mars, desc: "Drive & Action" },
-                { name: "Jupiter", glyph: "♃", data: chartResult.jupiter, desc: "Growth & Luck" },
-                { name: "Saturn", glyph: "♄", data: chartResult.saturn, desc: "Structure" },
-                { name: "Uranus", glyph: "♅", data: chartResult.uranus, desc: "Innovation" },
-                { name: "Neptune", glyph: "♆", data: chartResult.neptune, desc: "Dreams" },
-                { name: "Pluto", glyph: "♇", data: chartResult.pluto, desc: "Transformation" },
+                { name: "Mercury", glyph: "☿", data: activeChart.mercury, desc: "Communication" },
+                { name: "Venus", glyph: "♀", data: activeChart.venus, desc: "Love & Beauty" },
+                { name: "Mars", glyph: "♂", data: activeChart.mars, desc: "Drive & Action" },
+                { name: "Jupiter", glyph: "♃", data: activeChart.jupiter, desc: "Growth & Luck" },
+                { name: "Saturn", glyph: "♄", data: activeChart.saturn, desc: "Structure" },
+                { name: "Uranus", glyph: "♅", data: activeChart.uranus, desc: "Innovation" },
+                { name: "Neptune", glyph: "♆", data: activeChart.neptune, desc: "Dreams" },
+                { name: "Pluto", glyph: "♇", data: activeChart.pluto, desc: "Transformation" },
               ].map((planet) => (
                 <div key={planet.name} className="bg-white/5 rounded-lg p-4 border border-white/5">
                   <div className="flex items-center gap-2 mb-1">
@@ -3583,6 +3592,9 @@ export default function Natavium() {
     return localStorage.getItem("natavium_isPremium") === "true";
   });
   const [selectedBundle, setSelectedBundle] = useState("essential"); // default to most popular
+  const [selectedZodiacSystem, setSelectedZodiacSystem] = useState(() => {
+    return localStorage.getItem("natavium_zodiacSystem") || "tropical";
+  });
 
   // Persist state to localStorage
   useEffect(() => {
@@ -3598,6 +3610,10 @@ export default function Natavium() {
   useEffect(() => {
     localStorage.setItem("natavium_isPremium", isPremium.toString());
   }, [isPremium]);
+
+  useEffect(() => {
+    localStorage.setItem("natavium_zodiacSystem", selectedZodiacSystem);
+  }, [selectedZodiacSystem]);
 
   const handleInputChange = (field, value) => {
     setBirthData((prev) => {
@@ -3662,6 +3678,7 @@ export default function Natavium() {
       }
 
       // Calculate chart using the simplified API (handles geocoding + timezone)
+      // This now returns { tropical, sidereal, meta } format
       const chart = await calculateNatalChartFromLocal({
         year,
         month,
@@ -3674,11 +3691,15 @@ export default function Natavium() {
       // Generate unique chart ID
       const chartId = `NAT-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
 
-      console.log("Chart result:", chart);
+      console.log("Chart result (dual format):", chart);
       console.log("Chart ID:", chartId);
-      console.log("Zodiac type:", zodiac);
+      console.log("Selected zodiac system:", zodiac);
 
-      // Store chart with zodiac type for downstream processing (analysis, add-ons)
+      // Update the selected zodiac system state
+      setSelectedZodiacSystem(zodiac);
+
+      // Store chart with chartId and selected zodiac type
+      // chart already has { tropical, sidereal, meta } structure
       setChartResult({ ...chart, chartId, zodiacType: zodiac });
       navigate("/preview", { replace: true });
     } catch (error) {

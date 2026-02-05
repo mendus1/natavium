@@ -9,16 +9,33 @@ const supabase = createClient(
 );
 
 // Map bundle/add-on IDs to Stripe price env vars
+// Products are prefixed with zodiac system: tropical_ or sidereal_
 const PRICE_MAP = {
-  // Bundles
+  // Tropical bundles
+  tropical_base: process.env.STRIPE_PRICE_ID_TROPICAL_BASE || process.env.STRIPE_PRICE_ID_BASE,
+  tropical_essential: process.env.STRIPE_PRICE_ID_TROPICAL_ESSENTIAL || process.env.STRIPE_PRICE_ID_ESSENTIAL,
+  tropical_ultimate: process.env.STRIPE_PRICE_ID_TROPICAL_ULTIMATE || process.env.STRIPE_PRICE_ID_ULTIMATE,
+  // Sidereal bundles
+  sidereal_base: process.env.STRIPE_PRICE_ID_SIDEREAL_BASE || process.env.STRIPE_PRICE_ID_BASE,
+  sidereal_essential: process.env.STRIPE_PRICE_ID_SIDEREAL_ESSENTIAL || process.env.STRIPE_PRICE_ID_ESSENTIAL,
+  sidereal_ultimate: process.env.STRIPE_PRICE_ID_SIDEREAL_ULTIMATE || process.env.STRIPE_PRICE_ID_ULTIMATE,
+  // Tropical add-ons
+  tropical_compatibility: process.env.STRIPE_PRICE_ID_TROPICAL_COMPATIBILITY || process.env.STRIPE_PRICE_ID_COMPATIBILITY,
+  tropical_house_deep_dive: process.env.STRIPE_PRICE_ID_TROPICAL_HOUSE || process.env.STRIPE_PRICE_ID_HOUSE,
+  tropical_transit_report: process.env.STRIPE_PRICE_ID_TROPICAL_TRANSIT || process.env.STRIPE_PRICE_ID_TRANSIT,
+  tropical_solar_return: process.env.STRIPE_PRICE_ID_TROPICAL_SOLAR_RETURN || process.env.STRIPE_PRICE_ID_RETURN,
+  // Sidereal add-ons
+  sidereal_compatibility: process.env.STRIPE_PRICE_ID_SIDEREAL_COMPATIBILITY || process.env.STRIPE_PRICE_ID_COMPATIBILITY,
+  sidereal_house_deep_dive: process.env.STRIPE_PRICE_ID_SIDEREAL_HOUSE || process.env.STRIPE_PRICE_ID_HOUSE,
+  sidereal_transit_report: process.env.STRIPE_PRICE_ID_SIDEREAL_TRANSIT || process.env.STRIPE_PRICE_ID_TRANSIT,
+  sidereal_solar_return: process.env.STRIPE_PRICE_ID_SIDEREAL_SOLAR_RETURN || process.env.STRIPE_PRICE_ID_RETURN,
+  // Legacy (backwards compat) - map to tropical
   base: process.env.STRIPE_PRICE_ID_BASE,
   essential: process.env.STRIPE_PRICE_ID_ESSENTIAL,
   ultimate: process.env.STRIPE_PRICE_ID_ULTIMATE,
-  // Add-ons
   compatibility: process.env.STRIPE_PRICE_ID_COMPATIBILITY,
   house_deep_dive: process.env.STRIPE_PRICE_ID_HOUSE,
   transit_report: process.env.STRIPE_PRICE_ID_TRANSIT,
-  vedic_chart: process.env.STRIPE_PRICE_ID_VEDIC,
   solar_return: process.env.STRIPE_PRICE_ID_RETURN,
 };
 
@@ -28,14 +45,18 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { bundle, addOns = [], chartData } = req.body;
+    const { bundle, addOns = [], chartData, zodiacSystem = 'tropical' } = req.body;
 
     // --- Validate inputs ---
-    if (!chartData || !chartData.sun?.sign || !chartData.moon?.sign || !chartData.rising?.sign) {
+    // Support both old flat format and new { tropical, sidereal, meta } format
+    const activeChart = chartData?.tropical ? chartData[zodiacSystem] : chartData;
+    if (!activeChart || !activeChart.sun?.sign || !activeChart.moon?.sign || !activeChart.rising?.sign) {
       return res.status(400).json({ error: "Missing or incomplete chart data" });
     }
 
-    const bundlePriceId = PRICE_MAP[bundle];
+    // Prefix bundle with zodiac system
+    const prefixedBundle = `${zodiacSystem}_${bundle}`;
+    const bundlePriceId = PRICE_MAP[prefixedBundle] || PRICE_MAP[bundle];
     if (!bundlePriceId) {
       return res.status(400).json({ error: `Invalid bundle: ${bundle}` });
     }
@@ -45,7 +66,8 @@ export default async function handler(req, res) {
       .from("orders")
       .insert({
         chart_data: chartData,
-        product_type: bundle,
+        product_type: prefixedBundle,
+        zodiac_system: zodiacSystem,
         payment_status: "pending",
       })
       .select("id")
@@ -61,8 +83,10 @@ export default async function handler(req, res) {
     // --- 2. Build Stripe line items ---
     const line_items = [{ price: bundlePriceId, quantity: 1 }];
 
+    // Prefix add-ons with zodiac system
     for (const addOnId of addOns) {
-      const addOnPriceId = PRICE_MAP[addOnId];
+      const prefixedAddOnId = `${zodiacSystem}_${addOnId}`;
+      const addOnPriceId = PRICE_MAP[prefixedAddOnId] || PRICE_MAP[addOnId];
       if (addOnPriceId) {
         line_items.push({ price: addOnPriceId, quantity: 1 });
       }
@@ -81,7 +105,8 @@ export default async function handler(req, res) {
       cancel_url: `${origin}/preview`,
       metadata: {
         orderId,
-        productType: bundle,
+        productType: prefixedBundle,
+        zodiacSystem,
       },
     });
 
