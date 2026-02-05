@@ -480,13 +480,13 @@
   border-radius: 50%;
   background: radial-gradient(
     ellipse 65% 55% at 50% 45%,
-    rgba(15, 12, 40, 0.92) 0%,
-    rgba(15, 12, 40, 0.70) 30%,
-    rgba(15, 12, 40, 0.35) 55%,
+    rgba(162, 162, 171, 0.92) 0%,
+    rgba(162, 162, 171, 0.70) 30%,
+    rgba(162, 162, 171, 0.35) 55%,
     transparent 75%
   );
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
   pointer-events: none;
   z-index: 0;
 }
