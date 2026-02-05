@@ -657,12 +657,12 @@ function LandingPage() {
 
         {/* Tagline (slightly smaller, still prominent) */}
           <p className="text-xl md:text-2xl t-text-muted mb-4 text-center">
-            Powerful AI-astrology based on your birth chart
+            AI-powered astrology from your full birth chart.
           </p>
 
         {/* Supporting line (smaller + softer so it doesn't compete) */}
           <p className="text-base md:text-lg t-text-muted mb-10 text-center">
-            Career, relationships, and personal growth—timed to what's happening now
+            Timing for career, relationships, and personal growth—based on what’s happening now.
           </p>
   
   <button
