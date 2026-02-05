@@ -485,8 +485,8 @@
     rgba(162, 162, 171, 0.35) 35%,
     transparent 75%
   );
-  backdrop-filter: blur(2px);
-  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
   pointer-events: none;
   z-index: 0;
 }
