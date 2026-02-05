@@ -481,9 +481,9 @@
   background: radial-gradient(
     ellipse 65% 55% at 50% 45%,
     rgba(162, 162, 171, 0.92) 0%,
-    rgba(162, 162, 171, 0.70) 20%,
-    rgba(162, 162, 171, 0.35) 45%,
-    transparent 65%
+    rgba(162, 162, 171, 0.70) 10%,
+    rgba(162, 162, 171, 0.35) 35%,
+    transparent 55%
   );
   backdrop-filter: blur(2px);
   -webkit-backdrop-filter: blur(2px);
