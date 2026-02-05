@@ -12,14 +12,18 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { chartResult } = req.body;
+    const { chartResult, zodiacSystem = 'tropical' } = req.body;
 
     // Validate required data
     if (!chartResult) {
       return res.status(400).json({ error: 'No chart data provided' });
     }
 
-    if (!chartResult.sun?.sign || !chartResult.moon?.sign || !chartResult.rising?.sign) {
+    // Support both dual format { tropical, sidereal, meta } and old flat format
+    const activeChart = chartResult[zodiacSystem] || chartResult;
+    const zodiacLabel = zodiacSystem === 'sidereal' ? 'Sidereal (Fagan-Bradley)' : 'Tropical';
+
+    if (!activeChart.sun?.sign || !activeChart.moon?.sign || !activeChart.rising?.sign) {
       return res.status(400).json({ error: 'Incomplete chart data: missing Sun, Moon, or Rising' });
     }
 
@@ -27,12 +31,13 @@ export default async function handler(req, res) {
 Your goal is to hook the reader with specific, intriguing insights that make them want to learn more.
 Be specific to the placements - avoid generic statements.
 Write in second person ("You...").
-Keep it mystical but grounded.`;
+Keep it mystical but grounded.
+This chart uses the ${zodiacLabel} zodiac system.`;
 
     const userPrompt = `Write a short, compelling teaser (3 paragraphs, ~150 words total) for someone with:
-- Sun in ${chartResult.sun.sign} (${chartResult.sun.house}${getHouseSuffix(chartResult.sun.house)} house)
-- Moon in ${chartResult.moon.sign} (${chartResult.moon.house}${getHouseSuffix(chartResult.moon.house)} house)
-- Rising in ${chartResult.rising.sign}
+- Sun in ${activeChart.sun.sign} (${activeChart.sun.house}${getHouseSuffix(activeChart.sun.house)} house)
+- Moon in ${activeChart.moon.sign} (${activeChart.moon.house}${getHouseSuffix(activeChart.moon.house)} house)
+- Rising in ${activeChart.rising.sign}
 
 Focus on:
 1. Their core identity and what drives them (Sun)

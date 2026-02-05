@@ -996,7 +996,7 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
         const response = await fetch('/api/generate-teaser', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ chartResult }),
+          body: JSON.stringify({ chartResult, zodiacSystem: zodiacType }),
         });
 
         if (!response.ok) {
@@ -1014,6 +1014,8 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
     };
 
     fetchTeaser();
+    // zodiacType is derived from chartResult.zodiacType, so chartResult covers it
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chartResult]);
 
   if (!chartResult) {
@@ -1656,6 +1658,7 @@ function SuccessPage({ setIsPremium, chartResult, selectedBundle }) {
   const [generationStatus, setGenerationStatus] = useState('starting'); // starting, generating, complete, error
   const [streamedText, setStreamedText] = useState('');
   const [error, setError] = useState(null);
+  const zodiacType = chartResult?.zodiacType || 'tropical';
 
   // Check if we have chart data (from props or localStorage)
   const hasChartData = chartResult || localStorage.getItem("natavium_chartResult");
@@ -1695,6 +1698,7 @@ function SuccessPage({ setIsPremium, chartResult, selectedBundle }) {
             chartResult,
             productType: selectedBundle || 'essential',
             analysisType: 'natal',
+            zodiacSystem: zodiacType,
           }),
         });
 
@@ -1780,6 +1784,8 @@ function SuccessPage({ setIsPremium, chartResult, selectedBundle }) {
     // Small delay before starting generation
     const timer = setTimeout(generateReport, 500);
     return () => clearTimeout(timer);
+    // zodiacType is derived from chartResult.zodiacType, so chartResult covers it
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasChartData, chartResult, selectedBundle, setIsPremium, navigate]);
 
   // If no chart data anywhere, redirect to input
@@ -2029,13 +2035,19 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
   }, []);
 
   // Check if a tab is accessible
+  // Handles both prefixed (tropical_natal) and unprefixed (natal) purchased add-ons
   const isTabAccessible = (tabId) => {
     const tab = DASHBOARD_TABS.find(t => t.id === tabId);
     if (!tab) return false;
     if (tab.alwaysActive || !tab.requiresPurchase) return true;
     if (tab.comingSoon) return false; // Coming soon tabs are never accessible
-    if (purchasedProducts.addOns.includes(tabId)) return true;
-    if (tab.includedIn?.includes(purchasedProducts.bundle)) return true;
+    // Check add-ons: match unprefixed tab ID against both prefixed and unprefixed stored IDs
+    if (purchasedProducts.addOns.includes(tabId) ||
+        purchasedProducts.addOns.includes(`tropical_${tabId}`) ||
+        purchasedProducts.addOns.includes(`sidereal_${tabId}`)) return true;
+    // Check bundle inclusion: strip zodiac prefix from stored bundle for matching
+    const baseBundle = purchasedProducts.bundle?.replace(/^(tropical|sidereal)_/, '');
+    if (tab.includedIn?.includes(baseBundle)) return true;
     return false;
   };
 
@@ -2054,6 +2066,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
           analysisType: tabId,
           productType: purchasedProducts.bundle || 'essential',
           birthData,
+          zodiacSystem: zodiacType,
         }),
       });
 
@@ -2210,6 +2223,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
           birthData,
           analysisType: activeTab,
           productType: purchasedProducts.bundle || 'essential',
+          zodiacSystem: zodiacType,
         }),
       });
 
@@ -2310,6 +2324,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
           birthData,
           chartImage,
           analyses: analyses,
+          zodiacSystem: zodiacType,
         }),
       });
 
@@ -2370,6 +2385,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
           chartResult,
           birthData,
           analyses: analyses,
+          zodiacSystem: zodiacType,
         }),
       });
 

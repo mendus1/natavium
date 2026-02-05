@@ -9,11 +9,22 @@ const supabase = createClient(
 );
 
 // Map add-on IDs to Stripe price env vars
+// Supports both prefixed (tropical_compatibility) and unprefixed (compatibility) keys
 const ADDON_PRICE_MAP = {
+  // Tropical add-ons
+  tropical_compatibility: process.env.STRIPE_PRICE_ID_TROPICAL_COMPATIBILITY || process.env.STRIPE_PRICE_ID_COMPATIBILITY,
+  tropical_house_deep_dive: process.env.STRIPE_PRICE_ID_TROPICAL_HOUSE || process.env.STRIPE_PRICE_ID_HOUSE,
+  tropical_transit_report: process.env.STRIPE_PRICE_ID_TROPICAL_TRANSIT || process.env.STRIPE_PRICE_ID_TRANSIT,
+  tropical_solar_return: process.env.STRIPE_PRICE_ID_TROPICAL_SOLAR_RETURN || process.env.STRIPE_PRICE_ID_RETURN,
+  // Sidereal add-ons
+  sidereal_compatibility: process.env.STRIPE_PRICE_ID_SIDEREAL_COMPATIBILITY || process.env.STRIPE_PRICE_ID_COMPATIBILITY,
+  sidereal_house_deep_dive: process.env.STRIPE_PRICE_ID_SIDEREAL_HOUSE || process.env.STRIPE_PRICE_ID_HOUSE,
+  sidereal_transit_report: process.env.STRIPE_PRICE_ID_SIDEREAL_TRANSIT || process.env.STRIPE_PRICE_ID_TRANSIT,
+  sidereal_solar_return: process.env.STRIPE_PRICE_ID_SIDEREAL_SOLAR_RETURN || process.env.STRIPE_PRICE_ID_RETURN,
+  // Legacy (backwards compat)
   compatibility: process.env.STRIPE_PRICE_ID_COMPATIBILITY,
   house_deep_dive: process.env.STRIPE_PRICE_ID_HOUSE,
   transit_report: process.env.STRIPE_PRICE_ID_TRANSIT,
-  vedic_chart: process.env.STRIPE_PRICE_ID_VEDIC,
   solar_return: process.env.STRIPE_PRICE_ID_RETURN,
 };
 
@@ -37,7 +48,7 @@ export default async function handler(req, res) {
     // Verify order exists and is paid
     const { data: order, error: orderError } = await supabase
       .from("orders")
-      .select("id, payment_status, purchased_addons")
+      .select("id, payment_status, purchased_addons, zodiac_system")
       .eq("id", orderId)
       .single();
 
@@ -49,20 +60,26 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Original order not yet paid" });
     }
 
-    // Filter out already purchased add-ons
+    const zodiacSystem = order.zodiac_system || 'tropical';
+
+    // Filter out already purchased add-ons (check both prefixed and unprefixed)
     const existingAddons = order.purchased_addons || [];
-    const newAddOns = addOns.filter(
-      (addon) => !existingAddons.includes(addon) && ADDON_PRICE_MAP[addon]
-    );
+    const newAddOns = addOns.filter((addon) => {
+      const prefixed = `${zodiacSystem}_${addon}`;
+      const alreadyOwned = existingAddons.includes(addon) || existingAddons.includes(prefixed);
+      const hasPrice = ADDON_PRICE_MAP[prefixed] || ADDON_PRICE_MAP[addon];
+      return !alreadyOwned && hasPrice;
+    });
 
     if (!newAddOns.length) {
       return res.status(400).json({ error: "All selected add-ons already purchased" });
     }
 
-    // Build Stripe line items
+    // Build Stripe line items (prefer prefixed price IDs)
     const line_items = newAddOns
       .map((addOnId) => {
-        const priceId = ADDON_PRICE_MAP[addOnId];
+        const prefixed = `${zodiacSystem}_${addOnId}`;
+        const priceId = ADDON_PRICE_MAP[prefixed] || ADDON_PRICE_MAP[addOnId];
         return priceId ? { price: priceId, quantity: 1 } : null;
       })
       .filter(Boolean);
@@ -86,6 +103,7 @@ export default async function handler(req, res) {
         orderId,
         isAddonPurchase: "true",
         addOns: newAddOns.join(","),
+        zodiacSystem,
       },
     });
 

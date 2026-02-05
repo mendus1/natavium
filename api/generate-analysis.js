@@ -515,10 +515,13 @@ export default async function handler(req) {
   }
 
   try {
-    const { chartResult, productType = 'base', analysisType = 'natal', birthData } = await req.json();
+    const { chartResult, productType = 'base', analysisType = 'natal', birthData, zodiacSystem: explicitZodiacSystem } = await req.json();
 
     // Parse zodiac system from prefixed analysisType (e.g., 'tropical_natal' -> 'tropical')
-    const { zodiacSystem, baseType } = parseAnalysisType(analysisType);
+    // Explicit zodiacSystem parameter takes priority over prefix parsing
+    const parsed = parseAnalysisType(analysisType);
+    const zodiacSystem = explicitZodiacSystem || parsed.zodiacSystem;
+    const baseType = parsed.baseType;
     const zodiacContext = getZodiacSystemContext(zodiacSystem);
 
     // Validate required data
