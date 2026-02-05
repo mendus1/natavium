@@ -634,7 +634,7 @@ function LandingPage() {
       {/* Header with Logo/Title on left, Nav on right */}
       <header className="max-w-5xl mx-auto flex justify-between items-center mb-8">
         <div className="flex items-center">
-          <img src={LogoRed} alt="Natavium Logo" className="w-10 h-10 mr-3 object-contain" />
+          <img src={LogoRed} alt="Natavium Logo" className="w-11 h-11 mr-3 object-contain" />
           <h1 className="font-serif text-5xl md:text-6xl font-semibold gold-gradient-text leading-none pt-3">Natavium</h1>
         </div>  
         <nav className="flex gap-4">
@@ -661,10 +661,10 @@ function LandingPage() {
           </p>
 
         {/* Supporting line (smaller + softer so it doesn't compete) */}
-          <p className="text-base md:text-lg t-text-muted mb-10 text-center">
-            Timing for career, relationships, and personal growth—based on what’s happening now.
+          <p className="text-base md:text-lg t-text-muted mb-8 text-center">
+            Timing for career, relationships, and personal growth—based on what's happening now.
           </p>
-  
+
   <button
     onClick={() => navigate("/input")}
     className="gold-gradient-btn gold-gradient-btn-lg"
@@ -672,13 +672,13 @@ function LandingPage() {
     Discover Your Chart
   </button>
 
-  <p className="t-text-muted mt-5 text-sm tracking-wide">
+  <p className="t-text-muted mt-8 text-sm tracking-wide">
     Free preview • Full analysis from $4.99
   </p>
 </section>
 
-      {/* Sample Preview */}
-      <div className="mt-12 mb-14">
+      {/* Sample Preview (hidden for now) */}
+      <div className="hidden mt-12 mb-14">
         <div className="card-solid max-w-4xl mx-auto">
           <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
             {/* Left: text */}
@@ -761,10 +761,10 @@ function LandingPage() {
       </div>
 
     {/* Feature Cards */}
-      <section className="max-w-4xl mx-auto grid md:grid-cols-3 gap-6 mb-12">
+      <section className="max-w-4xl mx-auto grid md:grid-cols-3 gap-6 mt-2 mb-12">
         <div className="card-solid text-center py-8 px-6">
           <Star className="w-8 h-8 icon-gold mx-auto mb-4" strokeWidth={1} />
-          <h3 className="font-serif text-xl mb-2 t-text-primary">Personalized Birth Chart</h3>
+          <h3 className="font-serif text-2xl md:text-[1.65rem] mb-2 t-text-primary">Personalized Birth Chart</h3>
           <p className="t-text-muted text-sm leading-relaxed">
             Built from exact planetary positions at your birth—so it’s about you, not just your Sun sign.
           </p>
@@ -772,7 +772,7 @@ function LandingPage() {
 
         <div className="card-solid text-center py-8 px-6">
           <Zap className="w-8 h-8 icon-gold mx-auto mb-4" strokeWidth={1} />
-          <h3 className="font-serif text-xl mb-2 t-text-primary">Powerful AI</h3>
+          <h3 className="font-serif text-2xl md:text-[1.65rem] mb-2 t-text-primary">Powerful AI</h3>
           <p className="t-text-muted text-sm leading-relaxed">
             The latest AI models analyse your planetary placements + transits into a coherent story. No templates.
           </p>
@@ -780,7 +780,7 @@ function LandingPage() {
 
         <div className="card-solid text-center py-8 px-6">
           <Heart className="w-8 h-8 icon-gold mx-auto mb-4" strokeWidth={1} />
-          <h3 className="font-serif text-xl mb-2 t-text-primary">One-Time Unlocks</h3>
+          <h3 className="font-serif text-2xl md:text-[1.65rem] mb-2 t-text-primary">One-Time Unlocks</h3>
           <p className="t-text-muted text-sm leading-relaxed">
             Subscriptions are not required. Pay for exactly what you want. 
           </p>
