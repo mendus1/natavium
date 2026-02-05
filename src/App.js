@@ -649,7 +649,7 @@ function LandingPage() {
       </header>
 
       {/* Hero Section */}
-      <section className="max-w-5xl mx-auto text-center py-16 md:py-24 px-4">
+      <section className="hero-vignette max-w-5xl mx-auto text-center py-16 md:py-24 px-4">
         {/* Big hero headline (dominates page) */}
           <h2 className="font-serif text-5xl md:text-7xl font-semibold t-text-primary leading-tight tracking-tight mb-6 text-center">
             Clarity for your next move
@@ -676,6 +676,89 @@ function LandingPage() {
     Free preview • Full analysis from $4.99
   </p>
 </section>
+
+      {/* Sample Preview */}
+      <div className="mt-12 mb-14">
+        <div className="card-solid max-w-4xl mx-auto">
+          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
+            {/* Left: text */}
+            <div className="min-w-0">
+              <div className="flex items-center gap-3 mb-3">
+                <span className="inline-flex items-center rounded-full px-3 py-1 text-xs tracking-wide"
+                      style={{
+                        border: "1px solid rgba(255,255,255,0.12)",
+                        background: "rgba(255,255,255,0.03)",
+                        color: "var(--text)"
+                      }}>
+                  Sample Preview
+                </span>
+                <span className="text-sm t-text-muted">
+                  The next 5 days &bull; Personalized to you
+                </span>
+              </div>
+
+              <h3 className="font-serif text-2xl md:text-3xl font-semibold t-text-primary mb-3">
+                Your timing at a glance
+              </h3>
+
+              <p className="t-text-muted text-base md:text-lg leading-relaxed mb-5 max-w-2xl">
+                A short, clear preview of what&rsquo;s active right now in your chart&mdash;where momentum is building,
+                what to prioritize, and what to handle gently.
+              </p>
+
+              {/* Key transit chips */}
+              <div className="flex flex-wrap gap-2">
+                {["Key themes", "Pressure points", "Momentum windows", "Communication", "Rest & reset"].map((label) => (
+                  <span
+                    key={label}
+                    className="inline-flex items-center rounded-full px-3 py-1 text-xs"
+                    style={{
+                      border: "1px solid rgba(255,255,255,0.10)",
+                      background: "rgba(255,255,255,0.02)",
+                      color: "rgba(242,243,255,0.80)"
+                    }}
+                  >
+                    {label}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Right: mini signal + CTA */}
+            <div className="shrink-0 md:w-64">
+              <div
+                className="rounded-xl p-4"
+                style={{
+                  border: "1px solid rgba(255,255,255,0.10)",
+                  background: "rgba(255,255,255,0.02)"
+                }}
+              >
+                <div className="text-xs tracking-wide t-text-muted mb-2">
+                  Today&rsquo;s signal
+                </div>
+
+                <div className="flex items-center justify-between mb-2">
+                  <div className="font-serif text-xl t-text-primary">Steady</div>
+                  <div className="text-sm" style={{ color: "rgba(214,179,90,0.95)" }}>
+                    &#9679;&#9679;&#9679;&#9675;&#9675;
+                  </div>
+                </div>
+
+                <p className="text-sm t-text-muted leading-relaxed mb-4">
+                  Good for planning, clarifying, and small wins. Avoid forcing outcomes.
+                </p>
+
+                <button
+                  onClick={() => navigate("/input")}
+                  className="gold-gradient-btn w-full"
+                >
+                  Get My Preview &rarr;
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
     {/* Feature Cards */}
       <section className="max-w-4xl mx-auto grid md:grid-cols-3 gap-6 mb-12">

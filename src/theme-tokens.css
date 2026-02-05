@@ -469,22 +469,84 @@
   background-clip: text;
 }
 
-/* Gold gradient button */
+/* Hero vignette – soft radial darken behind hero text */
+.hero-vignette {
+  position: relative;
+}
+.hero-vignette::before {
+  content: '';
+  position: absolute;
+  inset: -20% -10%;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse 70% 60% at 50% 45%,
+    rgba(10, 10, 28, 0.85) 0%,
+    rgba(10, 10, 28, 0.55) 40%,
+    transparent 75%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+.hero-vignette > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Gold gradient button – metallic / brushed-gold feel */
 .gold-gradient-btn {
-  background: linear-gradient(135deg, #FAE8B4 0%, #D69E2E 100%);
+  background:
+    linear-gradient(
+      170deg,
+      #e8cf8a 0%,
+      #f5e4b5 12%,
+      #d4a84b 28%,
+      #c49530 50%,
+      #d9b35c 72%,
+      #f2dfa0 88%,
+      #c49530 100%
+    );
   color: #1a1a2e;
-  font-weight: 600;
-  border: none;
+  font-weight: 700;
+  border: 1px solid rgba(214, 179, 90, 0.45);
   border-radius: var(--radius);
   padding: 1rem 2.5rem;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 20px rgba(214, 158, 46, 0.25);
+  transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  box-shadow:
+    0 1px 0 0 rgba(255, 245, 200, 0.45) inset,
+    0 -1px 0 0 rgba(120, 80, 20, 0.25) inset,
+    0 4px 20px rgba(180, 140, 30, 0.30),
+    0 1px 3px rgba(0, 0, 0, 0.25);
+  text-shadow: 0 1px 0 rgba(255, 245, 200, 0.35);
 }
 
 .gold-gradient-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 30px rgba(214, 158, 46, 0.35);
+  background:
+    linear-gradient(
+      170deg,
+      #f2dfa0 0%,
+      #fcedc4 12%,
+      #ddb85a 28%,
+      #cfa040 50%,
+      #e0be6a 72%,
+      #f8e9b4 88%,
+      #cfa040 100%
+    );
+  box-shadow:
+    0 1px 0 0 rgba(255, 250, 220, 0.55) inset,
+    0 -1px 0 0 rgba(120, 80, 20, 0.20) inset,
+    0 8px 32px rgba(214, 158, 46, 0.45),
+    0 2px 8px rgba(0, 0, 0, 0.30);
+  border-color: rgba(214, 179, 90, 0.60);
+}
+
+.gold-gradient-btn:active {
+  transform: translateY(0);
+  box-shadow:
+    0 1px 0 0 rgba(255, 245, 200, 0.25) inset,
+    0 -1px 0 0 rgba(120, 80, 20, 0.35) inset,
+    0 2px 10px rgba(180, 140, 30, 0.25);
 }
 
 .gold-gradient-btn-lg {
