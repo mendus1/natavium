@@ -288,22 +288,40 @@ async function generateSingleAnalysis(chartResult, analysisType, zodiacSystem, b
 
 // Ensure all purchased analyses exist, generating any missing ones
 async function ensureAllAnalyses(orderId) {
+  console.log(`[Email] ensureAllAnalyses called with orderId: ${orderId}`);
+
+  // Validate orderId
+  if (!orderId || typeof orderId !== 'string') {
+    console.error('[Email] Invalid orderId:', orderId);
+    throw new Error(`Invalid orderId: ${orderId}`);
+  }
+
   // Fetch order from database
+  // Note: birth_data may not exist as a separate column - birth info is in chart_data
   const { data: order, error: orderError } = await supabase
     .from('orders')
-    .select('chart_data, purchased_addons, analyses, zodiac_system, birth_data, email')
+    .select('chart_data, purchased_addons, analyses, zodiac_system, customer_email')
     .eq('id', orderId)
     .single();
 
-  if (orderError || !order) {
-    throw new Error('Order not found');
+  if (orderError) {
+    console.error('[Email] Supabase error fetching order:', JSON.stringify(orderError));
+    throw new Error(`Database error for order ${orderId}: ${orderError.message || orderError.code || 'Unknown error'}`);
   }
+
+  if (!order) {
+    console.error('[Email] No order found for id:', orderId);
+    throw new Error(`Order not found for id: ${orderId}`);
+  }
+
+  console.log('[Email] Order found, purchased_addons:', order.purchased_addons);
 
   const chartData = order.chart_data;
   const purchasedAddons = order.purchased_addons || [];
   const existingAnalyses = order.analyses || {};
   const zodiacSystem = order.zodiac_system || 'tropical';
-  const birthData = order.birth_data || {};
+  // Birth data may be in chart_data.meta or as separate fields - try to extract it
+  const birthData = chartData?.meta?.birthData || chartData?.birthData || {};
 
   // Extract the active chart based on zodiac system
   const activeChart = chartData[zodiacSystem] || chartData;
@@ -375,7 +393,7 @@ async function ensureAllAnalyses(orderId) {
     activeChart: activeChart,
     zodiacSystem: zodiacSystem,
     birthData: birthData,
-    email: order.email,
+    email: order.customer_email,
   };
 }
 
@@ -464,8 +482,16 @@ module.exports = async function handler(req, res) {
     return res.status(405).json({ error: "Method Not Allowed" });
   }
 
+  // Check Supabase configuration
+  if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    console.error('[Email] Missing Supabase configuration');
+    return res.status(500).json({ error: "Server configuration error: Supabase not configured" });
+  }
+
   try {
     const { orderId, email: requestEmail } = req.body;
+
+    console.log(`[Email] Request received with orderId: ${orderId}, email: ${requestEmail || 'not provided'}`);
 
     if (!orderId) {
       return res.status(400).json({ error: "Missing orderId" });

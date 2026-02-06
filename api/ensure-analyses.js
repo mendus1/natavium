@@ -313,6 +313,8 @@ export default async function handler(req, res) {
     const purchasedAddons = order.purchased_addons || [];
     const existingAnalyses = order.analyses || {};
     const zodiacSystem = order.zodiac_system || 'tropical';
+    // Birth data may be in chart_data.meta or as separate fields - try to extract it
+    const birthData = chartData?.meta?.birthData || chartData?.birthData || {};
 
     // Extract the active chart based on zodiac system
     const activeChart = chartData[zodiacSystem] || chartData;
