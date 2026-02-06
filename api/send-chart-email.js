@@ -361,27 +361,38 @@ async function ensureAllAnalyses(orderId) {
     }
   }
 
-  // Generate missing analyses
+  // Generate missing analyses IN PARALLEL for faster execution
   const newAnalyses = { ...existingAnalyses };
 
-  for (const missing of missingAnalyses) {
-    console.log(`[Email] Generating missing analysis: ${missing.key}`);
+  if (missingAnalyses.length > 0) {
+    console.log(`[Email] Generating ${missingAnalyses.length} analyses in parallel...`);
 
-    try {
-      const content = await generateSingleAnalysis(
-        activeChart,
-        missing.baseType,
-        zodiacSystem,
-        birthData
-      );
+    const generationPromises = missingAnalyses.map(async (missing) => {
+      console.log(`[Email] Starting generation for: ${missing.key}`);
+      try {
+        const content = await generateSingleAnalysis(
+          activeChart,
+          missing.baseType,
+          zodiacSystem,
+          birthData
+        );
+        return { key: missing.key, content, success: true };
+      } catch (genError) {
+        console.error(`[Email] Failed to generate ${missing.key}:`, genError);
+        return { key: missing.key, success: false, error: genError.message };
+      }
+    });
 
-      newAnalyses[missing.key] = {
-        content,
-        generatedAt: new Date().toISOString(),
-      };
-    } catch (genError) {
-      console.error(`[Email] Failed to generate ${missing.key}:`, genError);
-      // Continue with other analyses even if one fails
+    const results = await Promise.all(generationPromises);
+
+    for (const result of results) {
+      if (result.success) {
+        newAnalyses[result.key] = {
+          content: result.content,
+          generatedAt: new Date().toISOString(),
+        };
+        console.log(`[Email] Successfully generated ${result.key}`);
+      }
     }
   }
 
@@ -498,7 +509,7 @@ function buildAnalysesSections(analyses) {
   return sections;
 }
 
-module.exports = async function handler(req, res) {
+async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method Not Allowed" });
   }
@@ -716,3 +727,9 @@ function getHouseSuffix(n) {
       return "th";
   }
 }
+
+// Vercel configuration - allow up to 60 seconds for analysis generation
+module.exports = handler;
+module.exports.config = {
+  maxDuration: 60,
+};

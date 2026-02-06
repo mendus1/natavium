@@ -350,27 +350,38 @@ export default async function handler(req, res) {
       }
     }
 
-    // Generate missing analyses
+    // Generate missing analyses IN PARALLEL for faster execution
     const newAnalyses = { ...existingAnalyses };
 
-    for (const missing of missingAnalyses) {
-      console.log(`Generating missing analysis: ${missing.key}`);
+    if (missingAnalyses.length > 0) {
+      console.log(`[ensure-analyses] Generating ${missingAnalyses.length} analyses in parallel...`);
 
-      try {
-        const content = await generateAnalysis(
-          activeChart,
-          missing.baseType,
-          zodiacSystem,
-          birthData
-        );
+      const generationPromises = missingAnalyses.map(async (missing) => {
+        console.log(`[ensure-analyses] Starting generation for: ${missing.key}`);
+        try {
+          const content = await generateAnalysis(
+            activeChart,
+            missing.baseType,
+            zodiacSystem,
+            birthData
+          );
+          return { key: missing.key, content, success: true };
+        } catch (genError) {
+          console.error(`[ensure-analyses] Failed to generate ${missing.key}:`, genError);
+          return { key: missing.key, success: false, error: genError.message };
+        }
+      });
 
-        newAnalyses[missing.key] = {
-          content,
-          generatedAt: new Date().toISOString(),
-        };
-      } catch (genError) {
-        console.error(`Failed to generate ${missing.key}:`, genError);
-        // Continue with other analyses even if one fails
+      const results = await Promise.all(generationPromises);
+
+      for (const result of results) {
+        if (result.success) {
+          newAnalyses[result.key] = {
+            content: result.content,
+            generatedAt: new Date().toISOString(),
+          };
+          console.log(`[ensure-analyses] Successfully generated ${result.key}`);
+        }
       }
     }
 

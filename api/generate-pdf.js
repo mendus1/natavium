@@ -360,26 +360,38 @@ async function ensureAllAnalyses(orderId) {
     }
   }
 
-  // Generate missing analyses
+  // Generate missing analyses IN PARALLEL for faster execution
   const newAnalyses = { ...existingAnalyses };
 
-  for (const missing of missingAnalyses) {
-    console.log(`[PDF] Generating missing analysis: ${missing.key}`);
+  if (missingAnalyses.length > 0) {
+    console.log(`[PDF] Generating ${missingAnalyses.length} analyses in parallel...`);
 
-    try {
-      const content = await generateSingleAnalysis(
-        activeChart,
-        missing.baseType,
-        zodiacSystem,
-        birthData
-      );
+    const generationPromises = missingAnalyses.map(async (missing) => {
+      console.log(`[PDF] Starting generation for: ${missing.key}`);
+      try {
+        const content = await generateSingleAnalysis(
+          activeChart,
+          missing.baseType,
+          zodiacSystem,
+          birthData
+        );
+        return { key: missing.key, content, success: true };
+      } catch (genError) {
+        console.error(`[PDF] Failed to generate ${missing.key}:`, genError);
+        return { key: missing.key, success: false, error: genError.message };
+      }
+    });
 
-      newAnalyses[missing.key] = {
-        content,
-        generatedAt: new Date().toISOString(),
-      };
-    } catch (genError) {
-      console.error(`[PDF] Failed to generate ${missing.key}:`, genError);
+    const results = await Promise.all(generationPromises);
+
+    for (const result of results) {
+      if (result.success) {
+        newAnalyses[result.key] = {
+          content: result.content,
+          generatedAt: new Date().toISOString(),
+        };
+        console.log(`[PDF] Successfully generated ${result.key}`);
+      }
     }
   }
 
@@ -510,6 +522,11 @@ function buildAnalysesSections(analyses) {
 
   return sections;
 }
+
+// Vercel configuration - allow up to 60 seconds for analysis generation
+export const config = {
+  maxDuration: 60,
+};
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
