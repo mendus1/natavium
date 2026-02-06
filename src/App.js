@@ -2382,12 +2382,19 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
   const handleDownloadPDF = async () => {
     if (pdfGenerating) return;
 
+    // Get orderId from localStorage
+    const orderId = localStorage.getItem('natavium_orderId');
+    if (!orderId) {
+      alert("No order found. Please complete a purchase first.");
+      return;
+    }
+
     setPdfGenerating(true);
     try {
       // --- START NEW IMAGE CAPTURE LOGIC ---
       let chartImage = null;
       const chartElement = document.getElementById("natal-chart-container");
-      
+
       if (chartElement) {
         // Capture the chart div as an image
         const canvas = await html2canvas(chartElement, {
@@ -2399,15 +2406,13 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
       }
       // --- END NEW IMAGE CAPTURE LOGIC ---
 
+      // Server will fetch order data and ensure all purchased analyses are generated
       const response = await fetch("/api/generate-pdf", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          chartResult,
-          birthData,
+          orderId,
           chartImage,
-          analyses: analyses,
-          zodiacSystem: zodiacType,
         }),
       });
 
@@ -2456,19 +2461,24 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
       return;
     }
 
+    // Get orderId from localStorage
+    const orderId = localStorage.getItem('natavium_orderId');
+    if (!orderId) {
+      setEmailError("No order found. Please complete a purchase first.");
+      return;
+    }
+
     setEmailStatus("sending");
     setEmailError("");
 
     try {
+      // Server will fetch order data and ensure all purchased analyses are generated
       const response = await fetch("/api/send-chart-email", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          orderId,
           email: emailAddress,
-          chartResult,
-          birthData,
-          analyses: analyses,
-          zodiacSystem: zodiacType,
         }),
       });
 
