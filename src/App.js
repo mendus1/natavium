@@ -158,7 +158,7 @@ const BUNDLES = {
   ultimate: {
     id: "ultimate",
     name: "Ultimate",
-    price: 14.99,
+    price: 12.99,
     description: "Everything + compatibility & transits",
     icon: Crown,
     color: "pink",
