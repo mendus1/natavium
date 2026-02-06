@@ -649,7 +649,7 @@ function LandingPage() {
       </header>
 
       {/* Hero Section */}
-      <section className="hero-vignette max-w-5xl mx-auto text-center py-16 md:py-24 px-4">
+      <section className="hero-vignette max-w-5xl mx-auto text-center pt-8 pb-6 md:pt-14 md:pb-10 px-4">
         {/* Big hero headline (dominates page) */}
           <h2 className="font-serif text-5xl md:text-7xl font-semibold t-text-primary leading-tight tracking-tight mb-6 text-center">
             Clarity for your next move
