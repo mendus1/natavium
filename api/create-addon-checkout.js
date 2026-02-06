@@ -12,15 +12,15 @@ const supabase = createClient(
 // Supports both prefixed (tropical_compatibility) and unprefixed (compatibility) keys
 const ADDON_PRICE_MAP = {
   // Tropical add-ons
-  tropical_compatibility: process.env.STRIPE_PRICE_ID_TROPICAL_COMPATIBILITY || process.env.STRIPE_PRICE_ID_COMPATIBILITY,
-  tropical_house_deep_dive: process.env.STRIPE_PRICE_ID_TROPICAL_HOUSE || process.env.STRIPE_PRICE_ID_HOUSE,
-  tropical_transit_report: process.env.STRIPE_PRICE_ID_TROPICAL_TRANSIT || process.env.STRIPE_PRICE_ID_TRANSIT,
-  tropical_solar_return: process.env.STRIPE_PRICE_ID_TROPICAL_SOLAR_RETURN || process.env.STRIPE_PRICE_ID_RETURN,
+  tropical_compatibility: process.env.STRIPE_PRICE_ID_COMPATIBILITY_TROP || process.env.STRIPE_PRICE_ID_COMPATIBILITY,
+  tropical_house_deep_dive: process.env.STRIPE_PRICE_ID_HOUSE_TROP || process.env.STRIPE_PRICE_ID_HOUSE,
+  tropical_transit_report: process.env.STRIPE_PRICE_ID_TRANSIT_TROP || process.env.STRIPE_PRICE_ID_TRANSIT,
+  tropical_solar_return: process.env.STRIPE_PRICE_ID_RETURN_TROP || process.env.STRIPE_PRICE_ID_RETURN,
   // Sidereal add-ons
-  sidereal_compatibility: process.env.STRIPE_PRICE_ID_SIDEREAL_COMPATIBILITY || process.env.STRIPE_PRICE_ID_COMPATIBILITY,
-  sidereal_house_deep_dive: process.env.STRIPE_PRICE_ID_SIDEREAL_HOUSE || process.env.STRIPE_PRICE_ID_HOUSE,
-  sidereal_transit_report: process.env.STRIPE_PRICE_ID_SIDEREAL_TRANSIT || process.env.STRIPE_PRICE_ID_TRANSIT,
-  sidereal_solar_return: process.env.STRIPE_PRICE_ID_SIDEREAL_SOLAR_RETURN || process.env.STRIPE_PRICE_ID_RETURN,
+  sidereal_compatibility: process.env.STRIPE_PRICE_ID_COMPATIBILITY_SIDE || process.env.STRIPE_PRICE_ID_COMPATIBILITY,
+  sidereal_house_deep_dive: process.env.STRIPE_PRICE_ID_HOUSE_SIDE || process.env.STRIPE_PRICE_ID_HOUSE,
+  sidereal_transit_report: process.env.STRIPE_PRICE_ID_TRANSIT_SIDE || process.env.STRIPE_PRICE_ID_TRANSIT,
+  sidereal_solar_return: process.env.STRIPE_PRICE_ID_RETURN_SIDE || process.env.STRIPE_PRICE_ID_RETURN,
   // Legacy (backwards compat)
   compatibility: process.env.STRIPE_PRICE_ID_COMPATIBILITY,
   house_deep_dive: process.env.STRIPE_PRICE_ID_HOUSE,

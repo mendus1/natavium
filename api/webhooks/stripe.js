@@ -13,15 +13,15 @@ const supabase = createClient(
 // The zodiac prefix is applied based on the order's zodiac_system
 const PRICE_TO_ADDON = {
   // Tropical-specific price IDs
-  [process.env.STRIPE_PRICE_ID_TROPICAL_COMPATIBILITY]: 'compatibility',
-  [process.env.STRIPE_PRICE_ID_TROPICAL_HOUSE]: 'house_deep_dive',
-  [process.env.STRIPE_PRICE_ID_TROPICAL_TRANSIT]: 'transit_report',
-  [process.env.STRIPE_PRICE_ID_TROPICAL_SOLAR_RETURN]: 'solar_return',
+  [process.env.STRIPE_PRICE_ID_COMPATIBILITY_TROP]: 'compatibility',
+  [process.env.STRIPE_PRICE_ID_HOUSE_TROP]: 'house_deep_dive',
+  [process.env.STRIPE_PRICE_ID_TRANSIT_TROP]: 'transit_report',
+  [process.env.STRIPE_PRICE_ID_RETURN_TROP]: 'solar_return',
   // Sidereal-specific price IDs
-  [process.env.STRIPE_PRICE_ID_SIDEREAL_COMPATIBILITY]: 'compatibility',
-  [process.env.STRIPE_PRICE_ID_SIDEREAL_HOUSE]: 'house_deep_dive',
-  [process.env.STRIPE_PRICE_ID_SIDEREAL_TRANSIT]: 'transit_report',
-  [process.env.STRIPE_PRICE_ID_SIDEREAL_SOLAR_RETURN]: 'solar_return',
+  [process.env.STRIPE_PRICE_ID_COMPATIBILITY_SIDE]: 'compatibility',
+  [process.env.STRIPE_PRICE_ID_HOUSE_SIDE]: 'house_deep_dive',
+  [process.env.STRIPE_PRICE_ID_TRANSIT_SIDE]: 'transit_report',
+  [process.env.STRIPE_PRICE_ID_RETURN_SIDE]: 'solar_return',
   // Legacy (backwards compat)
   [process.env.STRIPE_PRICE_ID_COMPATIBILITY]: 'compatibility',
   [process.env.STRIPE_PRICE_ID_HOUSE]: 'house_deep_dive',
