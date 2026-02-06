@@ -273,6 +273,8 @@ Total length: approximately 1500-2000 words.`,
 async function generateSingleAnalysis(chartResult, analysisType, zodiacSystem, birthData) {
   const { systemPrompt, userPrompt, maxTokens } = buildAnalysisPrompts(chartResult, analysisType, zodiacSystem, birthData);
 
+  console.log(`[Email] Calling OpenAI for ${analysisType}, maxTokens: ${maxTokens}`);
+
   const completion = await openai.chat.completions.create({
     model: 'gpt-4o-mini',
     messages: [
@@ -283,7 +285,11 @@ async function generateSingleAnalysis(chartResult, analysisType, zodiacSystem, b
     temperature: 0.7,
   });
 
-  return completion.choices[0].message.content;
+  const content = completion.choices[0].message.content;
+  const finishReason = completion.choices[0].finish_reason;
+  console.log(`[Email] OpenAI returned ${content?.length || 0} chars, finish_reason: ${finishReason}`);
+
+  return content;
 }
 
 // Ensure all purchased analyses exist, generating any missing ones

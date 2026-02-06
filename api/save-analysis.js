@@ -19,18 +19,31 @@ export default async function handler(req, res) {
     // 1. Fetch current data to ensure we don't overwrite other tabs
     const { data: currentOrder, error: fetchError } = await supabase
       .from('orders')
-      .select('analyses')
+      .select('analyses, zodiac_system')
       .eq('id', orderId)
       .single();
 
     if (fetchError) throw fetchError;
 
+    const zodiacSystem = currentOrder.zodiac_system || 'tropical';
+
+    // Build the prefixed key (e.g., 'sidereal_natal' instead of just 'natal')
+    // If the analysisType is already prefixed, use it as-is
+    const isPrefixed = analysisType.startsWith('tropical_') || analysisType.startsWith('sidereal_');
+    const analysisKey = isPrefixed ? analysisType : `${zodiacSystem}_${analysisType}`;
+
     // 2. Merge new content with existing
+    // Store in consistent format: { content: "...", generatedAt: "..." }
     const existingAnalyses = currentOrder.analyses || {};
     const updatedAnalyses = {
       ...existingAnalyses,
-      [analysisType]: content
+      [analysisKey]: {
+        content: content,
+        generatedAt: new Date().toISOString(),
+      }
     };
+
+    console.log(`[save-analysis] Saving ${analysisKey} (${content.length} chars) for order ${orderId}`);
 
     // 3. Save back to DB
     const { error: updateError } = await supabase
@@ -40,7 +53,7 @@ export default async function handler(req, res) {
 
     if (updateError) throw updateError;
 
-    res.status(200).json({ success: true });
+    res.status(200).json({ success: true, analysisKey });
 
   } catch (error) {
     console.error('Save Error:', error);
