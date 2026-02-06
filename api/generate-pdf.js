@@ -314,6 +314,7 @@ async function ensureAllAnalyses(orderId) {
   }
 
   console.log('[PDF] Order found, purchased_addons:', order.purchased_addons);
+  console.log('[PDF] Existing analyses keys:', Object.keys(order.analyses || {}));
 
   const chartData = order.chart_data;
   const purchasedAddons = order.purchased_addons || [];
@@ -321,6 +322,9 @@ async function ensureAllAnalyses(orderId) {
   const zodiacSystem = order.zodiac_system || 'tropical';
   // Birth data may be in chart_data.meta or as separate fields - try to extract it
   const birthData = chartData?.meta?.birthData || chartData?.birthData || {};
+
+  console.log('[PDF] Zodiac system:', zodiacSystem);
+  console.log('[PDF] BirthData:', JSON.stringify(birthData).substring(0, 100));
 
   // Extract the active chart based on zodiac system
   const activeChart = chartData[zodiacSystem] || chartData;
@@ -375,6 +379,7 @@ async function ensureAllAnalyses(orderId) {
 
   // Save updated analyses to database if we generated any
   if (missingAnalyses.length > 0) {
+    console.log('[PDF] Generated', missingAnalyses.length, 'new analyses, saving...');
     const { error: updateError } = await supabase
       .from('orders')
       .update({ analyses: newAnalyses })
@@ -382,7 +387,17 @@ async function ensureAllAnalyses(orderId) {
 
     if (updateError) {
       console.error('[PDF] Failed to save analyses:', updateError);
+    } else {
+      console.log('[PDF] Analyses saved successfully');
     }
+  } else {
+    console.log('[PDF] No missing analyses - using existing');
+  }
+
+  console.log('[PDF] Returning analyses keys:', Object.keys(newAnalyses));
+  for (const key of Object.keys(newAnalyses)) {
+    const contentLength = newAnalyses[key]?.content?.length || 0;
+    console.log(`[PDF] Analysis ${key}: ${contentLength} chars`);
   }
 
   return {
@@ -471,7 +486,7 @@ function buildAnalysesSections(analyses) {
       seen.add(baseKey);
       const title = ANALYSIS_TITLES[key] || ANALYSIS_TITLES[baseKey] || key;
       const html = markdownToHtml(analysis.content);
-      const isChapter = key === 'natal' || key === 'transit_report';
+      const isChapter = baseKey === 'natal' || baseKey === 'transit_report';
 
       sections += `
     <div class="section analysis-section">

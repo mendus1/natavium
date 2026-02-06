@@ -45,7 +45,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { bundle, addOns = [], chartData, zodiacSystem = 'tropical' } = req.body;
+    const { bundle, addOns = [], chartData, birthData, zodiacSystem = 'tropical' } = req.body;
 
     // --- Validate inputs ---
     // Support both old flat format and new { tropical, sidereal, meta } format
@@ -62,10 +62,19 @@ export default async function handler(req, res) {
     }
 
     // --- 1. Insert order into Supabase ---
+    // Store birthData in chart_data.meta for later retrieval
+    const chartDataWithBirth = {
+      ...chartData,
+      meta: {
+        ...(chartData?.meta || {}),
+        birthData: birthData || {},
+      },
+    };
+
     const { data: order, error: dbError } = await supabase
       .from("orders")
       .insert({
-        chart_data: chartData,
+        chart_data: chartDataWithBirth,
         product_type: prefixedBundle,
         zodiac_system: zodiacSystem,
         payment_status: "pending",

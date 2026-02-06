@@ -1697,6 +1697,7 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
                     bundle: selectedBundle,
                     addOns: selectedAddOns,
                     chartData: chartResult,
+                    birthData: birthData,
                     zodiacSystem: zodiacType,
                   }),
                 });
