@@ -80,7 +80,7 @@ export default function ReportsPage() {
 
       localStorage.setItem('natavium_orderId', String(orderId));
 
-      navigate('/chart');
+      window.location.assign('/chart');
     } finally {
       setOpenOrderId(null);
     }
