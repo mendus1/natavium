@@ -1,5 +1,6 @@
 import Stripe from "stripe";
 import { createClient } from "@supabase/supabase-js";
+import { canAccessOrder, fetchOrderForAccessCheck, getClaimTokenFromRequest, getUserFromRequest } from './_auth.js';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -43,6 +44,18 @@ export default async function handler(req, res) {
 
     if (!addOns.length) {
       return res.status(400).json({ error: "No add-ons selected" });
+    }
+
+    const user = await getUserFromRequest(req);
+    const claimToken = getClaimTokenFromRequest(req);
+
+    const { order: accessOrder, error: accessError } = await fetchOrderForAccessCheck(orderId);
+    if (accessError || !accessOrder) {
+      return res.status(404).json({ error: 'Order not found' });
+    }
+
+    if (!canAccessOrder({ order: accessOrder, user, claimToken })) {
+      return res.status(403).json({ error: 'Forbidden' });
     }
 
     // Verify order exists and is paid

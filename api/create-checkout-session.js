@@ -1,5 +1,6 @@
 import Stripe from "stripe";
 import { createClient } from "@supabase/supabase-js";
+import crypto from "crypto";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -71,6 +72,8 @@ export default async function handler(req, res) {
       },
     };
 
+    const claimToken = crypto.randomBytes(24).toString('hex');
+
     const { data: order, error: dbError } = await supabase
       .from("orders")
       .insert({
@@ -78,6 +81,7 @@ export default async function handler(req, res) {
         product_type: prefixedBundle,
         zodiac_system: zodiacSystem,
         payment_status: "pending",
+        claim_token: claimToken,
       })
       .select("id")
       .single();
@@ -116,10 +120,11 @@ export default async function handler(req, res) {
         orderId,
         productType: prefixedBundle,
         zodiacSystem,
+        claimToken,
       },
     });
 
-    return res.status(200).json({ url: session.url, orderId });
+    return res.status(200).json({ url: session.url, orderId, claimToken });
   } catch (err) {
     console.error("Checkout error:", err);
     return res.status(500).json({ error: err.message || "Checkout failed" });

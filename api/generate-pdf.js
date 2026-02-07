@@ -2,6 +2,7 @@ import chromium from '@sparticuz/chromium';
 import puppeteerCore from 'puppeteer-core';
 import { createClient } from '@supabase/supabase-js';
 import OpenAI from 'openai';
+import { canAccessOrder, fetchOrderForAccessCheck, getClaimTokenFromRequest, getUserFromRequest } from './_auth.js';
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
@@ -548,6 +549,17 @@ export default async function handler(req, res) {
 
     if (!orderId) {
       return res.status(400).json({ error: "Missing orderId" });
+    }
+
+    const user = await getUserFromRequest(req);
+    const claimToken = getClaimTokenFromRequest(req);
+    const { order, error: fetchError } = await fetchOrderForAccessCheck(orderId);
+    if (fetchError || !order) {
+      return res.status(404).json({ error: 'Order not found' });
+    }
+
+    if (!canAccessOrder({ order, user, claimToken })) {
+      return res.status(403).json({ error: 'Forbidden' });
     }
 
     // Ensure all purchased analyses are generated

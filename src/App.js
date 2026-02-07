@@ -3,6 +3,7 @@ import html2canvas from 'html2canvas';
 import { Routes, Route, useNavigate, useParams, Navigate } from "react-router-dom";
 import { calculateNatalChartFromLocal } from "./ephemeris";
 import BrandStar from "./components/BrandStar";
+import ReportsPage from "./ReportsPage";
 import LogoRed from "./LogoRed.png";
 import {
   Sparkles,
@@ -1715,6 +1716,11 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
                   localStorage.setItem('natavium_orderId', data.orderId);
                 }
 
+                // Store claim token for later access and claiming
+                if (data.claimToken) {
+                  localStorage.setItem('natavium_claimToken', data.claimToken);
+                }
+
                 window.location.href = data.url;
               } catch (err) {
                 console.error(err);
@@ -1837,9 +1843,13 @@ function SuccessPage({ setIsPremium, chartResult, selectedBundle }) {
           if (storedOrderId) {
             console.log("Saving natal analysis to database...");
             // No await needed here - let it run in background so UI doesn't freeze
+            const claimToken = localStorage.getItem('natavium_claimToken');
             fetch('/api/save-analysis', {
               method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
+              headers: {
+                'Content-Type': 'application/json',
+                ...(claimToken ? { 'X-Claim-Token': claimToken } : {}),
+              },
               body: JSON.stringify({
                 orderId: storedOrderId,
                 analysisType: 'natal', // This specific block handles the 'natal' section
@@ -2092,7 +2102,12 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
       if (!orderId) return;
 
       try {
-        const res = await fetch(`/api/get-order?id=${orderId}`);
+        const claimToken = localStorage.getItem('natavium_claimToken');
+        const res = await fetch(`/api/get-order?id=${orderId}`, {
+          headers: {
+            ...(claimToken ? { 'X-Claim-Token': claimToken } : {}),
+          }
+        });
         if (res.ok) {
           const data = await res.json();
           const products = {
@@ -2191,9 +2206,13 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
         if (storedOrderId) {
           console.log(`Saving ${tabId} analysis to database...`);
           // Save in background
+          const claimToken = localStorage.getItem('natavium_claimToken');
           fetch('/api/save-analysis', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+              'Content-Type': 'application/json',
+              ...(claimToken ? { 'X-Claim-Token': claimToken } : {}),
+            },
             body: JSON.stringify({
               orderId: storedOrderId,
               analysisType: tabId, // <--- Using the variable from your function
@@ -2272,7 +2291,12 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
     try {
       const response = await fetch('/api/create-addon-checkout', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(localStorage.getItem('natavium_claimToken')
+            ? { 'X-Claim-Token': localStorage.getItem('natavium_claimToken') }
+            : {}),
+        },
         body: JSON.stringify({
           orderId,
           addOns: selectedAddOns,
@@ -2347,9 +2371,13 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
         if (storedOrderId) {
           console.log(`Saving regenerated ${activeTab} analysis to database...`);
           // Save in background
+          const claimToken = localStorage.getItem('natavium_claimToken');
           fetch('/api/save-analysis', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+              'Content-Type': 'application/json',
+              ...(claimToken ? { 'X-Claim-Token': claimToken } : {}),
+            },
             body: JSON.stringify({
               orderId: storedOrderId,
               analysisType: activeTab, // <--- Using the 'activeTab' variable
@@ -2410,7 +2438,12 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
       // Server will fetch order data and ensure all purchased analyses are generated
       const response = await fetch("/api/generate-pdf", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(localStorage.getItem('natavium_claimToken')
+            ? { 'X-Claim-Token': localStorage.getItem('natavium_claimToken') }
+            : {}),
+        },
         body: JSON.stringify({
           orderId,
           chartImage,
@@ -2476,7 +2509,12 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
       // Server will fetch order data and ensure all purchased analyses are generated
       const response = await fetch("/api/send-chart-email", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(localStorage.getItem('natavium_claimToken')
+            ? { 'X-Claim-Token': localStorage.getItem('natavium_claimToken') }
+            : {}),
+        },
         body: JSON.stringify({
           orderId,
           email: emailAddress,
@@ -2576,7 +2614,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
 
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-8">
-          <h1 className="font-serif text-4xl md:text-5xl font-semibold gold-gradient-text mb-2">Your Complete {zodiacLabel} Chart</h1>
+          <h1 className="font-serif text-4xl md:text-5xl font-semibold gold-gradient-text mb-2">Your Complete {zodiacLabel} Analysis</h1>
           <p className="text-lg t-text-muted mb-4">
             {displayDate} • {birthData.time} • {birthData.location}
           </p>
@@ -3832,6 +3870,7 @@ export default function Natavium() {
       <div className={theme}>
         <Routes>
           <Route path="/" element={<LandingPage />} />
+          <Route path="/reports" element={<ReportsPage />} />
           <Route path="/input" element={
             <InputPage
               birthData={birthData}

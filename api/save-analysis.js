@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { canAccessOrder, fetchOrderForAccessCheck, getClaimTokenFromRequest, getUserFromRequest } from './_auth.js';
 
 // Initialize Supabase Admin (Service Role)
 const supabase = createClient(
@@ -16,6 +17,18 @@ export default async function handler(req, res) {
   }
 
   try {
+    const user = await getUserFromRequest(req);
+    const claimToken = getClaimTokenFromRequest(req);
+
+    const { order, error: fetchAccessError } = await fetchOrderForAccessCheck(orderId);
+    if (fetchAccessError || !order) {
+      return res.status(404).json({ error: 'Order not found' });
+    }
+
+    if (!canAccessOrder({ order, user, claimToken })) {
+      return res.status(403).json({ error: 'Forbidden' });
+    }
+
     // 1. Fetch current data to ensure we don't overwrite other tabs
     const { data: currentOrder, error: fetchError } = await supabase
       .from('orders')

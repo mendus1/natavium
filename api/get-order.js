@@ -1,9 +1,4 @@
-import { createClient } from '@supabase/supabase-js';
-
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
-);
+import { canAccessOrder, fetchOrderForAccessCheck, getClaimTokenFromRequest, getUserFromRequest, supabaseAdmin } from './_auth.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
@@ -17,27 +12,36 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { data: order, error } = await supabase
+    const user = await getUserFromRequest(req);
+    const claimToken = getClaimTokenFromRequest(req);
+
+    const { order, error: fetchError } = await fetchOrderForAccessCheck(id);
+    if (fetchError || !order) {
+      console.error('Supabase query error:', fetchError);
+      return res.status(404).json({ error: 'Order not found' });
+    }
+
+    if (!canAccessOrder({ order, user, claimToken })) {
+      return res.status(403).json({ error: 'Forbidden' });
+    }
+
+    const { data: fullOrder, error: fullError } = await supabaseAdmin
       .from('orders')
       .select('id, product_type, purchased_addons, payment_status, chart_data, zodiac_system')
       .eq('id', id)
       .single();
 
-    if (error) {
-      console.error('Supabase query error:', error);
+    if (fullError || !fullOrder) {
+      console.error('Supabase query error:', fullError);
       return res.status(404).json({ error: 'Order not found' });
     }
 
-    if (order.payment_status !== 'paid') {
-      return res.status(403).json({ error: 'Order not yet paid' });
-    }
-
     return res.status(200).json({
-      id: order.id,
-      productType: order.product_type,
-      purchasedAddons: order.purchased_addons || [],
-      chartData: order.chart_data,
-      zodiacSystem: order.zodiac_system || 'tropical',
+      id: fullOrder.id,
+      productType: fullOrder.product_type,
+      purchasedAddons: fullOrder.purchased_addons || [],
+      chartData: fullOrder.chart_data,
+      zodiacSystem: fullOrder.zodiac_system || 'tropical',
     });
   } catch (err) {
     console.error('Get order error:', err);
