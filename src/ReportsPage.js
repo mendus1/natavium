@@ -47,7 +47,12 @@ export default function ReportsPage() {
       }
 
       if (data?.chartData) {
-        localStorage.setItem('natavium_chartResult', JSON.stringify(data.chartData));
+        const zodiacSystem = data?.zodiacSystem || data?.chartData?.zodiacType || 'tropical';
+        const chartToStore = {
+          ...(data.chartData || {}),
+          zodiacType: zodiacSystem,
+        };
+        localStorage.setItem('natavium_chartResult', JSON.stringify(chartToStore));
       }
 
       if (data?.analyses) {
@@ -60,6 +65,9 @@ export default function ReportsPage() {
         });
         const analysesToStore = Object.keys(normalized).length > 0 ? normalized : (data.analyses || {});
         localStorage.setItem('natavium_analyses', JSON.stringify(analysesToStore));
+
+        // Clear legacy single-analysis cache to avoid cross-order bleed
+        localStorage.removeItem('natavium_analysis');
       }
 
       if (data?.purchasedAddons || data?.productType) {
