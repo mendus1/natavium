@@ -640,6 +640,13 @@ function LandingPage() {
         </div>  
         <nav className="flex gap-4">
           <button
+            onClick={() => navigate("/reports")}
+            className="t-btn-secondary text-sm"
+          >
+            <Star className="w-4 h-4 mr-2 icon-gold" strokeWidth={1} />
+            My Reports
+          </button>
+          <button
             onClick={() => navigate("/info/systems")}
             className="t-btn-secondary text-sm"
           >
@@ -2626,6 +2633,13 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
             >
               <Mail className="w-4 h-4 mr-2 icon-gold" />
               Email Results
+            </button>
+            <button
+              onClick={() => navigate('/reports')}
+              className="flex items-center px-4 py-2 bg-[#12142A]/80 border border-white/10 rounded-lg hover:bg-[#12142A] hover:border-white/20 transition-all text-sm"
+            >
+              <Star className="w-4 h-4 mr-2 icon-gold" strokeWidth={1} />
+              My Reports
             </button>
             <button
               onClick={handleDownloadPDF}

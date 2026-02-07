@@ -21,6 +21,20 @@ export default function ReportsPage() {
   const accessToken = useMemo(() => session?.access_token || null, [session]);
 
   useEffect(() => {
+    const hash = window.location.hash;
+    if (!hash || hash.length < 2) return;
+
+    const params = new URLSearchParams(hash.slice(1));
+    const error = params.get('error');
+    const errorDescription = params.get('error_description');
+
+    if (error) {
+      setLoginMessage(errorDescription || 'Sign-in link is invalid or has expired. Please request a new link.');
+      window.history.replaceState({}, document.title, window.location.pathname + window.location.search);
+    }
+  }, []);
+
+  useEffect(() => {
     let mounted = true;
 
     async function init() {
