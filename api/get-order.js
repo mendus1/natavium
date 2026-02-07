@@ -27,7 +27,7 @@ export default async function handler(req, res) {
 
     const { data: fullOrder, error: fullError } = await supabaseAdmin
       .from('orders')
-      .select('id, product_type, purchased_addons, payment_status, chart_data, zodiac_system')
+      .select('id, product_type, purchased_addons, payment_status, chart_data, zodiac_system, analyses')
       .eq('id', id)
       .single();
 
@@ -42,6 +42,7 @@ export default async function handler(req, res) {
       purchasedAddons: fullOrder.purchased_addons || [],
       chartData: fullOrder.chart_data,
       zodiacSystem: fullOrder.zodiac_system || 'tropical',
+      analyses: fullOrder.analyses || {},
     });
   } catch (err) {
     console.error('Get order error:', err);

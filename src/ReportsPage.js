@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from './supabaseClient';
-import { Download, Loader2, LogOut, Mail, Star } from 'lucide-react';
+import { Download, ExternalLink, Loader2, LogOut, Mail, Star } from 'lucide-react';
 
 export default function ReportsPage() {
   const navigate = useNavigate();
@@ -17,6 +17,7 @@ export default function ReportsPage() {
   const [ordersError, setOrdersError] = useState('');
 
   const [pdfOrderId, setPdfOrderId] = useState(null);
+  const [openOrderId, setOpenOrderId] = useState(null);
 
   const accessToken = useMemo(() => session?.access_token || null, [session]);
 
@@ -33,6 +34,49 @@ export default function ReportsPage() {
       window.history.replaceState({}, document.title, window.location.pathname + window.location.search);
     }
   }, []);
+
+  async function openReport(orderId) {
+    if (!orderId || openOrderId) return;
+    setOpenOrderId(orderId);
+
+    try {
+      const res = await apiFetch(`/api/get-order?id=${orderId}`);
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data?.error || 'Failed to load report');
+      }
+
+      if (data?.chartData) {
+        localStorage.setItem('natavium_chartResult', JSON.stringify(data.chartData));
+      }
+
+      if (data?.analyses) {
+        const zodiacSystem = data?.zodiacSystem || data?.chartData?.zodiacType || 'tropical';
+        const normalized = {};
+        Object.entries(data.analyses || {}).forEach(([key, value]) => {
+          if (key.startsWith(`${zodiacSystem}_`)) {
+            normalized[key.slice(`${zodiacSystem}_`.length)] = value;
+          }
+        });
+        const analysesToStore = Object.keys(normalized).length > 0 ? normalized : (data.analyses || {});
+        localStorage.setItem('natavium_analyses', JSON.stringify(analysesToStore));
+      }
+
+      if (data?.purchasedAddons || data?.productType) {
+        const purchasedProducts = {
+          bundle: data.productType,
+          addOns: data.purchasedAddons || [],
+        };
+        localStorage.setItem('natavium_purchasedProducts', JSON.stringify(purchasedProducts));
+      }
+
+      localStorage.setItem('natavium_orderId', String(orderId));
+
+      navigate('/chart');
+    } finally {
+      setOpenOrderId(null);
+    }
+  }
 
   useEffect(() => {
     let mounted = true;
@@ -310,6 +354,23 @@ export default function ReportsPage() {
                     </div>
 
                     <div className="mt-5 flex gap-3">
+                      <button
+                        onClick={() => openReport(o.id)}
+                        disabled={openOrderId === o.id}
+                        className="flex-1 px-4 py-2 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-sm flex items-center justify-center gap-2 disabled:opacity-50"
+                      >
+                        {openOrderId === o.id ? (
+                          <>
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                            Opening…
+                          </>
+                        ) : (
+                          <>
+                            <ExternalLink className="w-4 h-4 icon-gold" />
+                            Open report
+                          </>
+                        )}
+                      </button>
                       <button
                         onClick={() => downloadPdf(o.id)}
                         disabled={pdfOrderId === o.id}
