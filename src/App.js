@@ -4,6 +4,7 @@ import { Routes, Route, useNavigate, useParams, Navigate } from "react-router-do
 import { calculateNatalChartFromLocal } from "./ephemeris";
 import BrandStar from "./components/BrandStar";
 import ReportsPage from "./ReportsPage";
+import { supabase } from "./supabaseClient";
 import LogoRed from "./LogoRed.png";
 import {
   Sparkles,
@@ -1851,18 +1852,23 @@ function SuccessPage({ setIsPremium, chartResult, selectedBundle }) {
             console.log("Saving natal analysis to database...");
             // No await needed here - let it run in background so UI doesn't freeze
             const claimToken = localStorage.getItem('natavium_claimToken');
-            fetch('/api/save-analysis', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                ...(claimToken ? { 'X-Claim-Token': claimToken } : {}),
-              },
-              body: JSON.stringify({
-                orderId: storedOrderId,
-                analysisType: 'natal', // This specific block handles the 'natal' section
-                content: fullText
-              })
-            });
+            (async () => {
+              const { data } = await supabase.auth.getSession();
+              const accessToken = data?.session?.access_token;
+              fetch('/api/save-analysis', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  ...(claimToken ? { 'X-Claim-Token': claimToken } : {}),
+                  ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+                },
+                body: JSON.stringify({
+                  orderId: storedOrderId,
+                  analysisType: 'natal', // This specific block handles the 'natal' section
+                  content: fullText
+                })
+              });
+            })();
           }
         } catch (err) {
           console.error("Background save failed:", err);
@@ -2214,18 +2220,23 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
           console.log(`Saving ${tabId} analysis to database...`);
           // Save in background
           const claimToken = localStorage.getItem('natavium_claimToken');
-          fetch('/api/save-analysis', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              ...(claimToken ? { 'X-Claim-Token': claimToken } : {}),
-            },
-            body: JSON.stringify({
-              orderId: storedOrderId,
-              analysisType: tabId, // <--- Using the variable from your function
-              content: fullText
-            })
-          });
+          (async () => {
+            const { data } = await supabase.auth.getSession();
+            const accessToken = data?.session?.access_token;
+            fetch('/api/save-analysis', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                ...(claimToken ? { 'X-Claim-Token': claimToken } : {}),
+                ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+              },
+              body: JSON.stringify({
+                orderId: storedOrderId,
+                analysisType: tabId, // <--- Using the variable from your function
+                content: fullText
+              })
+            });
+          })();
         }
       } catch (err) {
         console.error("Background save failed:", err);
@@ -2379,18 +2390,23 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
           console.log(`Saving regenerated ${activeTab} analysis to database...`);
           // Save in background
           const claimToken = localStorage.getItem('natavium_claimToken');
-          fetch('/api/save-analysis', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              ...(claimToken ? { 'X-Claim-Token': claimToken } : {}),
-            },
-            body: JSON.stringify({
-              orderId: storedOrderId,
-              analysisType: activeTab, // <--- Using the 'activeTab' variable
-              content: fullText
-            })
-          });
+          (async () => {
+            const { data } = await supabase.auth.getSession();
+            const accessToken = data?.session?.access_token;
+            fetch('/api/save-analysis', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                ...(claimToken ? { 'X-Claim-Token': claimToken } : {}),
+                ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+              },
+              body: JSON.stringify({
+                orderId: storedOrderId,
+                analysisType: activeTab, // <--- Using the 'activeTab' variable
+                content: fullText
+              })
+            });
+          })();
         }
       } catch (err) {
         console.error("Background save failed:", err);
