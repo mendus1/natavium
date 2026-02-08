@@ -224,7 +224,6 @@ const DASHBOARD_TABS = [
     requiresPurchase: true,
     priceIfLocked: 3.99,
     includedIn: ['ultimate'],
-    comingSoon: true,
     description: 'Compare your chart with a partner or friend to discover harmony and growth areas.',
   },
 ];
