@@ -34,22 +34,46 @@ export default async function handler(req, res) {
     const userId = user.id;
     const userEmail = user.email;
 
-    const { data: orders, error } = await supabaseAdmin
+    const baseSelect = 'id, product_type, purchased_addons, payment_status, zodiac_system, created_at, user_id, customer_email';
+
+    const { data: claimedOrders, error: claimedError } = await supabaseAdmin
       .from('orders')
-      .select('id, product_type, purchased_addons, payment_status, zodiac_system, created_at, user_id, customer_email')
-      .or(
-        [
-          `user_id.eq.${userId}`,
-          userEmail ? `and(user_id.is.null,customer_email.eq.${userEmail})` : null,
-        ].filter(Boolean).join(',')
-      )
+      .select(baseSelect)
+      .eq('user_id', userId)
       .order('id', { ascending: false });
 
-    if (error) {
-      return res.status(500).json({ error: error.message });
+    if (claimedError) {
+      return res.status(500).json({ error: claimedError.message });
     }
 
-    return res.status(200).json({ orders: orders || [] });
+    let emailOrders = [];
+    if (userEmail) {
+      const { data: unclaimedOrders, error: unclaimedError } = await supabaseAdmin
+        .from('orders')
+        .select(baseSelect)
+        .is('user_id', null)
+        .eq('customer_email', userEmail)
+        .order('id', { ascending: false });
+
+      if (unclaimedError) {
+        return res.status(500).json({ error: unclaimedError.message });
+      }
+
+      emailOrders = unclaimedOrders || [];
+    }
+
+    const byId = new Map();
+    [...(claimedOrders || []), ...emailOrders].forEach((o) => {
+      if (o?.id) byId.set(o.id, o);
+    });
+
+    const orders = Array.from(byId.values()).sort((a, b) => {
+      const aId = String(a?.id || '');
+      const bId = String(b?.id || '');
+      return bId.localeCompare(aId);
+    });
+
+    return res.status(200).json({ orders });
   } catch (err) {
     console.error('List orders error:', err);
     return res.status(500).json({ error: 'Failed to list orders' });

@@ -2568,7 +2568,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
           orderId,
           chartImage,
         }),
-      });
+      });orderID
 
       if (!response.ok) {
         const errorData = await response.json();
