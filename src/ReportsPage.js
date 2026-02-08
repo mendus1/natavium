@@ -351,6 +351,14 @@ export default function ReportsPage() {
                       <div>
                         <div className="text-sm t-text-muted">Order</div>
                         <div className="font-mono text-xs text-white/70 break-all">{o.id}</div>
+                        {o.created_at && (
+                          <div className="mt-2 text-sm">
+                            <span className="t-text-muted">Purchased:</span>{' '}
+                            <span className="text-white/90">
+                              {new Date(o.created_at).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
+                            </span>
+                          </div>
+                        )}
                         <div className="mt-3 text-sm">
                           <span className="t-text-muted">Package:</span>{' '}
                           <span className="text-white/90">{o.product_type}</span>

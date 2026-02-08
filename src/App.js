@@ -1694,6 +1694,139 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
           </div>
         )}
 
+        {activeTab === 'compatibility' && (
+          <div className="space-y-8">
+            <div className="card-solid rounded-2xl p-8">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="font-serif text-2xl font-semibold gold-gradient-text">
+                  <Sparkles className="w-6 h-6 inline mr-2 icon-gold" />
+                  Compatibility Analysis
+                </h2>
+              </div>
+
+              {compatibilityError && (
+                <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 text-red-200 text-sm mb-4">
+                  {compatibilityError}
+                </div>
+              )}
+
+              {compatibilityLoading ? (
+                <div className="flex flex-col items-center justify-center py-12">
+                  <Loader2 className="w-10 h-10 text-[#D6B35A] animate-spin mb-4" />
+                  <p className="t-text-muted">Loading compatibility…</p>
+                </div>
+              ) : compatibilityReport?.analysis?.content ? (
+                <div className="prose prose-invert max-w-none">
+                  {compatibilityReport.analysis.content.split('\n').map((line, idx) => {
+                    if (line.startsWith('## ')) {
+                      return <h3 key={idx} className="text-xl font-semibold text-[#D6B35A] mt-6 mb-3">{line.replace('## ', '')}</h3>;
+                    }
+                    if (line.startsWith('### ')) {
+                      return <h4 key={idx} className="text-lg font-semibold text-white/90 mt-4 mb-2">{line.replace('### ', '')}</h4>;
+                    }
+                    if (line.startsWith('#### ')) {
+                      return <h5 key={idx} className="text-base font-medium t-text-muted mt-3 mb-1">{line.replace('#### ', '')}</h5>;
+                    }
+                    if (line.startsWith('- ') || line.startsWith('* ')) {
+                      return <p key={idx} className="text-white/80 ml-4 mb-1">• {line.slice(2).replace(/\*\*(.*?)\*\*/g, '$1')}</p>;
+                    }
+                    if (line.trim() === '') return <div key={idx} className="h-2" />;
+                    return <p key={idx} className="text-white/80 leading-relaxed mb-3">{line.replace(/\*\*(.*?)\*\*/g, '$1')}</p>;
+                  })}
+                </div>
+              ) : (
+                <div>
+                  <p className="t-text-muted mb-6">
+                    Enter your partner’s birth details to generate your compatibility report.
+                  </p>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+                      <label className="block text-sm font-medium mb-2">Birth date</label>
+                      <div className="grid grid-cols-3 gap-2">
+                        <input
+                          value={compatPartnerBirthData.birthMonth}
+                          onChange={(e) => setCompatPartnerBirthData(prev => ({ ...prev, birthMonth: e.target.value }))}
+                          placeholder="MM"
+                          className="w-full px-3 py-2 rounded-lg bg-[#12142A]/80 border border-white/10 text-white placeholder-white/40 focus:outline-none"
+                        />
+                        <input
+                          value={compatPartnerBirthData.birthDay}
+                          onChange={(e) => setCompatPartnerBirthData(prev => ({ ...prev, birthDay: e.target.value }))}
+                          placeholder="DD"
+                          className="w-full px-3 py-2 rounded-lg bg-[#12142A]/80 border border-white/10 text-white placeholder-white/40 focus:outline-none"
+                        />
+                        <input
+                          value={compatPartnerBirthData.birthYear}
+                          onChange={(e) => setCompatPartnerBirthData(prev => ({ ...prev, birthYear: e.target.value }))}
+                          placeholder="YYYY"
+                          className="w-full px-3 py-2 rounded-lg bg-[#12142A]/80 border border-white/10 text-white placeholder-white/40 focus:outline-none"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+                      <label className="block text-sm font-medium mb-2">Birth time</label>
+                      <div className="grid grid-cols-3 gap-2">
+                        <input
+                          value={compatPartnerBirthData.hour}
+                          onChange={(e) => setCompatPartnerBirthData(prev => ({ ...prev, hour: e.target.value }))}
+                          placeholder="HH"
+                          className="w-full px-3 py-2 rounded-lg bg-[#12142A]/80 border border-white/10 text-white placeholder-white/40 focus:outline-none"
+                        />
+                        <input
+                          value={compatPartnerBirthData.minute}
+                          onChange={(e) => setCompatPartnerBirthData(prev => ({ ...prev, minute: e.target.value }))}
+                          placeholder="MM"
+                          className="w-full px-3 py-2 rounded-lg bg-[#12142A]/80 border border-white/10 text-white placeholder-white/40 focus:outline-none"
+                        />
+                        <select
+                          value={compatPartnerBirthData.period}
+                          onChange={(e) => setCompatPartnerBirthData(prev => ({ ...prev, period: e.target.value }))}
+                          className="w-full px-3 py-2 rounded-lg bg-[#12142A]/80 border border-white/10 text-white focus:outline-none"
+                        >
+                          <option value="AM">AM</option>
+                          <option value="PM">PM</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="bg-white/5 rounded-xl p-4 border border-white/10 md:col-span-2">
+                      <label className="block text-sm font-medium mb-2">Birth location</label>
+                      <input
+                        value={compatPartnerBirthData.location}
+                        onChange={(e) => setCompatPartnerBirthData(prev => ({ ...prev, location: e.target.value }))}
+                        placeholder="City, Country"
+                        className="w-full px-3 py-2 rounded-lg bg-[#12142A]/80 border border-white/10 text-white placeholder-white/40 focus:outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="mt-6">
+                    <button
+                      onClick={handleGenerateCompatibility}
+                      disabled={compatibilityLoading}
+                      className="gold-gradient-btn px-6 py-3 rounded-xl font-bold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    >
+                      {compatibilityLoading ? (
+                        <>
+                          <Loader2 className="w-5 h-5 animate-spin" />
+                          Generating…
+                        </>
+                      ) : (
+                        'Generate Compatibility'
+                      )}
+                    </button>
+                    <p className="t-text-muted text-xs mt-3">
+                      We don’t require names. Your input is used only to compute the charts.
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* Proceed to Payment Button */}
         <div className="text-center">
           <button
@@ -2064,6 +2197,18 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
   const [emailError, setEmailError] = useState("");
   const [pdfGenerating, setPdfGenerating] = useState(false);
   const [analysisLoading, setAnalysisLoading] = useState(false);
+  const [compatPartnerBirthData, setCompatPartnerBirthData] = useState({
+    birthMonth: "",
+    birthDay: "",
+    birthYear: "",
+    hour: "",
+    minute: "",
+    period: "AM",
+    location: "",
+  });
+  const [compatibilityLoading, setCompatibilityLoading] = useState(false);
+  const [compatibilityError, setCompatibilityError] = useState("");
+  const [compatibilityReport, setCompatibilityReport] = useState(null);
 
   // Get the active chart based on selected zodiac system
   // Supports both old flat format and new { tropical, sidereal, meta } format
@@ -2259,13 +2404,141 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
     if (isTabAccessible(tab.id)) {
       setActiveTab(tab.id);
       // Generate analysis if not already present
-      if (!analyses[tab.id]?.content && tab.id !== 'natal') {
+      if (!analyses[tab.id]?.content && tab.id !== 'natal' && tab.id !== 'compatibility') {
         generateAnalysisForTab(tab.id);
       }
     } else {
       // Pre-select the clicked add-on and open modal
       setSelectedAddOns([tab.id]);
       setUpsellTab(tab);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab !== 'compatibility') return;
+
+    const orderId = localStorage.getItem('natavium_orderId');
+    if (!orderId) return;
+
+    setCompatibilityError("");
+
+    (async () => {
+      try {
+        setCompatibilityLoading(true);
+        const claimToken = localStorage.getItem('natavium_claimToken');
+        const { data } = await supabase.auth.getSession();
+        const accessToken = data?.session?.access_token;
+
+        const res = await fetch(`/api/get-compatibility?orderId=${encodeURIComponent(orderId)}`, {
+          headers: {
+            ...(claimToken ? { 'X-Claim-Token': claimToken } : {}),
+            ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+          }
+        });
+
+        const payload = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          throw new Error(payload?.error || 'Failed to load compatibility report');
+        }
+
+        setCompatibilityReport(payload?.report || null);
+
+        if (payload?.report?.analysis) {
+          setAnalyses(prev => ({
+            ...prev,
+            compatibility: payload.report.analysis,
+          }));
+        }
+      } catch (e) {
+        setCompatibilityError(e.message || 'Failed to load compatibility report');
+      } finally {
+        setCompatibilityLoading(false);
+      }
+    })();
+  }, [activeTab]);
+
+  const handleGenerateCompatibility = async () => {
+    const orderId = localStorage.getItem('natavium_orderId');
+    if (!orderId) {
+      setCompatibilityError('No order found. Please complete a purchase first.');
+      return;
+    }
+
+    if (compatibilityLoading) return;
+
+    setCompatibilityError("");
+    setCompatibilityLoading(true);
+
+    try {
+      const m = parseInt(compatPartnerBirthData.birthMonth, 10);
+      const d = parseInt(compatPartnerBirthData.birthDay, 10);
+      const y = parseInt(compatPartnerBirthData.birthYear, 10);
+      const h12 = parseInt(compatPartnerBirthData.hour, 10);
+      const min = parseInt(compatPartnerBirthData.minute, 10);
+
+      if (!m || !d || !y || !h12 || isNaN(min) || !compatPartnerBirthData.location) {
+        throw new Error('Please fill out all partner birth fields.');
+      }
+
+      let hour24 = h12;
+      if (compatPartnerBirthData.period === 'AM') {
+        hour24 = h12 === 12 ? 0 : h12;
+      } else {
+        hour24 = h12 === 12 ? 12 : h12 + 12;
+      }
+
+      const partnerChartData = await calculateNatalChartFromLocal({
+        year: y,
+        month: m,
+        day: d,
+        hour: hour24,
+        minute: min,
+        locationString: compatPartnerBirthData.location,
+      });
+
+      const claimToken = localStorage.getItem('natavium_claimToken');
+      const { data } = await supabase.auth.getSession();
+      const accessToken = data?.session?.access_token;
+
+      const label = `${String(y).padStart(4, '0')}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+
+      const res = await fetch('/api/create-compatibility', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(claimToken ? { 'X-Claim-Token': claimToken } : {}),
+          ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+        },
+        body: JSON.stringify({
+          orderId,
+          partnerBirthData: compatPartnerBirthData,
+          partnerChartData,
+          label,
+        })
+      });
+
+      const payload = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(payload?.error || 'Failed to create compatibility report');
+      }
+
+      setCompatibilityReport(payload?.report || null);
+
+      if (payload?.report?.analysis) {
+        setAnalyses(prev => ({
+          ...prev,
+          compatibility: payload.report.analysis,
+        }));
+        const updatedAnalyses = {
+          ...analyses,
+          compatibility: payload.report.analysis,
+        };
+        localStorage.setItem('natavium_analyses', JSON.stringify(updatedAnalyses));
+      }
+    } catch (e) {
+      setCompatibilityError(e.message || 'Failed to generate compatibility report');
+    } finally {
+      setCompatibilityLoading(false);
     }
   };
 
@@ -3372,7 +3645,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
         )}
 
         {/* Other Tab Content - Reusable Analysis Display */}
-        {activeTab !== 'natal' && (
+        {activeTab !== 'natal' && activeTab !== 'compatibility' && (
           <div className="space-y-8">
             <div className="card-solid rounded-2xl p-8">
               <div className="flex items-center justify-between mb-6">
@@ -3435,7 +3708,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
                 </div>
               )}
 
-              {currentAnalysis?.content && !generatingTab && (
+              {currentAnalysis?.content && !generatingTab && activeTab !== 'compatibility' && (
                 <div className="mt-8 pt-6 border-t border-white/10 flex justify-between items-center">
                   <p className="t-text-muted text-xs">
                     Generated {currentAnalysis.generatedAt ? new Date(currentAnalysis.generatedAt).toLocaleDateString() : 'recently'}

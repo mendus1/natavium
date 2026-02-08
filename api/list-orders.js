@@ -33,7 +33,7 @@ export default async function handler(req, res) {
 
     const { data: orders, error } = await supabaseAdmin
       .from('orders')
-      .select('id, product_type, purchased_addons, payment_status, zodiac_system')
+      .select('id, product_type, purchased_addons, payment_status, zodiac_system, created_at')
       .eq('user_id', user.id)
       .order('id', { ascending: false });
 
