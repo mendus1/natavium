@@ -1,15 +1,65 @@
 import { createClient } from '@supabase/supabase-js';
-import OpenAI from 'openai';
-import { canAccessOrder, fetchOrderForAccessCheck, getClaimTokenFromRequest, getUserFromRequest } from '../lib/auth.js';
+import { streamText } from 'ai';
+import { openai } from '@ai-sdk/openai';
+
+export const config = {
+  runtime: 'edge',
+};
 
 const supabaseAdmin = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+function getHeader(req, name) {
+  return req.headers.get(name) || req.headers.get(name.toLowerCase()) || null;
+}
+
+function getBearerToken(req) {
+  const authHeader = getHeader(req, 'authorization') || getHeader(req, 'Authorization');
+  if (!authHeader) return null;
+  return authHeader.startsWith('Bearer ') ? authHeader.slice('Bearer '.length) : null;
+}
+
+async function getUserFromRequest(req) {
+  const token = getBearerToken(req);
+  if (!token) return null;
+
+  const supabaseAuth = createClient(
+    process.env.SUPABASE_URL,
+    process.env.SUPABASE_ANON_KEY
+  );
+
+  const { data, error } = await supabaseAuth.auth.getUser(token);
+  if (error) return null;
+  return data?.user || null;
+}
+
+function getClaimTokenFromRequest(req) {
+  return getHeader(req, 'X-Claim-Token');
+}
+
+async function fetchOrderForAccessCheck(orderId) {
+  const { data: order, error } = await supabaseAdmin
+    .from('orders')
+    .select('id, user_id, claim_token, payment_status')
+    .eq('id', orderId)
+    .single();
+
+  if (error || !order) {
+    return { order: null, error: error || new Error('Order not found') };
+  }
+
+  return { order, error: null };
+}
+
+function canAccessOrder({ order, user, claimToken }) {
+  if (!order) return false;
+  if (order.payment_status !== 'paid') return false;
+  if (user?.id && order.user_id && order.user_id === user.id) return true;
+  if (claimToken && order.claim_token && claimToken === order.claim_token) return true;
+  return false;
+}
 
 function formatDegree(planet) {
   const deg = planet?.degree ?? '?';
@@ -88,61 +138,94 @@ Give:
 - 3 Red Flags to watch
 - 5 concrete habits/rituals that make this relationship thrive
 
-Length: 1500-2200 words.`;
+Length: 900-1300 words.`;
 }
 
-async function getOrderOrFail({ orderId, req, res }) {
+async function getOrderOrFail({ orderId, req }) {
   const user = await getUserFromRequest(req);
   const claimToken = getClaimTokenFromRequest(req);
 
   const { order, error: fetchError } = await fetchOrderForAccessCheck(orderId);
   if (fetchError || !order) {
-    res.status(404).json({ error: 'Order not found' });
-    return null;
+    return { ok: false, status: 404, error: 'Order not found' };
   }
 
   if (!canAccessOrder({ order, user, claimToken })) {
-    res.status(403).json({ error: 'Forbidden' });
-    return null;
+    return { ok: false, status: 403, error: 'Forbidden' };
   }
 
-  return { user, claimToken };
+  return { ok: true, user, claimToken };
 }
 
-export default async function handler(req, res) {
+export default async function handler(req) {
   if (req.method === 'GET') {
-    const orderId = req.query?.orderId || req.query?.id || req.headers?.['x-order-id'];
-    if (!orderId) return res.status(400).json({ error: 'Missing orderId' });
+    const url = new URL(req.url);
+    const orderId = url.searchParams.get('orderId') || url.searchParams.get('id') || getHeader(req, 'X-Order-Id');
+    if (!orderId) {
+      return new Response(JSON.stringify({ error: 'Missing orderId' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    const access = await getOrderOrFail({ orderId, req });
+    if (!access.ok) {
+      return new Response(JSON.stringify({ error: access.error }), {
+        status: access.status,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
 
     try {
-      const access = await getOrderOrFail({ orderId, req, res });
-      if (!access) return;
-
       const { data: report, error } = await supabaseAdmin
         .from('compatibility_reports')
         .select('id, order_id, zodiac_system, partner_birth_data, label, analysis, created_at')
         .eq('order_id', orderId)
         .maybeSingle();
 
-      if (error) return res.status(500).json({ error: error.message });
-      return res.status(200).json({ report: report || null });
+      if (error) {
+        return new Response(JSON.stringify({ error: error.message }), {
+          status: 500,
+          headers: { 'Content-Type': 'application/json' },
+        });
+      }
+
+      return new Response(JSON.stringify({ report: report || null }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      });
     } catch (err) {
       console.error('Get compatibility error:', err);
-      return res.status(500).json({ error: 'Failed to fetch compatibility report' });
+      return new Response(JSON.stringify({ error: 'Failed to fetch compatibility report' }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      });
     }
   }
 
   if (req.method === 'POST') {
     try {
-      const { orderId: bodyOrderId, partnerBirthData, partnerChartData, label } = req.body || {};
-      const orderId = bodyOrderId || req.query?.orderId || req.query?.id || req.headers?.['x-order-id'];
+      const url = new URL(req.url);
+      const body = await req.json().catch(() => ({}));
+
+      const { partnerBirthData, partnerChartData, label } = body || {};
+      const orderId = body?.orderId || url.searchParams.get('orderId') || url.searchParams.get('id') || getHeader(req, 'X-Order-Id');
 
       if (!orderId || !partnerBirthData || !partnerChartData) {
-        return res.status(400).json({ error: 'Missing required fields' });
+        return new Response(JSON.stringify({ error: 'Missing required fields' }), {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' },
+        });
       }
 
-      const access = await getOrderOrFail({ orderId, req, res });
-      if (!access) return;
+      const access = await getOrderOrFail({ orderId, req });
+      if (!access.ok) {
+        return new Response(JSON.stringify({ error: access.error }), {
+          status: access.status,
+          headers: { 'Content-Type': 'application/json' },
+        });
+      }
+
       const { user } = access;
 
       const { data: fullOrder, error: fullError } = await supabaseAdmin
@@ -152,22 +235,30 @@ export default async function handler(req, res) {
         .single();
 
       if (fullError || !fullOrder) {
-        return res.status(404).json({ error: 'Order not found' });
+        return new Response(JSON.stringify({ error: 'Order not found' }), {
+          status: 404,
+          headers: { 'Content-Type': 'application/json' },
+        });
       }
 
       const zodiacSystem = fullOrder.zodiac_system || 'tropical';
       const purchasedAddons = fullOrder.purchased_addons || [];
-
       const hasCompatibility = purchasedAddons.includes(`${zodiacSystem}_compatibility`) || purchasedAddons.includes('compatibility');
       if (!hasCompatibility) {
-        return res.status(403).json({ error: 'Compatibility not purchased for this order' });
+        return new Response(JSON.stringify({ error: 'Compatibility not purchased for this order' }), {
+          status: 403,
+          headers: { 'Content-Type': 'application/json' },
+        });
       }
 
       const subjectChart = fullOrder.chart_data?.[zodiacSystem] || fullOrder.chart_data;
       const partnerChart = partnerChartData?.[zodiacSystem] || partnerChartData;
 
       if (!subjectChart?.sun?.sign || !partnerChart?.sun?.sign) {
-        return res.status(400).json({ error: 'Invalid chart data' });
+        return new Response(JSON.stringify({ error: 'Invalid chart data' }), {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' },
+        });
       }
 
       const existing = await supabaseAdmin
@@ -177,7 +268,10 @@ export default async function handler(req, res) {
         .maybeSingle();
 
       if (existing?.data?.id) {
-        return res.status(409).json({ error: 'Compatibility report already exists for this order' });
+        return new Response(JSON.stringify({ error: 'Compatibility report already exists for this order' }), {
+          status: 409,
+          headers: { 'Content-Type': 'application/json' },
+        });
       }
 
       const prompt = buildCompatibilityPrompt({
@@ -186,50 +280,46 @@ export default async function handler(req, res) {
         partnerChart,
       });
 
-      const completion = await openai.chat.completions.create({
-        model: 'gpt-4o-mini',
-        messages: [
-          { role: 'system', content: 'You are a helpful assistant.' },
-          { role: 'user', content: prompt },
-        ],
-        max_tokens: 2600,
-        temperature: 0.7,
+      const result = streamText({
+        model: openai('gpt-4o-mini'),
+        system: 'You are a helpful assistant.',
+        prompt,
+        maxTokens: 1600,
+        temperature: 0.6,
+        onFinish: async ({ text }) => {
+          if (!text) return;
+
+          const insertPayload = {
+            order_id: orderId,
+            user_id: fullOrder.user_id || user?.id || null,
+            zodiac_system: zodiacSystem,
+            partner_birth_data: partnerBirthData,
+            partner_chart_data: partnerChartData,
+            label: label || null,
+            analysis: {
+              content: text,
+              generatedAt: new Date().toISOString(),
+            },
+          };
+
+          await supabaseAdmin
+            .from('compatibility_reports')
+            .insert(insertPayload);
+        },
       });
 
-      const content = completion.choices?.[0]?.message?.content || '';
-      if (!content) {
-        return res.status(500).json({ error: 'Failed to generate compatibility report' });
-      }
-
-      const insertPayload = {
-        order_id: orderId,
-        user_id: fullOrder.user_id || user?.id || null,
-        zodiac_system: zodiacSystem,
-        partner_birth_data: partnerBirthData,
-        partner_chart_data: partnerChartData,
-        label: label || null,
-        analysis: {
-          content,
-          generatedAt: new Date().toISOString(),
-        },
-      };
-
-      const { data: report, error: insertError } = await supabaseAdmin
-        .from('compatibility_reports')
-        .insert(insertPayload)
-        .select('id, order_id, zodiac_system, partner_birth_data, label, analysis, created_at')
-        .single();
-
-      if (insertError) {
-        return res.status(500).json({ error: insertError.message });
-      }
-
-      return res.status(200).json({ report });
+      return result.toTextStreamResponse();
     } catch (err) {
       console.error('Create compatibility error:', err);
-      return res.status(500).json({ error: err.message || 'Failed to create compatibility report' });
+      return new Response(JSON.stringify({ error: err?.message || 'Failed to create compatibility report' }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      });
     }
   }
 
-  return res.status(405).json({ error: 'Method Not Allowed' });
+  return new Response(JSON.stringify({ error: 'Method Not Allowed' }), {
+    status: 405,
+    headers: { 'Content-Type': 'application/json' },
+  });
 }

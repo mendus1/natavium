@@ -2341,21 +2341,65 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
         })
       });
 
-      const payload = await res.json().catch(() => ({}));
+      const contentType = res.headers.get('content-type') || '';
       if (!res.ok) {
+        const payload = await res.json().catch(() => ({}));
         throw new Error(payload?.error || 'Failed to create compatibility report');
       }
 
-      setCompatibilityReport(payload?.report || null);
+      if (contentType.includes('application/json')) {
+        const payload = await res.json().catch(() => ({}));
 
-      if (payload?.report?.analysis) {
+        setCompatibilityReport(payload?.report || null);
+
+        if (payload?.report?.analysis) {
+          setAnalyses(prev => ({
+            ...prev,
+            compatibility: payload.report.analysis,
+          }));
+          const updatedAnalyses = {
+            ...analyses,
+            compatibility: payload.report.analysis,
+          };
+          localStorage.setItem('natavium_analyses', JSON.stringify(updatedAnalyses));
+        }
+      } else {
+        const reader = res.body?.getReader?.();
+        if (!reader) {
+          throw new Error('Failed to read compatibility stream');
+        }
+
+        const decoder = new TextDecoder();
+        let fullText = '';
+
+        while (true) {
+          const { value, done } = await reader.read();
+          if (done) break;
+          fullText += decoder.decode(value, { stream: true });
+
+          const analysis = { content: fullText };
+          setAnalyses(prev => ({
+            ...prev,
+            compatibility: analysis,
+          }));
+          setCompatibilityReport({ analysis });
+        }
+
+        fullText += decoder.decode();
+        const finalAnalysis = {
+          content: fullText,
+          generatedAt: new Date().toISOString(),
+        };
+
         setAnalyses(prev => ({
           ...prev,
-          compatibility: payload.report.analysis,
+          compatibility: finalAnalysis,
         }));
+        setCompatibilityReport({ analysis: finalAnalysis });
+
         const updatedAnalyses = {
           ...analyses,
-          compatibility: payload.report.analysis,
+          compatibility: finalAnalysis,
         };
         localStorage.setItem('natavium_analyses', JSON.stringify(updatedAnalyses));
       }
@@ -2568,7 +2612,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
           orderId,
           chartImage,
         }),
-      });orderID
+      });
 
       if (!response.ok) {
         const errorData = await response.json();
