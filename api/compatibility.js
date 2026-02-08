@@ -42,24 +42,53 @@ function buildCompatibilityPrompt({ zodiacSystem, subjectChart, partnerChart }) 
     ? 'ZODIAC SYSTEM: SIDEREAL (Fagan-Bradley ayanamsa)'
     : 'ZODIAC SYSTEM: TROPICAL (Western)';
 
-  return `You are an expert relationship astrologer specializing in synastry. Write a compatibility report based on TWO birth charts.
+  return `You are an expert relationship astrologer specializing in synastry.
+
+Your task is to produce a detailed compatibility analysis between **two** people using the two sets of chart placements below.
 
 ${systemLine}
 
-${formatChartForPrompt(subjectChart, 'Person A (Account Owner / Subject)')}
-${formatChartForPrompt(partnerChart, 'Person B (Partner)')}
+IMPORTANT:
+- Treat the first chart as **Person A** and the second chart as **Person B**.
+- Perform *synastry* (A-to-B and B-to-A), not two separate natal readings.
+- You are given sign + degree + house for each body. Use the **degrees** to estimate inter-aspects.
+- Use these aspect orbs as a guideline (approximate is fine):
+  - Conjunction / Opposition: up to 8°
+  - Trine / Square: up to 6°
+  - Sextile: up to 4°
+- Focus primarily on Sun/Moon/Asc, Venus/Mars, Mercury, Saturn. Outer planets are secondary.
+- Avoid fatalistic language. Keep it practical and supportive.
 
-Write a clear, supportive, practical compatibility report with sections:
+${formatChartForPrompt(subjectChart, 'Person A (Chart A)')}
+${formatChartForPrompt(partnerChart, 'Person B (Chart B)')}
 
-## Overall Dynamic
-## Emotional Compatibility (Moon)
-## Attraction & Chemistry (Venus/Mars)
-## Communication (Mercury)
-## Commitment Potential (Saturn)
-## Friction Points
-## What Helps This Relationship Thrive
+Write the compatibility report structured as chapters:
 
-Avoid fatalistic language. Make it self-awareness focused. Total length: 1500-2000 words.`;
+## Chapter 1: Relationship Overview
+Summarize the core dynamic, chemistry, and the “why this works / why this is challenging” in plain language.
+
+## Chapter 2: Emotional Bond (Moon)
+Discuss emotional needs, attachment style, soothing patterns, and emotional triggers between A and B.
+
+## Chapter 3: Attraction & Intimacy (Venus/Mars)
+Describe romantic style, desire, pacing, affection, and polarity. Call out 2-4 likely strongest Venus/Mars links.
+
+## Chapter 4: Communication (Mercury)
+How they talk, repair conflict, understand each other, and where misunderstandings happen.
+
+## Chapter 5: Commitment & Longevity (Saturn)
+Discuss stabilizing factors, responsibilities, and how to build something real together.
+
+## Chapter 6: Friction Points & Growth Work
+Name the top 3 challenges and give actionable “what to do instead” advice.
+
+## Chapter 7: Practical Playbook
+Give:
+- 3 Green Flags to lean into
+- 3 Red Flags to watch
+- 5 concrete habits/rituals that make this relationship thrive
+
+Length: 1500-2200 words.`;
 }
 
 async function getOrderOrFail({ orderId, req, res }) {

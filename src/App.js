@@ -858,140 +858,92 @@ function InputPage({ birthData, handleInputChange, calculateChart, calcError }) 
         </div>
 
         <div className="card-solid rounded-2xl p-8">
-          <div className="mb-6">
-            <label className="flex items-center text-base font-semibold mb-3 t-text-primary">
-              <Calendar className="w-5 h-5 mr-2 icon-gold" />
-              Birth Date
-            </label>
-            <div className="flex gap-3">
-              <select
-                value={birthData.birthMonth}
-                onChange={(e) => handleInputChange("birthMonth", e.target.value)}
-                className="flex-1 px-4 py-3 rounded-lg bg-[#12142A] border border-white/10 text-white focus:outline-none focus:border-[#69D2FF] focus:ring-1 focus:ring-[#69D2FF]/30 appearance-none cursor-pointer"
-              >
-                <option value="" className="bg-[#12142A]">Month</option>
-                {["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"].map((month, i) => (
-                  <option key={month} value={String(i + 1)} className="bg-[#12142A]">
-                    {month}
-                  </option>
-                ))}
-              </select>
-              <select
-                value={birthData.birthDay}
-                onChange={(e) => handleInputChange("birthDay", e.target.value)}
-                className="w-24 px-4 py-3 rounded-lg bg-[#12142A] border border-white/10 text-white focus:outline-none focus:border-[#69D2FF] focus:ring-1 focus:ring-[#69D2FF]/30 appearance-none cursor-pointer"
-              >
-                <option value="" className="bg-[#12142A]">Day</option>
-                {Array.from({ length: 31 }, (_, i) => (
-                  <option key={i + 1} value={String(i + 1)} className="bg-[#12142A]">
-                    {i + 1}
-                  </option>
-                ))}
-              </select>
-              <select
-                value={birthData.birthYear}
-                onChange={(e) => handleInputChange("birthYear", e.target.value)}
-                className="w-28 px-4 py-3 rounded-lg bg-[#12142A] border border-white/10 text-white focus:outline-none focus:border-[#69D2FF] focus:ring-1 focus:ring-[#69D2FF]/30 appearance-none cursor-pointer"
-              >
-                <option value="" className="bg-[#12142A]">Year</option>
-                {Array.from({ length: 100 }, (_, i) => {
-                  const year = new Date().getFullYear() - i;
-                  return (
-                    <option key={year} value={String(year)} className="bg-[#12142A]">
-                      {year}
-                    </option>
-                  );
-                })}
-              </select>
-            </div>
-          </div>
-
-          <div className="mb-6">
-            <label className="flex items-center text-base font-semibold mb-3 t-text-primary">
-              <Clock className="w-5 h-5 mr-2 icon-gold" />
-              Birth Time
-            </label>
-            <div className="flex gap-3">
-              <select
-                value={birthData.hour}
-                onChange={(e) => handleInputChange("hour", e.target.value)}
-                className="flex-1 px-4 py-3 rounded-lg bg-[#12142A] border border-white/10 text-white focus:outline-none focus:border-[#69D2FF] focus:ring-1 focus:ring-[#69D2FF]/30 appearance-none cursor-pointer"
-              >
-                <option value="" className="bg-[#12142A]">Hour</option>
-                {[12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((h) => (
-                  <option key={h} value={h} className="bg-[#12142A]">
-                    {h}
-                  </option>
-                ))}
-              </select>
-              <select
-                value={birthData.minute}
-                onChange={(e) => handleInputChange("minute", e.target.value)}
-                className="flex-1 px-4 py-3 rounded-lg bg-[#12142A] border border-white/10 text-white focus:outline-none focus:border-[#69D2FF] focus:ring-1 focus:ring-[#69D2FF]/30 appearance-none cursor-pointer"
-              >
-                <option value="" className="bg-[#12142A]">Min</option>
-                {Array.from({ length: 60 }, (_, i) => (
-                  <option key={i} value={i} className="bg-[#12142A]">
-                    {i.toString().padStart(2, "0")}
-                  </option>
-                ))}
-              </select>
-              <div className="flex rounded-lg overflow-hidden border border-white/10">
-                <button
-                  type="button"
-                  onClick={() => handleInputChange("period", "AM")}
-                  className={`px-4 py-3 font-semibold transition-colors ${
-                    birthData.period === "AM"
-                      ? "bg-[#D6B35A] text-[#070812]"
-                      : "bg-[#12142A] text-white hover:bg-[#171A35]"
-                  }`}
-                >
-                  AM
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleInputChange("period", "PM")}
-                  className={`px-4 py-3 font-semibold transition-colors ${
-                    birthData.period === "PM"
-                      ? "bg-[#D6B35A] text-[#070812]"
-                      : "bg-[#12142A] text-white hover:bg-[#171A35]"
-                  }`}
-                >
-                  PM
-                </button>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+            <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+              <label className="flex items-center text-sm font-medium mb-2">
+                <Calendar className="w-4 h-4 mr-2 icon-gold" />
+                Birth date
+              </label>
+              <div className="grid grid-cols-3 gap-2">
+                <input
+                  value={birthData.birthMonth}
+                  onChange={(e) => handleInputChange("birthMonth", e.target.value)}
+                  placeholder="MM"
+                  className="w-full px-3 py-2 rounded-lg bg-[#12142A]/80 border border-white/10 text-white placeholder-white/40 focus:outline-none"
+                />
+                <input
+                  value={birthData.birthDay}
+                  onChange={(e) => handleInputChange("birthDay", e.target.value)}
+                  placeholder="DD"
+                  className="w-full px-3 py-2 rounded-lg bg-[#12142A]/80 border border-white/10 text-white placeholder-white/40 focus:outline-none"
+                />
+                <input
+                  value={birthData.birthYear}
+                  onChange={(e) => handleInputChange("birthYear", e.target.value)}
+                  placeholder="YYYY"
+                  className="w-full px-3 py-2 rounded-lg bg-[#12142A]/80 border border-white/10 text-white placeholder-white/40 focus:outline-none"
+                />
               </div>
             </div>
-            <p className="text-xs t-text-muted mt-2">Check birth certificate for exact time</p>
-          </div>
 
-          <div className="mb-8">
-            <label className="flex items-center text-base font-semibold mb-3 t-text-primary">
-              <MapPin className="w-5 h-5 mr-2 icon-gold" />
-              Birth Location
-            </label>
-            <input
-              type="text"
-              value={birthData.location}
-              onChange={(e) => handleInputChange("location", e.target.value)}
-              placeholder="e.g., Welland, Ontario"
-              className="w-full px-4 py-3 rounded-lg bg-[#12142A] border border-white/10 text-white placeholder-white/40 focus:outline-none focus:border-[#69D2FF] focus:ring-1 focus:ring-[#69D2FF]/30"
-            />
-            <p className="text-xs t-text-muted mt-2">City name auto-detected • Timezone calculated automatically</p>
+            <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+              <label className="flex items-center text-sm font-medium mb-2">
+                <Clock className="w-4 h-4 mr-2 icon-gold" />
+                Birth time
+              </label>
+              <div className="grid grid-cols-3 gap-2">
+                <input
+                  value={birthData.hour}
+                  onChange={(e) => handleInputChange("hour", e.target.value)}
+                  placeholder="HH"
+                  className="w-full px-3 py-2 rounded-lg bg-[#12142A]/80 border border-white/10 text-white placeholder-white/40 focus:outline-none"
+                />
+                <input
+                  value={birthData.minute}
+                  onChange={(e) => handleInputChange("minute", e.target.value)}
+                  placeholder="MM"
+                  className="w-full px-3 py-2 rounded-lg bg-[#12142A]/80 border border-white/10 text-white placeholder-white/40 focus:outline-none"
+                />
+                <select
+                  value={birthData.period}
+                  onChange={(e) => handleInputChange("period", e.target.value)}
+                  className="w-full px-3 py-2 rounded-lg bg-[#12142A]/80 border border-white/10 text-white focus:outline-none"
+                >
+                  <option value="AM">AM</option>
+                  <option value="PM">PM</option>
+                </select>
+              </div>
+              <p className="text-xs t-text-muted mt-2">Check birth certificate for exact time</p>
+            </div>
 
-            {/* Quick city presets */}
-            <div className="mt-3">
-              <p className="text-xs t-text-muted mb-2">Quick select:</p>
-              <div className="flex flex-wrap gap-2">
-                {["New York", "Los Angeles", "Chicago", "London", "Toronto", "Sydney"].map((city) => (
-                  <button
-                    key={city}
-                    type="button"
-                    onClick={() => handleInputChange("location", city)}
-                    className="px-2 py-1 text-xs bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 hover:border-white/20 transition-colors"
-                  >
-                    {city}
-                  </button>
-                ))}
+            <div className="bg-white/5 rounded-xl p-4 border border-white/10 md:col-span-2">
+              <label className="flex items-center text-sm font-medium mb-2">
+                <MapPin className="w-4 h-4 mr-2 icon-gold" />
+                Birth location
+              </label>
+              <input
+                type="text"
+                value={birthData.location}
+                onChange={(e) => handleInputChange("location", e.target.value)}
+                placeholder="City, Country"
+                className="w-full px-3 py-2 rounded-lg bg-[#12142A]/80 border border-white/10 text-white placeholder-white/40 focus:outline-none"
+              />
+              <p className="text-xs t-text-muted mt-2">City name auto-detected • Timezone calculated automatically</p>
+
+              <div className="mt-3">
+                <p className="text-xs t-text-muted mb-2">Quick select:</p>
+                <div className="flex flex-wrap gap-2">
+                  {["New York", "Los Angeles", "Chicago", "London", "Toronto", "Sydney"].map((city) => (
+                    <button
+                      key={city}
+                      type="button"
+                      onClick={() => handleInputChange("location", city)}
+                      className="px-2 py-1 text-xs bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 hover:border-white/20 transition-colors"
+                    >
+                      {city}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
           </div>

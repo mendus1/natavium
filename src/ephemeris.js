@@ -215,9 +215,7 @@ export async function geocodeLocation(locationString) {
     const url =
       `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(locationString)}&limit=1`;
 
-    const response = await fetch(url, {
-      headers: { "User-Agent": "Natavium Astrology App" },
-    });
+    const response = await fetch(url);
 
     const data = await response.json();
 
