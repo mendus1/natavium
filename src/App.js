@@ -1694,139 +1694,6 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
           </div>
         )}
 
-        {activeTab === 'compatibility' && (
-          <div className="space-y-8">
-            <div className="card-solid rounded-2xl p-8">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="font-serif text-2xl font-semibold gold-gradient-text">
-                  <Sparkles className="w-6 h-6 inline mr-2 icon-gold" />
-                  Compatibility Analysis
-                </h2>
-              </div>
-
-              {compatibilityError && (
-                <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 text-red-200 text-sm mb-4">
-                  {compatibilityError}
-                </div>
-              )}
-
-              {compatibilityLoading ? (
-                <div className="flex flex-col items-center justify-center py-12">
-                  <Loader2 className="w-10 h-10 text-[#D6B35A] animate-spin mb-4" />
-                  <p className="t-text-muted">Loading compatibility…</p>
-                </div>
-              ) : compatibilityReport?.analysis?.content ? (
-                <div className="prose prose-invert max-w-none">
-                  {compatibilityReport.analysis.content.split('\n').map((line, idx) => {
-                    if (line.startsWith('## ')) {
-                      return <h3 key={idx} className="text-xl font-semibold text-[#D6B35A] mt-6 mb-3">{line.replace('## ', '')}</h3>;
-                    }
-                    if (line.startsWith('### ')) {
-                      return <h4 key={idx} className="text-lg font-semibold text-white/90 mt-4 mb-2">{line.replace('### ', '')}</h4>;
-                    }
-                    if (line.startsWith('#### ')) {
-                      return <h5 key={idx} className="text-base font-medium t-text-muted mt-3 mb-1">{line.replace('#### ', '')}</h5>;
-                    }
-                    if (line.startsWith('- ') || line.startsWith('* ')) {
-                      return <p key={idx} className="text-white/80 ml-4 mb-1">• {line.slice(2).replace(/\*\*(.*?)\*\*/g, '$1')}</p>;
-                    }
-                    if (line.trim() === '') return <div key={idx} className="h-2" />;
-                    return <p key={idx} className="text-white/80 leading-relaxed mb-3">{line.replace(/\*\*(.*?)\*\*/g, '$1')}</p>;
-                  })}
-                </div>
-              ) : (
-                <div>
-                  <p className="t-text-muted mb-6">
-                    Enter your partner’s birth details to generate your compatibility report.
-                  </p>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="bg-white/5 rounded-xl p-4 border border-white/10">
-                      <label className="block text-sm font-medium mb-2">Birth date</label>
-                      <div className="grid grid-cols-3 gap-2">
-                        <input
-                          value={compatPartnerBirthData.birthMonth}
-                          onChange={(e) => setCompatPartnerBirthData(prev => ({ ...prev, birthMonth: e.target.value }))}
-                          placeholder="MM"
-                          className="w-full px-3 py-2 rounded-lg bg-[#12142A]/80 border border-white/10 text-white placeholder-white/40 focus:outline-none"
-                        />
-                        <input
-                          value={compatPartnerBirthData.birthDay}
-                          onChange={(e) => setCompatPartnerBirthData(prev => ({ ...prev, birthDay: e.target.value }))}
-                          placeholder="DD"
-                          className="w-full px-3 py-2 rounded-lg bg-[#12142A]/80 border border-white/10 text-white placeholder-white/40 focus:outline-none"
-                        />
-                        <input
-                          value={compatPartnerBirthData.birthYear}
-                          onChange={(e) => setCompatPartnerBirthData(prev => ({ ...prev, birthYear: e.target.value }))}
-                          placeholder="YYYY"
-                          className="w-full px-3 py-2 rounded-lg bg-[#12142A]/80 border border-white/10 text-white placeholder-white/40 focus:outline-none"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="bg-white/5 rounded-xl p-4 border border-white/10">
-                      <label className="block text-sm font-medium mb-2">Birth time</label>
-                      <div className="grid grid-cols-3 gap-2">
-                        <input
-                          value={compatPartnerBirthData.hour}
-                          onChange={(e) => setCompatPartnerBirthData(prev => ({ ...prev, hour: e.target.value }))}
-                          placeholder="HH"
-                          className="w-full px-3 py-2 rounded-lg bg-[#12142A]/80 border border-white/10 text-white placeholder-white/40 focus:outline-none"
-                        />
-                        <input
-                          value={compatPartnerBirthData.minute}
-                          onChange={(e) => setCompatPartnerBirthData(prev => ({ ...prev, minute: e.target.value }))}
-                          placeholder="MM"
-                          className="w-full px-3 py-2 rounded-lg bg-[#12142A]/80 border border-white/10 text-white placeholder-white/40 focus:outline-none"
-                        />
-                        <select
-                          value={compatPartnerBirthData.period}
-                          onChange={(e) => setCompatPartnerBirthData(prev => ({ ...prev, period: e.target.value }))}
-                          className="w-full px-3 py-2 rounded-lg bg-[#12142A]/80 border border-white/10 text-white focus:outline-none"
-                        >
-                          <option value="AM">AM</option>
-                          <option value="PM">PM</option>
-                        </select>
-                      </div>
-                    </div>
-
-                    <div className="bg-white/5 rounded-xl p-4 border border-white/10 md:col-span-2">
-                      <label className="block text-sm font-medium mb-2">Birth location</label>
-                      <input
-                        value={compatPartnerBirthData.location}
-                        onChange={(e) => setCompatPartnerBirthData(prev => ({ ...prev, location: e.target.value }))}
-                        placeholder="City, Country"
-                        className="w-full px-3 py-2 rounded-lg bg-[#12142A]/80 border border-white/10 text-white placeholder-white/40 focus:outline-none"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="mt-6">
-                    <button
-                      onClick={handleGenerateCompatibility}
-                      disabled={compatibilityLoading}
-                      className="gold-gradient-btn px-6 py-3 rounded-xl font-bold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                    >
-                      {compatibilityLoading ? (
-                        <>
-                          <Loader2 className="w-5 h-5 animate-spin" />
-                          Generating…
-                        </>
-                      ) : (
-                        'Generate Compatibility'
-                      )}
-                    </button>
-                    <p className="t-text-muted text-xs mt-3">
-                      We don’t require names. Your input is used only to compute the charts.
-                    </p>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
         {/* Proceed to Payment Button */}
         <div className="text-center">
           <button
@@ -3721,6 +3588,159 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
                     <Sparkles className="w-4 h-4" />
                     Regenerate
                   </button>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'compatibility' && (
+          <div className="space-y-8">
+            <div className="card-solid rounded-2xl p-8">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="font-serif text-2xl font-semibold gold-gradient-text">
+                  <Sparkles className="w-6 h-6 inline mr-2 icon-gold" />
+                  Compatibility Analysis
+                </h2>
+              </div>
+
+              {compatibilityError && (
+                <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 text-red-200 text-sm mb-4">
+                  {compatibilityError}
+                </div>
+              )}
+
+              {compatibilityLoading ? (
+                <div className="flex flex-col items-center justify-center py-12">
+                  <Loader2 className="w-10 h-10 text-[#D6B35A] animate-spin mb-4" />
+                  <p className="t-text-muted">Loading compatibility…</p>
+                </div>
+              ) : compatibilityReport?.analysis?.content ? (
+                <div className="prose prose-invert max-w-none">
+                  {compatibilityReport.analysis.content.split('\n').map((line, idx) => {
+                    if (line.startsWith('## ')) {
+                      return (
+                        <h3 key={idx} className="text-xl font-semibold text-[#D6B35A] mt-6 mb-3">
+                          {line.replace('## ', '')}
+                        </h3>
+                      );
+                    }
+                    if (line.startsWith('### ')) {
+                      return (
+                        <h4 key={idx} className="text-lg font-semibold text-white/90 mt-4 mb-2">
+                          {line.replace('### ', '')}
+                        </h4>
+                      );
+                    }
+                    if (line.startsWith('#### ')) {
+                      return (
+                        <h5 key={idx} className="text-base font-medium t-text-muted mt-3 mb-1">
+                          {line.replace('#### ', '')}
+                        </h5>
+                      );
+                    }
+                    if (line.startsWith('- ') || line.startsWith('* ')) {
+                      return (
+                        <p key={idx} className="text-white/80 ml-4 mb-1">
+                          • {line.slice(2).replace(/\*\*(.*?)\*\*/g, '$1')}
+                        </p>
+                      );
+                    }
+                    if (line.trim() === '') return <div key={idx} className="h-2" />;
+                    return (
+                      <p key={idx} className="text-white/80 leading-relaxed mb-3">
+                        {line.replace(/\*\*(.*?)\*\*/g, '$1')}
+                      </p>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div>
+                  <p className="t-text-muted mb-6">
+                    Enter your partner’s birth details to generate your compatibility report.
+                  </p>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+                      <label className="block text-sm font-medium mb-2">Birth date</label>
+                      <div className="grid grid-cols-3 gap-2">
+                        <input
+                          value={compatPartnerBirthData.birthMonth}
+                          onChange={(e) => setCompatPartnerBirthData(prev => ({ ...prev, birthMonth: e.target.value }))}
+                          placeholder="MM"
+                          className="w-full px-3 py-2 rounded-lg bg-[#12142A]/80 border border-white/10 text-white placeholder-white/40 focus:outline-none"
+                        />
+                        <input
+                          value={compatPartnerBirthData.birthDay}
+                          onChange={(e) => setCompatPartnerBirthData(prev => ({ ...prev, birthDay: e.target.value }))}
+                          placeholder="DD"
+                          className="w-full px-3 py-2 rounded-lg bg-[#12142A]/80 border border-white/10 text-white placeholder-white/40 focus:outline-none"
+                        />
+                        <input
+                          value={compatPartnerBirthData.birthYear}
+                          onChange={(e) => setCompatPartnerBirthData(prev => ({ ...prev, birthYear: e.target.value }))}
+                          placeholder="YYYY"
+                          className="w-full px-3 py-2 rounded-lg bg-[#12142A]/80 border border-white/10 text-white placeholder-white/40 focus:outline-none"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+                      <label className="block text-sm font-medium mb-2">Birth time</label>
+                      <div className="grid grid-cols-3 gap-2">
+                        <input
+                          value={compatPartnerBirthData.hour}
+                          onChange={(e) => setCompatPartnerBirthData(prev => ({ ...prev, hour: e.target.value }))}
+                          placeholder="HH"
+                          className="w-full px-3 py-2 rounded-lg bg-[#12142A]/80 border border-white/10 text-white placeholder-white/40 focus:outline-none"
+                        />
+                        <input
+                          value={compatPartnerBirthData.minute}
+                          onChange={(e) => setCompatPartnerBirthData(prev => ({ ...prev, minute: e.target.value }))}
+                          placeholder="MM"
+                          className="w-full px-3 py-2 rounded-lg bg-[#12142A]/80 border border-white/10 text-white placeholder-white/40 focus:outline-none"
+                        />
+                        <select
+                          value={compatPartnerBirthData.period}
+                          onChange={(e) => setCompatPartnerBirthData(prev => ({ ...prev, period: e.target.value }))}
+                          className="w-full px-3 py-2 rounded-lg bg-[#12142A]/80 border border-white/10 text-white focus:outline-none"
+                        >
+                          <option value="AM">AM</option>
+                          <option value="PM">PM</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="bg-white/5 rounded-xl p-4 border border-white/10 md:col-span-2">
+                      <label className="block text-sm font-medium mb-2">Birth location</label>
+                      <input
+                        value={compatPartnerBirthData.location}
+                        onChange={(e) => setCompatPartnerBirthData(prev => ({ ...prev, location: e.target.value }))}
+                        placeholder="City, Country"
+                        className="w-full px-3 py-2 rounded-lg bg-[#12142A]/80 border border-white/10 text-white placeholder-white/40 focus:outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="mt-6">
+                    <button
+                      onClick={handleGenerateCompatibility}
+                      disabled={compatibilityLoading}
+                      className="gold-gradient-btn px-6 py-3 rounded-xl font-bold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    >
+                      {compatibilityLoading ? (
+                        <>
+                          <Loader2 className="w-5 h-5 animate-spin" />
+                          Generating…
+                        </>
+                      ) : (
+                        'Generate Compatibility'
+                      )}
+                    </button>
+                    <p className="t-text-muted text-xs mt-3">
+                      We don’t require names. Your input is used only to compute the charts.
+                    </p>
+                  </div>
                 </div>
               )}
             </div>
