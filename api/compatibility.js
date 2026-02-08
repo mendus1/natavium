@@ -111,7 +111,7 @@ async function getOrderOrFail({ orderId, req, res }) {
 
 export default async function handler(req, res) {
   if (req.method === 'GET') {
-    const { orderId } = req.query;
+    const orderId = req.query?.orderId || req.query?.id || req.headers?.['x-order-id'];
     if (!orderId) return res.status(400).json({ error: 'Missing orderId' });
 
     try {
@@ -134,7 +134,8 @@ export default async function handler(req, res) {
 
   if (req.method === 'POST') {
     try {
-      const { orderId, partnerBirthData, partnerChartData, label } = req.body || {};
+      const { orderId: bodyOrderId, partnerBirthData, partnerChartData, label } = req.body || {};
+      const orderId = bodyOrderId || req.query?.orderId || req.query?.id || req.headers?.['x-order-id'];
 
       if (!orderId || !partnerBirthData || !partnerChartData) {
         return res.status(400).json({ error: 'Missing required fields' });

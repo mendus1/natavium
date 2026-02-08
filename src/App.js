@@ -2253,6 +2253,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
 
         const res = await fetch(`/api/compatibility?orderId=${encodeURIComponent(orderId)}`, {
           headers: {
+            'X-Order-Id': String(orderId),
             ...(claimToken ? { 'X-Claim-Token': claimToken } : {}),
             ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
           }
@@ -2328,6 +2329,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'X-Order-Id': String(orderId),
           ...(claimToken ? { 'X-Claim-Token': claimToken } : {}),
           ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
         },
