@@ -2296,7 +2296,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
         const { data } = await supabase.auth.getSession();
         const accessToken = data?.session?.access_token;
 
-        const res = await fetch(`/api/get-compatibility?orderId=${encodeURIComponent(orderId)}`, {
+        const res = await fetch(`/api/compatibility?orderId=${encodeURIComponent(orderId)}`, {
           headers: {
             ...(claimToken ? { 'X-Claim-Token': claimToken } : {}),
             ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
@@ -2369,7 +2369,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
 
       const label = `${String(y).padStart(4, '0')}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
 
-      const res = await fetch('/api/create-compatibility', {
+      const res = await fetch('/api/compatibility', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -1,4 +1,4 @@
-import { canAccessOrder, fetchOrderForAccessCheck, getClaimTokenFromRequest, getUserFromRequest, supabaseAdmin } from './_auth.js';
+import { canAccessOrder, fetchOrderForAccessCheck, getClaimTokenFromRequest, getUserFromRequest, supabaseAdmin } from '../lib/auth.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'GET') {

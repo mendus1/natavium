@@ -2,7 +2,7 @@ import chromium from '@sparticuz/chromium';
 import puppeteerCore from 'puppeteer-core';
 import { createClient } from '@supabase/supabase-js';
 import OpenAI from 'openai';
-import { canAccessOrder, fetchOrderForAccessCheck, getClaimTokenFromRequest, getUserFromRequest } from './_auth.js';
+import { canAccessOrder, fetchOrderForAccessCheck, getClaimTokenFromRequest, getUserFromRequest } from '../lib/auth.js';
 
 const supabase = createClient(
   process.env.SUPABASE_URL,

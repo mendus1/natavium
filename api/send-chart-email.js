@@ -1,7 +1,7 @@
 const { Resend } = require("resend");
 const { createClient } = require("@supabase/supabase-js");
 const OpenAI = require("openai").default;
-const { canAccessOrder, fetchOrderForAccessCheck, getClaimTokenFromRequest, getUserFromRequest } = require("./_auth-cjs.js");
+const { canAccessOrder, fetchOrderForAccessCheck, getClaimTokenFromRequest, getUserFromRequest } = require("../lib/auth-cjs.js");
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
