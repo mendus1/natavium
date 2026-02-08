@@ -33,13 +33,13 @@ export default async function handler(req, res) {
 
     const { orderId, claimToken } = req.body || {};
 
-    if (!orderId || !claimToken) {
-      return res.status(400).json({ error: 'Missing orderId or claimToken' });
+    if (!orderId) {
+      return res.status(400).json({ error: 'Missing orderId' });
     }
 
     const { data: order, error: fetchError } = await supabaseAdmin
       .from('orders')
-      .select('id, user_id, claim_token, payment_status')
+      .select('id, user_id, claim_token, payment_status, customer_email')
       .eq('id', orderId)
       .single();
 
@@ -51,7 +51,10 @@ export default async function handler(req, res) {
       return res.status(403).json({ error: 'Order not yet paid' });
     }
 
-    if (!order.claim_token || order.claim_token !== claimToken) {
+    const canClaimViaToken = Boolean(claimToken && order.claim_token && order.claim_token === claimToken);
+    const canClaimViaEmail = Boolean(user?.email && order?.customer_email && user.email === order.customer_email);
+
+    if (!canClaimViaToken && !canClaimViaEmail) {
       return res.status(403).json({ error: 'Invalid claim token' });
     }
 

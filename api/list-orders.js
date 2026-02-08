@@ -31,10 +31,18 @@ export default async function handler(req, res) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
+    const userId = user.id;
+    const userEmail = user.email;
+
     const { data: orders, error } = await supabaseAdmin
       .from('orders')
-      .select('id, product_type, purchased_addons, payment_status, zodiac_system, created_at')
-      .eq('user_id', user.id)
+      .select('id, product_type, purchased_addons, payment_status, zodiac_system, created_at, user_id, customer_email')
+      .or(
+        [
+          `user_id.eq.${userId}`,
+          userEmail ? `and(user_id.is.null,customer_email.eq.${userEmail})` : null,
+        ].filter(Boolean).join(',')
+      )
       .order('id', { ascending: false });
 
     if (error) {
