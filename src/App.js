@@ -2236,7 +2236,11 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
     if (activeTab !== 'compatibility') return;
 
     const orderId = localStorage.getItem('natavium_orderId');
-    if (!orderId) return;
+    if (!orderId || orderId === 'undefined' || orderId === 'null') {
+      setCompatibilityReport(null);
+      setCompatibilityError('No order found. Please open your purchased report (or complete a purchase) before generating compatibility.');
+      return;
+    }
 
     setCompatibilityError("");
 
@@ -2277,7 +2281,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
 
   const handleGenerateCompatibility = async () => {
     const orderId = localStorage.getItem('natavium_orderId');
-    if (!orderId) {
+    if (!orderId || orderId === 'undefined' || orderId === 'null') {
       setCompatibilityError('No order found. Please complete a purchase first.');
       return;
     }
@@ -3608,7 +3612,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
               ) : (
                 <div>
                   <p className="t-text-muted mb-6">
-                    Enter your partner’s birth details to generate your compatibility report.
+                    Enter the birth details of the other person to generate your compatibility report.
                   </p>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
