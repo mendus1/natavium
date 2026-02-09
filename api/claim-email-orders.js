@@ -1,24 +1,4 @@
-import { createClient } from '@supabase/supabase-js';
-
-const supabaseAdmin = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
-);
-
-async function getUserFromRequest(req) {
-  const authHeader = req.headers.authorization || req.headers.Authorization;
-  const token = authHeader?.startsWith('Bearer ') ? authHeader.slice('Bearer '.length) : null;
-  if (!token) return null;
-
-  const supabaseAuth = createClient(
-    process.env.SUPABASE_URL,
-    process.env.SUPABASE_ANON_KEY
-  );
-
-  const { data, error } = await supabaseAuth.auth.getUser(token);
-  if (error) return null;
-  return data?.user || null;
-}
+import { getUserFromRequest, supabaseAdmin } from '../lib/auth.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -31,7 +11,8 @@ export default async function handler(req, res) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    if (!user.email) {
+    const userEmail = typeof user.email === 'string' ? user.email.trim() : null;
+    if (!userEmail) {
       return res.status(400).json({ error: 'User email not available' });
     }
 
@@ -40,7 +21,7 @@ export default async function handler(req, res) {
       .select('id')
       .is('user_id', null)
       .eq('payment_status', 'paid')
-      .eq('customer_email', user.email)
+      .ilike('customer_email', userEmail)
       .order('id', { ascending: false });
 
     if (fetchError) {

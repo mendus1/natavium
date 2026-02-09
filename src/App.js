@@ -2264,6 +2264,56 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
     }
   }, []);
 
+  // Silent claim on login so users rarely need to press "Claim purchases" manually.
+  useEffect(() => {
+    let cancelled = false;
+
+    async function claimIfLoggedIn() {
+      try {
+        const { data: sessionData } = await supabase.auth.getSession();
+        const accessToken = sessionData?.session?.access_token;
+        if (!accessToken) return;
+
+        await fetch('/api/claim-email-orders', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: JSON.stringify({}),
+        });
+
+        const orderId = localStorage.getItem('natavium_orderId');
+        if (orderId) {
+          const res = await fetch('/api/claim-order', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${accessToken}`,
+            },
+            body: JSON.stringify({ orderId }),
+          });
+          if (res.ok && !cancelled) {
+            localStorage.removeItem('natavium_claimToken');
+          }
+        }
+      } catch {
+        // ignore
+      }
+    }
+
+    // Run once on mount and on auth changes.
+    claimIfLoggedIn();
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, _session) => {
+      claimIfLoggedIn();
+    });
+
+    return () => {
+      cancelled = true;
+      sub?.subscription?.unsubscribe?.();
+    };
+  }, []);
+
   // Fetch order data to get purchased products (if orderId is in localStorage)
   useEffect(() => {
     const fetchOrderData = async () => {
@@ -2293,6 +2343,22 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
         console.error('Failed to fetch order data:', err);
       }
     };
+
+    const refetchOrderDataWithRetry = async (attempt = 0) => {
+      await fetchOrderData();
+      try {
+        const stored = localStorage.getItem('natavium_purchasedProducts');
+        const parsed = stored ? JSON.parse(stored) : null;
+        const addOns = parsed?.addOns || [];
+        if (Array.isArray(addOns) && addOns.length > 0) return;
+      } catch {
+        // ignore
+      }
+
+      if (attempt >= 4) return;
+      const delayMs = 1200 + attempt * 1500;
+      setTimeout(() => refetchOrderDataWithRetry(attempt + 1), delayMs);
+    };
     fetchOrderData();
 
     // Check for add-on purchase success and clean up URL
@@ -2321,7 +2387,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
         }
 
         // Re-fetch order data to get updated add-ons (small delay for webhook to process)
-        setTimeout(fetchOrderData, 1500);
+        refetchOrderDataWithRetry(0);
       })();
     }
   }, []);
