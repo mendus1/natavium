@@ -81,6 +81,11 @@ export default function ReportsPage() {
           zodiacType: zodiacSystem,
         };
         localStorage.setItem('natavium_chartResult', JSON.stringify(chartToStore));
+
+        const nextBirthData = chartToStore?.meta?.birthData;
+        if (nextBirthData && typeof nextBirthData === 'object') {
+          localStorage.setItem('natavium_birthData', JSON.stringify(nextBirthData));
+        }
       }
 
       if (data?.analyses) {
@@ -110,7 +115,9 @@ export default function ReportsPage() {
         localStorage.setItem('natavium_purchasedProducts', JSON.stringify(purchasedProducts));
       }
 
-      navigate('/chart', { replace: true });
+      // Force a full reload so App state (chartResult/birthData) rehydrates from localStorage.
+      // Without a reload, /chart can continue rendering the previous order's in-memory state.
+      window.location.replace('/chart');
     } finally {
       setOpenOrderId(null);
     }
