@@ -166,6 +166,26 @@ async function getOrderOrFail({ orderId, req }) {
   return { ok: true, user, claimToken };
 }
 
+async function fetchFullOrder(orderId) {
+  const { data: fullOrder, error } = await supabaseAdmin
+    .from('orders')
+    .select('id, user_id, purchased_addons, chart_data, zodiac_system, payment_status, analyses')
+    .eq('id', orderId)
+    .single();
+
+  if (error || !fullOrder) {
+    return { order: null, error: error || new Error('Order not found') };
+  }
+
+  return { order: fullOrder, error: null };
+}
+
+function getCompatibilityAnalysisFromOrder({ fullOrder, zodiacSystem }) {
+  const analyses = fullOrder?.analyses || {};
+  const prefixedKey = `${zodiacSystem}_compatibility`;
+  return analyses[prefixedKey] || analyses.compatibility || null;
+}
+
 export default async function handler(req) {
   if (req.method === 'GET') {
     const url = new URL(req.url);
@@ -186,20 +206,28 @@ export default async function handler(req) {
     }
 
     try {
-      const { data: report, error } = await supabaseAdmin
-        .from('compatibility_reports')
-        .select('id, order_id, zodiac_system, partner_birth_data, label, analysis, created_at')
-        .eq('order_id', orderId)
-        .maybeSingle();
-
-      if (error) {
-        return new Response(JSON.stringify({ error: error.message }), {
-          status: 500,
+      const { order: fullOrder, error: fullError } = await fetchFullOrder(orderId);
+      if (fullError || !fullOrder) {
+        return new Response(JSON.stringify({ error: 'Order not found' }), {
+          status: 404,
           headers: { 'Content-Type': 'application/json' },
         });
       }
 
-      return new Response(JSON.stringify({ report: report || null }), {
+      const zodiacSystem = fullOrder.zodiac_system || 'tropical';
+      const analysis = getCompatibilityAnalysisFromOrder({ fullOrder, zodiacSystem });
+      const partnerBirthData = fullOrder?.chart_data?.meta?.partnerBirthData || null;
+
+      const report = analysis
+        ? {
+          order_id: orderId,
+          zodiac_system: zodiacSystem,
+          partner_birth_data: partnerBirthData,
+          analysis,
+        }
+        : null;
+
+      return new Response(JSON.stringify({ report }), {
         status: 200,
         headers: { 'Content-Type': 'application/json' },
       });
@@ -237,12 +265,7 @@ export default async function handler(req) {
 
       const { user } = access;
 
-      const { data: fullOrder, error: fullError } = await supabaseAdmin
-        .from('orders')
-        .select('id, user_id, purchased_addons, chart_data, zodiac_system, payment_status')
-        .eq('id', orderId)
-        .single();
-
+      const { order: fullOrder, error: fullError } = await fetchFullOrder(orderId);
       if (fullError || !fullOrder) {
         return new Response(JSON.stringify({ error: 'Order not found' }), {
           status: 404,
@@ -260,25 +283,20 @@ export default async function handler(req) {
         });
       }
 
+      const existingAnalysis = getCompatibilityAnalysisFromOrder({ fullOrder, zodiacSystem });
+      if (existingAnalysis?.content) {
+        return new Response(JSON.stringify({ error: 'Compatibility report already exists for this order' }), {
+          status: 409,
+          headers: { 'Content-Type': 'application/json' },
+        });
+      }
+
       const subjectChart = fullOrder.chart_data?.[zodiacSystem] || fullOrder.chart_data;
       const partnerChart = partnerChartData?.[zodiacSystem] || partnerChartData;
 
       if (!subjectChart?.sun?.sign || !partnerChart?.sun?.sign) {
         return new Response(JSON.stringify({ error: 'Invalid chart data' }), {
           status: 400,
-          headers: { 'Content-Type': 'application/json' },
-        });
-      }
-
-      const existing = await supabaseAdmin
-        .from('compatibility_reports')
-        .select('id')
-        .eq('order_id', orderId)
-        .maybeSingle();
-
-      if (existing?.data?.id) {
-        return new Response(JSON.stringify({ error: 'Compatibility report already exists for this order' }), {
-          status: 409,
           headers: { 'Content-Type': 'application/json' },
         });
       }
@@ -313,22 +331,33 @@ export default async function handler(req) {
         onFinish: async ({ text }) => {
           if (!text) return;
 
-          const insertPayload = {
-            order_id: orderId,
-            user_id: fullOrder.user_id || user?.id || null,
-            zodiac_system: zodiacSystem,
-            partner_birth_data: partnerBirthData,
-            partner_chart_data: partnerChartData,
+          const analysisKey = `${zodiacSystem}_compatibility`;
+          const nextAnalysis = {
+            content: text,
+            generatedAt: new Date().toISOString(),
             label: label || null,
-            analysis: {
-              content: text,
-              generatedAt: new Date().toISOString(),
+          };
+
+          const existingAnalyses = fullOrder?.analyses || {};
+          const updatedAnalyses = {
+            ...existingAnalyses,
+            [analysisKey]: nextAnalysis,
+          };
+
+          const existingChartData = fullOrder?.chart_data || {};
+          const updatedChartData = {
+            ...existingChartData,
+            meta: {
+              ...(existingChartData?.meta || {}),
+              partnerBirthData,
+              partnerChartData,
             },
           };
 
           await supabaseAdmin
-            .from('compatibility_reports')
-            .insert(insertPayload);
+            .from('orders')
+            .update({ analyses: updatedAnalyses, chart_data: updatedChartData, user_id: fullOrder.user_id || user?.id || null })
+            .eq('id', orderId);
         },
       });
 

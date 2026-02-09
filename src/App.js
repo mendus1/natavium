@@ -2294,6 +2294,13 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
   useEffect(() => {
     if (activeTab !== 'compatibility') return;
 
+    // If already present in local state (hydrated from localStorage / opened order), use it.
+    if (analyses?.compatibility?.content) {
+      setCompatibilityError("");
+      setCompatibilityReport({ analysis: analyses.compatibility });
+      return;
+    }
+
     const orderId = localStorage.getItem('natavium_orderId');
     if (!orderId || orderId === 'undefined' || orderId === 'null') {
       setCompatibilityReport(null);
@@ -2330,6 +2337,15 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
             ...prev,
             compatibility: payload.report.analysis,
           }));
+
+          try {
+            const stored = localStorage.getItem('natavium_analyses');
+            const parsed = stored ? JSON.parse(stored) : {};
+            const next = { ...parsed, compatibility: payload.report.analysis };
+            localStorage.setItem('natavium_analyses', JSON.stringify(next));
+          } catch {
+            // ignore localStorage write errors
+          }
         }
       } catch (e) {
         setCompatibilityError(e.message || 'Failed to load compatibility report');
@@ -2343,6 +2359,11 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
     const orderId = localStorage.getItem('natavium_orderId');
     if (!orderId || orderId === 'undefined' || orderId === 'null') {
       setCompatibilityError('No order found. Please complete a purchase first.');
+      return;
+    }
+
+    if (compatibilityReport?.analysis?.content || analyses?.compatibility?.content) {
+      setCompatibilityError('Compatibility report already exists for this order.');
       return;
     }
 
@@ -2400,62 +2421,84 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
         })
       });
 
-      const contentType = res.headers.get('content-type') || '';
       if (!res.ok) {
+        if (res.status === 409) {
+          const refetch = await fetch(`/api/compatibility?orderId=${encodeURIComponent(orderId)}`, {
+            headers: {
+              'X-Order-Id': String(orderId),
+              ...(claimToken ? { 'X-Claim-Token': claimToken } : {}),
+              ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+            }
+          });
+
+          const payload = await refetch.json().catch(() => ({}));
+          if (!refetch.ok) {
+            throw new Error(payload?.error || 'Failed to load compatibility report');
+          }
+
+          setCompatibilityReport(payload?.report || null);
+          if (payload?.report?.analysis) {
+            setAnalyses(prev => ({
+              ...prev,
+              compatibility: payload.report.analysis,
+            }));
+            try {
+              const stored = localStorage.getItem('natavium_analyses');
+              const parsed = stored ? JSON.parse(stored) : {};
+              const next = { ...parsed, compatibility: payload.report.analysis };
+              localStorage.setItem('natavium_analyses', JSON.stringify(next));
+            } catch {
+              // ignore localStorage write errors
+            }
+          }
+
+          return;
+        }
+
         const payload = await res.json().catch(() => ({}));
-        throw new Error(payload?.error || 'Failed to create compatibility report');
+        throw new Error(payload?.error || 'Failed to generate compatibility report');
       }
 
-      if (contentType.includes('application/json')) {
-        const payload = await res.json().catch(() => ({}));
+      const reader = res.body?.getReader?.();
+      if (!reader) {
+        throw new Error('Streaming not supported');
+      }
 
-        setCompatibilityReport(payload?.report || null);
+      const decoder = new TextDecoder();
+      let fullText = '';
 
-        if (payload?.report?.analysis) {
-          setAnalyses(prev => ({
-            ...prev,
-            compatibility: payload.report.analysis,
-          }));
-        }
-      } else {
-        const reader = res.body?.getReader?.();
-        if (!reader) {
-          throw new Error('Failed to read compatibility stream');
-        }
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        fullText += decoder.decode(value, { stream: true });
 
-        const decoder = new TextDecoder();
-        let fullText = '';
-
-        while (true) {
-          const { value, done } = await reader.read();
-          if (done) break;
-          fullText += decoder.decode(value, { stream: true });
-
-          const analysis = { content: fullText };
-          setAnalyses(prev => ({
-            ...prev,
-            compatibility: analysis,
-          }));
-          setCompatibilityReport({ analysis });
-        }
-
-        fullText += decoder.decode();
-        const finalAnalysis = {
-          content: fullText,
-          generatedAt: new Date().toISOString(),
-        };
-
+        const analysis = { content: fullText };
         setAnalyses(prev => ({
           ...prev,
-          compatibility: finalAnalysis,
+          compatibility: analysis,
         }));
-        setCompatibilityReport({ analysis: finalAnalysis });
+        setCompatibilityReport({ analysis });
+      }
 
-        const updatedAnalyses = {
-          ...analyses,
-          compatibility: finalAnalysis,
-        };
-        localStorage.setItem('natavium_analyses', JSON.stringify(updatedAnalyses));
+      fullText += decoder.decode();
+      const finalAnalysis = {
+        content: fullText,
+        generatedAt: new Date().toISOString(),
+      };
+
+      setAnalyses(prev => ({
+        ...prev,
+        compatibility: finalAnalysis,
+      }));
+      setCompatibilityReport({ analysis: finalAnalysis });
+
+      try {
+        const stored = localStorage.getItem('natavium_analyses');
+        const parsed = stored ? JSON.parse(stored) : {};
+        const next = { ...parsed, compatibility: finalAnalysis };
+        localStorage.setItem('natavium_analyses', JSON.stringify(next));
+      } catch {
+        // ignore localStorage write errors
       }
     } catch (e) {
       setCompatibilityError(e.message || 'Failed to generate compatibility report');
