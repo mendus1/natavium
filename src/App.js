@@ -3039,7 +3039,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
         {/* Chart content - shown on Natal tab */}
         {activeTab === 'natal' && (
           <>
-            <div className="bg-[#D6B35A]/10 border border-[#D6B35A]/30 rounded-2xl p-6 mb-8 text-center">
+            <div className="card-solid border border-white/10 rounded-2xl p-6 mb-8 text-center">
               <div className="text-4xl mb-2">✨</div>
               <h2 className="text-2xl font-semibold mb-2 gold-gradient-text">Welcome to Your Cosmic Journey!</h2>
               <p className="t-text-muted">Your complete analysis is unlocked.</p>
@@ -3427,7 +3427,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
           {/* Big Three Summary (Compact) */}
           <div className="card-solid rounded-2xl p-6">
             <h2 className="text-xl font-semibold mb-4">Your Big Three</h2>
-            <div className="space-y-3">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               <div className="bg-[#D6B35A]/10 rounded-xl p-4 border border-[#D6B35A]/30">
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-semibold text-[#D6B35A]">☉ {activeChart.sun.sign} Sun</h3>

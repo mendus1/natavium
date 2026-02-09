@@ -15,6 +15,7 @@ export default function ReportsPage() {
   const [orders, setOrders] = useState([]);
   const [loadingOrders, setLoadingOrders] = useState(false);
   const [ordersError, setOrdersError] = useState('');
+  const [claimingOrders, setClaimingOrders] = useState(false);
 
   const [pdfOrderId, setPdfOrderId] = useState(null);
   const [openOrderId, setOpenOrderId] = useState(null);
@@ -158,6 +159,7 @@ export default function ReportsPage() {
 
     localStorage.removeItem('natavium_orderId');
     localStorage.removeItem('natavium_claimToken');
+    localStorage.removeItem('natavium_sessionId');
   }
 
   async function apiFetch(path, init = {}) {
@@ -172,17 +174,43 @@ export default function ReportsPage() {
     });
   }
 
+  async function claimAllEmailOrders() {
+    if (!accessToken) return;
+    if (claimingOrders) return;
+
+    setClaimingOrders(true);
+    try {
+      const res = await apiFetch('/api/claim-email-orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      if (res.ok) {
+        // Once an order is bound to a Supabase user, we no longer need the claim token on this device.
+        localStorage.removeItem('natavium_claimToken');
+      }
+    } finally {
+      setClaimingOrders(false);
+    }
+  }
+
   async function claimMostRecentPurchaseIfPresent() {
     const orderId = localStorage.getItem('natavium_orderId');
-    const claimToken = localStorage.getItem('natavium_claimToken');
 
-    if (!orderId || !claimToken) return;
+    if (!orderId) return;
 
-    await apiFetch('/api/claim-order', {
+    // Intentionally do NOT use claimToken for auto-claim.
+    // Using claimToken here can accidentally bind an order to the wrong signed-in user on shared devices.
+    const res = await apiFetch('/api/claim-order', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ orderId, claimToken }),
+      body: JSON.stringify({ orderId }),
     });
+
+    if (res.ok) {
+      // Once an order is bound to a Supabase user, we no longer need the claim token on this device.
+      localStorage.removeItem('natavium_claimToken');
+    }
   }
 
   async function loadOrders() {
@@ -213,6 +241,7 @@ export default function ReportsPage() {
     if (!accessToken) return;
 
     (async () => {
+      await claimAllEmailOrders();
       await claimMostRecentPurchaseIfPresent();
       await loadOrders();
     })();
@@ -289,6 +318,18 @@ export default function ReportsPage() {
             >
               Back
             </button>
+            {accessToken && (
+              <button
+                onClick={async () => {
+                  await claimAllEmailOrders();
+                  await loadOrders();
+                }}
+                disabled={claimingOrders || loadingOrders}
+                className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-sm disabled:opacity-50"
+              >
+                {claimingOrders ? 'Claiming…' : 'Claim purchases'}
+              </button>
+            )}
             {accessToken && (
               <button
                 onClick={signOut}
@@ -385,6 +426,21 @@ export default function ReportsPage() {
                           <span className="t-text-muted">Package:</span>{' '}
                           <span className="text-white/90">{o.product_type}</span>
                         </div>
+
+                        {(() => {
+                          const birthData = o?.chart_data?.meta?.birthData;
+                          const relationship = birthData?.subjectRelationship;
+                          const initials = birthData?.subjectInitials;
+                          if (!relationship && !initials) return null;
+                          return (
+                            <div className="mt-2 text-sm">
+                              <span className="t-text-muted">Subject:</span>{' '}
+                              <span className="text-white/90">
+                                {(relationship || 'self').toUpperCase()}{initials ? ` • ${initials}` : ''}
+                              </span>
+                            </div>
+                          );
+                        })()}
                       </div>
                       <div className="text-xs px-2 py-1 rounded-lg bg-green-500/10 border border-green-500/20 text-green-200">
                         {o.payment_status}

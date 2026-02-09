@@ -34,7 +34,7 @@ export default async function handler(req, res) {
     const userId = user.id;
     const userEmail = user.email;
 
-    const baseSelect = 'id, product_type, purchased_addons, payment_status, zodiac_system, created_at, user_id, customer_email';
+    const baseSelect = 'id, product_type, purchased_addons, payment_status, zodiac_system, created_at, user_id, customer_email, chart_data';
 
     const { data: claimedOrders, error: claimedError } = await supabaseAdmin
       .from('orders')

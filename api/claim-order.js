@@ -55,7 +55,10 @@ export default async function handler(req, res) {
     const canClaimViaEmail = Boolean(user?.email && order?.customer_email && user.email === order.customer_email);
 
     if (!canClaimViaToken && !canClaimViaEmail) {
-      return res.status(403).json({ error: 'Invalid claim token' });
+      if (claimToken) {
+        return res.status(403).json({ error: 'Invalid claim token' });
+      }
+      return res.status(403).json({ error: 'Order email does not match signed-in user' });
     }
 
     if (order.user_id && order.user_id !== user.id) {
