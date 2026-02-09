@@ -59,6 +59,14 @@ export default function ReportsPage() {
     if (!orderId || openOrderId) return;
     setOpenOrderId(orderId);
 
+    // Clear cached report state up-front so we never show a previous order while loading a new one.
+    // We also set orderId immediately so subsequent calls (like /chart fetching) align to this selection.
+    localStorage.setItem('natavium_orderId', String(orderId));
+    localStorage.removeItem('natavium_analyses');
+    localStorage.removeItem('natavium_analysis');
+    localStorage.removeItem('natavium_chartResult');
+    localStorage.removeItem('natavium_purchasedProducts');
+
     try {
       const res = await apiFetch(`/api/get-order?id=${orderId}`);
       const data = await res.json();
@@ -88,6 +96,10 @@ export default function ReportsPage() {
 
         // Clear legacy single-analysis cache to avoid cross-order bleed
         localStorage.removeItem('natavium_analysis');
+      } else {
+        // Ensure we overwrite any prior order's analyses even if this order has none.
+        localStorage.setItem('natavium_analyses', JSON.stringify({}));
+        localStorage.removeItem('natavium_analysis');
       }
 
       if (data?.purchasedAddons || data?.productType) {
@@ -98,9 +110,7 @@ export default function ReportsPage() {
         localStorage.setItem('natavium_purchasedProducts', JSON.stringify(purchasedProducts));
       }
 
-      localStorage.setItem('natavium_orderId', String(orderId));
-
-      window.location.assign('/chart');
+      navigate('/chart', { replace: true });
     } finally {
       setOpenOrderId(null);
     }
