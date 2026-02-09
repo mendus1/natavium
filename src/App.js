@@ -861,6 +861,38 @@ function InputPage({ birthData, handleInputChange, calculateChart, calcError }) 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
             <div className="bg-white/5 rounded-xl p-4 border border-white/10">
               <label className="flex items-center text-sm font-medium mb-2">
+                Who is this chart for?
+              </label>
+              <select
+                value={birthData.subjectRelationship || 'self'}
+                onChange={(e) => handleInputChange('subjectRelationship', e.target.value)}
+                className="w-full px-3 py-2 rounded-lg bg-[#12142A]/80 border border-white/10 text-white focus:outline-none"
+              >
+                <option value="self">Self</option>
+                <option value="partner">Partner</option>
+                <option value="child">Child</option>
+                <option value="friend">Friend</option>
+                <option value="client">Client</option>
+                <option value="other">Other</option>
+              </select>
+              <p className="text-xs t-text-muted mt-2">Shown in your saved reports and headings</p>
+            </div>
+
+            <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+              <label className="flex items-center text-sm font-medium mb-2">
+                Initials (2–3 letters)
+              </label>
+              <input
+                value={birthData.subjectInitials || ''}
+                onChange={(e) => handleInputChange('subjectInitials', e.target.value)}
+                placeholder="AB"
+                className="w-full px-3 py-2 rounded-lg bg-[#12142A]/80 border border-white/10 text-white placeholder-white/40 focus:outline-none"
+              />
+              <p className="text-xs t-text-muted mt-2">Use initials only (no full names)</p>
+            </div>
+
+            <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+              <label className="flex items-center text-sm font-medium mb-2">
                 <Calendar className="w-4 h-4 mr-2 icon-gold" />
                 Birth date
               </label>
@@ -2016,6 +2048,8 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
   const [pdfGenerating, setPdfGenerating] = useState(false);
   const [analysisLoading, setAnalysisLoading] = useState(false);
   const [compatPartnerBirthData, setCompatPartnerBirthData] = useState({
+    subjectRelationship: "partner",
+    subjectInitials: "",
     birthMonth: "",
     birthDay: "",
     birthYear: "",
@@ -2357,11 +2391,6 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
             ...prev,
             compatibility: payload.report.analysis,
           }));
-          const updatedAnalyses = {
-            ...analyses,
-            compatibility: payload.report.analysis,
-          };
-          localStorage.setItem('natavium_analyses', JSON.stringify(updatedAnalyses));
         }
       } else {
         const reader = res.body?.getReader?.();
@@ -2709,71 +2738,71 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
       {/* Email Modal */}
       {showEmailModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="card-solid rounded-2xl p-6 max-w-md w-full shadow-2xl">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xl font-semibold">Email Your Chart</h3>
-              <button
-                onClick={() => {
-                  setShowEmailModal(false);
-                  setEmailStatus("idle");
-                  setEmailError("");
-                }}
-                className="p-1 hover:bg-white/10 rounded-lg transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            {emailStatus === "success" ? (
-              <div className="text-center py-8">
-                <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Check className="w-8 h-8 text-green-400" />
-                </div>
-                <p className="text-lg font-semibold text-green-400">Email Sent!</p>
-                <p className="t-text-muted text-sm mt-2">Check your inbox for your chart results.</p>
-              </div>
-            ) : (
-              <>
-                <p className="t-text-muted text-sm mb-4">
-                  We'll send your complete chart results including all planetary placements to your email.
-                </p>
-
-                <div className="mb-4">
-                  <label className="block text-sm font-medium mb-2">Email Address</label>
-                  <input
-                    type="email"
-                    value={emailAddress}
-                    onChange={(e) => setEmailAddress(e.target.value)}
-                    placeholder="your@email.com"
-                    className="w-full px-4 py-3 rounded-xl bg-[#12142A]/80 border border-white/10 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[#D6B35A] focus:border-transparent"
-                    disabled={emailStatus === "sending"}
-                  />
-                  {emailError && (
-                    <p className="text-red-400 text-sm mt-2">{emailError}</p>
-                  )}
-                </div>
-
-                <button
-                  onClick={handleSendEmail}
-                  disabled={!emailAddress || emailStatus === "sending"}
-                  className="w-full gold-gradient-btn px-6 py-3 rounded-xl font-bold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                >
-                  {emailStatus === "sending" ? (
-                    <>
-                      <Loader2 className="w-5 h-5 animate-spin" />
-                      Sending...
-                    </>
-                  ) : (
-                    <>
-                      <Mail className="w-5 h-5" />
-                      Send to Email
-                    </>
-                  )}
-                </button>
-              </>
-            )}
+        <div className="card-solid rounded-2xl p-6 max-w-md w-full shadow-2xl">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-xl font-semibold">Email Your Chart</h3>
+            <button
+              onClick={() => {
+                setShowEmailModal(false);
+                setEmailStatus("idle");
+                setEmailError("");
+              }}
+              className="p-1 hover:bg-white/10 rounded-lg transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
           </div>
+
+          {emailStatus === "success" ? (
+            <div className="text-center py-8">
+              <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Check className="w-8 h-8 text-green-400" />
+              </div>
+              <p className="text-lg font-semibold text-green-400">Email Sent!</p>
+              <p className="t-text-muted text-sm mt-2">Check your inbox for your chart results.</p>
+            </div>
+          ) : (
+            <>
+              <p className="t-text-muted text-sm mb-4">
+                We'll send your complete chart results including all planetary placements to your email.
+              </p>
+
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-2">Email Address</label>
+                <input
+                  type="email"
+                  value={emailAddress}
+                  onChange={(e) => setEmailAddress(e.target.value)}
+                  placeholder="your@email.com"
+                  className="w-full px-4 py-3 rounded-xl bg-[#12142A]/80 border border-white/10 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[#D6B35A] focus:border-transparent"
+                  disabled={emailStatus === "sending"}
+                />
+                {emailError && (
+                  <p className="text-red-400 text-sm mt-2">{emailError}</p>
+                )}
+              </div>
+
+              <button
+                onClick={handleSendEmail}
+                disabled={!emailAddress || emailStatus === "sending"}
+                className="w-full gold-gradient-btn px-6 py-3 rounded-xl font-bold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              >
+                {emailStatus === "sending" ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  <>
+                    <Mail className="w-5 h-5" />
+                    Send to Email
+                  </>
+                )}
+              </button>
+            </>
+          )}
         </div>
+      </div>
       )}
 
       <div className="max-w-4xl mx-auto">
@@ -2782,6 +2811,12 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
           <p className="text-lg t-text-muted mb-4">
             {displayDate} • {birthData.time} • {birthData.location}
           </p>
+
+          {(birthData.subjectRelationship || birthData.subjectInitials) && (
+            <p className="text-center t-text-muted text-sm mb-6">
+              {(birthData.subjectRelationship || 'self').toUpperCase()}{birthData.subjectInitials ? ` • ${birthData.subjectInitials}` : ''}
+            </p>
+          )}
 
           <div className="flex justify-center gap-4">
             <button
@@ -2995,7 +3030,12 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
         <div className="space-y-8">
           {/* Premium Chart Wheel */}
           <div id="natal-chart-container" className="card-solid rounded-2xl p-8">
-            <h2 className="font-serif text-2xl font-semibold text-center mb-6 gold-gradient-text">Your Natal Chart</h2>
+            <h2 className="font-serif text-2xl font-semibold text-center mb-2 gold-gradient-text">Your Natal Chart</h2>
+            {(birthData?.subjectRelationship || birthData?.subjectInitials) && (
+              <p className="text-center t-text-muted text-sm mb-6">
+                {(birthData.subjectRelationship || 'self').toUpperCase()}{birthData.subjectInitials ? ` • ${birthData.subjectInitials}` : ''}
+              </p>
+            )}
             {(() => {
               // SVG Path definitions for zodiac signs (scaled for 14px viewBox centered at 0,0)
               const zodiacPaths = {
@@ -3023,7 +3063,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
                 jupiter: "M-4,0 L4,0 M2,-5 L2,5 M-4,5 A5,5 0 0,1 -4,-2", // Jupiter symbol (4-shape)
                 saturn: "M-3,-5 L-3,0 A3,3 0 0,0 3,0 L3,5 M-1,-5 L-5,-5 M0,2 L-4,2", // Saturn h-shape
                 uranus: "M0,-5 L0,2 M-4,2 L4,2 M0,2 L0,5 A3,3 0 1,1 0,5 M-3,-3 L0,-5 L3,-3", // Uranus
-                neptune: "M0,-5 L0,5 M-3,5 L3,5 M-4,-2 A4,3 0 0,1 4,-2 M0,-5 L0,-2", // Trident
+                neptune: "M0,-2 A3,3 0 1,1 0,4 M0,4 L0,6 M-2,5 L2,5 M-3,-4 A5,2 0 0,1 3,-4", // Trident
                 pluto: "M0,-2 A3,3 0 1,1 0,4 M0,4 L0,6 M-2,5 L2,5 M-3,-4 A5,2 0 0,1 3,-4", // Pluto symbol
               };
 
@@ -3662,6 +3702,34 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+                      <label className="block text-sm font-medium mb-2">Who is this for?</label>
+                      <select
+                        value={compatPartnerBirthData.subjectRelationship}
+                        onChange={(e) => setCompatPartnerBirthData(prev => ({ ...prev, subjectRelationship: e.target.value }))}
+                        className="w-full px-3 py-2 rounded-lg bg-[#12142A]/80 border border-white/10 text-white focus:outline-none"
+                      >
+                        <option value="partner">Partner</option>
+                        <option value="friend">Friend</option>
+                        <option value="client">Client</option>
+                        <option value="other">Other</option>
+                      </select>
+                    </div>
+
+                    <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+                      <label className="block text-sm font-medium mb-2">Initials (2–3 letters)</label>
+                      <input
+                        value={compatPartnerBirthData.subjectInitials}
+                        onChange={(e) => {
+                          const raw = e.target.value;
+                          const cleaned = String(raw || '').toUpperCase().replace(/[^A-Z]/g, '').slice(0, 3);
+                          setCompatPartnerBirthData(prev => ({ ...prev, subjectInitials: cleaned }));
+                        }}
+                        placeholder="CD"
+                        className="w-full px-3 py-2 rounded-lg bg-[#12142A]/80 border border-white/10 text-white placeholder-white/40 focus:outline-none"
+                      />
+                    </div>
+
+                    <div className="bg-white/5 rounded-xl p-4 border border-white/10">
                       <label className="block text-sm font-medium mb-2">Birth date</label>
                       <div className="grid grid-cols-3 gap-2">
                         <input
@@ -4044,6 +4112,8 @@ export default function Natavium() {
     const saved = localStorage.getItem("natavium_birthData");
     return saved ? JSON.parse(saved) : {
       date: "",
+      subjectRelationship: "self",
+      subjectInitials: "",
       birthMonth: "",
       birthDay: "",
       birthYear: "",
@@ -4088,7 +4158,15 @@ export default function Natavium() {
 
   const handleInputChange = (field, value) => {
     setBirthData((prev) => {
-      const updated = { ...prev, [field]: value };
+      let nextValue = value;
+      if (field === 'subjectInitials') {
+        nextValue = String(value || '')
+          .toUpperCase()
+          .replace(/[^A-Z]/g, '')
+          .slice(0, 3);
+      }
+
+      const updated = { ...prev, [field]: nextValue };
       // Update the combined time string when hour/minute/period changes
       if (field === "hour" || field === "minute" || field === "period") {
         const h = field === "hour" ? value : prev.hour;

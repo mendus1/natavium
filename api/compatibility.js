@@ -15,6 +15,15 @@ function getHeader(req, name) {
   return req.headers.get(name) || req.headers.get(name.toLowerCase()) || null;
 }
 
+function formatSubjectLabel({ relationship, initials, fallback }) {
+  const rel = relationship ? String(relationship) : '';
+  const init = initials ? String(initials) : '';
+  const left = rel ? rel.replace(/_/g, ' ') : '';
+  const title = left ? left.charAt(0).toUpperCase() + left.slice(1) : '';
+  const combined = [title, init].filter(Boolean).join(' • ');
+  return combined || fallback;
+}
+
 function getBearerToken(req) {
   const authHeader = getHeader(req, 'authorization') || getHeader(req, 'Authorization');
   if (!authHeader) return null;
@@ -87,7 +96,7 @@ function formatChartForPrompt(chartResult, title) {
 `;
 }
 
-function buildCompatibilityPrompt({ zodiacSystem, subjectChart, partnerChart }) {
+function buildCompatibilityPrompt({ zodiacSystem, subjectChart, partnerChart, subjectTitle, partnerTitle }) {
   const systemLine = zodiacSystem === 'sidereal'
     ? 'ZODIAC SYSTEM: SIDEREAL (Fagan-Bradley ayanamsa)'
     : 'ZODIAC SYSTEM: TROPICAL (Western)';
@@ -109,8 +118,8 @@ IMPORTANT:
 - Focus primarily on Sun/Moon/Asc, Venus/Mars, Mercury, Saturn. Outer planets are secondary.
 - Avoid fatalistic language. Keep it practical and supportive.
 
-${formatChartForPrompt(subjectChart, 'Person A (Chart A)')}
-${formatChartForPrompt(partnerChart, 'Person B (Chart B)')}
+${formatChartForPrompt(subjectChart, subjectTitle || 'Person A (Chart A)')}
+${formatChartForPrompt(partnerChart, partnerTitle || 'Person B (Chart B)')}
 
 Write the compatibility report structured as chapters:
 
@@ -274,10 +283,25 @@ export default async function handler(req) {
         });
       }
 
+      const subjectBirthData = fullOrder.chart_data?.meta?.birthData || {};
+      const subjectTitle = formatSubjectLabel({
+        relationship: subjectBirthData?.subjectRelationship,
+        initials: subjectBirthData?.subjectInitials,
+        fallback: 'Person A (Chart A)',
+      });
+
+      const partnerTitle = formatSubjectLabel({
+        relationship: partnerBirthData?.subjectRelationship,
+        initials: partnerBirthData?.subjectInitials,
+        fallback: 'Person B (Chart B)',
+      });
+
       const prompt = buildCompatibilityPrompt({
         zodiacSystem,
         subjectChart,
         partnerChart,
+        subjectTitle,
+        partnerTitle,
       });
 
       const result = streamText({
