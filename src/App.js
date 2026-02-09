@@ -2291,11 +2291,24 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
     }
   };
 
+  const handleUnlockClick = (tab) => {
+    if (tab.id === 'compatibility') {
+      // Open compatibility modal
+      setShowCompatibilityModal(true);
+    } else {
+      // Pre-select the clicked add-on and open modal
+      setSelectedAddOns([tab.id]);
+      setUpsellTab(tab);
+    }
+  };
+
+  const compatibilityContent = analyses?.compatibility?.content;
+
   useEffect(() => {
     if (activeTab !== 'compatibility') return;
 
     // If already present in local state (hydrated from localStorage / opened order), use it.
-    if (analyses?.compatibility?.content) {
+    if (compatibilityContent) {
       setCompatibilityError("");
       setCompatibilityReport({ analysis: analyses.compatibility });
       return;
@@ -2353,7 +2366,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
         setCompatibilityLoading(false);
       }
     })();
-  }, [activeTab]);
+  }, [activeTab, compatibilityContent]);
 
   const handleGenerateCompatibility = async () => {
     const orderId = localStorage.getItem('natavium_orderId');
