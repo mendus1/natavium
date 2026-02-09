@@ -2292,14 +2292,9 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
   };
 
   const handleUnlockClick = (tab) => {
-    if (tab.id === 'compatibility') {
-      // Open compatibility modal
-      setShowCompatibilityModal(true);
-    } else {
-      // Pre-select the clicked add-on and open modal
-      setSelectedAddOns([tab.id]);
-      setUpsellTab(tab);
-    }
+    // Pre-select the clicked add-on and open modal
+    setSelectedAddOns([tab.id]);
+    setUpsellTab(tab);
   };
 
   const compatibilityContent = analyses?.compatibility?.content;
