@@ -21,6 +21,25 @@ export default function ReportsPage() {
 
   const accessToken = useMemo(() => session?.access_token || null, [session]);
 
+  function handleBack() {
+    // Prefer true browser back navigation so we return to /chart when coming from an analysis.
+    // If there is no usable history entry, fall back to /chart if we have an order/chart cached.
+    const hasCachedChart = !!localStorage.getItem('natavium_chartResult');
+    const hasCachedOrder = !!localStorage.getItem('natavium_orderId');
+
+    if (window.history.length > 1) {
+      navigate(-1);
+      return;
+    }
+
+    if (hasCachedChart || hasCachedOrder) {
+      navigate('/chart');
+      return;
+    }
+
+    navigate('/');
+  }
+
   useEffect(() => {
     const hash = window.location.hash;
     if (!hash || hash.length < 2) return;
@@ -265,7 +284,7 @@ export default function ReportsPage() {
 
           <div className="flex items-center gap-3">
             <button
-              onClick={() => navigate('/')}
+              onClick={handleBack}
               className="px-4 py-2 rounded-xl bg-[#12142A]/80 border border-white/10 hover:bg-[#12142A] hover:border-white/20 transition-all text-sm"
             >
               Back

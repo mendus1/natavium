@@ -1129,7 +1129,7 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
         {/* Sun Sign Heading */}
         <div className="text-center mb-6">
           <h2 className="font-serif text-3xl md:text-4xl font-semibold gold-gradient-text flex items-center justify-center gap-2">
-            <BrandStar className="w-8 h-8 icon-gold" /> You're a {activeChart.sun.sign}! <BrandStar className="w-8 h-8 icon-gold" />
+            <BrandStar className="w-8 h-8 icon-gold" /> A {activeChart.sun.sign}! <BrandStar className="w-8 h-8 icon-gold" />
           </h2>
           <p className="text-sm t-text-muted mt-1">({zodiacLabel} Zodiac)</p>
         </div>
@@ -1739,7 +1739,28 @@ function SuccessPage({ setIsPremium, chartResult, selectedBundle }) {
   const [generationStatus, setGenerationStatus] = useState('starting'); // starting, generating, complete, error
   const [streamedText, setStreamedText] = useState('');
   const [error, setError] = useState(null);
-  const zodiacType = chartResult?.zodiacType || 'tropical';
+  const chartResultForPrompt = (() => {
+    if (chartResult) return chartResult;
+    try {
+      const saved = localStorage.getItem('natavium_chartResult');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  })();
+
+  const zodiacType = chartResultForPrompt?.zodiacType || 'tropical';
+
+  const birthDataForPrompt = (() => {
+    try {
+      const fromChart = chartResult?.meta?.birthData;
+      if (fromChart) return fromChart;
+      const saved = localStorage.getItem('natavium_birthData');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  })();
 
   // Check if we have chart data (from props or localStorage)
   const hasChartData = chartResult || localStorage.getItem("natavium_chartResult");
@@ -1776,9 +1797,10 @@ function SuccessPage({ setIsPremium, chartResult, selectedBundle }) {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            chartResult,
+            chartResult: chartResultForPrompt,
             productType: selectedBundle || 'essential',
             analysisType: 'natal',
+            birthData: birthDataForPrompt,
             zodiacSystem: zodiacType,
           }),
         });
@@ -1901,17 +1923,20 @@ function SuccessPage({ setIsPremium, chartResult, selectedBundle }) {
             <div className="w-20 h-20 bg-[#D6B35A]/20 rounded-full flex items-center justify-center mx-auto mb-6">
               <Sparkles className="w-10 h-10 text-[#D6B35A] animate-pulse" />
             </div>
-            <h1 className="font-serif text-4xl font-semibold gold-gradient-text mb-4">Creating Your Reading</h1>
+            <h1 className="font-serif text-4xl font-semibold gold-gradient-text mb-4">Consulting the Stars</h1>
             <p className="t-text-muted text-lg mb-4">
               GPT is analyzing your unique cosmic blueprint...
             </p>
 
             {/* Live streaming preview */}
             {streamedText && (
-              <div className="mt-4 bg-white/5 rounded-xl p-4 max-h-48 overflow-y-auto text-left border border-white/10">
-                <p className="text-white/70 text-sm whitespace-pre-wrap">
-                  {streamedText.slice(0, 500)}{streamedText.length > 500 ? '...' : ''}
-                </p>
+              <div className="mt-6 card-solid rounded-2xl p-6 text-left border border-white/10">
+                <div className="text-xs t-text-muted mb-3">Streaming preview</div>
+                <div className="max-h-64 overflow-y-auto">
+                  <p className="text-white/80 text-sm whitespace-pre-wrap leading-relaxed">
+                    {streamedText}
+                  </p>
+                </div>
               </div>
             )}
             <p className="t-text-muted text-sm mt-4">

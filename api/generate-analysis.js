@@ -88,6 +88,36 @@ ZODIAC SYSTEM: TROPICAL (Western)
 - Interpret placements using traditional Western psychological astrology.`;
 }
 
+function buildAgeContext(birthData) {
+  const year = Number(birthData?.birthYear);
+  const month = Number(birthData?.birthMonth);
+  const day = Number(birthData?.birthDay);
+
+  if (!Number.isFinite(year) || !Number.isFinite(month) || !Number.isFinite(day)) return '';
+  if (year < 1900 || year > new Date().getFullYear()) return '';
+  if (month < 1 || month > 12) return '';
+  if (day < 1 || day > 31) return '';
+
+  const dob = new Date(Date.UTC(year, month - 1, day));
+  if (Number.isNaN(dob.getTime())) return '';
+
+  const now = new Date();
+  let age = now.getUTCFullYear() - dob.getUTCFullYear();
+  const m = now.getUTCMonth() - dob.getUTCMonth();
+  if (m < 0 || (m === 0 && now.getUTCDate() < dob.getUTCDate())) age -= 1;
+  if (!Number.isFinite(age) || age < 0 || age > 120) return '';
+
+  if (age < 13) {
+    return `\n\nAUDIENCE CONTEXT:\n- The recipient is approximately ${age} years old (a child).\n- Keep guidance age-appropriate: focus on family, school, friendships, emotional regulation, confidence, creativity, and healthy routines.\n- Avoid adult topics and adult-life assumptions (career planning, marriage/sexual themes, substance use, explicit mental-health diagnostics, financial investing, etc.).\n- Keep it supportive and practical while still respectful and not "baby talk".`;
+  }
+
+  if (age < 18) {
+    return `\n\nAUDIENCE CONTEXT:\n- The recipient is approximately ${age} years old (a minor).\n- Keep guidance age-appropriate: focus on school/learning, identity development, friendships, family dynamics, self-esteem, boundaries, and healthy habits.\n- Avoid adult-life assumptions and explicit content (marriage/sexual themes, investing/career-finality, etc.).`;
+  }
+
+  return `\n\nAUDIENCE CONTEXT:\n- The recipient is approximately ${age} years old (an adult).`;
+}
+
 // Build the prompt based on product tier
 function buildPrompt(chartResult, productType) {
   const config = PRODUCT_CONFIG[productType] || PRODUCT_CONFIG.base;
@@ -523,6 +553,7 @@ export default async function handler(req) {
     const zodiacSystem = explicitZodiacSystem || parsed.zodiacSystem;
     const baseType = parsed.baseType;
     const zodiacContext = getZodiacSystemContext(zodiacSystem);
+    const ageContext = buildAgeContext(birthData);
 
     // Validate required data
     if (!chartResult) {
@@ -550,7 +581,7 @@ export default async function handler(req) {
       const addonConfig = ADDON_CONFIG[baseType];
       const prompts = buildAddonPrompt(activeChart, baseType, birthData);
 
-      systemPrompt = prompts.systemPrompt + '\n' + zodiacContext;
+      systemPrompt = prompts.systemPrompt + '\n' + zodiacContext + ageContext;
       userPrompt = prompts.userPrompt;
       model = addonConfig.model;
       maxTokens = addonConfig.maxTokens;
@@ -583,7 +614,7 @@ ASTROLOGICAL EXPERTISE:
 FORMAT:
 - Use clean Markdown: ## for major headers, ### for subsections, #### for sub-subsections
 - Use **bold** for planet/sign combinations
-- Use bullet points for lists where appropriate`;
+- Use bullet points for lists where appropriate${ageContext}`;
 
       userPrompt = `${chartDataSection}\n\n${analysisRequest}`;
       model = config.model;
