@@ -3611,12 +3611,19 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
                 </div>
               )}
 
-              {compatibilityLoading ? (
+              {compatibilityLoading && !compatibilityReport?.analysis?.content ? (
                 <div className="flex flex-col items-center justify-center py-12">
                   <Loader2 className="w-10 h-10 text-[#D6B35A] animate-spin mb-4" />
                   <p className="t-text-muted">Loading compatibility…</p>
                 </div>
               ) : compatibilityReport?.analysis?.content ? (
+                <div>
+                  {compatibilityLoading && (
+                    <div className="flex items-center gap-3 t-text-muted mb-6">
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      Generating…
+                    </div>
+                  )}
                 <div className="prose prose-invert max-w-none">
                   {compatibilityReport.analysis.content.split('\n').map((line, idx) => {
                     if (line.startsWith('## ')) {
@@ -3654,6 +3661,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
                       </p>
                     );
                   })}
+                </div>
                 </div>
               ) : (
                 <div>
