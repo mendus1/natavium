@@ -63,7 +63,7 @@ function OngoingPage() {
             </div>
             <div>
               <h1 className="font-serif text-3xl md:text-4xl font-semibold gold-gradient-text">Ongoing Reports</h1>
-              <p className="t-text-muted text-sm">Coming shortly — weekly guidance tied to your natal chart.</p>
+              <p className="t-text-muted text-sm">Coming Soon — weekly guidance tied to your natal chart.</p>
             </div>
           </div>
 
@@ -83,7 +83,7 @@ function OngoingPage() {
                 A weekly forecast tailored to your chart: themes, best days, watch-outs, and where to focus.
               </p>
             </div>
-            <span className="text-xs bg-[#69D2FF]/20 px-2 py-1 rounded text-[#69D2FF] border border-[#69D2FF]/20">Coming shortly</span>
+            <span className="text-xs bg-[#69D2FF]/20 px-2 py-1 rounded text-[#69D2FF] border border-[#69D2FF]/20">Coming Soon</span>
           </div>
 
           <div className="mt-6 bg-white/5 rounded-xl p-5 border border-white/10">
@@ -717,6 +717,22 @@ function InfoPage() {
                     <Check className="w-4 h-4 text-[#69D2FF] mr-2" />
                     <span>All chart systems</span>
                   </div>
+                </div>
+
+                <div className="mt-5 flex items-center justify-between gap-4">
+                  <div className="text-xs t-text-muted">
+                    Explore a sample to see what this will feel like.
+                  </div>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      await logEvent('subscription_interest_clicked', { product: 'natavium_plus', surface: 'services_pricing' });
+                      navigate('/ongoing');
+                    }}
+                    className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-sm"
+                  >
+                    View sample
+                  </button>
                 </div>
               </div>
             </div>
@@ -1637,9 +1653,9 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
             <div>
               <div className="text-sm t-text-muted">Ongoing Reports</div>
               <h3 className="text-xl font-semibold mt-1">Weekly Astro Weather</h3>
-              <p className="t-text-muted text-sm mt-2">A weekly forecast tailored to your natal chart. Coming shortly.</p>
+              <p className="t-text-muted text-sm mt-2">A weekly forecast tailored to your natal chart. Coming Soon.</p>
             </div>
-            <span className="text-xs bg-[#69D2FF]/20 px-2 py-1 rounded text-[#69D2FF] border border-[#69D2FF]/20">Coming shortly</span>
+            <span className="text-xs bg-[#69D2FF]/20 px-2 py-1 rounded text-[#69D2FF] border border-[#69D2FF]/20">Coming Soon</span>
           </div>
           <button
             onClick={async () => {
@@ -3161,9 +3177,9 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
             <div>
               <div className="text-sm t-text-muted">Ongoing Reports</div>
               <h3 className="text-xl font-semibold mt-1">Weekly Astro Weather</h3>
-              <p className="t-text-muted text-sm mt-2">Get weekly guidance tied to your natal chart. Coming shortly.</p>
+              <p className="t-text-muted text-sm mt-2">Get weekly guidance tied to your natal chart. Coming Soon.</p>
             </div>
-            <span className="text-xs bg-[#69D2FF]/20 px-2 py-1 rounded text-[#69D2FF] border border-[#69D2FF]/20">Coming shortly</span>
+            <span className="text-xs bg-[#69D2FF]/20 px-2 py-1 rounded text-[#69D2FF] border border-[#69D2FF]/20">Coming Soon</span>
           </div>
           <button
             onClick={async () => {

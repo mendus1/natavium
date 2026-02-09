@@ -429,9 +429,9 @@ export default function ReportsPage() {
                 <div>
                   <div className="text-sm t-text-muted">Ongoing Reports</div>
                   <h3 className="text-xl font-semibold mt-1">Weekly Astro Weather</h3>
-                  <p className="t-text-muted text-sm mt-2">A weekly forecast tailored to your natal chart. Coming shortly.</p>
+                  <p className="t-text-muted text-sm mt-2">A weekly forecast tailored to your natal chart. Coming Soon.</p>
                 </div>
-                <span className="text-xs bg-[#69D2FF]/20 px-2 py-1 rounded text-[#69D2FF] border border-[#69D2FF]/20">Coming shortly</span>
+                <span className="text-xs bg-[#69D2FF]/20 px-2 py-1 rounded text-[#69D2FF] border border-[#69D2FF]/20">Coming Soon</span>
               </div>
               <button
                 onClick={async () => {
