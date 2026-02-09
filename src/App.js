@@ -2291,13 +2291,8 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
     }
   };
 
-  const handleUnlockClick = (tab) => {
-    // Pre-select the clicked add-on and open modal
-    setSelectedAddOns([tab.id]);
-    setUpsellTab(tab);
-  };
-
-  const compatibilityContent = analyses?.compatibility?.content;
+  const compatibilityAnalysis = analyses?.compatibility;
+  const compatibilityContent = compatibilityAnalysis?.content;
 
   useEffect(() => {
     if (activeTab !== 'compatibility') return;
@@ -2305,7 +2300,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
     // If already present in local state (hydrated from localStorage / opened order), use it.
     if (compatibilityContent) {
       setCompatibilityError("");
-      setCompatibilityReport({ analysis: analyses.compatibility });
+      setCompatibilityReport({ analysis: compatibilityAnalysis });
       return;
     }
 
@@ -2361,7 +2356,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
         setCompatibilityLoading(false);
       }
     })();
-  }, [activeTab, compatibilityContent]);
+  }, [activeTab, compatibilityAnalysis, compatibilityContent]);
 
   const handleGenerateCompatibility = async () => {
     const orderId = localStorage.getItem('natavium_orderId');
