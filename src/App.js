@@ -2548,13 +2548,16 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
 
     setCheckoutLoading(true);
     try {
+      const claimToken = localStorage.getItem('natavium_claimToken');
+      const { data: sessionData } = await supabase.auth.getSession();
+      const accessToken = sessionData?.session?.access_token;
+
       const response = await fetch('/api/create-addon-checkout', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          ...(localStorage.getItem('natavium_claimToken')
-            ? { 'X-Claim-Token': localStorage.getItem('natavium_claimToken') }
-            : {}),
+          ...(claimToken ? { 'X-Claim-Token': claimToken } : {}),
+          ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
         },
         body: JSON.stringify({
           orderId,
@@ -2562,14 +2565,14 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
         }),
       });
 
-      const data = await response.json();
+      const responseData = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || 'Checkout failed');
+        throw new Error(responseData.error || 'Checkout failed');
       }
 
       // Redirect to Stripe
-      window.location.href = data.url;
+      window.location.href = responseData.url;
     } catch (error) {
       console.error('Add-on checkout error:', error);
       alert(error.message || 'Failed to start checkout. Please try again.');
