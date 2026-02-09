@@ -2138,9 +2138,12 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
 
       try {
         const claimToken = localStorage.getItem('natavium_claimToken');
+        const { data: sessionData } = await supabase.auth.getSession();
+        const accessToken = sessionData?.session?.access_token;
         const res = await fetch(`/api/get-order?id=${orderId}`, {
           headers: {
             ...(claimToken ? { 'X-Claim-Token': claimToken } : {}),
+            ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
           }
         });
         if (res.ok) {
@@ -2163,8 +2166,29 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
     if (urlParams.get('addon_success') === 'true') {
       // Clear the URL param
       window.history.replaceState({}, '', window.location.pathname);
-      // Re-fetch order data to get updated add-ons (small delay for webhook to process)
-      setTimeout(fetchOrderData, 1500);
+
+      // Silently claim any paid orders for this email (if logged in), then refresh entitlements.
+      (async () => {
+        try {
+          const { data: sessionData } = await supabase.auth.getSession();
+          const accessToken = sessionData?.session?.access_token;
+          if (accessToken) {
+            await fetch('/api/claim-email-orders', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${accessToken}`,
+              },
+              body: JSON.stringify({}),
+            });
+          }
+        } catch {
+          // ignore
+        }
+
+        // Re-fetch order data to get updated add-ons (small delay for webhook to process)
+        setTimeout(fetchOrderData, 1500);
+      })();
     }
   }, []);
 
