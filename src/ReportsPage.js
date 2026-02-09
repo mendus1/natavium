@@ -22,6 +22,39 @@ export default function ReportsPage() {
 
   const accessToken = useMemo(() => session?.access_token || null, [session]);
 
+  function getOrCreateSessionId() {
+    try {
+      const existing = localStorage.getItem('natavium_sessionId');
+      if (existing) return existing;
+      const id = `${Date.now()}_${Math.random().toString(16).slice(2)}`;
+      localStorage.setItem('natavium_sessionId', id);
+      return id;
+    } catch {
+      return null;
+    }
+  }
+
+  async function logEvent(eventName, props = {}) {
+    try {
+      const sessionId = getOrCreateSessionId();
+
+      await fetch('/api/log-event', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+        },
+        body: JSON.stringify({
+          eventName,
+          props,
+          sessionId,
+        }),
+      });
+    } catch {
+      // ignore
+    }
+  }
+
   function handleBack() {
     // Prefer true browser back navigation so we return to /chart when coming from an analysis.
     // If there is no usable history entry, fall back to /chart if we have an order/chart cached.
@@ -391,6 +424,26 @@ export default function ReportsPage() {
           </div>
         ) : (
           <div className="space-y-4">
+            <div className="card-solid rounded-2xl p-6">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <div className="text-sm t-text-muted">Ongoing Reports</div>
+                  <h3 className="text-xl font-semibold mt-1">Weekly Astro Weather</h3>
+                  <p className="t-text-muted text-sm mt-2">A weekly forecast tailored to your natal chart. Coming shortly.</p>
+                </div>
+                <span className="text-xs bg-[#69D2FF]/20 px-2 py-1 rounded text-[#69D2FF] border border-[#69D2FF]/20">Coming shortly</span>
+              </div>
+              <button
+                onClick={async () => {
+                  await logEvent('ongoing_teaser_clicked', { surface: 'reports', product: 'weekly_astro_weather' });
+                  navigate('/ongoing');
+                }}
+                className="mt-4 px-5 py-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-sm"
+              >
+                View sample
+              </button>
+            </div>
+
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-semibold">Your purchases</h2>
               <button

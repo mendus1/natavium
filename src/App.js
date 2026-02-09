@@ -35,6 +35,109 @@ import "./App.css";
 import "./theme-cosmic.css";
 import "./theme-tokens.css";
 
+function getOrCreateSessionId() {
+  try {
+    const existing = localStorage.getItem('natavium_sessionId');
+    if (existing) return existing;
+    const id = `${Date.now()}_${Math.random().toString(16).slice(2)}`;
+    localStorage.setItem('natavium_sessionId', id);
+    return id;
+  } catch {
+    return null;
+  }
+}
+
+// =========================
+// Ongoing (Coming Soon)
+// =========================
+function OngoingPage() {
+  const navigate = useNavigate();
+
+  return (
+    <div className="min-h-screen px-6 py-6">
+      <div className="max-w-4xl mx-auto">
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
+              <TrendingUp className="w-5 h-5 text-[#69D2FF]" />
+            </div>
+            <div>
+              <h1 className="font-serif text-3xl md:text-4xl font-semibold gold-gradient-text">Ongoing Reports</h1>
+              <p className="t-text-muted text-sm">Coming shortly — weekly guidance tied to your natal chart.</p>
+            </div>
+          </div>
+
+          <button
+            onClick={() => navigate(-1)}
+            className="px-4 py-2 rounded-xl bg-[#12142A]/80 border border-white/10 hover:bg-[#12142A] hover:border-white/20 transition-all text-sm"
+          >
+            Back
+          </button>
+        </div>
+
+        <div className="card-solid rounded-2xl p-8 mb-6">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h2 className="font-serif text-2xl font-semibold gold-gradient-text">Weekly Astro Weather</h2>
+              <p className="t-text-muted mt-2">
+                A weekly forecast tailored to your chart: themes, best days, watch-outs, and where to focus.
+              </p>
+            </div>
+            <span className="text-xs bg-[#69D2FF]/20 px-2 py-1 rounded text-[#69D2FF] border border-[#69D2FF]/20">Coming shortly</span>
+          </div>
+
+          <div className="mt-6 bg-white/5 rounded-xl p-5 border border-white/10">
+            <div className="text-sm font-semibold mb-2">Sample (preview)</div>
+            <div className="space-y-2 text-sm t-text-muted">
+              <p><span className="text-white/90 font-semibold">Theme:</span> Clarity in communication and self-definition.</p>
+              <p><span className="text-white/90 font-semibold">Best days:</span> Midweek for decisions, weekend for connection.</p>
+              <p><span className="text-white/90 font-semibold">Watch-outs:</span> Overcommitting or reading too much into signals.</p>
+            </div>
+
+            <button
+              onClick={async () => {
+                await logEvent('ongoing_sample_opened', { product: 'weekly_astro_weather', surface: 'ongoing_page' });
+              }}
+              className="mt-5 px-5 py-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-sm"
+            >
+              I want this weekly
+            </button>
+          </div>
+        </div>
+
+        <div className="card-solid rounded-2xl p-6">
+          <div className="text-sm t-text-muted">
+            You’ll be able to subscribe soon. For now, you can still purchase one-off deep dives from your chart.
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+async function logEvent(eventName, props = {}) {
+  try {
+    const sessionId = getOrCreateSessionId();
+    const { data: sessionData } = await supabase.auth.getSession();
+    const accessToken = sessionData?.session?.access_token;
+
+    await fetch('/api/log-event', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+      },
+      body: JSON.stringify({
+        eventName,
+        props,
+        sessionId,
+      }),
+    });
+  } catch {
+    // ignore
+  }
+}
+
 // Theme Context for global theme switching
 const ThemeContext = createContext({
   theme: 'theme-original',
@@ -647,6 +750,17 @@ function LandingPage() {
             My Reports
           </button>
           <button
+            onClick={async () => {
+              await logEvent('nav_clicked', { destination: 'ongoing' });
+              navigate('/ongoing');
+            }}
+            className="t-btn-secondary text-sm"
+          >
+            <TrendingUp className="w-4 h-4 mr-2 text-[#69D2FF]" strokeWidth={1} />
+            Ongoing
+            <span className="ml-2 text-[10px] bg-[#69D2FF]/20 px-1.5 py-0.5 rounded text-[#69D2FF]">Soon</span>
+          </button>
+          <button
             onClick={() => navigate("/info/systems")}
             className="t-btn-secondary text-sm"
           >
@@ -854,7 +968,7 @@ function InputPage({ birthData, handleInputChange, calculateChart, calcError }) 
       <div className="max-w-2xl w-full">
         <div className="text-center mb-8">
           <h2 className="font-serif text-4xl md:text-5xl font-semibold gold-gradient-text mb-3">Enter Your Birth Details</h2>
-          <p className="text-base t-text-muted">Exact time and location create your unique chart</p>
+          <p className="text-base t-text-muted">To beging enter the date, time, & location of birth. This is the basis of all additional services</p>
         </div>
 
         <div className="card-solid rounded-2xl p-8">
@@ -945,7 +1059,7 @@ function InputPage({ birthData, handleInputChange, calculateChart, calcError }) 
                   <option value="PM">PM</option>
                 </select>
               </div>
-              <p className="text-xs t-text-muted mt-2">Check birth certificate for exact time</p>
+              <p className="text-xs t-text-muted mt-2">Check birth certificate. Use noon if time is unknown.</p>
             </div>
 
             <div className="bg-white/5 rounded-xl p-4 border border-white/10 md:col-span-2">
@@ -1051,14 +1165,14 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
   const [selectedAddOns, setSelectedAddOns] = useState([]);
   const [teaser, setTeaser] = useState(null);
   const [teaserLoading, setTeaserLoading] = useState(false);
-  const [teaserError, setTeaserError] = useState(null);
+  const [teaserError, setTeaserError] = useState("");
+  const navigate = useNavigate();
 
-  // Get the active chart based on selected zodiac system
-  // Supports both old flat format and new { tropical, sidereal, meta } format
   const zodiacType = chartResult?.zodiacType || 'tropical';
   const activeChart = chartResult?.tropical ? chartResult[zodiacType] : chartResult;
   const zodiacLabel = zodiacType === 'sidereal' ? 'Sidereal' : 'Tropical';
 
+  // ... (rest of the code remains the same)
   // Fetch AI teaser on mount
   useEffect(() => {
     if (!chartResult) return;
@@ -1516,6 +1630,26 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
             <Lock className="w-8 h-8 icon-gold mx-auto mb-2" />
             <p className="t-text-muted text-sm">Select a package below to unlock your full reading</p>
           </div>
+        </div>
+
+        <div className="card-solid rounded-2xl p-6 mb-8">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <div className="text-sm t-text-muted">Ongoing Reports</div>
+              <h3 className="text-xl font-semibold mt-1">Weekly Astro Weather</h3>
+              <p className="t-text-muted text-sm mt-2">A weekly forecast tailored to your natal chart. Coming shortly.</p>
+            </div>
+            <span className="text-xs bg-[#69D2FF]/20 px-2 py-1 rounded text-[#69D2FF] border border-[#69D2FF]/20">Coming shortly</span>
+          </div>
+          <button
+            onClick={async () => {
+              await logEvent('ongoing_teaser_clicked', { surface: 'preview', product: 'weekly_astro_weather' });
+              navigate('/ongoing');
+            }}
+            className="mt-4 px-5 py-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-sm"
+          >
+            View sample
+          </button>
         </div>
 
         {/* Bundle Selection */}
@@ -2956,6 +3090,26 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
           </div>
         </div>
 
+        <div className="card-solid rounded-2xl p-6 mb-6">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <div className="text-sm t-text-muted">Ongoing Reports</div>
+              <h3 className="text-xl font-semibold mt-1">Weekly Astro Weather</h3>
+              <p className="t-text-muted text-sm mt-2">Get weekly guidance tied to your natal chart. Coming shortly.</p>
+            </div>
+            <span className="text-xs bg-[#69D2FF]/20 px-2 py-1 rounded text-[#69D2FF] border border-[#69D2FF]/20">Coming shortly</span>
+          </div>
+          <button
+            onClick={async () => {
+              await logEvent('ongoing_teaser_clicked', { surface: 'chart', product: 'weekly_astro_weather' });
+              navigate('/ongoing');
+            }}
+            className="mt-4 px-5 py-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-sm"
+          >
+            View sample
+          </button>
+        </div>
+
         {/* Tab Navigation */}
         <nav className="flex gap-1 overflow-x-auto bg-[#12142A]/60 rounded-2xl p-2 mb-6 scrollbar-hide border border-white/10">
           {DASHBOARD_TABS.map((tab) => {
@@ -4369,6 +4523,7 @@ export default function Natavium() {
       <div className={theme}>
         <Routes>
           <Route path="/" element={<LandingPage />} />
+          <Route path="/ongoing" element={<OngoingPage />} />
           <Route path="/reports" element={<ReportsPage />} />
           <Route path="/input" element={
             <InputPage
