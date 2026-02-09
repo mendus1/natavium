@@ -3523,29 +3523,19 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
                 </h2>
               </div>
 
-              {generatingTab === activeTab ? (
+              {generatingTab === activeTab && !currentAnalysis?.content ? (
                 <div className="flex flex-col items-center justify-center py-12">
                   <Loader2 className="w-10 h-10 text-[#D6B35A] animate-spin mb-4" />
                   <p className="t-text-muted">Generating your {DASHBOARD_TABS.find(t => t.id === activeTab)?.label.toLowerCase()} analysis...</p>
-                  {currentAnalysis?.content && (
-                    <div className="mt-6 w-full prose prose-invert max-w-none opacity-70">
-                      {currentAnalysis.content.split('\n').slice(0, 10).map((line, idx) => {
-                        if (line.startsWith('## ')) {
-                          return <h3 key={idx} className="text-xl font-semibold text-[#D6B35A] mt-4 mb-2">{line.replace('## ', '')}</h3>;
-                        }
-                        if (line.startsWith('### ')) {
-                          return <h4 key={idx} className="text-lg font-semibold text-white/90 mt-3 mb-1">{line.replace('### ', '')}</h4>;
-                        }
-                        if (line.startsWith('#### ')) {
-                          return <h5 key={idx} className="text-base font-medium t-text-muted mt-2 mb-1">{line.replace('#### ', '')}</h5>;
-                        }
-                        if (line.trim() === '') return <div key={idx} className="h-2" />;
-                        return <p key={idx} className="text-white/80 leading-relaxed mb-2">{line.replace(/\*\*(.*?)\*\*/g, '$1')}</p>;
-                      })}
-                    </div>
-                  )}
                 </div>
               ) : currentAnalysis?.content ? (
+                <div>
+                  {generatingTab === activeTab && (
+                    <div className="flex items-center gap-3 t-text-muted mb-6">
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      Generating…
+                    </div>
+                  )}
                 <div className="prose prose-invert max-w-none">
                   {currentAnalysis.content.split('\n').map((line, idx) => {
                     if (line.startsWith('## ')) {
@@ -3563,6 +3553,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
                     if (line.trim() === '') return <div key={idx} className="h-2" />;
                     return <p key={idx} className="text-white/80 leading-relaxed mb-3">{line.replace(/\*\*(.*?)\*\*/g, '$1')}</p>;
                   })}
+                </div>
                 </div>
               ) : (
                 <div className="text-center py-8">

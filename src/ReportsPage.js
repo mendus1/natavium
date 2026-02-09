@@ -136,6 +136,9 @@ export default function ReportsPage() {
   async function signOut() {
     await supabase.auth.signOut();
     setOrders([]);
+
+    localStorage.removeItem('natavium_orderId');
+    localStorage.removeItem('natavium_claimToken');
   }
 
   async function apiFetch(path, init = {}) {
