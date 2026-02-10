@@ -2237,6 +2237,9 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
   const [compatibilityLoading, setCompatibilityLoading] = useState(false);
   const [compatibilityError, setCompatibilityError] = useState("");
   const [compatibilityReport, setCompatibilityReport] = useState(null);
+  const [compatibilityRunsRemaining, setCompatibilityRunsRemaining] = useState(null);
+  const [compatibilityComparisons, setCompatibilityComparisons] = useState([]);
+  const [selectedCompatibilityComparisonId, setSelectedCompatibilityComparisonId] = useState('latest');
 
   // Get the active chart based on selected zodiac system
   // Supports both old flat format and new { tropical, sidereal, meta } format
@@ -2542,7 +2545,6 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
     if (compatibilityContent) {
       setCompatibilityError("");
       setCompatibilityReport({ analysis: compatibilityAnalysis });
-      return;
     }
 
     const orderId = localStorage.getItem('natavium_orderId');
@@ -2574,6 +2576,13 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
           throw new Error(payload?.error || 'Failed to load compatibility report');
         }
 
+        if (Number.isFinite(payload?.runsRemaining)) {
+          setCompatibilityRunsRemaining(payload.runsRemaining);
+        }
+        if (Array.isArray(payload?.comparisons)) {
+          setCompatibilityComparisons(payload.comparisons);
+        }
+
         setCompatibilityReport(payload?.report || null);
 
         if (payload?.report?.analysis) {
@@ -2599,15 +2608,87 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
     })();
   }, [activeTab, compatibilityAnalysis, compatibilityContent]);
 
-  const handleGenerateCompatibility = async () => {
+  useEffect(() => {
+    if (activeTab !== 'compatibility') return;
+
+    if (selectedCompatibilityComparisonId === 'latest') {
+      return;
+    }
+
+    const found = compatibilityComparisons.find((c) => c?.id === selectedCompatibilityComparisonId);
+    if (!found?.analysis) return;
+
+    setCompatibilityError('');
+    setCompatibilityReport({
+      order_id: localStorage.getItem('natavium_orderId') || null,
+      zodiac_system: found?.zodiacSystem || null,
+      partner_birth_data: found?.partnerBirthData || null,
+      analysis: found.analysis,
+    });
+    setAnalyses(prev => ({
+      ...prev,
+      compatibility: found.analysis,
+    }));
+  }, [activeTab, selectedCompatibilityComparisonId, compatibilityComparisons]);
+
+  const handlePurchaseCompatibilityRuns = async (pack) => {
+    const orderId = localStorage.getItem('natavium_orderId');
+    if (!orderId) {
+      alert('No order found. Please complete your initial purchase first.');
+      return;
+    }
+
+    const addOnId = pack === '3x' ? 'compatibility_3x' : 'compatibility';
+    setCheckoutLoading(true);
+    try {
+      const claimToken = localStorage.getItem('natavium_claimToken');
+      const { data: sessionData } = await supabase.auth.getSession();
+      const accessToken = sessionData?.session?.access_token;
+
+      const response = await fetch('/api/create-addon-checkout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(claimToken ? { 'X-Claim-Token': claimToken } : {}),
+          ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+        },
+        body: JSON.stringify({
+          orderId,
+          addOns: [addOnId],
+        }),
+      });
+
+      const responseData = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(responseData?.error || 'Failed to start checkout');
+      }
+
+      if (responseData?.url) {
+        window.location.href = responseData.url;
+      } else {
+        throw new Error('Checkout URL missing');
+      }
+    } catch (err) {
+      alert(err?.message || 'Checkout failed');
+    } finally {
+      setCheckoutLoading(false);
+    }
+  };
+
+  const handleGenerateCompatibility = async ({ forceNew = false } = {}) => {
     const orderId = localStorage.getItem('natavium_orderId');
     if (!orderId || orderId === 'undefined' || orderId === 'null') {
       setCompatibilityError('No order found. Please complete a purchase first.');
       return;
     }
 
-    if (compatibilityReport?.analysis?.content || analyses?.compatibility?.content) {
+    if (!forceNew && (compatibilityReport?.analysis?.content || analyses?.compatibility?.content)) {
       setCompatibilityError('Compatibility report already exists for this order.');
+      return;
+    }
+
+    if (Number.isFinite(compatibilityRunsRemaining) && compatibilityRunsRemaining <= 0) {
+      setCompatibilityError('You’re out of compatibility comparisons for this order.');
       return;
     }
 
@@ -2667,6 +2748,10 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
       });
 
       if (!res.ok) {
+        if (res.status === 402) {
+          throw new Error('No compatibility runs remaining for this order.');
+        }
+
         if (res.status === 409) {
           const refetch = await fetch(`/api/compatibility?orderId=${encodeURIComponent(orderId)}`, {
             headers: {
@@ -2744,6 +2829,29 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
         localStorage.setItem('natavium_analyses', JSON.stringify(next));
       } catch {
         // ignore localStorage write errors
+      }
+
+      // Refresh runs/comparisons from server after generation finishes.
+      try {
+        const refetch = await fetch(`/api/compatibility?orderId=${encodeURIComponent(orderId)}`, {
+          headers: {
+            'X-Order-Id': String(orderId),
+            ...(claimToken ? { 'X-Claim-Token': claimToken } : {}),
+            ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+          }
+        });
+        const payload = await refetch.json().catch(() => ({}));
+        if (refetch.ok) {
+          if (Number.isFinite(payload?.runsRemaining)) {
+            setCompatibilityRunsRemaining(payload.runsRemaining);
+          }
+          if (Array.isArray(payload?.comparisons)) {
+            setCompatibilityComparisons(payload.comparisons);
+          }
+          setSelectedCompatibilityComparisonId('latest');
+        }
+      } catch {
+        // ignore
       }
     } catch (e) {
       setCompatibilityError(e.message || 'Failed to generate compatibility report');
@@ -3972,6 +4080,65 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
                 </h2>
               </div>
 
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-6">
+                <div className="flex items-center gap-3">
+                  <div className="text-xs t-text-muted">
+                    Runs left:{' '}
+                    <span className="text-white/90 font-semibold">
+                      {Number.isFinite(compatibilityRunsRemaining) ? compatibilityRunsRemaining : '—'}
+                    </span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => handlePurchaseCompatibilityRuns('1x')}
+                    disabled={checkoutLoading}
+                    className="px-3 py-2 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-xs font-semibold disabled:opacity-50"
+                  >
+                    Buy 1
+                  </button>
+                  <button
+                    onClick={() => handlePurchaseCompatibilityRuns('3x')}
+                    disabled={checkoutLoading}
+                    className="px-3 py-2 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-xs font-semibold disabled:opacity-50"
+                  >
+                    Buy 3
+                  </button>
+                  <button
+                    onClick={() => handleGenerateCompatibility({ forceNew: true })}
+                    disabled={
+                      compatibilityLoading ||
+                      (Number.isFinite(compatibilityRunsRemaining) && compatibilityRunsRemaining <= 0)
+                    }
+                    className="px-3 py-2 rounded-lg bg-[#D6B35A]/10 border border-[#D6B35A]/30 hover:bg-[#D6B35A]/20 transition-colors text-xs font-semibold text-[#D6B35A] disabled:opacity-50"
+                  >
+                    New comparison
+                  </button>
+                </div>
+              </div>
+
+              {Array.isArray(compatibilityComparisons) && compatibilityComparisons.length > 0 && (
+                <div className="bg-white/5 rounded-xl p-4 border border-white/10 mb-6">
+                  <label className="block text-sm font-medium mb-2">View comparison</label>
+                  <select
+                    value={selectedCompatibilityComparisonId}
+                    onChange={(e) => setSelectedCompatibilityComparisonId(e.target.value)}
+                    className="w-full px-3 py-2 rounded-lg bg-[#12142A]/80 border border-white/10 text-white focus:outline-none"
+                  >
+                    <option value="latest">Latest</option>
+                    {compatibilityComparisons
+                      .slice()
+                      .reverse()
+                      .map((c) => (
+                        <option key={c?.id} value={c?.id}>
+                          {c?.createdAt ? new Date(c.createdAt).toLocaleDateString() : 'Comparison'}
+                          {c?.label ? ` • ${c.label}` : ''}
+                        </option>
+                      ))}
+                  </select>
+                </div>
+              )}
+
               {compatibilityError && (
                 <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 text-red-200 text-sm mb-4">
                   {compatibilityError}
@@ -4143,8 +4310,11 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
 
                   <div className="mt-6">
                     <button
-                      onClick={handleGenerateCompatibility}
-                      disabled={compatibilityLoading}
+                      onClick={() => handleGenerateCompatibility({ forceNew: true })}
+                      disabled={
+                        compatibilityLoading ||
+                        (Number.isFinite(compatibilityRunsRemaining) && compatibilityRunsRemaining <= 0)
+                      }
                       className="gold-gradient-btn px-6 py-3 rounded-xl font-bold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     >
                       {compatibilityLoading ? (
@@ -4156,6 +4326,13 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
                         'Generate Compatibility'
                       )}
                     </button>
+                    {Number.isFinite(compatibilityRunsRemaining) && compatibilityRunsRemaining <= 0 && (
+                      <div className="mt-3">
+                        <p className="t-text-muted text-sm">
+                          You’re out of comparisons for this order. Purchase more to generate another.
+                        </p>
+                      </div>
+                    )}
                     <p className="t-text-muted text-xs mt-3">
                       We don’t require names. Your input is used only to compute the charts.
                     </p>

@@ -13,12 +13,28 @@ const supabase = createClient(
 // Supports both prefixed (tropical_compatibility) and unprefixed (compatibility) keys
 const ADDON_PRICE_MAP = {
   // Tropical add-ons
-  tropical_compatibility: process.env.STRIPE_PRICE_ID_COMPATIBILITY_TROP || process.env.STRIPE_PRICE_ID_COMPATIBILITY,
+  tropical_compatibility:
+    process.env.STRIPE_PRICE_ID_COMPATIBILITY_TROP_1X ||
+    process.env.STRIPE_PRICE_ID_COMPATIBILITY_TROP ||
+    process.env.STRIPE_PRICE_ID_COMPATIBILITY,
+  tropical_compatibility_3x:
+    process.env.STRIPE_PRICE_ID_COMPATIBILITY_TROP_3X ||
+    process.env.STRIPE_PRICE_ID_COMPATIBILITY_TROP_1X ||
+    process.env.STRIPE_PRICE_ID_COMPATIBILITY_TROP ||
+    process.env.STRIPE_PRICE_ID_COMPATIBILITY,
   tropical_house_deep_dive: process.env.STRIPE_PRICE_ID_HOUSE_TROP || process.env.STRIPE_PRICE_ID_HOUSE,
   tropical_transit_report: process.env.STRIPE_PRICE_ID_TRANSIT_TROP || process.env.STRIPE_PRICE_ID_TRANSIT,
   tropical_solar_return: process.env.STRIPE_PRICE_ID_RETURN_TROP || process.env.STRIPE_PRICE_ID_RETURN,
   // Sidereal add-ons
-  sidereal_compatibility: process.env.STRIPE_PRICE_ID_COMPATIBILITY_SIDE || process.env.STRIPE_PRICE_ID_COMPATIBILITY,
+  sidereal_compatibility:
+    process.env.STRIPE_PRICE_ID_COMPATIBILITY_SIDE_1X ||
+    process.env.STRIPE_PRICE_ID_COMPATIBILITY_SIDE ||
+    process.env.STRIPE_PRICE_ID_COMPATIBILITY,
+  sidereal_compatibility_3x:
+    process.env.STRIPE_PRICE_ID_COMPATIBILITY_SIDE_3X ||
+    process.env.STRIPE_PRICE_ID_COMPATIBILITY_SIDE_1X ||
+    process.env.STRIPE_PRICE_ID_COMPATIBILITY_SIDE ||
+    process.env.STRIPE_PRICE_ID_COMPATIBILITY,
   sidereal_house_deep_dive: process.env.STRIPE_PRICE_ID_HOUSE_SIDE || process.env.STRIPE_PRICE_ID_HOUSE,
   sidereal_transit_report: process.env.STRIPE_PRICE_ID_TRANSIT_SIDE || process.env.STRIPE_PRICE_ID_TRANSIT,
   sidereal_solar_return: process.env.STRIPE_PRICE_ID_RETURN_SIDE || process.env.STRIPE_PRICE_ID_RETURN,
@@ -116,7 +132,8 @@ export default async function handler(req, res) {
     const existingAddons = coercePurchasedAddons(order.purchased_addons);
     const newAddOns = addOns.filter((addon) => {
       const prefixed = `${zodiacSystem}_${addon}`;
-      const alreadyOwned = existingAddons.includes(addon) || existingAddons.includes(prefixed);
+      const isCompatibilityCredits = addon === 'compatibility' || addon === 'compatibility_3x';
+      const alreadyOwned = isCompatibilityCredits ? false : (existingAddons.includes(addon) || existingAddons.includes(prefixed));
       const hasPrice = ADDON_PRICE_MAP[prefixed] || ADDON_PRICE_MAP[addon];
       return !alreadyOwned && hasPrice;
     });

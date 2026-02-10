@@ -279,6 +279,27 @@ function getCompatibilityAnalysisFromOrder({ fullOrder, zodiacSystem }) {
   return analyses[prefixedKey] || analyses.compatibility || null;
 }
 
+function getCompatibilityRunsRemaining({ fullOrder, zodiacSystem, hasCompatibility }) {
+  const meta = fullOrder?.chart_data?.meta || {};
+  const raw = meta?.compatibilityRunsRemaining;
+  const parsed = Number(raw);
+  if (Number.isFinite(parsed)) return Math.max(0, parsed);
+
+  // Backwards-compat: older orders only ever allowed one run.
+  // If compatibility is present but credits were never initialized, treat it as 1.
+  if (hasCompatibility) {
+    const existingAnalysis = getCompatibilityAnalysisFromOrder({ fullOrder, zodiacSystem });
+    return existingAnalysis?.content ? 0 : 1;
+  }
+  return 0;
+}
+
+function getCompatibilityComparisons({ fullOrder }) {
+  const arr = fullOrder?.chart_data?.meta?.compatibilityComparisons;
+  if (!Array.isArray(arr)) return [];
+  return arr.filter(item => item && typeof item === 'object');
+}
+
 export default async function handler(req) {
   if (req.method === 'GET') {
     const url = new URL(req.url);
@@ -310,6 +331,10 @@ export default async function handler(req) {
       const zodiacSystem = fullOrder.zodiac_system || 'tropical';
       const analysis = getCompatibilityAnalysisFromOrder({ fullOrder, zodiacSystem });
       const partnerBirthData = fullOrder?.chart_data?.meta?.partnerBirthData || null;
+      const purchasedAddons = coercePurchasedAddons(fullOrder.purchased_addons);
+      const hasCompatibility = purchasedAddons.includes(`${zodiacSystem}_compatibility`) || purchasedAddons.includes('compatibility');
+      const runsRemaining = getCompatibilityRunsRemaining({ fullOrder, zodiacSystem, hasCompatibility });
+      const comparisons = getCompatibilityComparisons({ fullOrder });
 
       const report = analysis
         ? {
@@ -320,7 +345,7 @@ export default async function handler(req) {
         }
         : null;
 
-      return new Response(JSON.stringify({ report }), {
+      return new Response(JSON.stringify({ report, runsRemaining, comparisons }), {
         status: 200,
         headers: { 'Content-Type': 'application/json' },
       });
@@ -376,13 +401,15 @@ export default async function handler(req) {
         });
       }
 
-      const existingAnalysis = getCompatibilityAnalysisFromOrder({ fullOrder, zodiacSystem });
-      if (existingAnalysis?.content) {
-        return new Response(JSON.stringify({ error: 'Compatibility report already exists for this order' }), {
-          status: 409,
+      const runsRemaining = getCompatibilityRunsRemaining({ fullOrder, zodiacSystem, hasCompatibility });
+      if (runsRemaining <= 0) {
+        return new Response(JSON.stringify({ error: 'No compatibility runs remaining for this order.' }), {
+          status: 402,
           headers: { 'Content-Type': 'application/json' },
         });
       }
+
+      // Multi-run: we allow multiple comparisons; the latest remains stored under analyses[`${zodiacSystem}_compatibility`].
 
       const subjectChart = fullOrder.chart_data?.[zodiacSystem] || fullOrder.chart_data;
       const partnerChart = partnerChartData?.[zodiacSystem] || partnerChartData;
@@ -441,13 +468,39 @@ export default async function handler(req) {
           };
 
           const existingChartData = fullOrder?.chart_data || {};
+          const existingMeta = existingChartData?.meta || {};
+          const existingComparisons = Array.isArray(existingMeta?.compatibilityComparisons)
+            ? existingMeta.compatibilityComparisons.filter(item => item && typeof item === 'object')
+            : [];
+
+          const currentRuns = getCompatibilityRunsRemaining({
+            fullOrder,
+            zodiacSystem,
+            hasCompatibility: true,
+          });
+          const nextRuns = Math.max(0, currentRuns - 1);
+
+          const comparisonId = `${Date.now()}_${Math.random().toString(16).slice(2)}`;
+          const nextComparison = {
+            id: comparisonId,
+            createdAt: new Date().toISOString(),
+            zodiacSystem,
+            label: label || null,
+            relationshipType: relationshipType || null,
+            partnerBirthData,
+            partnerChartData,
+            analysis: nextAnalysis,
+          };
+
           const updatedChartData = {
             ...existingChartData,
             meta: {
-              ...(existingChartData?.meta || {}),
+              ...existingMeta,
               partnerBirthData,
               partnerChartData,
               compatibilityRelationshipType: relationshipType || null,
+              compatibilityRunsRemaining: nextRuns,
+              compatibilityComparisons: [...existingComparisons, nextComparison],
             },
           };
 

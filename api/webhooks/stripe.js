@@ -13,12 +13,14 @@ const supabase = createClient(
 // The zodiac prefix is applied based on the order's zodiac_system
 const PRICE_TO_ADDON = {
   // Tropical-specific price IDs
-  [process.env.STRIPE_PRICE_ID_COMPATIBILITY_TROP]: 'compatibility',
+  [process.env.STRIPE_PRICE_ID_COMPATIBILITY_TROP_1X || process.env.STRIPE_PRICE_ID_COMPATIBILITY_TROP]: 'compatibility',
+  [process.env.STRIPE_PRICE_ID_COMPATIBILITY_TROP_3X]: 'compatibility',
   [process.env.STRIPE_PRICE_ID_HOUSE_TROP]: 'house_deep_dive',
   [process.env.STRIPE_PRICE_ID_TRANSIT_TROP]: 'transit_report',
   [process.env.STRIPE_PRICE_ID_RETURN_TROP]: 'solar_return',
   // Sidereal-specific price IDs
-  [process.env.STRIPE_PRICE_ID_COMPATIBILITY_SIDE]: 'compatibility',
+  [process.env.STRIPE_PRICE_ID_COMPATIBILITY_SIDE_1X || process.env.STRIPE_PRICE_ID_COMPATIBILITY_SIDE]: 'compatibility',
+  [process.env.STRIPE_PRICE_ID_COMPATIBILITY_SIDE_3X]: 'compatibility',
   [process.env.STRIPE_PRICE_ID_HOUSE_SIDE]: 'house_deep_dive',
   [process.env.STRIPE_PRICE_ID_TRANSIT_SIDE]: 'transit_report',
   [process.env.STRIPE_PRICE_ID_RETURN_SIDE]: 'solar_return',
@@ -28,6 +30,14 @@ const PRICE_TO_ADDON = {
   [process.env.STRIPE_PRICE_ID_TRANSIT]: 'transit_report',
   [process.env.STRIPE_PRICE_ID_RETURN]: 'solar_return',
 };
+
+ const COMPATIBILITY_PRICE_TO_RUNS = {
+   [process.env.STRIPE_PRICE_ID_COMPATIBILITY_TROP_1X || process.env.STRIPE_PRICE_ID_COMPATIBILITY_TROP]: 1,
+   [process.env.STRIPE_PRICE_ID_COMPATIBILITY_SIDE_1X || process.env.STRIPE_PRICE_ID_COMPATIBILITY_SIDE]: 1,
+   [process.env.STRIPE_PRICE_ID_COMPATIBILITY_TROP_3X]: 3,
+   [process.env.STRIPE_PRICE_ID_COMPATIBILITY_SIDE_3X]: 3,
+   [process.env.STRIPE_PRICE_ID_COMPATIBILITY]: 1,
+ };
 
 // Bundle contents (products included for free)
 // Base add-on IDs - will be prefixed with zodiac system
@@ -115,8 +125,14 @@ export default async function handler(req, res) {
 
     // Extract purchased add-ons from line items (base IDs)
     let newAddons = [];
+    let compatibilityRunsPurchased = 0;
     try {
       const lineItems = await stripe.checkout.sessions.listLineItems(session.id);
+      compatibilityRunsPurchased = lineItems.data.reduce((sum, item) => {
+        const priceId = item.price?.id;
+        const runs = priceId ? COMPATIBILITY_PRICE_TO_RUNS[priceId] : 0;
+        return sum + (Number.isFinite(runs) ? runs : 0);
+      }, 0);
       newAddons = lineItems.data
         .map(item => PRICE_TO_ADDON[item.price?.id])
         .filter(Boolean);
@@ -131,17 +147,32 @@ export default async function handler(req, res) {
       // Add-on purchase: merge with existing add-ons
       const { data: existingOrder } = await supabase
         .from('orders')
-        .select('purchased_addons')
+        .select('purchased_addons, chart_data')
         .eq('id', orderId)
         .single();
 
       const existingAddons = coercePurchasedAddons(existingOrder?.purchased_addons);
       const mergedAddons = [...new Set([...existingAddons, ...prefixedNewAddons])];
 
+      const existingChartData = existingOrder?.chart_data || {};
+      const existingMeta = existingChartData?.meta || {};
+      const currentRuns = Number(existingMeta?.compatibilityRunsRemaining) || 0;
+      const nextRuns = currentRuns + (compatibilityRunsPurchased || 0);
+      const updatedChartData = compatibilityRunsPurchased
+        ? {
+          ...existingChartData,
+          meta: {
+            ...existingMeta,
+            compatibilityRunsRemaining: nextRuns,
+          },
+        }
+        : existingChartData;
+
       const { error: updateError } = await supabase
         .from('orders')
         .update({
           purchased_addons: mergedAddons,
+          ...(compatibilityRunsPurchased ? { chart_data: updatedChartData } : {}),
         })
         .eq('id', orderId);
 
@@ -169,6 +200,28 @@ export default async function handler(req, res) {
       // Combine purchased add-ons with bundle includes
       const purchasedAddons = [...new Set([...prefixedNewAddons, ...bundleIncludes])];
 
+      const baselineCompatibilityRuns = baseBundleType === 'ultimate' ? 1 : 0;
+      const computedRuns = (compatibilityRunsPurchased || 0) + baselineCompatibilityRuns;
+
+      let updatedChartData = null;
+      if (computedRuns > 0) {
+        const { data: existingOrder } = await supabase
+          .from('orders')
+          .select('chart_data')
+          .eq('id', orderId)
+          .single();
+        const existingChartData = existingOrder?.chart_data || {};
+        const existingMeta = existingChartData?.meta || {};
+        const currentRuns = Number(existingMeta?.compatibilityRunsRemaining) || 0;
+        updatedChartData = {
+          ...existingChartData,
+          meta: {
+            ...existingMeta,
+            compatibilityRunsRemaining: currentRuns > 0 ? currentRuns : computedRuns,
+          },
+        };
+      }
+
       const { error: updateError } = await supabase
         .from('orders')
         .update({
@@ -176,6 +229,7 @@ export default async function handler(req, res) {
           stripe_session_id: session.id,
           customer_email: session.customer_details?.email || null,
           purchased_addons: purchasedAddons,
+          ...(updatedChartData ? { chart_data: updatedChartData } : {}),
         })
         .eq('id', orderId);
 
