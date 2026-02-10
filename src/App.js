@@ -1170,7 +1170,8 @@ function CalculatingPage() {
 // =========================
 // Add-on services definition
 const ADD_ONS = [
-  { id: "compatibility", name: "Compatibility", price: 3.99, description: "Compare charts with a partner" },
+  { id: "compatibility", name: "Compatibility ×1", price: 3.99, description: "1 compatibility comparison" },
+  { id: "compatibility_3x", name: "Compatibility ×3", price: 9.99, description: "3 compatibility comparisons" },
   { id: "house_deep_dive", name: "House Deep Dive", price: 2.99, description: "Detailed house analysis" },
   { id: "solar_return", name: "Solar Return", price: 4.99, description: "Your year ahead forecast" },
   { id: "transit_report", name: "Transit Report", price: 1.99, description: "Current planetary influences" },
@@ -1237,13 +1238,19 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
   }, 0);
   const totalPrice = currentBundle.price + addOnsTotal;
 
-  // Toggle add-on selection
+  // Toggle add-on selection (compatibility packs are mutually exclusive)
+  const COMPAT_IDS = ['compatibility', 'compatibility_3x'];
   const toggleAddOn = (addOnId) => {
-    setSelectedAddOns(prev =>
-      prev.includes(addOnId)
-        ? prev.filter(id => id !== addOnId)
-        : [...prev, addOnId]
-    );
+    setSelectedAddOns(prev => {
+      if (prev.includes(addOnId)) {
+        return prev.filter(id => id !== addOnId);
+      }
+      // If selecting a compatibility pack, deselect the other one
+      const base = COMPAT_IDS.includes(addOnId)
+        ? prev.filter(id => !COMPAT_IDS.includes(id))
+        : prev;
+      return [...base, addOnId];
+    });
   };
 
   return (

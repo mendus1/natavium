@@ -508,6 +508,23 @@ export default async function handler(req) {
             .from('orders')
             .update({ analyses: updatedAnalyses, chart_data: updatedChartData, user_id: fullOrder.user_id || user?.id || null })
             .eq('id', orderId);
+
+          // Persist to compatibility_reports table for analytics / history
+          try {
+            await supabaseAdmin.from('compatibility_reports').insert({
+              order_id: orderId,
+              user_id: fullOrder.user_id || user?.id || null,
+              comparison_id: comparisonId,
+              zodiac_system: zodiacSystem,
+              relationship_type: relationshipType || null,
+              comparison_birth_data: partnerBirthData || null,
+              comparison_chart_data: partnerChartData || null,
+              label: label || null,
+              analysis: text,
+            });
+          } catch (reportErr) {
+            console.error('Failed to insert compatibility_reports row:', reportErr);
+          }
         },
       });
 
