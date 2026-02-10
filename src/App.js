@@ -2541,6 +2541,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
 
   useEffect(() => {
     if (activeTab !== 'compatibility') return;
+    if (compatibilityGenerating) return;
 
     // If already present in local state (hydrated from localStorage / opened order), use it.
     if (compatibilityContent) {
@@ -2607,7 +2608,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
         setCompatibilityFetching(false);
       }
     })();
-  }, [activeTab, compatibilityAnalysis, compatibilityContent]);
+  }, [activeTab, compatibilityGenerating]);
 
   useEffect(() => {
     if (activeTab !== 'compatibility') return;
