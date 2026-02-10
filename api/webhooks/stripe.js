@@ -147,7 +147,7 @@ export default async function handler(req, res) {
       // Add-on purchase: merge with existing add-ons
       const { data: existingOrder } = await supabase
         .from('orders')
-        .select('purchased_addons, chart_data')
+        .select('purchased_addons, chart_data, analyses, zodiac_system')
         .eq('id', orderId)
         .single();
 
@@ -156,7 +156,13 @@ export default async function handler(req, res) {
 
       const existingChartData = existingOrder?.chart_data || {};
       const existingMeta = existingChartData?.meta || {};
-      const currentRuns = Number(existingMeta?.compatibilityRunsRemaining) || 0;
+      const rawRuns = Number(existingMeta?.compatibilityRunsRemaining);
+      const resolvedZodiacSystem = existingOrder?.zodiac_system || zodiacSystem || 'tropical';
+      const hasCompatibility = coercePurchasedAddons(existingOrder?.purchased_addons)
+        .includes(`${resolvedZodiacSystem}_compatibility`);
+      const existingAnalysis = existingOrder?.analyses?.[`${resolvedZodiacSystem}_compatibility`];
+      const legacyDefaultRuns = hasCompatibility ? (existingAnalysis?.content ? 0 : 1) : 0;
+      const currentRuns = Number.isFinite(rawRuns) ? rawRuns : legacyDefaultRuns;
       const nextRuns = currentRuns + (compatibilityRunsPurchased || 0);
       const updatedChartData = compatibilityRunsPurchased
         ? {

@@ -2234,7 +2234,8 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
     period: "AM",
     location: "",
   });
-  const [compatibilityLoading, setCompatibilityLoading] = useState(false);
+  const [compatibilityFetching, setCompatibilityFetching] = useState(false);
+  const [compatibilityGenerating, setCompatibilityGenerating] = useState(false);
   const [compatibilityError, setCompatibilityError] = useState("");
   const [compatibilityReport, setCompatibilityReport] = useState(null);
   const [compatibilityRunsRemaining, setCompatibilityRunsRemaining] = useState(null);
@@ -2558,7 +2559,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
 
     (async () => {
       try {
-        setCompatibilityLoading(true);
+        setCompatibilityFetching(true);
         const claimToken = localStorage.getItem('natavium_claimToken');
         const { data } = await supabase.auth.getSession();
         const accessToken = data?.session?.access_token;
@@ -2603,7 +2604,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
       } catch (e) {
         setCompatibilityError(e.message || 'Failed to load compatibility report');
       } finally {
-        setCompatibilityLoading(false);
+        setCompatibilityFetching(false);
       }
     })();
   }, [activeTab, compatibilityAnalysis, compatibilityContent]);
@@ -2692,10 +2693,10 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
       return;
     }
 
-    if (compatibilityLoading) return;
+    if (compatibilityGenerating) return;
 
     setCompatibilityError("");
-    setCompatibilityLoading(true);
+    setCompatibilityGenerating(true);
 
     try {
       const m = parseInt(compatPartnerBirthData.birthMonth, 10);
@@ -2856,7 +2857,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
     } catch (e) {
       setCompatibilityError(e.message || 'Failed to generate compatibility report');
     } finally {
-      setCompatibilityLoading(false);
+      setCompatibilityGenerating(false);
     }
   };
 
@@ -4093,21 +4094,21 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
                   <button
                     onClick={() => handlePurchaseCompatibilityRuns('1x')}
                     disabled={checkoutLoading}
-                    className="px-3 py-2 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-xs font-semibold disabled:opacity-50"
+                    className="text-xs font-semibold t-text-muted hover:text-white underline-offset-4 hover:underline disabled:opacity-50"
                   >
-                    Buy 1
+                    +1 run
                   </button>
                   <button
                     onClick={() => handlePurchaseCompatibilityRuns('3x')}
                     disabled={checkoutLoading}
-                    className="px-3 py-2 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-xs font-semibold disabled:opacity-50"
+                    className="text-xs font-semibold t-text-muted hover:text-white underline-offset-4 hover:underline disabled:opacity-50"
                   >
-                    Buy 3
+                    +3 runs
                   </button>
                   <button
                     onClick={() => handleGenerateCompatibility({ forceNew: true })}
                     disabled={
-                      compatibilityLoading ||
+                      compatibilityGenerating ||
                       (Number.isFinite(compatibilityRunsRemaining) && compatibilityRunsRemaining <= 0)
                     }
                     className="px-3 py-2 rounded-lg bg-[#D6B35A]/10 border border-[#D6B35A]/30 hover:bg-[#D6B35A]/20 transition-colors text-xs font-semibold text-[#D6B35A] disabled:opacity-50"
@@ -4131,8 +4132,10 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
                       .reverse()
                       .map((c) => (
                         <option key={c?.id} value={c?.id}>
-                          {c?.createdAt ? new Date(c.createdAt).toLocaleDateString() : 'Comparison'}
-                          {c?.label ? ` • ${c.label}` : ''}
+                          {(birthData?.subjectInitials || birthData?.subjectRelationship || c?.partnerBirthData?.subjectInitials || c?.partnerBirthData?.subjectRelationship)
+                            ? `${(birthData?.subjectInitials || birthData?.subjectRelationship || 'A').toUpperCase()} × ${(c?.partnerBirthData?.subjectInitials || c?.partnerBirthData?.subjectRelationship || 'B').toUpperCase()}`
+                            : (c?.createdAt ? new Date(c.createdAt).toLocaleDateString() : 'Comparison')}
+                          {c?.createdAt ? ` • ${new Date(c.createdAt).toLocaleDateString()}` : ''}
                         </option>
                       ))}
                   </select>
@@ -4145,14 +4148,14 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
                 </div>
               )}
 
-              {compatibilityLoading && !compatibilityReport?.analysis?.content ? (
+              {compatibilityFetching && !compatibilityReport?.analysis?.content ? (
                 <div className="flex flex-col items-center justify-center py-12">
                   <Loader2 className="w-10 h-10 text-[#D6B35A] animate-spin mb-4" />
                   <p className="t-text-muted">Loading compatibility…</p>
                 </div>
               ) : compatibilityReport?.analysis?.content ? (
                 <div>
-                  {compatibilityLoading && (
+                  {compatibilityGenerating && (
                     <div className="flex items-center gap-3 t-text-muted mb-6">
                       <Loader2 className="w-5 h-5 animate-spin" />
                       Generating…
@@ -4312,18 +4315,21 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
                     <button
                       onClick={() => handleGenerateCompatibility({ forceNew: true })}
                       disabled={
-                        compatibilityLoading ||
+                        compatibilityGenerating ||
                         (Number.isFinite(compatibilityRunsRemaining) && compatibilityRunsRemaining <= 0)
                       }
                       className="gold-gradient-btn px-6 py-3 rounded-xl font-bold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     >
-                      {compatibilityLoading ? (
+                      {compatibilityGenerating ? (
                         <>
                           <Loader2 className="w-5 h-5 animate-spin" />
                           Generating…
                         </>
                       ) : (
-                        'Generate Compatibility'
+                        <>
+                          <Sparkles className="w-5 h-5" />
+                          Generate Compatibility
+                        </>
                       )}
                     </button>
                     {Number.isFinite(compatibilityRunsRemaining) && compatibilityRunsRemaining <= 0 && (
