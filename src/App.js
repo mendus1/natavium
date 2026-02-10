@@ -2241,7 +2241,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
   const [compatibilityReport, setCompatibilityReport] = useState(null);
   const [compatibilityRunsRemaining, setCompatibilityRunsRemaining] = useState(null);
   const [compatibilityComparisons, setCompatibilityComparisons] = useState([]);
-  const [selectedCompatibilityComparisonId, setSelectedCompatibilityComparisonId] = useState('latest');
+  const [selectedCompatibilityComparisonId, setSelectedCompatibilityComparisonId] = useState('');
 
   // Get the active chart based on selected zodiac system
   // Supports both old flat format and new { tropical, sidereal, meta } format
@@ -2575,6 +2575,11 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
         }
         if (Array.isArray(payload?.comparisons)) {
           setCompatibilityComparisons(payload.comparisons);
+          setSelectedCompatibilityComparisonId((prev) => {
+            if (prev && payload.comparisons.some(c => c?.id === prev)) return prev;
+            const mostRecentId = payload.comparisons[payload.comparisons.length - 1]?.id;
+            return mostRecentId || '';
+          });
         }
 
         setCompatibilityReport(payload?.report || null);
@@ -2605,7 +2610,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
   useEffect(() => {
     if (activeTab !== 'compatibility') return;
 
-    if (selectedCompatibilityComparisonId === 'latest') {
+    if (!selectedCompatibilityComparisonId) {
       return;
     }
 
@@ -2850,8 +2855,9 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
           }
           if (Array.isArray(payload?.comparisons)) {
             setCompatibilityComparisons(payload.comparisons);
+            const mostRecentId = payload.comparisons[payload.comparisons.length - 1]?.id;
+            setSelectedCompatibilityComparisonId(mostRecentId || '');
           }
-          setSelectedCompatibilityComparisonId('latest');
         }
       } catch {
         // ignore
@@ -4128,7 +4134,6 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
                     onChange={(e) => setSelectedCompatibilityComparisonId(e.target.value)}
                     className="w-full px-3 py-2 rounded-lg bg-[#12142A]/80 border border-white/10 text-white focus:outline-none"
                   >
-                    <option value="latest">Latest</option>
                     {compatibilityComparisons
                       .slice()
                       .reverse()
