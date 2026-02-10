@@ -435,7 +435,7 @@ export default function ReportsPage() {
               </div>
               <button
                 onClick={async () => {
-                  await logEvent('ongoing_teaser_clicked', { surface: 'reports', product: 'weekly_astro_weather' });
+                  await logEvent('coming_soon_view_sample_clicked', { surface: 'reports', product: 'weekly_astro_weather' });
                   navigate('/ongoing');
                 }}
                 className="mt-4 px-5 py-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-sm"

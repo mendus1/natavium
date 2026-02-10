@@ -96,7 +96,7 @@ function OngoingPage() {
 
             <button
               onClick={async () => {
-                await logEvent('ongoing_sample_opened', { product: 'weekly_astro_weather', surface: 'ongoing_page' });
+                await logEvent('coming_soon_interest_clicked', { product: 'weekly_astro_weather', surface: 'ongoing_page', action: 'i_want_this_weekly' });
               }}
               className="mt-5 px-5 py-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-sm"
             >
@@ -726,7 +726,7 @@ function InfoPage() {
                   <button
                     type="button"
                     onClick={async () => {
-                      await logEvent('subscription_interest_clicked', { product: 'natavium_plus', surface: 'services_pricing' });
+                      await logEvent('coming_soon_view_sample_clicked', { product: 'natavium_plus', surface: 'services_pricing' });
                       navigate('/ongoing');
                     }}
                     className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-sm"
@@ -767,7 +767,7 @@ function LandingPage() {
           </button>
           <button
             onClick={async () => {
-              await logEvent('nav_clicked', { destination: 'ongoing' });
+              await logEvent('coming_soon_nav_clicked', { destination: 'ongoing', surface: 'landing_nav' });
               navigate('/ongoing');
             }}
             className="t-btn-secondary text-sm"
@@ -1659,7 +1659,7 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
           </div>
           <button
             onClick={async () => {
-              await logEvent('ongoing_teaser_clicked', { surface: 'preview', product: 'weekly_astro_weather' });
+              await logEvent('coming_soon_view_sample_clicked', { surface: 'preview', product: 'weekly_astro_weather' });
               navigate('/ongoing');
             }}
             className="mt-4 px-5 py-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-sm"
@@ -3183,7 +3183,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
           </div>
           <button
             onClick={async () => {
-              await logEvent('ongoing_teaser_clicked', { surface: 'chart', product: 'weekly_astro_weather' });
+              await logEvent('coming_soon_view_sample_clicked', { surface: 'chart', product: 'weekly_astro_weather' });
               navigate('/ongoing');
             }}
             className="mt-4 px-5 py-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-sm"
