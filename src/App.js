@@ -2236,6 +2236,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
   });
   const [compatibilityFetching, setCompatibilityFetching] = useState(false);
   const [compatibilityGenerating, setCompatibilityGenerating] = useState(false);
+  const [compatibilityShowForm, setCompatibilityShowForm] = useState(false);
   const [compatibilityError, setCompatibilityError] = useState("");
   const [compatibilityReport, setCompatibilityReport] = useState(null);
   const [compatibilityRunsRemaining, setCompatibilityRunsRemaining] = useState(null);
@@ -2536,18 +2537,9 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
     }
   };
 
-  const compatibilityAnalysis = analyses?.compatibility;
-  const compatibilityContent = compatibilityAnalysis?.content;
-
   useEffect(() => {
     if (activeTab !== 'compatibility') return;
     if (compatibilityGenerating) return;
-
-    // If already present in local state (hydrated from localStorage / opened order), use it.
-    if (compatibilityContent) {
-      setCompatibilityError("");
-      setCompatibilityReport({ analysis: compatibilityAnalysis });
-    }
 
     const orderId = localStorage.getItem('natavium_orderId');
     if (!orderId || orderId === 'undefined' || orderId === 'null') {
@@ -2627,6 +2619,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
       partner_birth_data: found?.partnerBirthData || null,
       analysis: found.analysis,
     });
+    setCompatibilityShowForm(false);
     setAnalyses(prev => ({
       ...prev,
       compatibility: found.analysis,
@@ -2681,6 +2674,12 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
     const orderId = localStorage.getItem('natavium_orderId');
     if (!orderId || orderId === 'undefined' || orderId === 'null') {
       setCompatibilityError('No order found. Please complete a purchase first.');
+      return;
+    }
+
+    if (forceNew && !compatibilityShowForm) {
+      setCompatibilityError('');
+      setCompatibilityShowForm(true);
       return;
     }
 
@@ -2832,6 +2831,8 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
       } catch {
         // ignore localStorage write errors
       }
+
+      setCompatibilityShowForm(false);
 
       // Refresh runs/comparisons from server after generation finishes.
       try {
@@ -4149,63 +4150,26 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
                 </div>
               )}
 
-              {compatibilityFetching && !compatibilityReport?.analysis?.content ? (
+              {compatibilityFetching && !compatibilityReport?.analysis?.content && !compatibilityShowForm ? (
                 <div className="flex flex-col items-center justify-center py-12">
                   <Loader2 className="w-10 h-10 text-[#D6B35A] animate-spin mb-4" />
                   <p className="t-text-muted">Loading compatibility…</p>
                 </div>
-              ) : compatibilityReport?.analysis?.content ? (
+              ) : compatibilityShowForm || !compatibilityReport?.analysis?.content ? (
                 <div>
-                  {compatibilityGenerating && (
-                    <div className="flex items-center gap-3 t-text-muted mb-6">
-                      <Loader2 className="w-5 h-5 animate-spin" />
-                      Generating…
-                    </div>
-                  )}
-                <div className="prose prose-invert max-w-none">
-                  {compatibilityReport.analysis.content.split('\n').map((line, idx) => {
-                    if (line.startsWith('## ')) {
-                      return (
-                        <h3 key={idx} className="text-xl font-semibold text-[#D6B35A] mt-6 mb-3">
-                          {line.replace('## ', '')}
-                        </h3>
-                      );
-                    }
-                    if (line.startsWith('### ')) {
-                      return (
-                        <h4 key={idx} className="text-lg font-semibold text-white/90 mt-4 mb-2">
-                          {line.replace('### ', '')}
-                        </h4>
-                      );
-                    }
-                    if (line.startsWith('#### ')) {
-                      return (
-                        <h5 key={idx} className="text-base font-medium t-text-muted mt-3 mb-1">
-                          {line.replace('#### ', '')}
-                        </h5>
-                      );
-                    }
-                    if (line.startsWith('- ') || line.startsWith('* ')) {
-                      return (
-                        <p key={idx} className="text-white/80 ml-4 mb-1">
-                          • {line.slice(2).replace(/\*\*(.*?)\*\*/g, '$1')}
-                        </p>
-                      );
-                    }
-                    if (line.trim() === '') return <div key={idx} className="h-2" />;
-                    return (
-                      <p key={idx} className="text-white/80 leading-relaxed mb-3">
-                        {line.replace(/\*\*(.*?)\*\*/g, '$1')}
-                      </p>
-                    );
-                  })}
-                </div>
-                </div>
-              ) : (
-                <div>
-                  <p className="t-text-muted mb-6">
-                    Enter the birth details of the other person to generate your compatibility report.
-                  </p>
+                  <div className="flex items-start justify-between gap-4 mb-6">
+                    <p className="t-text-muted">
+                      Enter the birth details of the other person to generate your compatibility report.
+                    </p>
+                    {compatibilityShowForm && (
+                      <button
+                        onClick={() => setCompatibilityShowForm(false)}
+                        className="text-xs font-semibold t-text-muted hover:text-white underline-offset-4 hover:underline"
+                      >
+                        Cancel
+                      </button>
+                    )}
+                  </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="bg-white/5 rounded-xl p-4 border border-white/10">
@@ -4344,6 +4308,53 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
                       We don’t require names. Your input is used only to compute the charts.
                     </p>
                   </div>
+                </div>
+              ) : (
+                <div>
+                  {compatibilityGenerating && (
+                    <div className="flex items-center gap-3 t-text-muted mb-6">
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      Generating…
+                    </div>
+                  )}
+                <div className="prose prose-invert max-w-none">
+                  {compatibilityReport.analysis.content.split('\n').map((line, idx) => {
+                    if (line.startsWith('## ')) {
+                      return (
+                        <h3 key={idx} className="text-xl font-semibold text-[#D6B35A] mt-6 mb-3">
+                          {line.replace('## ', '')}
+                        </h3>
+                      );
+                    }
+                    if (line.startsWith('### ')) {
+                      return (
+                        <h4 key={idx} className="text-lg font-semibold text-white/90 mt-4 mb-2">
+                          {line.replace('### ', '')}
+                        </h4>
+                      );
+                    }
+                    if (line.startsWith('#### ')) {
+                      return (
+                        <h5 key={idx} className="text-base font-medium t-text-muted mt-3 mb-1">
+                          {line.replace('#### ', '')}
+                        </h5>
+                      );
+                    }
+                    if (line.startsWith('- ') || line.startsWith('* ')) {
+                      return (
+                        <p key={idx} className="text-white/80 ml-4 mb-1">
+                          • {line.slice(2).replace(/\*\*(.*?)\*\*/g, '$1')}
+                        </p>
+                      );
+                    }
+                    if (line.trim() === '') return <div key={idx} className="h-2" />;
+                    return (
+                      <p key={idx} className="text-white/80 leading-relaxed mb-3">
+                        {line.replace(/\*\*(.*?)\*\*/g, '$1')}
+                      </p>
+                    );
+                  })}
+                </div>
                 </div>
               )}
             </div>
