@@ -9,6 +9,43 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
+ function coercePurchasedAddons(value) {
+   if (Array.isArray(value)) {
+     const filtered = value.filter(v => typeof v === 'string');
+     const looksLikeCharArrayJson =
+       filtered.length > 10 &&
+       filtered.every(v => v.length === 1) &&
+       filtered.includes('[');
+
+     if (looksLikeCharArrayJson) {
+       return coercePurchasedAddons(filtered.join(''));
+     }
+
+     return filtered.map(v => v.trim()).filter(Boolean);
+   }
+
+   if (typeof value === 'string') {
+     const trimmed = value.trim();
+     if (!trimmed) return [];
+
+     if (trimmed.startsWith('[')) {
+       try {
+         const parsed = JSON.parse(trimmed);
+         return Array.isArray(parsed) ? parsed.filter(v => typeof v === 'string' && v.trim()) : [];
+       } catch (e) {
+         return [];
+       }
+     }
+
+     return trimmed
+       .split(',')
+       .map(s => s.trim())
+       .filter(Boolean);
+   }
+
+   return [];
+ }
+
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
@@ -324,7 +361,7 @@ async function ensureAllAnalyses(orderId) {
   console.log('[PDF] Existing analyses keys:', Object.keys(order.analyses || {}));
 
   const chartData = order.chart_data;
-  const purchasedAddons = order.purchased_addons || [];
+  const purchasedAddons = coercePurchasedAddons(order.purchased_addons);
   const existingAnalyses = order.analyses || {};
   const zodiacSystem = order.zodiac_system || 'tropical';
   // Birth data may be in chart_data.meta or as separate fields - try to extract it

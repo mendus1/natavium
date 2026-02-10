@@ -39,6 +39,43 @@ function prefixAddons(addons, zodiacSystem) {
   return addons.map(addon => `${zodiacSystem}_${addon}`);
 }
 
+ function coercePurchasedAddons(value) {
+   if (Array.isArray(value)) {
+     const filtered = value.filter(v => typeof v === 'string');
+     const looksLikeCharArrayJson =
+       filtered.length > 10 &&
+       filtered.every(v => v.length === 1) &&
+       filtered.includes('[');
+
+     if (looksLikeCharArrayJson) {
+       return coercePurchasedAddons(filtered.join(''));
+     }
+
+     return filtered.map(v => v.trim()).filter(Boolean);
+   }
+
+   if (typeof value === 'string') {
+     const trimmed = value.trim();
+     if (!trimmed) return [];
+
+     if (trimmed.startsWith('[')) {
+       try {
+         const parsed = JSON.parse(trimmed);
+         return Array.isArray(parsed) ? parsed.filter(v => typeof v === 'string' && v.trim()) : [];
+       } catch (e) {
+         return [];
+       }
+     }
+
+     return trimmed
+       .split(',')
+       .map(s => s.trim())
+       .filter(Boolean);
+   }
+
+   return [];
+ }
+
 // Disable Vercel's default body parser — we need the raw buffer for signature verification
 export const config = {
   api: {
@@ -98,7 +135,7 @@ export default async function handler(req, res) {
         .eq('id', orderId)
         .single();
 
-      const existingAddons = existingOrder?.purchased_addons || [];
+      const existingAddons = coercePurchasedAddons(existingOrder?.purchased_addons);
       const mergedAddons = [...new Set([...existingAddons, ...prefixedNewAddons])];
 
       const { error: updateError } = await supabase

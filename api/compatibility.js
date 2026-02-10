@@ -24,6 +24,43 @@ function formatSubjectLabel({ relationship, initials, fallback }) {
   return combined || fallback;
 }
 
+function coercePurchasedAddons(value) {
+  if (Array.isArray(value)) {
+    const filtered = value.filter(v => typeof v === 'string');
+    const looksLikeCharArrayJson =
+      filtered.length > 10 &&
+      filtered.every(v => v.length === 1) &&
+      filtered.includes('[');
+
+    if (looksLikeCharArrayJson) {
+      return coercePurchasedAddons(filtered.join(''));
+    }
+
+    return filtered.map(v => v.trim()).filter(Boolean);
+  }
+
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    if (!trimmed) return [];
+
+    if (trimmed.startsWith('[')) {
+      try {
+        const parsed = JSON.parse(trimmed);
+        return Array.isArray(parsed) ? parsed.filter(v => typeof v === 'string' && v.trim()) : [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    return trimmed
+      .split(',')
+      .map(s => s.trim())
+      .filter(Boolean);
+  }
+
+  return [];
+}
+
 function getBearerToken(req) {
   const authHeader = getHeader(req, 'authorization') || getHeader(req, 'Authorization');
   if (!authHeader) return null;
@@ -96,7 +133,62 @@ function formatChartForPrompt(chartResult, title) {
 `;
 }
 
-function buildCompatibilityPrompt({ zodiacSystem, subjectChart, partnerChart, subjectTitle, partnerTitle }) {
+function computeAgeYears(birthData) {
+  const year = Number(birthData?.birthYear);
+  const month = Number(birthData?.birthMonth);
+  const day = Number(birthData?.birthDay);
+  if (!Number.isFinite(year) || !Number.isFinite(month) || !Number.isFinite(day)) return null;
+
+  const dob = new Date(Date.UTC(year, month - 1, day));
+  if (Number.isNaN(dob.getTime())) return null;
+
+  const now = new Date();
+  let age = now.getUTCFullYear() - dob.getUTCFullYear();
+  const m = now.getUTCMonth() - dob.getUTCMonth();
+  if (m < 0 || (m === 0 && now.getUTCDate() < dob.getUTCDate())) age -= 1;
+  if (!Number.isFinite(age) || age < 0 || age > 120) return null;
+  return age;
+}
+
+function buildAudienceContextForCompatibility({ subjectBirthData, partnerBirthData }) {
+  const a = computeAgeYears(subjectBirthData);
+  const b = computeAgeYears(partnerBirthData);
+  if (!Number.isFinite(a) && !Number.isFinite(b)) return '';
+
+  const lines = [];
+  if (Number.isFinite(a)) lines.push(`- Person A is approximately ${a} years old.`);
+  if (Number.isFinite(b)) lines.push(`- Person B is approximately ${b} years old.`);
+
+  const anyUnder13 = [a, b].some((x) => Number.isFinite(x) && x < 13);
+  const anyMinor = [a, b].some((x) => Number.isFinite(x) && x < 18);
+
+  if (anyUnder13) {
+    lines.push('- At least one person is a child. Keep guidance age-appropriate and strictly avoid adult topics (romance/sex/marriage). Focus on family, school, friendships, emotional regulation, confidence, and healthy boundaries.');
+  } else if (anyMinor) {
+    lines.push('- At least one person is a minor. Keep guidance age-appropriate and avoid explicit content or adult-life assumptions.');
+  } else {
+    lines.push('- Both people appear to be adults.');
+  }
+
+  return `\n\nAUDIENCE CONTEXT:\n${lines.join('\n')}`;
+}
+
+function buildRelationshipContext(relationshipType) {
+  const type = String(relationshipType || '').trim();
+  if (!type) return '';
+
+  const map = {
+    romantic: 'ROMANTIC / DATING / PARTNERSHIP',
+    friends: 'FRIENDS',
+    family: 'FAMILY',
+    coworker: 'COWORKERS / PROFESSIONAL',
+    other: 'OTHER',
+  };
+  const label = map[type] || type.toUpperCase();
+  return `\n\nRELATIONSHIP CONTEXT:\n- The intended relationship type is: ${label}.\n- Tailor examples, advice, boundaries, and "growth work" to this context (e.g., friendship dynamics vs romantic attachment).`;
+}
+
+function buildCompatibilityPrompt({ zodiacSystem, subjectChart, partnerChart, subjectTitle, partnerTitle, relationshipType, audienceContext }) {
   const systemLine = zodiacSystem === 'sidereal'
     ? 'ZODIAC SYSTEM: SIDEREAL (Fagan-Bradley ayanamsa)'
     : 'ZODIAC SYSTEM: TROPICAL (Western)';
@@ -106,6 +198,7 @@ function buildCompatibilityPrompt({ zodiacSystem, subjectChart, partnerChart, su
 Your task is to produce a detailed compatibility analysis between **two** people using the two sets of chart placements below.
 
 ${systemLine}
+${audienceContext || ''}${buildRelationshipContext(relationshipType)}
 
 IMPORTANT:
 - Treat the first chart as **Person A** and the second chart as **Person B**.
@@ -245,7 +338,7 @@ export default async function handler(req) {
       const url = new URL(req.url);
       const body = await req.json().catch(() => ({}));
 
-      const { partnerBirthData, partnerChartData, label } = body || {};
+      const { partnerBirthData, partnerChartData, label, relationshipType } = body || {};
       const orderId = body?.orderId || url.searchParams.get('orderId') || url.searchParams.get('id') || getHeader(req, 'X-Order-Id');
 
       if (!orderId || !partnerBirthData || !partnerChartData) {
@@ -274,7 +367,7 @@ export default async function handler(req) {
       }
 
       const zodiacSystem = fullOrder.zodiac_system || 'tropical';
-      const purchasedAddons = fullOrder.purchased_addons || [];
+      const purchasedAddons = coercePurchasedAddons(fullOrder.purchased_addons);
       const hasCompatibility = purchasedAddons.includes(`${zodiacSystem}_compatibility`) || purchasedAddons.includes('compatibility');
       if (!hasCompatibility) {
         return new Response(JSON.stringify({ error: 'Compatibility not purchased for this order' }), {
@@ -302,6 +395,7 @@ export default async function handler(req) {
       }
 
       const subjectBirthData = fullOrder.chart_data?.meta?.birthData || {};
+      const audienceContext = buildAudienceContextForCompatibility({ subjectBirthData, partnerBirthData });
       const subjectTitle = formatSubjectLabel({
         relationship: subjectBirthData?.subjectRelationship,
         initials: subjectBirthData?.subjectInitials,
@@ -320,6 +414,8 @@ export default async function handler(req) {
         partnerChart,
         subjectTitle,
         partnerTitle,
+        relationshipType,
+        audienceContext,
       });
 
       const result = streamText({
@@ -351,6 +447,7 @@ export default async function handler(req) {
               ...(existingChartData?.meta || {}),
               partnerBirthData,
               partnerChartData,
+              compatibilityRelationshipType: relationshipType || null,
             },
           };
 

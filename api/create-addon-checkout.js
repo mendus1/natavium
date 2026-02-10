@@ -29,6 +29,43 @@ const ADDON_PRICE_MAP = {
   solar_return: process.env.STRIPE_PRICE_ID_RETURN,
 };
 
+function coercePurchasedAddons(value) {
+  if (Array.isArray(value)) {
+    const filtered = value.filter(v => typeof v === 'string');
+    const looksLikeCharArrayJson =
+      filtered.length > 10 &&
+      filtered.every(v => v.length === 1) &&
+      filtered.includes('[');
+
+    if (looksLikeCharArrayJson) {
+      return coercePurchasedAddons(filtered.join(''));
+    }
+
+    return filtered.map(v => v.trim()).filter(Boolean);
+  }
+
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    if (!trimmed) return [];
+
+    if (trimmed.startsWith('[')) {
+      try {
+        const parsed = JSON.parse(trimmed);
+        return Array.isArray(parsed) ? parsed.filter(v => typeof v === 'string' && v.trim()) : [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    return trimmed
+      .split(',')
+      .map(s => s.trim())
+      .filter(Boolean);
+  }
+
+  return [];
+}
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method Not Allowed" });
@@ -76,7 +113,7 @@ export default async function handler(req, res) {
     const zodiacSystem = order.zodiac_system || 'tropical';
 
     // Filter out already purchased add-ons (check both prefixed and unprefixed)
-    const existingAddons = order.purchased_addons || [];
+    const existingAddons = coercePurchasedAddons(order.purchased_addons);
     const newAddOns = addOns.filter((addon) => {
       const prefixed = `${zodiacSystem}_${addon}`;
       const alreadyOwned = existingAddons.includes(addon) || existingAddons.includes(prefixed);

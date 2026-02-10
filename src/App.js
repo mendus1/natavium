@@ -1259,7 +1259,7 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
         {/* Sun Sign Heading */}
         <div className="text-center mb-6">
           <h2 className="font-serif text-3xl md:text-4xl font-semibold gold-gradient-text flex items-center justify-center gap-2">
-            <BrandStar className="w-8 h-8 icon-gold" /> A {activeChart.sun.sign}! <BrandStar className="w-8 h-8 icon-gold" />
+            <BrandStar className="w-8 h-8 icon-gold" />{activeChart.sun.sign}! <BrandStar className="w-8 h-8 icon-gold" />
           </h2>
           <p className="text-sm t-text-muted mt-1">({zodiacLabel} Zodiac)</p>
         </div>
@@ -2223,6 +2223,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
   const [pdfGenerating, setPdfGenerating] = useState(false);
   const [analysisLoading, setAnalysisLoading] = useState(false);
   const [compatPartnerBirthData, setCompatPartnerBirthData] = useState({
+    relationshipType: 'romantic',
     subjectRelationship: "partner",
     subjectInitials: "",
     birthMonth: "",
@@ -2661,6 +2662,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
           partnerBirthData: compatPartnerBirthData,
           partnerChartData,
           label,
+          relationshipType: compatPartnerBirthData?.relationshipType,
         })
       });
 
@@ -4045,6 +4047,21 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
                         <option value="partner">Partner</option>
                         <option value="friend">Friend</option>
                         <option value="client">Client</option>
+                        <option value="other">Other</option>
+                      </select>
+                    </div>
+
+                    <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+                      <label className="block text-sm font-medium mb-2">Relationship type</label>
+                      <select
+                        value={compatPartnerBirthData.relationshipType}
+                        onChange={(e) => setCompatPartnerBirthData(prev => ({ ...prev, relationshipType: e.target.value }))}
+                        className="w-full px-3 py-2 rounded-lg bg-[#12142A]/80 border border-white/10 text-white focus:outline-none"
+                      >
+                        <option value="romantic">Romantic / dating</option>
+                        <option value="friends">Friends</option>
+                        <option value="family">Family</option>
+                        <option value="coworker">Coworkers</option>
                         <option value="other">Other</option>
                       </select>
                     </div>
