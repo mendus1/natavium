@@ -1583,12 +1583,6 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
                     isSelected ? "scale-105 shadow-lg" : "hover:bg-white/10"
                   }`}
                 >
-                  {bundle.popular && (
-                    <div className="absolute top-2 left-1/2 transform -translate-x-1/2 gold-gradient-btn text-xs font-bold px-3 py-1 rounded-full">
-                      MOST POPULAR
-                    </div>
-                  )}
-
                   {/* Icon and Price Row */}
                   <div className="flex items-center justify-between mb-4">
                     <IconComponent className={`w-8 h-8 ${colors.icon}`} />
@@ -1597,20 +1591,24 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
                     </div>
                   </div>
 
+                  {/* Most Popular Tag - below price for Essential */}
+                  {bundle.popular && (
+                    <div className="mt-2 mb-3 gold-gradient-btn text-xs font-bold px-3 py-1 rounded-full text-center inline-block w-full">
+                      MOST POPULAR
+                    </div>
+                  )}
+
                   {/* Bundle Name */}
                   <h3 className="text-xl font-bold mb-3">{bundle.name}</h3>
 
                   {/* Services List with Info Icons */}
                   <div className="space-y-2 mb-3">
-                    {/* Base includes */}
+                    {/* Base includes - same color as service lines */}
                     {bundle.essentialIncludes && (
-                      <div className="text-sm text-white/70">Essential +</div>
+                      <div className="text-sm text-white">Essential +</div>
                     )}
                     {bundle.baseIncludes && !bundle.essentialIncludes && (
-                      <div className="text-sm text-white/70">Base +</div>
-                    )}
-                    {!bundle.baseIncludes && !bundle.essentialIncludes && (
-                      <div className="text-sm text-white/70">Base</div>
+                      <div className="text-sm text-white">Base +</div>
                     )}
 
                     {/* Services */}
@@ -1638,7 +1636,7 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
                     ))}
                   </div>
 
-                  <p className="text-xs t-text-muted">One-time payment</p>
+                  <p className="text-xs t-text-muted text-center">One-time payment</p>
 
                   {isSelected && (
                     <div className="absolute top-3 right-3">
