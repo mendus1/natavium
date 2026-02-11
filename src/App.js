@@ -902,7 +902,7 @@ function LandingPage() {
       <section className="max-w-4xl mx-auto grid md:grid-cols-3 gap-6 mt-2 mb-12">
         <div className="card-solid text-center py-8 px-6">
           <Star className="w-8 h-8 icon-gold mx-auto mb-4" strokeWidth={1} />
-          <h3 className="font-serif text-2xl md:text-[1.65rem] mb-2 t-text-primary">Personalized Birth Chart</h3>
+          <h3 className="font-serif text-xl md:text-2xl mb-2 t-text-primary">Personalized Birth Chart</h3>
           <p className="t-text-muted text-sm leading-relaxed">
             Built from exact planetary positions at your birth—so it’s about you, not just your Sun sign.
           </p>
@@ -910,7 +910,7 @@ function LandingPage() {
 
         <div className="card-solid text-center py-8 px-6">
           <Zap className="w-8 h-8 icon-gold mx-auto mb-4" strokeWidth={1} />
-          <h3 className="font-serif text-2xl md:text-[1.65rem] mb-2 t-text-primary">Powerful AI</h3>
+          <h3 className="font-serif text-xl md:text-2xl mb-2 t-text-primary">Powerful AI</h3>
           <p className="t-text-muted text-sm leading-relaxed">
             The latest AI models analyse your planetary placements + transits into a coherent story. No templates.
           </p>
@@ -918,7 +918,7 @@ function LandingPage() {
 
         <div className="card-solid text-center py-8 px-6">
           <Heart className="w-8 h-8 icon-gold mx-auto mb-4" strokeWidth={1} />
-          <h3 className="font-serif text-2xl md:text-[1.65rem] mb-2 t-text-primary">One-Time Unlocks</h3>
+          <h3 className="font-serif text-xl md:text-2xl mb-2 t-text-primary">One-Time Unlocks</h3>
           <p className="t-text-muted text-sm leading-relaxed">
             Subscriptions are not required. Pay for exactly what you want. 
           </p>
@@ -984,7 +984,7 @@ function InputPage({ birthData, handleInputChange, calculateChart, calcError }) 
       <div className="max-w-2xl w-full">
         <div className="text-center mb-8">
           <h2 className="font-serif text-4xl md:text-5xl font-semibold gold-gradient-text mb-3">Enter Your Birth Details</h2>
-          <p className="text-base t-text-muted">Everything begins with your natal chart. Enter your details now to see yours</p>
+          <p className="text-lg t-text-muted">Everything begins with your natal chart. Enter your details now to see yours</p>
         </div>
 
         <div className="card-solid rounded-2xl p-8">
