@@ -796,16 +796,17 @@
 .card-gold-hover:hover {
   background:
     linear-gradient(135deg,
-      rgba(214, 179, 90, 0.15) 0%,
-      rgba(18, 20, 42, 0.90) 50%,
+      rgba(214, 179, 90, 0.25) 0%,
+      rgba(18, 20, 42, 0.85) 50%,
       rgba(18, 20, 42, 0.95) 100%
     ),
     rgba(18, 20, 42, 0.90);
-  border-color: rgba(214, 179, 90, 0.40);
+  border-color: rgba(214, 179, 90, 0.60);
   box-shadow:
-    0 8px 30px rgba(214, 179, 90, 0.15),
-    0 0 20px rgba(214, 179, 90, 0.10);
-  transform: translateY(-2px);
+    0 12px 40px rgba(214, 179, 90, 0.25),
+    0 0 30px rgba(214, 179, 90, 0.20),
+    inset 0 1px 0 rgba(214, 179, 90, 0.15);
+  transform: translateY(-4px) scale(1.02);
 }
 
 /* Preview page cards - slightly lighter base */
@@ -827,14 +828,15 @@
 .card-preview:hover {
   background:
     linear-gradient(135deg,
-      rgba(214, 179, 90, 0.12) 0%,
+      rgba(214, 179, 90, 0.20) 0%,
       rgba(28, 32, 58, 0.90) 50%,
       rgba(28, 32, 58, 0.95) 100%
     ),
     rgba(28, 32, 58, 0.90);
-  border-color: rgba(214, 179, 90, 0.35);
+  border-color: rgba(214, 179, 90, 0.50);
   box-shadow:
-    0 8px 30px rgba(214, 179, 90, 0.12),
-    0 0 20px rgba(214, 179, 90, 0.08);
-  transform: translateY(-2px);
+    0 10px 35px rgba(214, 179, 90, 0.20),
+    0 0 25px rgba(214, 179, 90, 0.15),
+    inset 0 1px 0 rgba(214, 179, 90, 0.12);
+  transform: translateY(-4px) scale(1.02);
 }

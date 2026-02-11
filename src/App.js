@@ -1541,8 +1541,8 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
       </div>
 
       {/* Services description - text on background, no box - outside max-w-4xl container for full page centering */}
-      <div className="w-full px-4">
-        <p className="text-base leading-relaxed text-white/90 text-center mb-20 max-w-3xl mx-auto">
+      <div className="w-full px-4 mt-8">
+        <p className="text-lg leading-relaxed text-white/90 text-center mb-24 max-w-4xl mx-auto">
           Calculating your full natal chart opens the door to a wide range of services. We offer deep dives, compatibility reports, forecasts and more.
         </p>
       </div>
