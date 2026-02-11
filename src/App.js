@@ -810,105 +810,22 @@ function LandingPage() {
     Discover Your Chart
   </button>
 
-  <p className="t-text-muted mt-8 text-sm tracking-wide">
+  <p className="t-text-muted mt-12 text-sm tracking-wide">
     Free preview • Full analysis from $4.99
   </p>
 </section>
 
-      {/* Sample Preview (hidden for now) */}
-      <div className="hidden mt-12 mb-14">
-        <div className="card-solid max-w-4xl mx-auto">
-          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
-            {/* Left: text */}
-            <div className="min-w-0">
-              <div className="flex items-center gap-3 mb-3">
-                <span className="inline-flex items-center rounded-full px-3 py-1 text-xs tracking-wide"
-                      style={{
-                        border: "1px solid rgba(255,255,255,0.12)",
-                        background: "rgba(255,255,255,0.03)",
-                        color: "var(--text)"
-                      }}>
-                  Sample Preview
-                </span>
-                <span className="text-sm t-text-muted">
-                  The next 5 days &bull; Personalized to you
-                </span>
-              </div>
-
-              <h3 className="font-serif text-2xl md:text-3xl font-semibold t-text-primary mb-3">
-                Your timing at a glance
-              </h3>
-
-              <p className="t-text-muted text-base md:text-lg leading-relaxed mb-5 max-w-2xl">
-                A short, clear preview of what&rsquo;s active right now in your chart&mdash;where momentum is building,
-                what to prioritize, and what to handle gently.
-              </p>
-
-              {/* Key transit chips */}
-              <div className="flex flex-wrap gap-2">
-                {["Key themes", "Pressure points", "Momentum windows", "Communication", "Rest & reset"].map((label) => (
-                  <span
-                    key={label}
-                    className="inline-flex items-center rounded-full px-3 py-1 text-xs"
-                    style={{
-                      border: "1px solid rgba(255,255,255,0.10)",
-                      background: "rgba(255,255,255,0.02)",
-                      color: "rgba(242,243,255,0.80)"
-                    }}
-                  >
-                    {label}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            {/* Right: mini signal + CTA */}
-            <div className="shrink-0 md:w-64">
-              <div
-                className="rounded-xl p-4"
-                style={{
-                  border: "1px solid rgba(255,255,255,0.10)",
-                  background: "rgba(255,255,255,0.02)"
-                }}
-              >
-                <div className="text-xs tracking-wide t-text-muted mb-2">
-                  Today&rsquo;s signal
-                </div>
-
-                <div className="flex items-center justify-between mb-2">
-                  <div className="font-serif text-xl t-text-primary">Steady</div>
-                  <div className="text-sm" style={{ color: "rgba(214,179,90,0.95)" }}>
-                    &#9679;&#9679;&#9679;&#9675;&#9675;
-                  </div>
-                </div>
-
-                <p className="text-sm t-text-muted leading-relaxed mb-4">
-                  Good for planning, clarifying, and small wins. Avoid forcing outcomes.
-                </p>
-
-                <button
-                  onClick={() => navigate("/input")}
-                  className="gold-gradient-btn w-full"
-                >
-                  Get My Preview &rarr;
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
     {/* Feature Cards */}
       <section className="max-w-4xl mx-auto grid md:grid-cols-3 gap-6 mt-2 mb-12">
-        <div className="card-solid text-center py-8 px-6">
+        <div className="card-solid card-elevated text-center py-8 px-6">
           <Star className="w-8 h-8 icon-gold mx-auto mb-4" strokeWidth={1} />
           <h3 className="font-serif text-xl md:text-2xl mb-2 t-text-primary">Personalized Birth Chart</h3>
           <p className="t-text-muted text-sm leading-relaxed">
-            Built from exact planetary positions at your birth—so it’s about you, not just your Sun sign.
+            Built from exact planetary positions at your birth—so it's about you, not just your Sun sign.
           </p>
         </div>
 
-        <div className="card-solid text-center py-8 px-6">
+        <div className="card-solid card-elevated text-center py-8 px-6">
           <Zap className="w-8 h-8 icon-gold mx-auto mb-4" strokeWidth={1} />
           <h3 className="font-serif text-xl md:text-2xl mb-2 t-text-primary">Powerful AI</h3>
           <p className="t-text-muted text-sm leading-relaxed">
@@ -916,39 +833,12 @@ function LandingPage() {
           </p>
         </div>
 
-        <div className="card-solid text-center py-8 px-6">
+        <div className="card-solid card-elevated text-center py-8 px-6">
           <Heart className="w-8 h-8 icon-gold mx-auto mb-4" strokeWidth={1} />
           <h3 className="font-serif text-xl md:text-2xl mb-2 t-text-primary">One-Time Unlocks</h3>
           <p className="t-text-muted text-sm leading-relaxed">
             Subscriptions are not required. Pay for exactly what you want. 
           </p>
-        </div>
-      </section>
-
-      {/* Comparison - Premium Table Style */}
-      <section className="max-w-3xl mx-auto mb-12">
-        <h2 className="font-serif text-3xl text-center mb-8 t-text-primary">Why Natavium?</h2>
-        <div className="comparison-table">
-          <div className="comparison-row comparison-header">
-            <div className="comparison-cell"></div>
-            <div className="comparison-cell text-center t-text-muted">Other Apps</div>
-            <div className="comparison-cell text-center gold-gradient-text font-semibold">Natavium</div>
-          </div>
-          <div className="comparison-row">
-            <div className="comparison-cell t-text-muted">Pricing</div>
-            <div className="comparison-cell text-center t-text-muted">$7-15/month</div>
-            <div className="comparison-cell text-center t-text-primary font-medium">$4.99 once</div>
-          </div>
-          <div className="comparison-row">
-            <div className="comparison-cell t-text-muted">Analysis</div>
-            <div className="comparison-cell text-center t-text-muted">Templates</div>
-            <div className="comparison-cell text-center t-text-primary font-medium">Real AI synthesis</div>
-          </div>
-          <div className="comparison-row">
-            <div className="comparison-cell t-text-muted">Personalization</div>
-            <div className="comparison-cell text-center t-text-muted">Generic horoscopes</div>
-            <div className="comparison-cell text-center t-text-primary font-medium">Your exact chart</div>
-          </div>
         </div>
       </section>
 
