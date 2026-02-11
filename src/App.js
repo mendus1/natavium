@@ -798,26 +798,22 @@ function LandingPage() {
             AI-powered astrology from your full birth chart.
           </p>
 
-        {/* Supporting line (smaller + softer so it doesn't compete) */}
-          <p className="text-base md:text-lg t-text-muted mb-8 text-center">
-            Timing for career, relationships, and personal growth—based on what's happening now.
-          </p>
-
   <button
     onClick={() => navigate("/input")}
     className="gold-gradient-btn gold-gradient-btn-lg"
+    style={{ marginTop: '24px', marginBottom: '24px' }}
   >
     Discover Your Chart
   </button>
-
-  <p className="t-text-muted mt-12 text-sm tracking-wide">
-    Free preview • Full analysis from $4.99
-  </p>
+{/* Supporting line (smaller + softer so it doesn't compete) */}
+          <p className="text-base md:text-lg t-text-muted mb-8 text-center" style={{ marginBottom: '48px' }}>
+            Timing for career, relationships, and personal growth—based on what's happening now.
+          </p>
 </section>
 
     {/* Feature Cards */}
       <section className="max-w-4xl mx-auto grid md:grid-cols-3 gap-6 mt-2 mb-12">
-        <div className="card-solid card-elevated text-center py-8 px-6">
+        <div className="card-illuminated text-center py-8 px-6">
           <Star className="w-8 h-8 icon-gold mx-auto mb-4" strokeWidth={1} />
           <h3 className="font-serif text-xl md:text-2xl mb-2 t-text-primary">Personalized Birth Chart</h3>
           <p className="t-text-muted text-sm leading-relaxed">
@@ -825,7 +821,7 @@ function LandingPage() {
           </p>
         </div>
 
-        <div className="card-solid card-elevated text-center py-8 px-6">
+        <div className="card-illuminated text-center py-8 px-6">
           <Zap className="w-8 h-8 icon-gold mx-auto mb-4" strokeWidth={1} />
           <h3 className="font-serif text-xl md:text-2xl mb-2 t-text-primary">Powerful AI</h3>
           <p className="t-text-muted text-sm leading-relaxed">
@@ -833,7 +829,7 @@ function LandingPage() {
           </p>
         </div>
 
-        <div className="card-solid card-elevated text-center py-8 px-6">
+        <div className="card-illuminated text-center py-8 px-6">
           <Heart className="w-8 h-8 icon-gold mx-auto mb-4" strokeWidth={1} />
           <h3 className="font-serif text-xl md:text-2xl mb-2 t-text-primary">One-Time Unlocks</h3>
           <p className="t-text-muted text-sm leading-relaxed">
@@ -877,9 +873,9 @@ function InputPage({ birthData, handleInputChange, calculateChart, calcError }) 
           <p className="text-lg t-text-muted">Everything begins with your natal chart. Enter your details now to see yours</p>
         </div>
 
-        <div className="card-solid rounded-2xl p-8">
+        <div className="card-input-hover rounded-2xl p-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-            <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+            <div className="bg-white/15 rounded-xl p-4 border border-white/10">
               <label className="flex items-center text-sm font-medium mb-2">
                 Who is this chart for?
               </label>
@@ -898,7 +894,7 @@ function InputPage({ birthData, handleInputChange, calculateChart, calcError }) 
               <p className="text-xs t-text-muted mt-2">Shown in your saved reports and headings</p>
             </div>
 
-            <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+            <div className="bg-white/15 rounded-xl p-4 border border-white/10">
               <label className="flex items-center text-sm font-medium mb-2">
                 Initials (2–3 letters)
               </label>
@@ -911,7 +907,7 @@ function InputPage({ birthData, handleInputChange, calculateChart, calcError }) 
               <p className="text-xs t-text-muted mt-2">Use initials only (no full names)</p>
             </div>
 
-            <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+            <div className="bg-white/15 rounded-xl p-4 border border-white/10">
               <label className="flex items-center text-sm font-medium mb-2">
                 <Calendar className="w-4 h-4 mr-2 icon-gold" />
                 Birth date
@@ -938,7 +934,7 @@ function InputPage({ birthData, handleInputChange, calculateChart, calcError }) 
               </div>
             </div>
 
-            <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+            <div className="bg-white/15 rounded-xl p-4 border border-white/10">
               <label className="flex items-center text-sm font-medium mb-2">
                 <Clock className="w-4 h-4 mr-2 icon-gold" />
                 Birth time
@@ -968,7 +964,7 @@ function InputPage({ birthData, handleInputChange, calculateChart, calcError }) 
               <p className="text-xs t-text-muted mt-2">Check birth certificate. Use noon if time is unknown.</p>
             </div>
 
-            <div className="bg-white/5 rounded-xl p-4 border border-white/10 md:col-span-2">
+            <div className="bg-white/15 rounded-xl p-4 border border-white/10 md:col-span-2">
               <label className="flex items-center text-sm font-medium mb-2">
                 <MapPin className="w-4 h-4 mr-2 icon-gold" />
                 Birth location
@@ -1147,22 +1143,50 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
     <div className="min-h-screen text-white p-6 pb-16">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-8">
-          <h1 className="font-serif text-4xl md:text-5xl font-semibold gold-gradient-text mb-2">Your Natal Chart</h1>
+          <h1 className="font-serif text-4xl md:text-5xl font-semibold gold-gradient-text mb-2">
+            {birthData.subjectInitials 
+              ? `Natal Chart (${zodiacLabel}) for ${birthData.subjectInitials.toUpperCase()}` 
+              : `Natal Chart (${zodiacLabel})`}
+          </h1>
           <p className="text-lg t-text-muted">
             {displayDate} • {birthData.time} • {birthData.location}
           </p>
         </div>
 
-        {/* Sun Sign Heading */}
-        <div className="text-center mb-6">
-          <h2 className="font-serif text-3xl md:text-4xl font-semibold gold-gradient-text flex items-center justify-center gap-2">
-            <BrandStar className="w-8 h-8 icon-gold" />{activeChart.sun.sign}! <BrandStar className="w-8 h-8 icon-gold" />
-          </h2>
-          <p className="text-sm t-text-muted mt-1">({zodiacLabel} Zodiac)</p>
+        {/* Sun Sign Heading - now inside wheel box */}
+        {/* Removed - moved inside wheel box */}
+
+        {/* Big Three - Above chart wheel, tightened with gold hover */}
+        <div className="grid md:grid-cols-3 gap-3 mb-6">
+          <div className="card-gold-hover rounded-xl p-4 text-center">
+            <Sun className="w-8 h-8 icon-gold mb-2 mx-auto" />
+            <div className="text-xl font-bold mb-0.5">{activeChart.sun.sign} Sun</div>
+            <div className="text-xs t-text-muted">Core Identity</div>
+            <div className="text-xs t-text-muted mt-1">
+              {activeChart.sun.degree}° {String(activeChart.sun.minutes || 0).padStart(2, '0')}' • House {activeChart.sun.house}
+            </div>
+          </div>
+
+          <div className="card-gold-hover rounded-xl p-4 text-center">
+            <Moon className="w-8 h-8 text-[#69D2FF] mb-2 mx-auto" />
+            <div className="text-xl font-bold mb-0.5">{activeChart.moon.sign} Moon</div>
+            <div className="text-xs t-text-muted">Emotional Core</div>
+            <div className="text-xs t-text-muted mt-1">
+              {activeChart.moon.degree}° {String(activeChart.moon.minutes || 0).padStart(2, '0')}' • House {activeChart.moon.house}
+            </div>
+          </div>
+
+          <div className="card-gold-hover rounded-xl p-4 text-center">
+            <Star className="w-8 h-8 icon-gold mb-2 mx-auto" />
+            <div className="text-xl font-bold mb-0.5">{activeChart.rising.sign} Rising</div>
+            <div className="text-xs t-text-muted">How Others See You</div>
+            <div className="text-xs t-text-muted mt-1">{activeChart.rising.degree}° {String(activeChart.rising.minutes || 0).padStart(2, '0')}' Ascendant</div>
+          </div>
         </div>
 
-        {/* Premium Chart Wheel */}
-        <div className="card-solid rounded-2xl p-8 mb-8">
+        {/* Premium Chart Wheel - Left aligned on desktop with Cosmic Blueprint on right */}
+        <div className="md:grid md:grid-cols-2 gap-6 mb-8">
+          <div className="card-gold-hover rounded-2xl p-8">
           {/* Personalized Archetype - above wheel */}
           {(() => {
             // Sun sign base archetypes
@@ -1219,11 +1243,11 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
 
             return (
               <div className="text-center mb-6 pb-6 border-b border-white/10">
-                <p className="font-serif text-2xl font-semibold gold-gradient-text italic">
-                  "{archetype}"
+                <p className="font-serif text-2xl font-semibold gold-gradient-text">
+                  {sunSign} — <span className="italic">"{archetype}"</span>
                 </p>
                 <p className="text-xs t-text-muted mt-2">
-                  {sunSign} Sun • {moonSign} Moon • {risingSign} Rising
+                  {moonSign} Moon • {risingSign} Rising
                 </p>
               </div>
             );
@@ -1469,70 +1493,40 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
           </p>
         </div>
 
-        {/* Big Three */}
-        <div className="grid md:grid-cols-3 gap-4 mb-8">
-          <div className="card-solid rounded-2xl p-6 text-center">
-            <Sun className="w-10 h-10 icon-gold mb-3 mx-auto" />
-            <div className="text-2xl font-bold mb-1">{activeChart.sun.sign} Sun</div>
-            <div className="text-sm t-text-muted">Core Identity</div>
-            <div className="text-xs t-text-muted mt-2">
-              {activeChart.sun.degree}° {String(activeChart.sun.minutes || 0).padStart(2, '0')}' in {activeChart.sun.house}
-              {houseSuffix(activeChart.sun.house)} house
-            </div>
-          </div>
-
-          <div className="card-solid rounded-2xl p-6 text-center">
-            <Moon className="w-10 h-10 text-[#69D2FF] mb-3 mx-auto" />
-            <div className="text-2xl font-bold mb-1">{activeChart.moon.sign} Moon</div>
-            <div className="text-sm t-text-muted">Emotional Core</div>
-            <div className="text-xs t-text-muted mt-2">
-              {activeChart.moon.degree}° {String(activeChart.moon.minutes || 0).padStart(2, '0')}' in {activeChart.moon.house}
-              {houseSuffix(activeChart.moon.house)} house
-            </div>
-          </div>
-
-          <div className="card-solid rounded-2xl p-6 text-center">
-            <Star className="w-10 h-10 icon-gold mb-3 mx-auto" />
-            <div className="text-2xl font-bold mb-1">{activeChart.rising.sign} Rising</div>
-            <div className="text-sm t-text-muted">How Others See You</div>
-            <div className="text-xs t-text-muted mt-2">{activeChart.rising.degree}° {String(activeChart.rising.minutes || 0).padStart(2, '0')}' Ascendant</div>
-          </div>
-        </div>
-
-        {/* AI-Generated Teaser with paywall */}
-        <div className="card-solid rounded-2xl p-8 mb-8">
-          <h2 className="font-serif text-3xl font-semibold gold-gradient-text mb-6">Your Cosmic Blueprint</h2>
+        {/* Cosmic Blueprint - beside chart box */}
+        <div className="card-gold-hover rounded-2xl p-6">
+          <h2 className="font-serif text-2xl font-semibold gold-gradient-text mb-4">Your Cosmic Blueprint</h2>
 
           {teaserLoading ? (
-            <div className="flex flex-col items-center justify-center py-8">
-              <Loader2 className="w-10 h-10 icon-gold animate-spin mb-4" />
-              <p className="t-text-muted">Analyzing your unique cosmic signature...</p>
+            <div className="flex flex-col items-center justify-center py-6">
+              <Loader2 className="w-8 h-8 icon-gold animate-spin mb-3" />
+              <p className="t-text-muted text-sm">Analyzing your unique cosmic signature...</p>
             </div>
           ) : teaserError ? (
-            <div className="space-y-4">
-              <p className="text-lg leading-relaxed">
+            <div className="space-y-3">
+              <p className="text-sm leading-relaxed">
                 Your {activeChart.sun.sign} Sun combined with {activeChart.moon.sign} Moon and {activeChart.rising.sign} Rising
                 creates a unique cosmic blueprint that shapes your personality, emotions, and how others perceive you.
               </p>
-              <p className="t-text-muted text-sm">Full AI analysis available in paid packages below.</p>
+              <p className="t-text-muted text-xs">Full AI analysis available in paid packages below.</p>
             </div>
           ) : teaser ? (
-            <div className="space-y-4">
-              {teaser.split('\n\n').map((paragraph, idx) => (
-                <p key={idx} className="text-lg leading-relaxed text-white/90">
+            <div className="space-y-3">
+              {teaser.split('\n\n').slice(0, 2).map((paragraph, idx) => (
+                <p key={idx} className="text-sm leading-relaxed text-white/90">
                   {paragraph}
                 </p>
               ))}
             </div>
           ) : null}
 
-          <div className="relative mt-6">
+          <div className="relative mt-4">
             {/* Blurred premium preview */}
             <div className="blur-sm select-none opacity-50">
-              <h3 className="text-xl font-bold mb-2">
+              <h3 className="text-base font-bold mb-1">
                 Mercury in {activeChart.mercury.sign}
               </h3>
-              <p className="text-sm">Your communication style reveals hidden patterns...</p>
+              <p className="text-xs">Your communication style reveals hidden patterns...</p>
             </div>
 
             {/* Gradient overlay */}
@@ -1540,10 +1534,11 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
           </div>
 
           <div className="text-center mt-4">
-            <Lock className="w-8 h-8 icon-gold mx-auto mb-2" />
-            <p className="t-text-muted text-sm">Select a package below to unlock your full analsis</p>
+            <Lock className="w-6 h-6 icon-gold mx-auto mb-2" />
+            <p className="t-text-muted text-xs">Select a package below to unlock your full analysis</p>
           </div>
         </div>
+      </div>
 
         <div className="card-solid rounded-2xl p-6 mb-8">
           <div className="flex items-start justify-between gap-4">
@@ -3767,7 +3762,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
                 </div>
                 <p className="text-sm t-text-muted mt-1">Emotional Core</p>
               </div>
-              <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+              <div className="bg-white/15 rounded-xl p-4 border border-white/10">
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-semibold text-white">↑ {activeChart.rising.sign} Rising</h3>
                   <span className="text-sm t-text-muted">{activeChart.rising.degree}° {String(activeChart.rising.minutes || 0).padStart(2, '0')}' Ascendant</span>
@@ -4074,7 +4069,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+                    <div className="bg-white/15 rounded-xl p-4 border border-white/10">
                       <label className="block text-sm font-medium mb-2">Who is this for?</label>
                       <select
                         value={compatPartnerBirthData.subjectRelationship}
@@ -4088,7 +4083,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
                       </select>
                     </div>
 
-                    <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+                    <div className="bg-white/15 rounded-xl p-4 border border-white/10">
                       <label className="block text-sm font-medium mb-2">Relationship type</label>
                       <select
                         value={compatPartnerBirthData.relationshipType}
@@ -4103,7 +4098,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
                       </select>
                     </div>
 
-                    <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+                    <div className="bg-white/15 rounded-xl p-4 border border-white/10">
                       <label className="block text-sm font-medium mb-2">Initials (2–3 letters)</label>
                       <input
                         value={compatPartnerBirthData.subjectInitials}
@@ -4117,7 +4112,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
                       />
                     </div>
 
-                    <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+                    <div className="bg-white/15 rounded-xl p-4 border border-white/10">
                       <label className="block text-sm font-medium mb-2">Birth date</label>
                       <div className="grid grid-cols-3 gap-2">
                         <input
@@ -4141,7 +4136,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
                       </div>
                     </div>
 
-                    <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+                    <div className="bg-white/15 rounded-xl p-4 border border-white/10">
                       <label className="block text-sm font-medium mb-2">Birth time</label>
                       <div className="grid grid-cols-3 gap-2">
                         <input
