@@ -1540,12 +1540,13 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
         </div>
       </div>
 
-        {/* Services description - text on background, no box */}
-        <p className="text-xl leading-relaxed text-white/90 text-center mb-12 max-w-3xl mx-auto">
+      {/* Services description - text on background, no box - outside max-w-4xl container for full page centering */}
+      <div className="w-full px-4">
+        <p className="text-base leading-relaxed text-white/90 text-center mb-20 max-w-3xl mx-auto">
           Calculating your full natal chart opens the door to a wide range of services. We offer deep dives, compatibility reports, forecasts and more.
         </p>
-
-        {/* Bundle Selection */}
+      </div>
+      {/* Bundle Selection */}
         <div className="mb-12">
           <h2 className="font-serif text-3xl font-semibold gold-gradient-text text-center mb-10">Choose Your Package</h2>
 
