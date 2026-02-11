@@ -9,7 +9,6 @@ import LogoRed from "./LogoRed.png";
 import {
   Sparkles,
   Lock,
-  Download,
   Star,
   Moon,
   Sun,
@@ -2145,6 +2144,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
   // Supports both old flat format and new { tropical, sidereal, meta } format
   const zodiacType = chartResult?.zodiacType || 'tropical';
   const activeChart = chartResult?.tropical ? chartResult[zodiacType] : chartResult;
+  // eslint-disable-next-line no-unused-vars
   const zodiacLabel = zodiacType === 'sidereal' ? 'Sidereal' : 'Tropical';
 
   // Tab and dashboard state
@@ -2931,7 +2931,8 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
 
   const displayDate = formatBirthDate(birthData.birthMonth, birthData.birthDay, birthData.birthYear);
 
-  // PDF Generation Handler (Server-side via Puppeteer)
+  // PDF Generation Handler (Server-side via Puppeteer) - available for future use
+  // eslint-disable-next-line no-unused-vars
   const handleDownloadPDF = async () => {
     if (pdfGenerating) return;
 
