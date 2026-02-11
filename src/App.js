@@ -1034,14 +1034,14 @@ function InputPage({ birthData, handleInputChange, calculateChart, calcError }) 
 // =========================
 function CalculatingPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 text-white flex items-center justify-center p-6">
+    <div className="min-h-screen text-white flex items-center justify-center p-6">
       <div className="text-center">
         <div className="relative mb-8">
-          <div className="animate-spin rounded-full h-32 w-32 border-t-4 border-b-4 border-yellow-400 mx-auto" />
-          <Star className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-16 h-16 text-yellow-300 animate-pulse" />
+          <div className="animate-spin rounded-full h-32 w-32 border-t-4 border-b-4 border-[#D6B35A] mx-auto" />
+          <Star className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-16 h-16 icon-gold animate-pulse" />
         </div>
-        <h2 className="text-3xl font-bold mb-4">Calculating Your Cosmic Blueprint...</h2>
-        <div className="space-y-2 text-purple-300">
+        <h2 className="text-3xl font-bold mb-4 gold-gradient-text">Calculating Your Cosmic Blueprint...</h2>
+        <div className="space-y-2 t-text-muted">
           <p className="animate-pulse">⚡ Computing planetary positions...</p>
           <p className="animate-pulse">🌙 Analyzing house placements...</p>
           <p className="animate-pulse flex items-center justify-center gap-1"><BrandStar className="w-4 h-4" /> Generating AI insights...</p>
@@ -1158,7 +1158,7 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
 
         {/* Big Three - Above chart wheel, tightened with gold hover */}
         <div className="grid md:grid-cols-3 gap-3 mb-6">
-          <div className="card-gold-hover rounded-xl p-4 text-center">
+          <div className="card-preview rounded-xl p-4 text-center">
             <Sun className="w-8 h-8 icon-gold mb-2 mx-auto" />
             <div className="text-xl font-bold mb-0.5">{activeChart.sun.sign} Sun</div>
             <div className="text-xs t-text-muted">Core Identity</div>
@@ -1167,7 +1167,7 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
             </div>
           </div>
 
-          <div className="card-gold-hover rounded-xl p-4 text-center">
+          <div className="card-preview rounded-xl p-4 text-center">
             <Moon className="w-8 h-8 text-[#69D2FF] mb-2 mx-auto" />
             <div className="text-xl font-bold mb-0.5">{activeChart.moon.sign} Moon</div>
             <div className="text-xs t-text-muted">Emotional Core</div>
@@ -1176,7 +1176,7 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
             </div>
           </div>
 
-          <div className="card-gold-hover rounded-xl p-4 text-center">
+          <div className="card-preview rounded-xl p-4 text-center">
             <Star className="w-8 h-8 icon-gold mb-2 mx-auto" />
             <div className="text-xl font-bold mb-0.5">{activeChart.rising.sign} Rising</div>
             <div className="text-xs t-text-muted">How Others See You</div>
@@ -1186,7 +1186,7 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
 
         {/* Premium Chart Wheel - Left aligned on desktop with Cosmic Blueprint on right */}
         <div className="md:grid md:grid-cols-2 gap-6 mb-8">
-          <div className="card-gold-hover rounded-2xl p-8">
+          <div className="card-preview rounded-2xl p-8">
           {/* Personalized Archetype - above wheel */}
           {(() => {
             // Sun sign base archetypes
@@ -1494,7 +1494,7 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
         </div>
 
         {/* Cosmic Blueprint - beside chart box */}
-        <div className="card-gold-hover rounded-2xl p-6">
+        <div className="card-preview rounded-2xl p-6">
           <h2 className="font-serif text-2xl font-semibold gold-gradient-text mb-4">Your Cosmic Blueprint</h2>
 
           {teaserLoading ? (
@@ -1540,24 +1540,11 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
         </div>
       </div>
 
-        <div className="card-solid rounded-2xl p-6 mb-8">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <div className="text-sm t-text-muted">Ongoing Reports</div>
-              <h3 className="text-xl font-semibold mt-1">Weekly Astro Weather</h3>
-              <p className="t-text-muted text-sm mt-2">A weekly forecast tailored to your natal chart. Coming Soon.</p>
-            </div>
-            <span className="text-xs bg-[#69D2FF]/20 px-2 py-1 rounded text-[#69D2FF] border border-[#69D2FF]/20">Coming Soon</span>
-          </div>
-          <button
-            onClick={async () => {
-              await logEvent('coming_soon_view_sample_clicked', { surface: 'preview', product: 'weekly_astro_weather' });
-              navigate('/ongoing');
-            }}
-            className="mt-4 px-5 py-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-sm"
-          >
-            View sample
-          </button>
+        {/* Services description - in place of weekly box */}
+        <div className="card-preview rounded-2xl p-6 mb-8 text-center">
+          <p className="text-lg leading-relaxed text-white/90">
+            Calculating your full natal chart opens the door to a wide range of services. We offer deep dives, compatibility reports, forecasts and more.
+          </p>
         </div>
 
         {/* Bundle Selection */}
@@ -1605,7 +1592,7 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
                   }`}
                 >
                   {bundle.popular && (
-                    <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 gold-gradient-btn text-xs font-bold px-3 py-1 rounded-full">
+                    <div className="absolute top-2 left-2 gold-gradient-btn text-xs font-bold px-3 py-1 rounded-full">
                       MOST POPULAR
                     </div>
                   )}
@@ -1720,7 +1707,7 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
         )}
 
         {/* Proceed to Payment Button */}
-        <div className="text-center">
+        <div className="text-center mb-8">
           <button
             onClick={async () => {
               try {
@@ -1768,6 +1755,28 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
             Secure checkout • Instant access • Yours forever
           </p>
         </div>
+
+        {/* Weekly Astro Weather - at bottom */}
+        <div className="card-preview rounded-2xl p-6">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <div className="text-sm t-text-muted">Ongoing Reports</div>
+              <h3 className="text-xl font-semibold mt-1">Weekly Astro Weather</h3>
+              <p className="t-text-muted text-sm mt-2">A weekly forecast tailored to your natal chart. Coming Soon.</p>
+            </div>
+            <span className="text-xs bg-[#69D2FF]/20 px-2 py-1 rounded text-[#69D2FF] border border-[#69D2FF]/20">Coming Soon</span>
+          </div>
+          <button
+            onClick={async () => {
+              await logEvent('coming_soon_view_sample_clicked', { surface: 'preview', product: 'weekly_astro_weather' });
+              navigate('/ongoing');
+            }}
+            className="mt-4 px-5 py-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-sm"
+          >
+            View sample
+          </button>
+        </div>
+
       </div>
     </div>
   );
