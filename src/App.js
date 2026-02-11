@@ -984,7 +984,7 @@ function InputPage({ birthData, handleInputChange, calculateChart, calcError }) 
       <div className="max-w-2xl w-full">
         <div className="text-center mb-8">
           <h2 className="font-serif text-4xl md:text-5xl font-semibold gold-gradient-text mb-3">Enter Your Birth Details</h2>
-          <p className="text-base t-text-muted">To beging enter the date, time, & location of birth. This is the basis of all additional services</p>
+          <p className="text-base t-text-muted">Everything begins with your natal chart. Enter your details now to see yours</p>
         </div>
 
         <div className="card-solid rounded-2xl p-8">
@@ -1651,7 +1651,7 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
 
           <div className="text-center mt-4">
             <Lock className="w-8 h-8 icon-gold mx-auto mb-2" />
-            <p className="t-text-muted text-sm">Select a package below to unlock your full reading</p>
+            <p className="t-text-muted text-sm">Select a package below to unlock your full analsis</p>
           </div>
         </div>
 
