@@ -3163,25 +3163,38 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
             <h2 className="text-sm font-semibold t-text-muted uppercase tracking-wider">Available Services</h2>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
-            {DASHBOARD_TABS.filter(tab => !tab.comingSoon).map((tab) => {
+            {DASHBOARD_TABS.map((tab) => {
               const accessible = isTabAccessible(tab.id);
               const TabIcon = tab.icon;
+              const isActive = activeTab === tab.id;
+              const isGenerating = generatingTab === tab.id;
+
               return (
                 <button
                   key={tab.id}
                   onClick={() => handleTabClick(tab)}
                   className={`flex items-center gap-2 p-3 rounded-xl border transition-all text-left ${
-                    accessible
-                      ? 'bg-[#D6B35A]/10 border-[#D6B35A]/30 hover:bg-[#D6B35A]/20'
-                      : 'bg-white/5 border-white/10 hover:bg-white/10 opacity-60'
+                    isActive
+                      ? 'bg-[#D6B35A]/20 border-[#D6B35A]/50'
+                      : accessible
+                        ? 'bg-[#D6B35A]/10 border-[#D6B35A]/30 hover:bg-[#D6B35A]/20'
+                        : 'bg-white/5 border-white/10 hover:bg-white/10 opacity-60'
                   }`}
                 >
-                  <TabIcon className={`w-4 h-4 ${accessible ? 'text-[#D6B35A]' : 't-text-muted'}`} />
+                  {isGenerating ? (
+                    <Loader2 className="w-4 h-4 animate-spin text-[#D6B35A]" />
+                  ) : (
+                    <TabIcon className={`w-4 h-4 ${accessible ? 'text-[#D6B35A]' : 't-text-muted'}`} />
+                  )}
                   <div className="flex-1 min-w-0">
                     <div className="text-sm font-medium truncate">{tab.label}</div>
-                    <div className={`text-xs ${accessible ? 'text-green-400' : 't-text-muted'}`}>
-                      {accessible ? '✓ Available' : '🔒 Locked'}
-                    </div>
+                    {tab.comingSoon ? (
+                      <div className="text-[10px] text-[#69D2FF]">Soon</div>
+                    ) : (
+                      <div className={`text-xs ${accessible ? 'text-green-400' : 't-text-muted'}`}>
+                        {accessible ? '✓ Available' : '🔒 Locked'}
+                      </div>
+                    )}
                   </div>
                 </button>
               );
@@ -3213,42 +3226,6 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
             View sample
           </button>
         </div>
-
-        {/* Tab Navigation */}
-        <nav className="flex gap-1 overflow-x-auto bg-[#12142A]/60 rounded-2xl p-2 mb-6 scrollbar-hide border border-white/10">
-          {DASHBOARD_TABS.map((tab) => {
-            const accessible = isTabAccessible(tab.id);
-            const TabIcon = tab.icon;
-            const isActive = activeTab === tab.id;
-            const isGenerating = generatingTab === tab.id;
-
-            return (
-              <button
-                key={tab.id}
-                onClick={() => handleTabClick(tab)}
-                className={`flex items-center gap-2 px-4 py-3 rounded-xl font-semibold
-                  whitespace-nowrap transition-all min-w-fit ${
-                  isActive
-                    ? 'bg-[#D6B35A]/20 text-[#D6B35A] border border-[#D6B35A]/30'
-                    : accessible
-                      ? 'hover:bg-white/10 t-text-muted hover:text-white'
-                      : 't-text-muted opacity-60 hover:opacity-80'
-                }`}
-              >
-                {isGenerating ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  <TabIcon className="w-4 h-4" />
-                )}
-                <span>{tab.label}</span>
-                {tab.comingSoon && (
-                  <span className="text-[10px] bg-[#69D2FF]/20 px-1.5 py-0.5 rounded text-[#69D2FF]">Soon</span>
-                )}
-                {!accessible && !tab.comingSoon && <Lock className="w-3 h-3 ml-1" />}
-              </button>
-            );
-          })}
-        </nav>
 
         {/* Upsell Modal */}
         {upsellTab && (
