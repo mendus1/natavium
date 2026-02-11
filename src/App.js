@@ -1540,16 +1540,14 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
         </div>
       </div>
 
-        {/* Services description - in place of weekly box */}
-        <div className="card-preview rounded-2xl p-6 mb-8 text-center">
-          <p className="text-lg leading-relaxed text-white/90">
-            Calculating your full natal chart opens the door to a wide range of services. We offer deep dives, compatibility reports, forecasts and more.
-          </p>
-        </div>
+        {/* Services description - text on background, no box */}
+        <p className="text-xl leading-relaxed text-white/90 text-center mb-12 max-w-3xl mx-auto">
+          Calculating your full natal chart opens the door to a wide range of services. We offer deep dives, compatibility reports, forecasts and more.
+        </p>
 
         {/* Bundle Selection */}
-        <div className="mb-8">
-          <h2 className="font-serif text-2xl font-semibold gold-gradient-text text-center mb-6">Choose Your Package</h2>
+        <div className="mb-12">
+          <h2 className="font-serif text-3xl font-semibold gold-gradient-text text-center mb-10">Choose Your Package</h2>
 
           <div className="grid md:grid-cols-3 gap-4">
             {Object.values(BUNDLES).map((bundle) => {
@@ -1563,10 +1561,10 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
                   price: "gold-gradient-text",
                 },
                 purple: {
-                  border: isSelected ? "border-[#69D2FF]" : "border-white/10",
-                  bg: isSelected ? "bg-[#69D2FF]/15" : "bg-[#12142A]/80",
-                  icon: "text-[#69D2FF]",
-                  price: "text-[#69D2FF]",
+                  border: isSelected ? "border-[#D6B35A]" : "border-white/10",
+                  bg: isSelected ? "bg-[#D6B35A]/15" : "bg-[#12142A]/80",
+                  icon: "icon-gold",
+                  price: "gold-gradient-text",
                 },
                 pink: {
                   border: isSelected ? "border-[#D6B35A]" : "border-white/10",
@@ -1592,7 +1590,7 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
                   }`}
                 >
                   {bundle.popular && (
-                    <div className="absolute top-2 left-2 gold-gradient-btn text-xs font-bold px-3 py-1 rounded-full">
+                    <div className="absolute top-2 left-1/2 transform -translate-x-1/2 gold-gradient-btn text-xs font-bold px-3 py-1 rounded-full">
                       MOST POPULAR
                     </div>
                   )}
