@@ -1134,8 +1134,8 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
         <div className="text-center mb-8">
           <h1 className="font-serif text-4xl md:text-5xl font-semibold gold-gradient-text mb-2">
             {birthData.subjectInitials 
-              ? `Natal Chart (${zodiacLabel}) for ${birthData.subjectInitials.toUpperCase()}` 
-              : `Natal Chart (${zodiacLabel})`}
+              ? `Natal Chart Preview (${zodiacLabel}) for ${birthData.subjectInitials.toUpperCase()}` 
+              : `Natal Chart Preview (${zodiacLabel})`}
           </h1>
           <p className="text-lg t-text-muted">
             {displayDate} • {birthData.time} • {birthData.location}
@@ -1469,7 +1469,7 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
             );
           })()}
 
-          {/* Legend */}
+          {/* Legend - centered */}
           <div className="flex flex-wrap justify-center gap-4 text-xs mb-3 mt-2">
             <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full" style={{ background: 'linear-gradient(135deg, #ff6b6b, #f97316)' }}></span><span className="t-text-muted">Fire</span></div>
             <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full" style={{ background: 'linear-gradient(135deg, #4ade80, #22c55e)' }}></span><span className="t-text-muted">Earth</span></div>
@@ -1579,8 +1579,8 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
                       setSelectedAddOns([]);
                     }
                   }}
-                  className={`relative p-6 rounded-2xl border transition-all text-left backdrop-blur-sm ${colors.border} ${colors.bg} ${
-                    isSelected ? "scale-105 shadow-lg" : "hover:bg-white/10"
+                  className={`card-preview relative rounded-2xl border transition-all text-left ${colors.border} ${
+                    isSelected ? "scale-105 shadow-lg border-[#D6B35A]" : ""
                   }`}
                 >
                   {/* Icon and Price Row */}
@@ -1590,13 +1590,6 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
                       ${bundle.price.toFixed(2)}
                     </div>
                   </div>
-
-                  {/* Most Popular Tag - below price for Essential */}
-                  {bundle.popular && (
-                    <div className="mt-2 mb-3 gold-gradient-btn text-xs font-bold px-3 py-1 rounded-full text-center inline-block w-full">
-                      MOST POPULAR
-                    </div>
-                  )}
 
                   {/* Bundle Name */}
                   <h3 className="text-xl font-bold mb-3">{bundle.name}</h3>
@@ -1636,7 +1629,14 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
                     ))}
                   </div>
 
-                  <p className="text-xs t-text-muted text-center">One-time payment</p>
+                  <p className="text-xs t-text-muted text-center mb-3">One-time payment</p>
+
+                  {/* Most Popular Tag - at bottom */}
+                  {bundle.popular && (
+                    <div className="gold-gradient-btn text-xs font-bold px-3 py-1 rounded-full text-center">
+                      MOST POPULAR
+                    </div>
+                  )}
 
                   {isSelected && (
                     <div className="absolute top-3 right-3">
@@ -3137,56 +3137,60 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
       )}
 
       <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-8">
-          <h1 className="font-serif text-4xl md:text-5xl font-semibold gold-gradient-text mb-2">Your Complete {zodiacLabel} Analysis</h1>
-          <p className="text-lg t-text-muted mb-4">
-            {displayDate} • {birthData.time} • {birthData.location}
-          </p>
-
-          {(birthData.subjectRelationship || birthData.subjectInitials) && (
-            <p className="text-center t-text-muted text-sm mb-6">
-              {(birthData.subjectRelationship || 'self').toUpperCase()}{birthData.subjectInitials ? ` • ${birthData.subjectInitials}` : ''}
+        {/* Header with My Reports button in upper right */}
+        <div className="flex items-start justify-between mb-8">
+          <div className="flex-1">
+            <h1 className="font-serif text-4xl md:text-5xl font-semibold gold-gradient-text mb-2">
+              Astrological Analyses for {birthData.subjectInitials?.toUpperCase() || 'You'}
+            </h1>
+            <p className="text-lg t-text-muted">
+              {displayDate} • {birthData.time} • {birthData.location}
             </p>
-          )}
-
-          <div className="flex justify-center gap-4">
-            <button
-              onClick={() => setShowEmailModal(true)}
-              className="flex items-center px-4 py-2 bg-[#12142A]/80 border border-white/10 rounded-lg hover:bg-[#12142A] hover:border-white/20 transition-all text-sm"
-            >
-              <Mail className="w-4 h-4 mr-2 icon-gold" />
-              Email Results
-            </button>
-            <button
-              onClick={() => navigate('/reports')}
-              className="flex items-center px-4 py-2 bg-[#12142A]/80 border border-white/10 rounded-lg hover:bg-[#12142A] hover:border-white/20 transition-all text-sm"
-            >
-              <Star className="w-4 h-4 mr-2 icon-gold" strokeWidth={1} />
-              My Reports
-            </button>
-            <button
-              onClick={handleDownloadPDF}
-              disabled={pdfGenerating}
-              className="flex items-center px-4 py-2 bg-[#12142A]/80 border border-white/10 rounded-lg hover:bg-[#12142A] hover:border-white/20 transition-all text-sm disabled:opacity-50"
-            >
-              {pdfGenerating ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Generating...
-                </>
-              ) : (
-                <>
-                  <Download className="w-4 h-4 mr-2 icon-gold" />
-                  Download PDF
-                </>
-              )}
-            </button>
           </div>
+          <button
+            onClick={() => navigate('/reports')}
+            className="flex items-center px-4 py-2 bg-[#12142A]/80 border border-white/10 rounded-lg hover:bg-[#12142A] hover:border-white/20 transition-all text-sm ml-4"
+          >
+            <Star className="w-4 h-4 mr-2 icon-gold" strokeWidth={1} />
+            My Reports
+          </button>
+        </div>
 
-          {/* Social Media Links */}
-          <div className="flex justify-center mt-4">
-            <SocialLinks iconClassName="w-4 h-4" />
+        {/* Product Bar - Services available and access status */}
+        <div className="card-solid rounded-2xl p-4 mb-6">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-sm font-semibold t-text-muted uppercase tracking-wider">Available Services</h2>
           </div>
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
+            {DASHBOARD_TABS.filter(tab => !tab.comingSoon).map((tab) => {
+              const accessible = isTabAccessible(tab.id);
+              const TabIcon = tab.icon;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => handleTabClick(tab)}
+                  className={`flex items-center gap-2 p-3 rounded-xl border transition-all text-left ${
+                    accessible
+                      ? 'bg-[#D6B35A]/10 border-[#D6B35A]/30 hover:bg-[#D6B35A]/20'
+                      : 'bg-white/5 border-white/10 hover:bg-white/10 opacity-60'
+                  }`}
+                >
+                  <TabIcon className={`w-4 h-4 ${accessible ? 'text-[#D6B35A]' : 't-text-muted'}`} />
+                  <div className="flex-1 min-w-0">
+                    <div className="text-sm font-medium truncate">{tab.label}</div>
+                    <div className={`text-xs ${accessible ? 'text-green-400' : 't-text-muted'}`}>
+                      {accessible ? '✓ Available' : '🔒 Locked'}
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Social Media Links */}
+        <div className="flex justify-center mb-6">
+          <SocialLinks iconClassName="w-4 h-4" />
         </div>
 
         <div className="card-solid rounded-2xl p-6 mb-6">
@@ -3381,12 +3385,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
         <div className="space-y-8">
           {/* Premium Chart Wheel */}
           <div id="natal-chart-container" className="card-solid rounded-2xl p-8">
-            <h2 className="font-serif text-2xl font-semibold text-center mb-2 gold-gradient-text">Your Natal Chart</h2>
-            {(birthData?.subjectRelationship || birthData?.subjectInitials) && (
-              <p className="text-center t-text-muted text-sm mb-6">
-                {(birthData.subjectRelationship || 'self').toUpperCase()}{birthData.subjectInitials ? ` • ${birthData.subjectInitials}` : ''}
-              </p>
-            )}
+            <h2 className="font-serif text-2xl font-semibold text-center mb-6 gold-gradient-text">Your Natal Chart</h2>
             {(() => {
               // SVG Path definitions for zodiac signs (scaled for 14px viewBox centered at 0,0)
               const zodiacPaths = {
