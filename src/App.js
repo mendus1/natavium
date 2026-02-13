@@ -1062,6 +1062,7 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
 
   const zodiacType = chartResult?.zodiacType || 'tropical';
   const activeChart = chartResult?.tropical ? chartResult[zodiacType] : chartResult;
+  // eslint-disable-next-line no-unused-vars
   const zodiacLabel = zodiacType === 'sidereal' ? 'Sidereal' : 'Tropical';
 
   // ... (rest of the code remains the same)
@@ -1134,8 +1135,8 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
         <div className="text-center mb-8">
           <h1 className="font-serif text-4xl md:text-5xl font-semibold gold-gradient-text mb-2">
             {birthData.subjectInitials 
-              ? `Natal Chart Preview (${zodiacLabel}) for ${birthData.subjectInitials.toUpperCase()}` 
-              : `Natal Chart Preview (${zodiacLabel})`}
+              ? `Natavium Preview for ${birthData.subjectInitials.toUpperCase()}` 
+              : `Natavium Preview`}
           </h1>
           <p className="text-lg t-text-muted">
             {displayDate} • {birthData.time} • {birthData.location}
@@ -1484,7 +1485,7 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
 
         {/* Cosmic Blueprint - beside chart box */}
         <div className="card-preview rounded-2xl p-6">
-          <h2 className="font-serif text-2xl font-semibold gold-gradient-text mb-4">Your Cosmic Blueprint</h2>
+          <h2 className="font-serif text-2xl font-semibold gold-gradient-text mb-4">Natal Chart Analysis</h2>
 
           {teaserLoading ? (
             <div className="flex flex-col items-center justify-center py-6">
@@ -1528,6 +1529,27 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
           </div>
         </div>
       </div>
+
+        {/* Weekly Astro Weather - moved up under the two boxes */}
+        <div className="card-preview rounded-2xl p-6 mb-8">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <div className="text-sm t-text-muted">Ongoing Reports</div>
+              <h3 className="text-xl font-semibold mt-1">Weekly Astro Weather</h3>
+              <p className="t-text-muted text-sm mt-2">A weekly forecast tailored to your natal chart. Coming Soon.</p>
+            </div>
+            <span className="text-xs bg-[#69D2FF]/20 px-2 py-1 rounded text-[#69D2FF] border border-[#69D2FF]/20">Coming Soon</span>
+          </div>
+          <button
+            onClick={async () => {
+              await logEvent('coming_soon_view_sample_clicked', { surface: 'preview', product: 'weekly_astro_weather' });
+              navigate('/ongoing');
+            }}
+            className="mt-4 px-5 py-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-sm"
+          >
+            View sample
+          </button>
+        </div>
 
       {/* Services description - text on background, no box - outside max-w-4xl container for full page centering */}
       <div className="w-full px-4 mt-8">
@@ -1751,27 +1773,6 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
           <p className="t-text-muted mt-3 text-sm">
             Secure checkout • Instant access • Yours forever
           </p>
-        </div>
-
-        {/* Weekly Astro Weather - at bottom */}
-        <div className="card-preview rounded-2xl p-6">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <div className="text-sm t-text-muted">Ongoing Reports</div>
-              <h3 className="text-xl font-semibold mt-1">Weekly Astro Weather</h3>
-              <p className="t-text-muted text-sm mt-2">A weekly forecast tailored to your natal chart. Coming Soon.</p>
-            </div>
-            <span className="text-xs bg-[#69D2FF]/20 px-2 py-1 rounded text-[#69D2FF] border border-[#69D2FF]/20">Coming Soon</span>
-          </div>
-          <button
-            onClick={async () => {
-              await logEvent('coming_soon_view_sample_clicked', { surface: 'preview', product: 'weekly_astro_weather' });
-              navigate('/ongoing');
-            }}
-            className="mt-4 px-5 py-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-sm"
-          >
-            View sample
-          </button>
         </div>
 
       </div>
@@ -3825,9 +3826,6 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
             <h2 className="font-serif text-xl font-semibold mb-4 gold-gradient-text">Planetary Placements</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {[
-                { name: "Sun", icon: Sun, color: "text-[#D6B35A]", data: activeChart.sun, desc: "Core Identity" },
-                { name: "Moon", icon: Moon, color: "text-[#69D2FF]", data: activeChart.moon, desc: "Emotional Core" },
-                { name: "Rising", icon: Star, color: "text-[#D6B35A]", data: activeChart.rising, desc: "Ascendant" },
                 { name: "Mercury", icon: null, glyph: "☿", color: "text-orange-400", data: activeChart.mercury, desc: "Communication" },
                 { name: "Venus", icon: null, glyph: "♀", color: "text-green-400", data: activeChart.venus, desc: "Love & Beauty" },
                 { name: "Mars", icon: null, glyph: "♂", color: "text-red-500", data: activeChart.mars, desc: "Drive & Action" },
@@ -3835,7 +3833,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
                 { name: "Saturn", icon: null, glyph: "♄", color: "text-slate-400", data: activeChart.saturn, desc: "Structure" },
                 { name: "Uranus", icon: null, glyph: "♅", color: "text-cyan-400", data: activeChart.uranus, desc: "Innovation" },
                 { name: "Neptune", icon: null, glyph: "♆", color: "text-indigo-400", data: activeChart.neptune, desc: "Dreams" },
-                { name: "Pluto", icon: null, glyph: "♇", color: "text-rose-700", data: activeChart.pluto, desc: "Transformation" },
+                { name: "Pluto", icon: null, glyph: "♇", color: "text-rose-500", data: activeChart.pluto, desc: "Transformation" },
               ].map((planet) => (
                 <div key={planet.name} className="bg-white/5 rounded-lg p-3 border border-white/5 text-center">
                   {planet.icon ? (
