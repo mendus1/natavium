@@ -3148,13 +3148,16 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
               {displayDate} • {birthData.time} • {birthData.location}
             </p>
           </div>
-          <button
-            onClick={() => navigate('/reports')}
-            className="flex items-center px-4 py-2 bg-[#12142A]/80 border border-white/10 rounded-lg hover:bg-[#12142A] hover:border-white/20 transition-all text-sm ml-4"
-          >
-            <Star className="w-4 h-4 mr-2 icon-gold" strokeWidth={1} />
-            My Reports
-          </button>
+          <div className="flex items-center gap-4">
+            <SocialLinks iconClassName="w-4 h-4" />
+            <button
+              onClick={() => navigate('/reports')}
+              className="flex items-center px-4 py-2 bg-[#12142A]/80 border border-white/10 rounded-lg hover:bg-[#12142A] hover:border-white/20 transition-all text-sm"
+            >
+              <Star className="w-4 h-4 mr-2 icon-gold" strokeWidth={1} />
+              My Reports
+            </button>
+          </div>
         </div>
 
         {/* Product Bar - Services available and access status */}
@@ -3200,31 +3203,6 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
               );
             })}
           </div>
-        </div>
-
-        {/* Social Media Links */}
-        <div className="flex justify-center mb-6">
-          <SocialLinks iconClassName="w-4 h-4" />
-        </div>
-
-        <div className="card-solid rounded-2xl p-6 mb-6">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <div className="text-sm t-text-muted">Ongoing Reports</div>
-              <h3 className="text-xl font-semibold mt-1">Weekly Astro Weather</h3>
-              <p className="t-text-muted text-sm mt-2">Get weekly guidance tied to your natal chart. Coming Soon.</p>
-            </div>
-            <span className="text-xs bg-[#69D2FF]/20 px-2 py-1 rounded text-[#69D2FF] border border-[#69D2FF]/20">Coming Soon</span>
-          </div>
-          <button
-            onClick={async () => {
-              await logEvent('coming_soon_view_sample_clicked', { surface: 'chart', product: 'weekly_astro_weather' });
-              navigate('/ongoing');
-            }}
-            className="mt-4 px-5 py-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-sm"
-          >
-            View sample
-          </button>
         </div>
 
         {/* Upsell Modal */}
@@ -3361,9 +3339,11 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
         {/* Natal Chart Tab Content */}
         {activeTab === 'natal' && (
         <div className="space-y-8">
-          {/* Premium Chart Wheel */}
-          <div id="natal-chart-container" className="card-solid rounded-2xl p-8">
-            <h2 className="font-serif text-2xl font-semibold text-center mb-6 gold-gradient-text">Your Natal Chart</h2>
+          {/* Chart Wheel + Mobile Mockup Grid */}
+          <div className="grid md:grid-cols-5 gap-6">
+            {/* Premium Chart Wheel - takes 3/5 width */}
+            <div id="natal-chart-container" className="card-solid rounded-2xl p-6 md:col-span-3">
+              <h2 className="font-serif text-2xl font-semibold text-center mb-4 gold-gradient-text">Your Natal Chart</h2>
             {(() => {
               // SVG Path definitions for zodiac signs (scaled for 14px viewBox centered at 0,0)
               const zodiacPaths = {
@@ -3719,11 +3699,27 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
                 </div>
               );
             })()}
-            <div className="flex flex-wrap justify-center gap-4 text-xs mt-2">
-              <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full" style={{ background: 'linear-gradient(135deg, #ff6b6b, #f97316)' }}></span><span className="t-text-muted">Fire</span></div>
-              <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full" style={{ background: 'linear-gradient(135deg, #4ade80, #22c55e)' }}></span><span className="t-text-muted">Earth</span></div>
-              <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full" style={{ background: 'linear-gradient(135deg, #fde047, #facc15)' }}></span><span className="t-text-muted">Air</span></div>
-              <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full" style={{ background: 'linear-gradient(135deg, #60a5fa, #3b82f6)' }}></span><span className="t-text-muted">Water</span></div>
+            </div>
+            {/* Mobile Phone Mockup - takes 2/5 width, same height as chart */}
+            <div className="md:col-span-2 flex items-center justify-center">
+              <div className="relative w-[280px] h-[500px] bg-gradient-to-b from-gray-800 to-gray-900 rounded-[3rem] border-4 border-gray-700 shadow-2xl p-3">
+                {/* Phone notch */}
+                <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-20 h-6 bg-gray-900 rounded-full z-10"></div>
+                {/* Phone screen */}
+                <div className="w-full h-full bg-gradient-to-b from-[#1a1b3a] to-[#0f0a1e] rounded-[2.5rem] overflow-hidden flex items-center justify-center">
+                  <div className="text-center p-6">
+                    <div className="w-16 h-16 bg-[#D6B35A]/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Sparkles className="w-8 h-8 text-[#D6B35A]" />
+                    </div>
+                    <p className="text-white/60 text-sm">Mobile App</p>
+                    <p className="text-white/40 text-xs mt-1">Coming Soon</p>
+                  </div>
+                </div>
+                {/* Phone buttons */}
+                <div className="absolute right-[-6px] top-24 w-1.5 h-8 bg-gray-700 rounded-l"></div>
+                <div className="absolute right-[-6px] top-36 w-1.5 h-12 bg-gray-700 rounded-l"></div>
+                <div className="absolute left-[-6px] top-28 w-1.5 h-16 bg-gray-700 rounded-r"></div>
+              </div>
             </div>
           </div>
 
@@ -4240,6 +4236,27 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
             </div>
           </div>
         )}
+
+        {/* Weekly Astro Weather - moved to bottom */}
+        <div className="card-solid rounded-2xl p-6 mb-6">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <div className="text-sm t-text-muted">Ongoing Reports</div>
+              <h3 className="text-xl font-semibold mt-1">Weekly Astro Weather</h3>
+              <p className="t-text-muted text-sm mt-2">Get weekly guidance tied to your natal chart. Coming Soon.</p>
+            </div>
+            <span className="text-xs bg-[#69D2FF]/20 px-2 py-1 rounded text-[#69D2FF] border border-[#69D2FF]/20">Coming Soon</span>
+          </div>
+          <button
+            onClick={async () => {
+              await logEvent('coming_soon_view_sample_clicked', { surface: 'chart', product: 'weekly_astro_weather' });
+              navigate('/ongoing');
+            }}
+            className="mt-4 px-5 py-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-sm"
+          >
+            View sample
+          </button>
+        </div>
 
         {/* Footer Navigation */}
         <div className="card-solid rounded-2xl p-8 mt-8">
