@@ -3825,18 +3825,25 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
             <h2 className="font-serif text-xl font-semibold mb-4 gold-gradient-text">Planetary Placements</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {[
-                { name: "Mercury", glyph: "☿", data: activeChart.mercury, desc: "Communication" },
-                { name: "Venus", glyph: "♀", data: activeChart.venus, desc: "Love & Beauty" },
-                { name: "Mars", glyph: "♂", data: activeChart.mars, desc: "Drive & Action" },
-                { name: "Jupiter", glyph: "♃", data: activeChart.jupiter, desc: "Growth & Luck" },
-                { name: "Saturn", glyph: "♄", data: activeChart.saturn, desc: "Structure" },
-                { name: "Uranus", glyph: "♅", data: activeChart.uranus, desc: "Innovation" },
-                { name: "Neptune", glyph: "♆", data: activeChart.neptune, desc: "Dreams" },
-                { name: "Pluto", glyph: "♇", data: activeChart.pluto, desc: "Transformation" },
+                { name: "Sun", icon: Sun, color: "text-[#D6B35A]", data: activeChart.sun, desc: "Core Identity" },
+                { name: "Moon", icon: Moon, color: "text-[#69D2FF]", data: activeChart.moon, desc: "Emotional Core" },
+                { name: "Rising", icon: Star, color: "text-[#D6B35A]", data: activeChart.rising, desc: "Ascendant" },
+                { name: "Mercury", icon: null, glyph: "☿", color: "text-orange-400", data: activeChart.mercury, desc: "Communication" },
+                { name: "Venus", icon: null, glyph: "♀", color: "text-green-400", data: activeChart.venus, desc: "Love & Beauty" },
+                { name: "Mars", icon: null, glyph: "♂", color: "text-red-500", data: activeChart.mars, desc: "Drive & Action" },
+                { name: "Jupiter", icon: null, glyph: "♃", color: "text-blue-400", data: activeChart.jupiter, desc: "Growth & Luck" },
+                { name: "Saturn", icon: null, glyph: "♄", color: "text-slate-400", data: activeChart.saturn, desc: "Structure" },
+                { name: "Uranus", icon: null, glyph: "♅", color: "text-cyan-400", data: activeChart.uranus, desc: "Innovation" },
+                { name: "Neptune", icon: null, glyph: "♆", color: "text-indigo-400", data: activeChart.neptune, desc: "Dreams" },
+                { name: "Pluto", icon: null, glyph: "♇", color: "text-rose-700", data: activeChart.pluto, desc: "Transformation" },
               ].map((planet) => (
                 <div key={planet.name} className="bg-white/5 rounded-lg p-3 border border-white/5 text-center">
-                  <div className="text-lg mb-0.5">{planet.glyph}</div>
-                  <div className="font-semibold text-sm">{planet.name}</div>
+                  {planet.icon ? (
+                    <planet.icon className={`w-5 h-5 ${planet.color} mb-1 mx-auto`} />
+                  ) : (
+                    <div className={`text-lg mb-0.5 ${planet.color}`}>{planet.glyph}</div>
+                  )}
+                  <div className={`font-semibold text-sm ${planet.color}`}>{planet.name}</div>
                   <p className="text-[#D6B35A] font-bold text-sm">{planet.data?.sign || "—"}</p>
                   <p className="t-text-muted text-xs">{planet.data?.degree ?? "—"}° {String(planet.data?.minutes || 0).padStart(2, '0')}'</p>
                   <p className="t-text-muted text-xs">{planet.desc}</p>
