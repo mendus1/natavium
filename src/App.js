@@ -322,6 +322,7 @@ const DASHBOARD_TABS = [
 // =========================
 // Helper Functions
 // =========================
+// eslint-disable-next-line no-unused-vars
 const houseSuffix = (n) => {
   const num = Number(n);
   if (num % 100 >= 11 && num % 100 <= 13) return "th";
@@ -2839,6 +2840,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
   };
 
   // Function to regenerate analysis for the active tab
+  // eslint-disable-next-line no-unused-vars
   const regenerateAnalysis = async () => {
     setAnalysisLoading(true);
     try {
@@ -3790,38 +3792,38 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
             </div>
           </div>
 
-          {/* Big Three Summary (Compact) */}
-          <div className="card-solid rounded-2xl p-6">
-            <h2 className="text-xl font-semibold mb-4">Your Big Three</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              <div className="bg-[#D6B35A]/10 rounded-xl p-4 border border-[#D6B35A]/30">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-[#D6B35A]">☉ {activeChart.sun.sign} Sun</h3>
-                  <span className="text-sm t-text-muted">{activeChart.sun.degree}° {String(activeChart.sun.minutes || 0).padStart(2, '0')}' • {activeChart.sun.house}{houseSuffix(activeChart.sun.house)} house</span>
-                </div>
-                <p className="text-sm t-text-muted mt-1">Core Identity</p>
+          {/* Big Three Summary - Matching PreviewPage Style */}
+          <div className="grid md:grid-cols-3 gap-3">
+            <div className="card-preview rounded-xl p-4 text-center">
+              <Sun className="w-8 h-8 icon-gold mb-2 mx-auto" />
+              <div className="text-xl font-bold mb-0.5">{activeChart.sun.sign} Sun</div>
+              <div className="text-xs t-text-muted">Core Identity</div>
+              <div className="text-xs t-text-muted mt-1">
+                {activeChart.sun.degree}° {String(activeChart.sun.minutes || 0).padStart(2, '0')}' • House {activeChart.sun.house}
               </div>
-              <div className="bg-[#69D2FF]/10 rounded-xl p-4 border border-[#69D2FF]/30">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-[#69D2FF]">☽ {activeChart.moon.sign} Moon</h3>
-                  <span className="text-sm t-text-muted">{activeChart.moon.degree}° {String(activeChart.moon.minutes || 0).padStart(2, '0')}' • {activeChart.moon.house}{houseSuffix(activeChart.moon.house)} house</span>
-                </div>
-                <p className="text-sm t-text-muted mt-1">Emotional Core</p>
+            </div>
+
+            <div className="card-preview rounded-xl p-4 text-center">
+              <Moon className="w-8 h-8 text-[#69D2FF] mb-2 mx-auto" />
+              <div className="text-xl font-bold mb-0.5">{activeChart.moon.sign} Moon</div>
+              <div className="text-xs t-text-muted">Emotional Core</div>
+              <div className="text-xs t-text-muted mt-1">
+                {activeChart.moon.degree}° {String(activeChart.moon.minutes || 0).padStart(2, '0')}' • House {activeChart.moon.house}
               </div>
-              <div className="bg-white/15 rounded-xl p-4 border border-white/10">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-white">↑ {activeChart.rising.sign} Rising</h3>
-                  <span className="text-sm t-text-muted">{activeChart.rising.degree}° {String(activeChart.rising.minutes || 0).padStart(2, '0')}' Ascendant</span>
-                </div>
-                <p className="text-sm t-text-muted mt-1">How Others See You</p>
-              </div>
+            </div>
+
+            <div className="card-preview rounded-xl p-4 text-center">
+              <Star className="w-8 h-8 icon-gold mb-2 mx-auto" />
+              <div className="text-xl font-bold mb-0.5">{activeChart.rising.sign} Rising</div>
+              <div className="text-xs t-text-muted">How Others See You</div>
+              <div className="text-xs t-text-muted mt-1">{activeChart.rising.degree}° {String(activeChart.rising.minutes || 0).padStart(2, '0')}' Ascendant</div>
             </div>
           </div>
 
-          {/* Planetary Placements */}
-          <div className="card-solid rounded-2xl p-8">
-            <h2 className="font-serif text-2xl font-semibold mb-6 gold-gradient-text">Planetary Placements</h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          {/* Planetary Placements - Tightened to match Big Three style */}
+          <div className="card-solid rounded-2xl p-6">
+            <h2 className="font-serif text-xl font-semibold mb-4 gold-gradient-text">Planetary Placements</h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {[
                 { name: "Mercury", glyph: "☿", data: activeChart.mercury, desc: "Communication" },
                 { name: "Venus", glyph: "♀", data: activeChart.venus, desc: "Love & Beauty" },
@@ -3832,14 +3834,12 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
                 { name: "Neptune", glyph: "♆", data: activeChart.neptune, desc: "Dreams" },
                 { name: "Pluto", glyph: "♇", data: activeChart.pluto, desc: "Transformation" },
               ].map((planet) => (
-                <div key={planet.name} className="bg-white/5 rounded-lg p-4 border border-white/5">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-lg">{planet.glyph}</span>
-                    <span className="font-semibold">{planet.name}</span>
-                  </div>
-                  <p className="text-[#D6B35A] font-bold">{planet.data?.sign || "—"}</p>
-                  <p className="t-text-muted text-xs">{planet.data?.degree ?? "—"}° {String(planet.data?.minutes || 0).padStart(2, '0')}' • {planet.data?.house ? `${planet.data.house}${houseSuffix(planet.data.house)} house` : "—"}</p>
-                  <p className="t-text-muted text-xs mt-1">{planet.desc}</p>
+                <div key={planet.name} className="bg-white/5 rounded-lg p-3 border border-white/5 text-center">
+                  <div className="text-lg mb-0.5">{planet.glyph}</div>
+                  <div className="font-semibold text-sm">{planet.name}</div>
+                  <p className="text-[#D6B35A] font-bold text-sm">{planet.data?.sign || "—"}</p>
+                  <p className="t-text-muted text-xs">{planet.data?.degree ?? "—"}° {String(planet.data?.minutes || 0).padStart(2, '0')}'</p>
+                  <p className="t-text-muted text-xs">{planet.desc}</p>
                 </div>
               ))}
             </div>
@@ -3929,14 +3929,6 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
                 <p className="t-text-muted text-xs">
                   Generated {currentAnalysis.generatedAt ? new Date(currentAnalysis.generatedAt).toLocaleDateString() : 'recently'}
                 </p>
-                <button
-                  onClick={regenerateAnalysis}
-                  disabled={analysisLoading || generatingTab}
-                  className="t-text-muted hover:text-white text-sm flex items-center gap-2 disabled:opacity-50"
-                >
-                  <Sparkles className="w-4 h-4" />
-                  Regenerate
-                </button>
               </div>
             )}
           </div>
@@ -4003,14 +3995,6 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
                   <p className="t-text-muted text-xs">
                     Generated {currentAnalysis.generatedAt ? new Date(currentAnalysis.generatedAt).toLocaleDateString() : 'recently'}
                   </p>
-                  <button
-                    onClick={regenerateAnalysis}
-                    disabled={analysisLoading || generatingTab}
-                    className="t-text-muted hover:text-white text-sm flex items-center gap-2 disabled:opacity-50"
-                  >
-                    <Sparkles className="w-4 h-4" />
-                    Regenerate
-                  </button>
                 </div>
               )}
             </div>
