@@ -3162,9 +3162,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
 
         {/* Product Bar - Services available and access status */}
         <div className="card-solid rounded-2xl p-4 mb-6">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm font-semibold t-text-muted uppercase tracking-wider">Available Services</h2>
-          </div>
+          <h2 className="font-serif text-2xl font-semibold gold-gradient-text text-center mb-4">Welcome to Your Cosmic Journey!</h2>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
             {DASHBOARD_TABS.map((tab) => {
               const accessible = isTabAccessible(tab.id);
@@ -3324,26 +3322,78 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
 
         {/* Chart content - shown on Natal tab */}
         {activeTab === 'natal' && (
-          <>
-            <div className="card-solid border border-white/10 rounded-2xl p-6 mb-8 text-center">
-              <div className="text-4xl mb-2">✨</div>
-              <h2 className="text-2xl font-semibold mb-2 gold-gradient-text">Welcome to Your Cosmic Journey!</h2>
-              <p className="t-text-muted">Your complete analysis is unlocked.</p>
-              {chartResult.chartId && (
-                <p className="t-text-muted text-xs mt-2">Chart ID: {chartResult.chartId}</p>
-              )}
-            </div>
-          </>
-        )}
-
-        {/* Natal Chart Tab Content */}
-        {activeTab === 'natal' && (
         <div className="space-y-8">
           {/* Chart Wheel + Mobile Mockup Grid */}
           <div className="grid md:grid-cols-5 gap-6">
             {/* Premium Chart Wheel - takes 3/5 width */}
             <div id="natal-chart-container" className="card-solid rounded-2xl p-6 md:col-span-3">
-              <h2 className="font-serif text-2xl font-semibold text-center mb-4 gold-gradient-text">Your Natal Chart</h2>
+              {/* Personalized Archetype - above wheel */}
+              {(() => {
+                // Sun sign base archetypes
+                const sunArchetypes = {
+                  Aries: ["Bold Pioneer", "Fearless Warrior", "Dynamic Leader"],
+                  Taurus: ["Grounded Builder", "Patient Cultivator", "Steadfast Creator"],
+                  Gemini: ["Curious Messenger", "Witty Explorer", "Clever Connector"],
+                  Cancer: ["Nurturing Protector", "Intuitive Guardian", "Emotional Anchor"],
+                  Leo: ["Radiant Leader", "Generous Star", "Confident Creator"],
+                  Virgo: ["Precise Perfectionist", "Helpful Analyst", "Practical Healer"],
+                  Libra: ["Harmonious Diplomat", "Aesthetic Peacemaker", "Balanced Judge"],
+                  Scorpio: ["Intense Transformer", "Magnetic Detective", "Powerful Phoenix"],
+                  Sagittarius: ["Adventurous Philosopher", "Optimistic Explorer", "Free Spirit"],
+                  Capricorn: ["Ambitious Achiever", "Disciplined Climber", "Wise Authority"],
+                  Aquarius: ["Visionary Rebel", "Independent Innovator", "Humanitarian Genius"],
+                  Pisces: ["Dreamy Mystic", "Compassionate Artist", "Intuitive Empath"],
+                };
+
+                // Element mappings
+                const signElements = {
+                  Aries: "fire", Leo: "fire", Sagittarius: "fire",
+                  Taurus: "earth", Virgo: "earth", Capricorn: "earth",
+                  Gemini: "air", Libra: "air", Aquarius: "air",
+                  Cancer: "water", Scorpio: "water", Pisces: "water",
+                };
+
+                // Moon element modifiers
+                const moonModifiers = {
+                  fire: ["Passionate", "Bold", "Fiery"],
+                  earth: ["Grounded", "Practical", "Steady"],
+                  air: ["Intellectual", "Social", "Thoughtful"],
+                  water: ["Sensitive", "Intuitive", "Deep"],
+                };
+
+                const sunSign = activeChart.sun.sign;
+                const moonSign = activeChart.moon.sign;
+                const risingSign = activeChart.rising.sign;
+
+                const moonElement = signElements[moonSign];
+
+                // Get base archetype from sun sign
+                const baseArchetypes = sunArchetypes[sunSign] || ["Cosmic Soul"];
+                const baseArchetype = baseArchetypes[0];
+
+                // Get moon modifier
+                const moonMods = moonModifiers[moonElement] || ["Intuitive"];
+                const moonMod = moonMods[0];
+
+                // Combine into a unique archetype title
+                const baseWords = baseArchetype.split(" ");
+                const archetypeNoun = baseWords[baseWords.length - 1];
+
+                const archetype = `The ${moonMod} ${archetypeNoun}`;
+
+                return (
+                  <div className="text-center mb-6 pb-6 border-b border-white/10">
+                    <p className="font-serif text-2xl font-semibold gold-gradient-text">
+                      {sunSign} — <span className="italic">"{archetype}"</span>
+                    </p>
+                    <p className="text-xs t-text-muted mt-2">
+                      {moonSign} Moon • {risingSign} Rising
+                    </p>
+                  </div>
+                );
+              })()}
+
+              {/* Chart Wheel */}
             {(() => {
               // SVG Path definitions for zodiac signs (scaled for 14px viewBox centered at 0,0)
               const zodiacPaths = {
@@ -3699,6 +3749,23 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
                 </div>
               );
             })()}
+
+              {/* Legend - centered */}
+              <div className="flex flex-wrap justify-center gap-4 text-xs mb-3 mt-2">
+                <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full" style={{ background: 'linear-gradient(135deg, #ff6b6b, #f97316)' }}></span><span className="t-text-muted">Fire</span></div>
+                <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full" style={{ background: 'linear-gradient(135deg, #4ade80, #22c55e)' }}></span><span className="t-text-muted">Earth</span></div>
+                <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full" style={{ background: 'linear-gradient(135deg, #fde047, #facc15)' }}></span><span className="t-text-muted">Air</span></div>
+                <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full" style={{ background: 'linear-gradient(135deg, #60a5fa, #3b82f6)' }}></span><span className="t-text-muted">Water</span></div>
+              </div>
+
+              <p className="text-center t-text-muted italic text-sm">
+                {activeChart.rising.sign} Rising • Planets positioned by degree
+              </p>
+
+              {/* Chart ID */}
+              {chartResult.chartId && (
+                <p className="text-center t-text-muted text-xs mt-2">Chart ID: {chartResult.chartId}</p>
+              )}
             </div>
             {/* Mobile Phone Mockup - takes 2/5 width, same height as chart */}
             <div className="md:col-span-2 flex items-center justify-center">
