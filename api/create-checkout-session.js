@@ -26,6 +26,8 @@ const PRICE_MAP = {
     process.env.STRIPE_PRICE_ID_COMPATIBILITY_TROP_1X ||
     process.env.STRIPE_PRICE_ID_COMPATIBILITY_TROP ||
     process.env.STRIPE_PRICE_ID_COMPATIBILITY,
+  tropical_compatibility_3x:
+    process.env.STRIPE_PRICE_ID_COMPATIBILITY_TROP_3X,
   tropical_house_deep_dive: process.env.STRIPE_PRICE_ID_HOUSE_TROP || process.env.STRIPE_PRICE_ID_HOUSE,
   tropical_transit_report: process.env.STRIPE_PRICE_ID_TRANSIT_TROP || process.env.STRIPE_PRICE_ID_TRANSIT,
   tropical_solar_return: process.env.STRIPE_PRICE_ID_RETURN_TROP || process.env.STRIPE_PRICE_ID_RETURN,
@@ -35,6 +37,8 @@ const PRICE_MAP = {
     process.env.STRIPE_PRICE_ID_COMPATIBILITY_SIDE_1X ||
     process.env.STRIPE_PRICE_ID_COMPATIBILITY_SIDE ||
     process.env.STRIPE_PRICE_ID_COMPATIBILITY,
+  sidereal_compatibility_3x:
+    process.env.STRIPE_PRICE_ID_COMPATIBILITY_SIDE_3X,
   sidereal_house_deep_dive: process.env.STRIPE_PRICE_ID_HOUSE_SIDE || process.env.STRIPE_PRICE_ID_HOUSE,
   sidereal_transit_report: process.env.STRIPE_PRICE_ID_TRANSIT_SIDE || process.env.STRIPE_PRICE_ID_TRANSIT,
   sidereal_solar_return: process.env.STRIPE_PRICE_ID_RETURN_SIDE || process.env.STRIPE_PRICE_ID_RETURN,

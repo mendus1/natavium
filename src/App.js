@@ -279,8 +279,10 @@ const DASHBOARD_TABS = [
     id: 'natal',
     label: 'Natal Chart',
     icon: Star,
-    alwaysActive: true,
-    requiresPurchase: false,
+    requiresPurchase: true,
+    priceIfLocked: 4.99,
+    includedIn: ['base', 'essential', 'ultimate'],
+    description: 'A snapshot of the sky at your birth that maps the positions of the planets, signs, and houses to describe your core personality, motivations, and life themes.',
   },
   {
     id: 'house_deep_dive',
@@ -1083,6 +1085,8 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
 
         const data = await response.json();
         setTeaser(data.teaser);
+        // Store teaser for ChartPage to display when natal is locked
+        if (data.teaser) localStorage.setItem('natavium_natalTeaser', data.teaser);
       } catch (error) {
         console.error('Teaser fetch error:', error);
         setTeaserError(error.message);
@@ -1910,9 +1914,9 @@ function SuccessPage({ setIsPremium, chartResult, selectedBundle }) {
     })();
 
     if (!shouldGenerateNatal) {
-      // No natal analysis to generate - redirect to reports page
+      // No natal analysis to generate - redirect to chart page
       setGenerationStatus('complete');
-      setTimeout(() => navigate('/reports', { replace: true }), 1500);
+      setTimeout(() => navigate('/chart', { replace: true }), 1500);
       return;
     }
 
@@ -2228,8 +2232,27 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
   // eslint-disable-next-line no-unused-vars
   const zodiacLabel = zodiacType === 'sidereal' ? 'Sidereal' : 'Tropical';
 
-  // Tab and dashboard state
-  const [activeTab, setActiveTab] = useState('natal');
+  // Tab and dashboard state - default to first purchased product
+  const [activeTab, setActiveTab] = useState(() => {
+    try {
+      const stored = localStorage.getItem('natavium_purchasedProducts');
+      if (!stored) return 'natal';
+      const products = JSON.parse(stored);
+      const baseBundle = products.bundle?.replace(/^(tropical|sidereal)_/, '');
+      const addOns = (products.addOns || []).map(a => a.replace(/^(tropical|sidereal)_/, ''));
+      const services = products.services || [];
+      // Find first tab that is purchased
+      for (const tab of DASHBOARD_TABS) {
+        if (!tab.requiresPurchase) continue;
+        if (tab.comingSoon) continue;
+        if (tab.includedIn?.includes(baseBundle)) return tab.id;
+        if (addOns.includes(tab.id)) return tab.id;
+        if (tab.id === 'compatibility' && (addOns.includes('compatibility_3x') || services.includes('compatibility_3x'))) return tab.id;
+        if (services.includes(tab.id)) return tab.id;
+      }
+      return 'natal';
+    } catch { return 'natal'; }
+  });
   const [analyses, setAnalyses] = useState({});
   const [generatingTab, setGeneratingTab] = useState(null);
   const [upsellTab, setUpsellTab] = useState(null);
@@ -2395,18 +2418,30 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
 
   // Check if a tab is accessible
   // Handles both prefixed (tropical_natal) and unprefixed (natal) purchased add-ons
+  // Also checks services array (set during checkout, before webhook fires)
   const isTabAccessible = (tabId) => {
     const tab = DASHBOARD_TABS.find(t => t.id === tabId);
     if (!tab) return false;
-    if (tab.alwaysActive || !tab.requiresPurchase) return true;
-    if (tab.comingSoon) return false; // Coming soon tabs are never accessible
-    // Check add-ons: match unprefixed tab ID against both prefixed and unprefixed stored IDs
-    if (purchasedProducts.addOns.includes(tabId) ||
-        purchasedProducts.addOns.includes(`tropical_${tabId}`) ||
-        purchasedProducts.addOns.includes(`sidereal_${tabId}`)) return true;
+    if (!tab.requiresPurchase) return true;
+    if (tab.comingSoon) return false;
+    // Check add-ons from order (set by webhook via purchased_addons)
+    const addOns = purchasedProducts.addOns || [];
+    if (addOns.includes(tabId) ||
+        addOns.includes(`tropical_${tabId}`) ||
+        addOns.includes(`sidereal_${tabId}`)) return true;
+    // compatibility_3x grants access to the compatibility tab
+    if (tabId === 'compatibility' && (
+        addOns.includes('compatibility_3x') ||
+        addOns.includes('tropical_compatibility_3x') ||
+        addOns.includes('sidereal_compatibility_3x'))) return true;
     // Check bundle inclusion: strip zodiac prefix from stored bundle for matching
     const baseBundle = purchasedProducts.bundle?.replace(/^(tropical|sidereal)_/, '');
     if (tab.includedIn?.includes(baseBundle)) return true;
+    // Check services array (set during checkout in PreviewPage, available before webhook)
+    const services = purchasedProducts.services || [];
+    if (services.includes(tabId)) return true;
+    // compatibility_3x service grants compatibility tab access
+    if (tabId === 'compatibility' && services.includes('compatibility_3x')) return true;
     return false;
   };
 
@@ -2509,6 +2544,9 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
       if (!analyses[tab.id]?.content && tab.id !== 'natal' && tab.id !== 'compatibility') {
         generateAnalysisForTab(tab.id);
       }
+    } else if (tab.id === 'natal') {
+      // Natal tab is always selectable - shows preview content when locked
+      setActiveTab(tab.id);
     } else {
       // Pre-select the clicked add-on and open modal
       setSelectedAddOns([tab.id]);
@@ -3934,16 +3972,40 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
             <div className="flex items-center justify-between mb-6">
               <h2 className="font-serif text-2xl font-semibold gold-gradient-text">
                 <Sparkles className="w-6 h-6 inline mr-2 icon-gold" />
-                Your Personalized Reading
+                {isTabAccessible('natal') ? 'Your Personalized Reading' : 'Natal Chart Analysis Preview'}
               </h2>
-              {purchasedProducts.bundle && (
+              {isTabAccessible('natal') && purchasedProducts.bundle && (
                 <span className="text-xs t-text-muted">
                   {purchasedProducts.bundle.charAt(0).toUpperCase() + purchasedProducts.bundle.slice(1)} Package
                 </span>
               )}
+              {!isTabAccessible('natal') && (
+                <span className="flex items-center gap-1 text-xs text-[#D6B35A]">
+                  <Lock className="w-3 h-3" /> Locked
+                </span>
+              )}
             </div>
 
-            {analysisLoading || generatingTab === 'natal' ? (
+            {!isTabAccessible('natal') ? (
+              <div>
+                <div className="relative">
+                  <div className="text-white/80 leading-relaxed whitespace-pre-line">
+                    {localStorage.getItem('natavium_natalTeaser') || 'Your personalized natal chart preview will appear here.'}
+                  </div>
+                  <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#12142A]" />
+                </div>
+                <div className="text-center mt-6 pt-4 border-t border-white/10">
+                  <Lock className="w-6 h-6 icon-gold mx-auto mb-2" />
+                  <p className="t-text-muted text-sm mb-4">Purchase the Natal Chart Analysis to unlock your full personalized reading</p>
+                  <button
+                    onClick={() => navigate('/preview')}
+                    className="gold-gradient-btn px-6 py-3 rounded-xl font-bold"
+                  >
+                    View Pricing
+                  </button>
+                </div>
+              </div>
+            ) : analysisLoading || generatingTab === 'natal' ? (
               <div className="flex flex-col items-center justify-center py-12">
                 <Loader2 className="w-10 h-10 text-[#D6B35A] animate-spin mb-4" />
                 <p className="t-text-muted">Generating your reading...</p>
