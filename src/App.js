@@ -1604,27 +1604,6 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
           </div>
         </div>
 
-        {/* Weekly Astro Weather */}
-        <div className="card-preview rounded-2xl p-6 mb-8 mt-6">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <div className="text-sm t-text-muted">Ongoing Reports</div>
-              <h3 className="text-xl font-semibold mt-1">Weekly Astro Weather</h3>
-              <p className="t-text-muted text-sm mt-2">A weekly forecast tailored to your natal chart. Coming Soon.</p>
-            </div>
-            <span className="text-xs bg-[#69D2FF]/20 px-2 py-1 rounded text-[#69D2FF] border border-[#69D2FF]/20">Coming Soon</span>
-          </div>
-          <button
-            onClick={async () => {
-              await logEvent('coming_soon_view_sample_clicked', { surface: 'preview', product: 'weekly_astro_weather' });
-              navigate('/ongoing');
-            }}
-            className="mt-4 px-5 py-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-sm"
-          >
-            View sample
-          </button>
-        </div>
-
       {/* Services description */}
       <div className="w-full px-4 mt-8">
         <p className="text-lg leading-relaxed text-white/90 text-center mb-12 max-w-4xl mx-auto">
@@ -1896,12 +1875,19 @@ function SuccessPage({ setIsPremium, chartResult, selectedBundle }) {
       localStorage.setItem('natavium_sessionId', sessionId);
     }
 
-    // Store purchased products info
-    const purchasedProducts = {
-      bundle: selectedBundle || null,
-      addOns: [], // Add-ons will be fetched from order when ChartPage loads
-    };
-    localStorage.setItem('natavium_purchasedProducts', JSON.stringify(purchasedProducts));
+    // Merge bundle info into purchasedProducts without clobbering the services
+    // array that was saved during checkout in PreviewPage
+    try {
+      const existing = JSON.parse(localStorage.getItem('natavium_purchasedProducts') || '{}');
+      existing.bundle = selectedBundle || existing.bundle || null;
+      if (!existing.addOns) existing.addOns = [];
+      localStorage.setItem('natavium_purchasedProducts', JSON.stringify(existing));
+    } catch {
+      localStorage.setItem('natavium_purchasedProducts', JSON.stringify({
+        bundle: selectedBundle || null,
+        addOns: [],
+      }));
+    }
   }, [selectedBundle]);
 
   useEffect(() => {
@@ -1923,9 +1909,9 @@ function SuccessPage({ setIsPremium, chartResult, selectedBundle }) {
     })();
 
     if (!shouldGenerateNatal) {
-      // No natal analysis to generate - just redirect to chart
+      // No natal analysis to generate - redirect to reports page
       setGenerationStatus('complete');
-      setTimeout(() => navigate('/chart', { replace: true }), 1500);
+      setTimeout(() => navigate('/reports', { replace: true }), 1500);
       return;
     }
 
