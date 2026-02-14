@@ -1104,10 +1104,10 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
       setTransitTeaserError(null);
 
       try {
-        const response = await fetch('/api/generate-transit-teaser', {
+        const response = await fetch('/api/generate-teaser', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ chartResult, zodiacSystem: zodiacType }),
+          body: JSON.stringify({ chartResult, zodiacSystem: zodiacType, type: 'transit' }),
         });
 
         if (!response.ok) {
@@ -2288,13 +2288,13 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
         const accessToken = sessionData?.session?.access_token;
         if (!accessToken) return;
 
-        await fetch('/api/claim-email-orders', {
+        await fetch('/api/claim-order', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${accessToken}`,
           },
-          body: JSON.stringify({}),
+          body: JSON.stringify({ action: 'claim-email' }),
         });
 
         const orderId = localStorage.getItem('natavium_orderId');
@@ -2338,7 +2338,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
         const claimToken = localStorage.getItem('natavium_claimToken');
         const { data: sessionData } = await supabase.auth.getSession();
         const accessToken = sessionData?.session?.access_token;
-        const res = await fetch(`/api/get-order?id=${orderId}`, {
+        const res = await fetch(`/api/orders?id=${orderId}`, {
           headers: {
             ...(claimToken ? { 'X-Claim-Token': claimToken } : {}),
             ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
@@ -2387,13 +2387,13 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
           const { data: sessionData } = await supabase.auth.getSession();
           const accessToken = sessionData?.session?.access_token;
           if (accessToken) {
-            await fetch('/api/claim-email-orders', {
+            await fetch('/api/claim-order', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${accessToken}`,
               },
-              body: JSON.stringify({}),
+              body: JSON.stringify({ action: 'claim-email' }),
             });
           }
         } catch {

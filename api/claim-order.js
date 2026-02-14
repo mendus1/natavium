@@ -1,3 +1,6 @@
+// api/claim-order.js
+// Supports action: 'claim' (default) - claim single order by ID/token
+//                  'claim-email' - claim all unclaimed orders matching user email
 import { getUserFromRequest, supabaseAdmin } from '../lib/auth.js';
 
 export default async function handler(req, res) {
@@ -11,8 +14,46 @@ export default async function handler(req, res) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    const { orderId, claimToken } = req.body || {};
+    const { action = 'claim', orderId, claimToken } = req.body || {};
 
+    // --- claim-email: bulk claim all unclaimed orders by email ---
+    if (action === 'claim-email') {
+      const userEmail = typeof user.email === 'string' ? user.email.trim() : null;
+      if (!userEmail) {
+        return res.status(400).json({ error: 'User email not available' });
+      }
+
+      const { data: unclaimed, error: fetchError } = await supabaseAdmin
+        .from('orders')
+        .select('id')
+        .is('user_id', null)
+        .eq('payment_status', 'paid')
+        .ilike('customer_email', userEmail)
+        .order('id', { ascending: false });
+
+      if (fetchError) {
+        return res.status(500).json({ error: fetchError.message });
+      }
+
+      const orderIds = (unclaimed || []).map((o) => o?.id).filter(Boolean);
+      if (orderIds.length === 0) {
+        return res.status(200).json({ success: true, claimedCount: 0 });
+      }
+
+      const { error: updateError } = await supabaseAdmin
+        .from('orders')
+        .update({ user_id: user.id })
+        .in('id', orderIds)
+        .is('user_id', null);
+
+      if (updateError) {
+        return res.status(500).json({ error: updateError.message });
+      }
+
+      return res.status(200).json({ success: true, claimedCount: orderIds.length });
+    }
+
+    // --- claim: single order by ID ---
     if (!orderId) {
       return res.status(400).json({ error: 'Missing orderId' });
     }

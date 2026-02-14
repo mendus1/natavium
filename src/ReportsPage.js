@@ -101,7 +101,7 @@ export default function ReportsPage() {
     localStorage.removeItem('natavium_purchasedProducts');
 
     try {
-      const res = await apiFetch(`/api/get-order?id=${orderId}`);
+      const res = await apiFetch(`/api/orders?id=${orderId}`);
       const data = await res.json();
       if (!res.ok) {
         throw new Error(data?.error || 'Failed to load report');
@@ -230,9 +230,10 @@ export default function ReportsPage() {
 
     setClaimingOrders(true);
     try {
-      const res = await apiFetch('/api/claim-email-orders', {
+      const res = await apiFetch('/api/claim-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'claim-email' }),
       });
 
       if (res.ok) {
@@ -254,7 +255,7 @@ export default function ReportsPage() {
     const res = await apiFetch('/api/claim-order', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ orderId }),
+      body: JSON.stringify({ action: 'claim', orderId }),
     });
 
     if (res.ok) {
@@ -268,7 +269,7 @@ export default function ReportsPage() {
     setOrdersError('');
 
     try {
-      const res = await apiFetch('/api/list-orders');
+      const res = await apiFetch('/api/orders');
       const data = await res.json().catch(() => ({}));
 
       if (!res.ok) {
