@@ -20,7 +20,8 @@ const PRICE_MAP = {
   sidereal_base: process.env.STRIPE_PRICE_ID_BASE_SIDE || process.env.STRIPE_PRICE_ID_BASE,
   sidereal_essential: process.env.STRIPE_PRICE_ID_ESSENTIAL_SIDE || process.env.STRIPE_PRICE_ID_ESSENTIAL,
   sidereal_ultimate: process.env.STRIPE_PRICE_ID_ULTIMATE_SIDE || process.env.STRIPE_PRICE_ID_ULTIMATE,
-  // Tropical add-ons
+  // Tropical individual services (natal uses the old 'base' price)
+  tropical_natal: process.env.STRIPE_PRICE_ID_BASE_TROP || process.env.STRIPE_PRICE_ID_BASE,
   tropical_compatibility:
     process.env.STRIPE_PRICE_ID_COMPATIBILITY_TROP_1X ||
     process.env.STRIPE_PRICE_ID_COMPATIBILITY_TROP ||
@@ -28,7 +29,8 @@ const PRICE_MAP = {
   tropical_house_deep_dive: process.env.STRIPE_PRICE_ID_HOUSE_TROP || process.env.STRIPE_PRICE_ID_HOUSE,
   tropical_transit_report: process.env.STRIPE_PRICE_ID_TRANSIT_TROP || process.env.STRIPE_PRICE_ID_TRANSIT,
   tropical_solar_return: process.env.STRIPE_PRICE_ID_RETURN_TROP || process.env.STRIPE_PRICE_ID_RETURN,
-  // Sidereal add-ons
+  // Sidereal individual services
+  sidereal_natal: process.env.STRIPE_PRICE_ID_BASE_SIDE || process.env.STRIPE_PRICE_ID_BASE,
   sidereal_compatibility:
     process.env.STRIPE_PRICE_ID_COMPATIBILITY_SIDE_1X ||
     process.env.STRIPE_PRICE_ID_COMPATIBILITY_SIDE ||
@@ -52,7 +54,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { bundle, addOns = [], chartData, birthData, zodiacSystem = 'tropical' } = req.body;
+    const { bundle, services = [], addOns = [], chartData, birthData, zodiacSystem = 'tropical' } = req.body;
 
     // --- Validate inputs ---
     // Support both old flat format and new { tropical, sidereal, meta } format
@@ -61,11 +63,20 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Missing or incomplete chart data" });
     }
 
-    // Prefix bundle with zodiac system
-    const prefixedBundle = `${zodiacSystem}_${bundle}`;
-    const bundlePriceId = PRICE_MAP[prefixedBundle] || PRICE_MAP[bundle];
-    if (!bundlePriceId) {
-      return res.status(400).json({ error: `Invalid bundle: ${bundle}` });
+    // Determine if this is a bundle purchase or individual services purchase
+    const isIndividualPurchase = !bundle && services.length > 0;
+
+    let bundlePriceId = null;
+    let prefixedBundle = null;
+    if (bundle) {
+      // Bundle purchase
+      prefixedBundle = `${zodiacSystem}_${bundle}`;
+      bundlePriceId = PRICE_MAP[prefixedBundle] || PRICE_MAP[bundle];
+      if (!bundlePriceId) {
+        return res.status(400).json({ error: `Invalid bundle: ${bundle}` });
+      }
+    } else if (!isIndividualPurchase) {
+      return res.status(400).json({ error: "No bundle or services selected" });
     }
 
     // --- 1. Insert order into Supabase ---
@@ -80,11 +91,14 @@ export default async function handler(req, res) {
 
     const claimToken = crypto.randomBytes(24).toString('hex');
 
+    // product_type: bundle name (e.g. 'tropical_essential') or 'tropical_services' for individual
+    const productType = bundle ? prefixedBundle : `${zodiacSystem}_services`;
+
     const { data: order, error: dbError } = await supabase
       .from("orders")
       .insert({
         chart_data: chartDataWithBirth,
-        product_type: prefixedBundle,
+        product_type: productType,
         zodiac_system: zodiacSystem,
         payment_status: "pending",
         claim_token: claimToken,
@@ -100,15 +114,35 @@ export default async function handler(req, res) {
     const orderId = order.id;
 
     // --- 2. Build Stripe line items ---
-    const line_items = [{ price: bundlePriceId, quantity: 1 }];
+    const line_items = [];
 
-    // Prefix add-ons with zodiac system
+    if (bundlePriceId) {
+      // Bundle purchase
+      line_items.push({ price: bundlePriceId, quantity: 1 });
+    }
+
+    // Add individual services as line items (when no bundle selected)
+    if (isIndividualPurchase) {
+      for (const serviceId of services) {
+        const prefixedServiceId = `${zodiacSystem}_${serviceId}`;
+        const servicePriceId = PRICE_MAP[prefixedServiceId] || PRICE_MAP[serviceId];
+        if (servicePriceId) {
+          line_items.push({ price: servicePriceId, quantity: 1 });
+        }
+      }
+    }
+
+    // Add any extra add-ons (legacy support)
     for (const addOnId of addOns) {
       const prefixedAddOnId = `${zodiacSystem}_${addOnId}`;
       const addOnPriceId = PRICE_MAP[prefixedAddOnId] || PRICE_MAP[addOnId];
       if (addOnPriceId) {
         line_items.push({ price: addOnPriceId, quantity: 1 });
       }
+    }
+
+    if (line_items.length === 0) {
+      return res.status(400).json({ error: "No valid items for checkout" });
     }
 
     // --- 3. Create Stripe Checkout Session with orderId in metadata ---
@@ -124,9 +158,10 @@ export default async function handler(req, res) {
       cancel_url: `${origin}/preview`,
       metadata: {
         orderId,
-        productType: prefixedBundle,
+        productType: productType,
         zodiacSystem,
         claimToken,
+        ...(isIndividualPurchase ? { services: services.join(',') } : {}),
       },
     });
 

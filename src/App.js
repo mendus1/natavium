@@ -222,30 +222,31 @@ const SocialLinks = ({ className = "", iconClassName = "w-5 h-5" }) => (
 );
 
 // =========================
-// Bundle Definitions
+// Service Definitions (individually purchasable)
+// =========================
+const SERVICES = [
+  { id: "natal", name: "Natal Chart Analysis", price: 4.99, description: "A snapshot of the sky at your birth that maps the positions of the planets, signs, and houses to describe your core personality, motivations, and life themes. The foundation." },
+  { id: "house_deep_dive", name: "House Deep Dive", price: 2.99, description: "A focused reading of the 12 houses in your chart, showing where key life areas (like relationships, career, home, and health) are emphasized and shape your experiences and patterns." },
+  { id: "solar_return", name: "Solar Return", price: 4.99, description: "A forecast for your year ahead timed to the moment the Sun returns to its exact birth position." },
+  { id: "transit_report", name: "Transit Report", price: 1.99, description: "A timing-focused forecast that tracks current planetary movements, important celestial events, and how they interact with your natal chart. Periods of change, growth, or pressure are highlighted and suggestions made on how to deal with them." },
+  { id: "compatibility", name: "Compatibility ×1", price: 3.99, description: "Known as synastry, this compares two people's charts to explore emotional, romantic, and communication dynamics. It identifies strengths, friction points, and what helps the relationship thrive." },
+  { id: "compatibility_3x", name: "Compatibility ×3", price: 9.99, description: "3 compatibility comparisons. Compare your chart with up to three different people." },
+];
+
+// Bundle Definitions (discount packages)
 // =========================
 const BUNDLES = {
-  base: {
-    id: "base",
-    name: "Base",
-    price: 4.99,
-    description: "Indepth natal chart and analysis",
-    icon: Star,
-    color: "yellow",
-    services: [
-      { name: "Natal Chart", description: "A snapshot of the sky at your birth that maps the positions of the planets, signs, and houses to describe your core personality, motivations, and life themes. The foundation." }
-    ],
-  },
   essential: {
     id: "essential",
     name: "Essential",
     price: 9.99,
-    description: "Base + House Deep Dive & Solar Return",
+    description: "Natal Chart + House Deep Dive + Solar Return",
     icon: Gift,
     color: "purple",
     popular: true,
-    baseIncludes: true,
+    includes: ["natal", "house_deep_dive", "solar_return"],
     services: [
+      { name: "Natal Chart Analysis", description: "A snapshot of the sky at your birth that maps the positions of the planets, signs, and houses to describe your core personality, motivations, and life themes. The foundation." },
       { name: "House Deep Dive", description: "A focused reading of the 12 houses in your chart, showing where key life areas (like relationships, career, home, and health) are emphasized and shape your experiences and patterns." },
       { name: "Solar Return Analysis", description: "A forecast for your year ahead timed to the moment the Sun returns to its exact birth position." }
     ],
@@ -254,13 +255,13 @@ const BUNDLES = {
     id: "ultimate",
     name: "Ultimate",
     price: 12.99,
-    description: "Essential + Compatibility & Transit Report",
+    description: "Everything in Essential + Compatibility + Transit Report",
     icon: Crown,
     color: "pink",
-    baseIncludes: true,
     essentialIncludes: true,
+    includes: ["natal", "house_deep_dive", "solar_return", "transit_report", "compatibility"],
     services: [
-      { name: "Compatibility", description: "Known as synastry, this compares two people's charts to explore emotional, romantic, and communication dynamics. It identifies strengths, friction points, and what helps the relationship thrive." },
+      { name: "Compatibility ×1", description: "Known as synastry, this compares two people's charts to explore emotional, romantic, and communication dynamics. It identifies strengths, friction points, and what helps the relationship thrive." },
       { name: "Transit Report", description: "A timing-focused forecast that tracks current planetary movements, important celestial events, and how they interact with your natal chart. Periods of change, growth, or pressure are highlighted and suggestions made on how to deal with them." }
     ],
   },
@@ -1043,21 +1044,15 @@ function CalculatingPage() {
 // =========================
 // Preview (Paywall)
 // =========================
-// Add-on services definition
-const ADD_ONS = [
-  { id: "compatibility", name: "Compatibility ×1", price: 3.99, description: "1 compatibility comparison" },
-  { id: "compatibility_3x", name: "Compatibility ×3", price: 9.99, description: "3 compatibility comparisons" },
-  { id: "house_deep_dive", name: "House Deep Dive", price: 2.99, description: "Detailed house analysis" },
-  { id: "solar_return", name: "Solar Return", price: 4.99, description: "Your year ahead forecast" },
-  { id: "transit_report", name: "Transit Report", price: 1.99, description: "Current planetary influences" },
-];
-
 function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle }) {
   const [showTooltip, setShowTooltip] = useState(null);
-  const [selectedAddOns, setSelectedAddOns] = useState([]);
+  const [selectedServices, setSelectedServices] = useState([]);
   const [teaser, setTeaser] = useState(null);
   const [teaserLoading, setTeaserLoading] = useState(false);
   const [teaserError, setTeaserError] = useState("");
+  const [transitTeaser, setTransitTeaser] = useState(null);
+  const [transitTeaserLoading, setTransitTeaserLoading] = useState(false);
+  const [transitTeaserError, setTransitTeaserError] = useState("");
   const navigate = useNavigate();
 
   const zodiacType = chartResult?.zodiacType || 'tropical';
@@ -1100,32 +1095,68 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chartResult]);
 
+  // Fetch transit teaser on mount
+  useEffect(() => {
+    if (!chartResult) return;
+
+    const fetchTransitTeaser = async () => {
+      setTransitTeaserLoading(true);
+      setTransitTeaserError(null);
+
+      try {
+        const response = await fetch('/api/generate-transit-teaser', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ chartResult, zodiacSystem: zodiacType }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to generate transit teaser');
+        }
+
+        const data = await response.json();
+        setTransitTeaser(data.teaser);
+      } catch (error) {
+        console.error('Transit teaser fetch error:', error);
+        setTransitTeaserError(error.message);
+      } finally {
+        setTransitTeaserLoading(false);
+      }
+    };
+
+    fetchTransitTeaser();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chartResult]);
+
   if (!chartResult) {
     return <Navigate to="/input" replace />;
   }
 
   const displayDate = formatBirthDate(birthData.birthMonth, birthData.birthDay, birthData.birthYear);
-  const currentBundle = BUNDLES[selectedBundle];
+  const currentBundle = selectedBundle ? BUNDLES[selectedBundle] : null;
 
-  // Calculate total price including add-ons
-  const addOnsTotal = selectedAddOns.reduce((sum, id) => {
-    const addOn = ADD_ONS.find(a => a.id === id);
-    return sum + (addOn ? addOn.price : 0);
+  // Calculate total price: bundle price OR sum of individual services
+  const servicesTotal = selectedServices.reduce((sum, id) => {
+    const svc = SERVICES.find(s => s.id === id);
+    return sum + (svc ? svc.price : 0);
   }, 0);
-  const totalPrice = currentBundle.price + addOnsTotal;
+  const totalPrice = currentBundle ? currentBundle.price : servicesTotal;
+  const hasSelection = currentBundle || selectedServices.length > 0;
 
-  // Toggle add-on selection (compatibility packs are mutually exclusive)
+  // Toggle service selection (compatibility packs are mutually exclusive)
   const COMPAT_IDS = ['compatibility', 'compatibility_3x'];
-  const toggleAddOn = (addOnId) => {
-    setSelectedAddOns(prev => {
-      if (prev.includes(addOnId)) {
-        return prev.filter(id => id !== addOnId);
+  const toggleService = (serviceId) => {
+    // Deselect any bundle when picking individual services
+    if (selectedBundle) setSelectedBundle(null);
+    setSelectedServices(prev => {
+      if (prev.includes(serviceId)) {
+        return prev.filter(id => id !== serviceId);
       }
       // If selecting a compatibility pack, deselect the other one
-      const base = COMPAT_IDS.includes(addOnId)
+      const base = COMPAT_IDS.includes(serviceId)
         ? prev.filter(id => !COMPAT_IDS.includes(id))
         : prev;
-      return [...base, addOnId];
+      return [...base, serviceId];
     });
   };
 
@@ -1530,8 +1561,51 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
         </div>
       </div>
 
-        {/* Weekly Astro Weather - moved up under the two boxes */}
-        <div className="card-preview rounded-2xl p-6 mb-8">
+        {/* Transit Report Preview */}
+        <div className="card-preview rounded-2xl p-6">
+          <h2 className="font-serif text-2xl font-semibold gold-gradient-text mb-4">Transit Report Preview</h2>
+
+          {transitTeaserLoading ? (
+            <div className="flex flex-col items-center justify-center py-6">
+              <Loader2 className="w-8 h-8 icon-gold animate-spin mb-3" />
+              <p className="t-text-muted text-sm">Scanning current planetary transits...</p>
+            </div>
+          ) : transitTeaserError ? (
+            <div className="space-y-3">
+              <p className="text-sm leading-relaxed">
+                Current planetary movements are creating significant shifts in your chart. Saturn, Jupiter, and the outer planets
+                are activating key areas of your life right now.
+              </p>
+              <p className="t-text-muted text-xs">Full transit analysis available below.</p>
+            </div>
+          ) : transitTeaser ? (
+            <div className="space-y-3">
+              {transitTeaser.split('\n\n').slice(0, 2).map((paragraph, idx) => (
+                <p key={idx} className="text-sm leading-relaxed text-white/90">
+                  {paragraph}
+                </p>
+              ))}
+            </div>
+          ) : null}
+
+          <div className="relative mt-4">
+            <div className="blur-sm select-none opacity-50">
+              <h3 className="text-base font-bold mb-1">
+                Saturn Transit to your {activeChart.sun.sign} Sun
+              </h3>
+              <p className="text-xs">Major restructuring themes are emerging in your life...</p>
+            </div>
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#12142A] pointer-events-none" />
+          </div>
+
+          <div className="text-center mt-4">
+            <Lock className="w-6 h-6 icon-gold mx-auto mb-2" />
+            <p className="t-text-muted text-xs">Select the Transit Report below to unlock your full forecast</p>
+          </div>
+        </div>
+
+        {/* Weekly Astro Weather */}
+        <div className="card-preview rounded-2xl p-6 mb-8 mt-6">
           <div className="flex items-start justify-between gap-4">
             <div>
               <div className="text-sm t-text-muted">Ongoing Reports</div>
@@ -1551,61 +1625,114 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
           </button>
         </div>
 
-      {/* Services description - text on background, no box - outside max-w-4xl container for full page centering */}
+      {/* Services description */}
       <div className="w-full px-4 mt-8">
-        <p className="text-lg leading-relaxed text-white/90 text-center mb-24 max-w-4xl mx-auto">
-          Calculating your full natal chart opens the door to a wide range of services. We offer deep dives, compatibility reports, forecasts and more.
+        <p className="text-lg leading-relaxed text-white/90 text-center mb-12 max-w-4xl mx-auto">
+          Select individual services or save with a bundle package.
         </p>
       </div>
-      {/* Bundle Selection */}
-        <div className="mb-12 mt-6">
-          <h2 className="font-serif text-3xl font-semibold gold-gradient-text text-center mb-10">
-            Choose Your Package
-            <span className="block text-2xl mt-1">OR</span>
-            <span className="block text-2xl mt-1">Select 'Base' and select any desired add ons</span>
-          </h2>
 
-          <div className="grid md:grid-cols-3 gap-4">
+      {/* Individual Services Selection */}
+        <div className="mb-12">
+          <h2 className="font-serif text-3xl font-semibold gold-gradient-text text-center mb-2">Select Services</h2>
+          <p className="text-center t-text-muted text-sm mb-8">Pick any combination you want</p>
+
+          <div className="card-solid rounded-2xl p-6">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              {SERVICES.map((service) => {
+                const isSelected = !selectedBundle && selectedServices.includes(service.id);
+                const isIncludedInBundle = selectedBundle && BUNDLES[selectedBundle]?.includes?.includes(service.id);
+                return (
+                  <button
+                    key={service.id}
+                    onClick={() => toggleService(service.id)}
+                    className={`relative p-4 rounded-xl border transition-all text-left ${
+                      isSelected
+                        ? "bg-[#D6B35A]/15 border-[#D6B35A]"
+                        : isIncludedInBundle
+                        ? "bg-green-500/10 border-green-500/30"
+                        : "bg-[#12142A]/60 border-white/10 hover:bg-white/10"
+                    }`}
+                  >
+                    <div className="flex items-start justify-between mb-2">
+                      <div
+                        className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
+                          isSelected
+                            ? "bg-[#D6B35A] border-[#D6B35A]"
+                            : isIncludedInBundle
+                            ? "bg-green-500 border-green-500"
+                            : "border-white/30"
+                        }`}
+                      >
+                        {(isSelected || isIncludedInBundle) && <Check className="w-3 h-3 text-[#12142A]" />}
+                      </div>
+                      <div className="relative">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setShowTooltip(showTooltip === `svc-${service.id}` ? null : `svc-${service.id}`);
+                          }}
+                          className="p-1 hover:bg-white/10 rounded-full transition-colors"
+                        >
+                          <Info className="w-4 h-4 t-text-muted" />
+                        </button>
+                        {showTooltip === `svc-${service.id}` && (
+                          <div className="absolute right-0 top-8 w-64 bg-[#12142A] border border-white/15 rounded-xl p-4 shadow-xl z-20">
+                            <p className="text-sm text-white/90">{service.description}</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    <h4 className="font-semibold text-sm mb-1">{service.name}</h4>
+                    <p className="text-[#D6B35A] text-xs font-bold">${service.price.toFixed(2)}</p>
+                    {isIncludedInBundle && (
+                      <p className="text-green-400 text-xs mt-1">Included in {BUNDLES[selectedBundle]?.name}</p>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+
+            {selectedServices.length > 0 && !selectedBundle && (
+              <div className="mt-4 pt-4 border-t border-white/10 flex items-center justify-between">
+                <span className="t-text-muted text-sm">
+                  {selectedServices.length} service{selectedServices.length > 1 ? "s" : ""} selected
+                </span>
+                <span className="text-[#D6B35A] font-bold">
+                  ${servicesTotal.toFixed(2)}
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+
+      {/* Bundle Packages */}
+        <div className="mb-12">
+          <h2 className="font-serif text-3xl font-semibold gold-gradient-text text-center mb-2">Or Save With a Bundle</h2>
+          <p className="text-center t-text-muted text-sm mb-8">Discount packages that include multiple services</p>
+
+          <div className="grid md:grid-cols-2 gap-4">
             {Object.values(BUNDLES).map((bundle) => {
               const IconComponent = bundle.icon;
               const isSelected = selectedBundle === bundle.id;
-              const colorClasses = {
-                yellow: {
-                  border: isSelected ? "border-[#D6B35A]" : "border-white/10",
-                  bg: isSelected ? "bg-[#D6B35A]/15" : "bg-[#12142A]/80",
-                  icon: "icon-gold",
-                  price: "gold-gradient-text",
-                },
-                purple: {
-                  border: isSelected ? "border-[#D6B35A]" : "border-white/10",
-                  bg: isSelected ? "bg-[#D6B35A]/15" : "bg-[#12142A]/80",
-                  icon: "icon-gold",
-                  price: "gold-gradient-text",
-                },
-                pink: {
-                  border: isSelected ? "border-[#D6B35A]" : "border-white/10",
-                  bg: isSelected ? "bg-[#D6B35A]/10" : "bg-[#12142A]/80",
-                  icon: "icon-gold",
-                  price: "gold-gradient-text",
-                },
+              const colors = {
+                border: isSelected ? "border-[#D6B35A]" : "border-white/10",
+                icon: "icon-gold",
+                price: "gold-gradient-text",
               };
-              const colors = colorClasses[bundle.color];
 
               return (
                 <button
                   key={bundle.id}
                   onClick={() => {
-                    setSelectedBundle(bundle.id);
-                    // Clear add-ons when switching to non-base package
-                    if (bundle.id !== "base") {
-                      setSelectedAddOns([]);
-                    }
+                    setSelectedBundle(isSelected ? null : bundle.id);
+                    setSelectedServices([]);
                   }}
                   className={`card-preview relative rounded-2xl border transition-all text-left ${colors.border} ${
                     isSelected ? "scale-105 shadow-lg border-[#D6B35A]" : ""
                   }`}
                 >
-                  {/* Icon and Price Row */}
                   <div className="flex items-center justify-between mb-4">
                     <IconComponent className={`w-8 h-8 ${colors.icon}`} />
                     <div className={`text-3xl font-black ${colors.price}`}>
@@ -1613,20 +1740,12 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
                     </div>
                   </div>
 
-                  {/* Bundle Name */}
                   <h3 className="text-xl font-bold mb-3">{bundle.name}</h3>
 
-                  {/* Services List with Info Icons */}
                   <div className="space-y-2 mb-3">
-                    {/* Base includes - same color as service lines */}
                     {bundle.essentialIncludes && (
                       <div className="text-sm text-white">Essential +</div>
                     )}
-                    {bundle.baseIncludes && !bundle.essentialIncludes && (
-                      <div className="text-sm text-white">Base +</div>
-                    )}
-
-                    {/* Services */}
                     {bundle.services.map((service, idx) => (
                       <div key={idx} className="flex items-center justify-between text-sm">
                         <span className="text-white">{service.name}</span>
@@ -1653,7 +1772,6 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
 
                   <p className="text-xs t-text-muted text-center mb-3">One-time payment</p>
 
-                  {/* Most Popular Tag - at bottom */}
                   {bundle.popular && (
                     <div className="gold-gradient-btn text-xs font-bold px-3 py-1 rounded-full text-center">
                       MOST POPULAR
@@ -1673,69 +1791,18 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
           </div>
         </div>
 
-        {/* Add-On Customization Section - Only show for Base package */}
-        {selectedBundle === "base" && (
-          <div className="mb-8">
-            <h2 className="font-serif text-2xl font-semibold gold-gradient-text text-center mb-2">Customize Your Base Package</h2>
-            <p className="text-center t-text-muted text-sm mb-6">Add any services you want</p>
-
-            <div className="card-solid rounded-2xl p-6">
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-              {ADD_ONS.map((addOn) => {
-                const isSelected = selectedAddOns.includes(addOn.id);
-                return (
-                  <button
-                    key={addOn.id}
-                    onClick={() => toggleAddOn(addOn.id)}
-                    className={`relative p-4 rounded-xl border transition-all text-left ${
-                      isSelected
-                        ? "bg-[#D6B35A]/15 border-[#D6B35A]"
-                        : "bg-[#12142A]/60 border-white/10 hover:bg-white/10"
-                    }`}
-                  >
-                    <div className="flex items-start justify-between mb-2">
-                      <div
-                        className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
-                          isSelected
-                            ? "bg-[#D6B35A] border-[#D6B35A]"
-                            : "border-white/30"
-                        }`}
-                      >
-                        {isSelected && <Check className="w-3 h-3 text-[#12142A]" />}
-                      </div>
-                    </div>
-                    <h4 className="font-semibold text-sm mb-1">{addOn.name}</h4>
-                    <p className="text-[#D6B35A] text-xs font-bold">+${addOn.price.toFixed(2)}</p>
-                  </button>
-                );
-              })}
-              </div>
-
-              {selectedAddOns.length > 0 && (
-                <div className="mt-4 pt-4 border-t border-white/10 flex items-center justify-between">
-                  <span className="t-text-muted text-sm">
-                    {selectedAddOns.length} add-on{selectedAddOns.length > 1 ? "s" : ""} selected
-                  </span>
-                  <span className="text-[#D6B35A] font-bold">
-                    +${addOnsTotal.toFixed(2)}
-                  </span>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
         {/* Proceed to Payment Button */}
         <div className="text-center mb-8">
           <button
+            disabled={!hasSelection}
             onClick={async () => {
               try {
                 const res = await fetch("/api/create-checkout-session", {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify({
-                    bundle: selectedBundle,
-                    addOns: selectedAddOns,
+                    bundle: selectedBundle || null,
+                    services: selectedBundle ? [] : selectedServices,
                     chartData: chartResult,
                     birthData: birthData,
                     zodiacSystem: zodiacType,
@@ -1760,15 +1827,21 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
                   localStorage.setItem('natavium_claimToken', data.claimToken);
                 }
 
+                // Store purchased products info for SuccessPage
+                localStorage.setItem('natavium_purchasedProducts', JSON.stringify({
+                  bundle: selectedBundle || null,
+                  services: selectedBundle ? [] : selectedServices,
+                }));
+
                 window.location.href = data.url;
               } catch (err) {
                 console.error(err);
                 alert("Network error. Please try again.");
               }
             }}
-            className="gold-gradient-btn gold-gradient-btn-lg hover:scale-105 transition-transform shadow-2xl"
+            className={`gold-gradient-btn gold-gradient-btn-lg hover:scale-105 transition-transform shadow-2xl ${!hasSelection ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
-            Proceed to Payment — ${totalPrice.toFixed(2)}
+            {hasSelection ? `Proceed to Payment — $${totalPrice.toFixed(2)}` : 'Select services or a bundle'}
           </button>
           <p className="t-text-muted mt-3 text-sm">
             Secure checkout • Instant access • Yours forever
@@ -1825,7 +1898,7 @@ function SuccessPage({ setIsPremium, chartResult, selectedBundle }) {
 
     // Store purchased products info
     const purchasedProducts = {
-      bundle: selectedBundle || 'essential',
+      bundle: selectedBundle || null,
       addOns: [], // Add-ons will be fetched from order when ChartPage loads
     };
     localStorage.setItem('natavium_purchasedProducts', JSON.stringify(purchasedProducts));
@@ -1837,6 +1910,25 @@ function SuccessPage({ setIsPremium, chartResult, selectedBundle }) {
     // Payment successful - unlock premium content
     setIsPremium(true);
 
+    // Check if natal analysis should be generated
+    // Bundles always include natal; for individual services, check localStorage
+    const shouldGenerateNatal = (() => {
+      if (selectedBundle) return true; // All bundles include natal
+      try {
+        const products = JSON.parse(localStorage.getItem('natavium_purchasedProducts') || '{}');
+        // If no bundle and no services info, assume natal was purchased (legacy)
+        if (!products.services || products.services.length === 0) return true;
+        return products.services.includes('natal');
+      } catch { return true; }
+    })();
+
+    if (!shouldGenerateNatal) {
+      // No natal analysis to generate - just redirect to chart
+      setGenerationStatus('complete');
+      setTimeout(() => navigate('/chart', { replace: true }), 1500);
+      return;
+    }
+
     const generateReport = async () => {
       setGenerationStatus('generating');
       setStreamedText('');
@@ -1847,7 +1939,7 @@ function SuccessPage({ setIsPremium, chartResult, selectedBundle }) {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             chartResult: chartResultForPrompt,
-            productType: selectedBundle || 'essential',
+            productType: selectedBundle || 'base',
             analysisType: 'natal',
             birthData: birthDataForPrompt,
             zodiacSystem: zodiacType,
@@ -1895,7 +1987,7 @@ function SuccessPage({ setIsPremium, chartResult, selectedBundle }) {
         // Also store in legacy format for backwards compatibility
         localStorage.setItem('natavium_analysis', JSON.stringify({
           ...analysisData,
-          productType: selectedBundle || 'essential',
+          productType: selectedBundle || 'base',
         }));
 
         try {
@@ -4631,7 +4723,7 @@ export default function Natavium() {
   const [isPremium, setIsPremium] = useState(() => {
     return localStorage.getItem("natavium_isPremium") === "true";
   });
-  const [selectedBundle, setSelectedBundle] = useState("essential"); // default to most popular
+  const [selectedBundle, setSelectedBundle] = useState(null); // no bundle selected by default - services are primary
   const [selectedZodiacSystem, setSelectedZodiacSystem] = useState(() => {
     return localStorage.getItem("natavium_zodiacSystem") || "tropical";
   });

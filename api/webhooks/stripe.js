@@ -9,22 +9,25 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
-// Reverse mapping: Stripe price ID -> add-on ID (base IDs without zodiac prefix)
+// Reverse mapping: Stripe price ID -> service/add-on ID (base IDs without zodiac prefix)
 // The zodiac prefix is applied based on the order's zodiac_system
 const PRICE_TO_ADDON = {
   // Tropical-specific price IDs
+  [process.env.STRIPE_PRICE_ID_BASE_TROP || process.env.STRIPE_PRICE_ID_BASE]: 'natal',
   [process.env.STRIPE_PRICE_ID_COMPATIBILITY_TROP_1X || process.env.STRIPE_PRICE_ID_COMPATIBILITY_TROP]: 'compatibility',
   [process.env.STRIPE_PRICE_ID_COMPATIBILITY_TROP_3X]: 'compatibility',
   [process.env.STRIPE_PRICE_ID_HOUSE_TROP]: 'house_deep_dive',
   [process.env.STRIPE_PRICE_ID_TRANSIT_TROP]: 'transit_report',
   [process.env.STRIPE_PRICE_ID_RETURN_TROP]: 'solar_return',
   // Sidereal-specific price IDs
+  [process.env.STRIPE_PRICE_ID_BASE_SIDE || process.env.STRIPE_PRICE_ID_BASE]: 'natal',
   [process.env.STRIPE_PRICE_ID_COMPATIBILITY_SIDE_1X || process.env.STRIPE_PRICE_ID_COMPATIBILITY_SIDE]: 'compatibility',
   [process.env.STRIPE_PRICE_ID_COMPATIBILITY_SIDE_3X]: 'compatibility',
   [process.env.STRIPE_PRICE_ID_HOUSE_SIDE]: 'house_deep_dive',
   [process.env.STRIPE_PRICE_ID_TRANSIT_SIDE]: 'transit_report',
   [process.env.STRIPE_PRICE_ID_RETURN_SIDE]: 'solar_return',
   // Legacy (backwards compat)
+  [process.env.STRIPE_PRICE_ID_BASE]: 'natal',
   [process.env.STRIPE_PRICE_ID_COMPATIBILITY]: 'compatibility',
   [process.env.STRIPE_PRICE_ID_HOUSE]: 'house_deep_dive',
   [process.env.STRIPE_PRICE_ID_TRANSIT]: 'transit_report',
@@ -188,18 +191,22 @@ export default async function handler(req, res) {
         console.log(`Order ${orderId} updated with new add-ons: ${prefixedNewAddons.join(', ')}`);
       }
     } else {
-      // Initial order: apply bundle benefits
+      // Initial order: apply bundle benefits or individual services
       // Extract base bundle type from prefixed productType (e.g., 'tropical_essential' -> 'essential')
       const baseBundleType = productType?.replace(/^(tropical|sidereal)_/, '') || productType;
 
-      // Determine which add-ons are included in the bundle
+      // Determine which add-ons/services are included
       let bundleIncludes = [];
       if (baseBundleType === 'ultimate') {
         bundleIncludes = prefixAddons(BASE_ULTIMATE_INCLUDES, zodiacSystem);
       } else if (baseBundleType === 'essential') {
         bundleIncludes = prefixAddons(BASE_ESSENTIAL_INCLUDES, zodiacSystem);
+      } else if (baseBundleType === 'services') {
+        // Individual services purchase - services are determined from line items
+        // (prefixedNewAddons already contains the resolved service IDs from line items)
+        bundleIncludes = [];
       } else {
-        // Base bundle: just natal
+        // Legacy base bundle: just natal
         bundleIncludes = prefixAddons(['natal'], zodiacSystem);
       }
 
