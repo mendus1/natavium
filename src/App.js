@@ -2218,6 +2218,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
         refetchOrderDataWithRetry(0);
       })();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Check if a tab is accessible
