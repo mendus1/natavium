@@ -1842,41 +1842,15 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
 // =========================
 function SuccessPage({ setIsPremium, chartResult, selectedBundle }) {
   const navigate = useNavigate();
-  const [generationStatus, setGenerationStatus] = useState('starting'); // starting, generating, complete, error
-  const [streamedText, setStreamedText] = useState('');
-  const [error, setError] = useState(null);
-  const chartResultForPrompt = (() => {
-    if (chartResult) return chartResult;
-    try {
-      const saved = localStorage.getItem('natavium_chartResult');
-      return saved ? JSON.parse(saved) : null;
-    } catch {
-      return null;
-    }
-  })();
-
-  const zodiacType = chartResultForPrompt?.zodiacType || 'tropical';
-
-  const birthDataForPrompt = (() => {
-    try {
-      const fromChart = chartResult?.meta?.birthData;
-      if (fromChart) return fromChart;
-      const saved = localStorage.getItem('natavium_birthData');
-      return saved ? JSON.parse(saved) : null;
-    } catch {
-      return null;
-    }
-  })();
 
   // Check if we have chart data (from props or localStorage)
   const hasChartData = chartResult || localStorage.getItem("natavium_chartResult");
 
-  // Extract session_id from URL params and store orderId
+  // Store session, merge purchasedProducts, set premium, and redirect to /chart
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const sessionId = urlParams.get('session_id');
     if (sessionId) {
-      // Store session ID for potential order lookup
       localStorage.setItem('natavium_sessionId', sessionId);
     }
 
@@ -1893,144 +1867,14 @@ function SuccessPage({ setIsPremium, chartResult, selectedBundle }) {
         addOns: [],
       }));
     }
-  }, [selectedBundle]);
-
-  useEffect(() => {
-    if (!hasChartData) return;
 
     // Payment successful - unlock premium content
     setIsPremium(true);
 
-    // Check if natal analysis should be generated
-    // Bundles always include natal; for individual services, check localStorage
-    const shouldGenerateNatal = (() => {
-      if (selectedBundle) return true; // All bundles include natal
-      try {
-        const products = JSON.parse(localStorage.getItem('natavium_purchasedProducts') || '{}');
-        // If no bundle and no services info, assume natal was purchased (legacy)
-        if (!products.services || products.services.length === 0) return true;
-        return products.services.includes('natal');
-      } catch { return true; }
-    })();
-
-    if (!shouldGenerateNatal) {
-      // No natal analysis to generate - redirect to chart page
-      setGenerationStatus('complete');
-      setTimeout(() => navigate('/chart', { replace: true }), 1500);
-      return;
-    }
-
-    const generateReport = async () => {
-      setGenerationStatus('generating');
-      setStreamedText('');
-
-      try {
-        const response = await fetch('/api/generate-analysis', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            chartResult: chartResultForPrompt,
-            productType: selectedBundle || 'base',
-            analysisType: 'natal',
-            birthData: birthDataForPrompt,
-            zodiacSystem: zodiacType,
-          }),
-        });
-
-        if (!response.ok) {
-          // Handle error responses
-          let errorMessage = 'Failed to generate report';
-          try {
-            const errorData = await response.json();
-            errorMessage = errorData.error || errorMessage;
-          } catch {
-            if (response.status === 504) {
-              errorMessage = 'Request timed out. Please try again.';
-            } else {
-              errorMessage = `Server error (${response.status}). Please try again.`;
-            }
-          }
-          throw new Error(errorMessage);
-        }
-
-        // Handle streaming response
-        const reader = response.body.getReader();
-        const decoder = new TextDecoder();
-        let fullText = '';
-
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-
-          const chunk = decoder.decode(value, { stream: true });
-          fullText += chunk;
-          setStreamedText(fullText);
-        }
-
-        // Store the analysis in localStorage using the new multi-analysis format
-        const analysisData = {
-          content: fullText,
-          generatedAt: new Date().toISOString(),
-        };
-        localStorage.setItem('natavium_analyses', JSON.stringify({
-          natal: analysisData,
-        }));
-        // Also store in legacy format for backwards compatibility
-        localStorage.setItem('natavium_analysis', JSON.stringify({
-          ...analysisData,
-          productType: selectedBundle || 'base',
-        }));
-
-        try {
-          // Retrieve the Order ID (saved during checkout)
-          const storedOrderId = localStorage.getItem('natavium_orderId'); 
-          
-          if (storedOrderId) {
-            console.log("Saving natal analysis to database...");
-            // No await needed here - let it run in background so UI doesn't freeze
-            const claimToken = localStorage.getItem('natavium_claimToken');
-            (async () => {
-              const { data } = await supabase.auth.getSession();
-              const accessToken = data?.session?.access_token;
-              fetch('/api/save-analysis', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                  ...(claimToken ? { 'X-Claim-Token': claimToken } : {}),
-                  ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
-                },
-                body: JSON.stringify({
-                  orderId: storedOrderId,
-                  analysisType: 'natal', // This specific block handles the 'natal' section
-                  content: fullText
-                })
-              });
-            })();
-          }
-        } catch (err) {
-          console.error("Background save failed:", err);
-        }
-
-        setGenerationStatus('complete');
-
-        // Redirect to chart page after brief success display
-        setTimeout(() => {
-          navigate('/chart', { replace: true });
-        }, 1500);
-
-      } catch (err) {
-        console.error('Report generation error:', err);
-        setError(err.message);
-        setGenerationStatus('error');
-      }
-    };
-
-    // Small delay before starting generation
-    const timer = setTimeout(generateReport, 500);
+    // Redirect to chart page — generation happens there
+    const timer = setTimeout(() => navigate('/chart', { replace: true }), 1200);
     return () => clearTimeout(timer);
-    // zodiacType is derived from chartResult.zodiacType, so chartResult covers it
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hasChartData, chartResult, selectedBundle, setIsPremium, navigate]);
+  }, [selectedBundle, setIsPremium, navigate]);
 
   // If no chart data anywhere, redirect to input
   if (!hasChartData) {
@@ -2040,77 +1884,15 @@ function SuccessPage({ setIsPremium, chartResult, selectedBundle }) {
   return (
     <div className="min-h-screen text-white flex items-center justify-center p-6">
       <div className="text-center max-w-md">
-        {generationStatus === 'starting' && (
-          <>
-            <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Check className="w-10 h-10 text-green-400" />
-            </div>
-            <h1 className="font-serif text-4xl font-semibold gold-gradient-text mb-4">Payment Successful!</h1>
-            <p className="t-text-muted text-lg">Preparing your personalized reading...</p>
-          </>
-        )}
-
-        {generationStatus === 'generating' && (
-          <>
-            <div className="w-20 h-20 bg-[#D6B35A]/20 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Sparkles className="w-10 h-10 text-[#D6B35A] animate-pulse" />
-            </div>
-            <h1 className="font-serif text-4xl font-semibold gold-gradient-text mb-4">Consulting the Stars</h1>
-            <p className="t-text-muted text-lg mb-4">
-              GPT is analyzing your unique cosmic blueprint...
-            </p>
-
-            {/* Live streaming preview */}
-            {streamedText && (
-              <div className="mt-6 card-solid rounded-2xl p-6 text-left border border-white/10">
-                <div className="text-xs t-text-muted mb-3">Streaming preview</div>
-                <div className="max-h-64 overflow-y-auto">
-                  <p className="text-white/80 text-sm whitespace-pre-wrap leading-relaxed">
-                    {streamedText}
-                  </p>
-                </div>
-              </div>
-            )}
-            <p className="t-text-muted text-sm mt-4">
-              {streamedText.length > 0 ? `${streamedText.length} characters generated...` : 'Starting generation...'}
-            </p>
-
-            {/* Social Media Links */}
-            <div className="mt-8 pt-6 border-t border-white/10">
-              <p className="t-text-muted text-sm mb-3">Follow us on socials</p>
-              <SocialLinks className="justify-center" iconClassName="w-5 h-5" />
-            </div>
-          </>
-        )}
-
-        {generationStatus === 'complete' && (
-          <>
-            <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Check className="w-10 h-10 text-green-400" />
-            </div>
-            <h1 className="font-serif text-4xl font-semibold gold-gradient-text mb-4">Your Reading is Ready!</h1>
-            <p className="t-text-muted text-lg">Taking you to your personalized analysis...</p>
-          </>
-        )}
-
-        {generationStatus === 'error' && (
-          <>
-            <div className="w-20 h-20 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-              <X className="w-10 h-10 text-red-400" />
-            </div>
-            <h1 className="font-serif text-4xl font-semibold mb-4">Generation Error</h1>
-            <p className="text-red-300 text-lg mb-4">{error}</p>
-            <button
-              onClick={() => navigate('/chart', { replace: true })}
-              className="gold-gradient-btn px-6 py-3 rounded-xl font-bold"
-            >
-              Continue to Chart
-            </button>
-            <p className="t-text-muted text-sm mt-4">
-              Don't worry - you can regenerate your reading from the chart page.
-            </p>
-          </>
-        )}
+        <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+          <Check className="w-10 h-10 text-green-400" />
+        </div>
+        <h1 className="font-serif text-4xl font-semibold gold-gradient-text mb-4">Payment Successful!</h1>
+        <p className="t-text-muted text-lg">Taking you to your dashboard...</p>
+        <div className="mt-8 pt-6 border-t border-white/10">
+          <p className="t-text-muted text-sm mb-3">Follow us on socials</p>
+          <SocialLinks className="justify-center" iconClassName="w-5 h-5" />
+        </div>
       </div>
     </div>
   );
@@ -2532,6 +2314,24 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
     }
   };
 
+  // Auto-generate natal analysis on mount if purchased but not yet generated
+  useEffect(() => {
+    if (isTabAccessible('natal') && !analyses.natal?.content && !generatingTab) {
+      generateAnalysisForTab('natal');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Auto-generate the initially active tab's analysis (for non-natal, non-compatibility tabs)
+  useEffect(() => {
+    if (activeTab && activeTab !== 'natal' && activeTab !== 'compatibility') {
+      if (isTabAccessible(activeTab) && !analyses[activeTab]?.content && !generatingTab) {
+        generateAnalysisForTab(activeTab);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Handle tab click
   const handleTabClick = (tab) => {
     if (tab.comingSoon) {
@@ -2541,7 +2341,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
     if (isTabAccessible(tab.id)) {
       setActiveTab(tab.id);
       // Generate analysis if not already present
-      if (!analyses[tab.id]?.content && tab.id !== 'natal' && tab.id !== 'compatibility') {
+      if (!analyses[tab.id]?.content && tab.id !== 'compatibility') {
         generateAnalysisForTab(tab.id);
       }
     } else if (tab.id === 'natal') {
@@ -4433,27 +4233,6 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
             </div>
           </div>
         )}
-
-        {/* Weekly Astro Weather - moved to bottom */}
-        <div className="card-solid rounded-2xl p-6 mb-6">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <div className="text-sm t-text-muted">Ongoing Reports</div>
-              <h3 className="text-xl font-semibold mt-1">Weekly Astro Weather</h3>
-              <p className="t-text-muted text-sm mt-2">Get weekly guidance tied to your natal chart. Coming Soon.</p>
-            </div>
-            <span className="text-xs bg-[#69D2FF]/20 px-2 py-1 rounded text-[#69D2FF] border border-[#69D2FF]/20">Coming Soon</span>
-          </div>
-          <button
-            onClick={async () => {
-              await logEvent('coming_soon_view_sample_clicked', { surface: 'chart', product: 'weekly_astro_weather' });
-              navigate('/ongoing');
-            }}
-            className="mt-4 px-5 py-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-sm"
-          >
-            View sample
-          </button>
-        </div>
 
         {/* Footer Navigation */}
         <div className="card-solid rounded-2xl p-8 mt-8">
