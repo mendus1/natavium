@@ -1053,6 +1053,7 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
   const [transitTeaser, setTransitTeaser] = useState(null);
   const [transitTeaserLoading, setTransitTeaserLoading] = useState(false);
   const [transitTeaserError, setTransitTeaserError] = useState("");
+  // eslint-disable-next-line no-unused-vars
   const navigate = useNavigate();
 
   const zodiacType = chartResult?.zodiacType || 'tropical';
