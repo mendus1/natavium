@@ -2035,7 +2035,20 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
       return 'natal';
     } catch { return 'natal'; }
   });
-  const [analyses, setAnalyses] = useState({});
+  const [analyses, setAnalyses] = useState(() => {
+    try {
+      const stored = localStorage.getItem('natavium_analyses');
+      if (stored) return JSON.parse(stored);
+      const legacy = localStorage.getItem('natavium_analysis');
+      if (legacy) {
+        const parsed = JSON.parse(legacy);
+        const migrated = { natal: parsed };
+        localStorage.setItem('natavium_analyses', JSON.stringify(migrated));
+        return migrated;
+      }
+    } catch { /* ignore */ }
+    return {};
+  });
   const [generatingTab, setGeneratingTab] = useState(null);
   const [upsellTab, setUpsellTab] = useState(null);
   const [selectedAddOns, setSelectedAddOns] = useState([]);
@@ -2045,30 +2058,9 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
     return saved ? JSON.parse(saved) : { bundle: selectedBundle || 'essential', addOns: [] };
   });
 
-  // Load analyses from localStorage on mount
-  useEffect(() => {
-    const storedAnalyses = localStorage.getItem('natavium_analyses');
-    if (storedAnalyses) {
-      try {
-        const parsed = JSON.parse(storedAnalyses);
-        setAnalyses(parsed);
-      } catch (e) {
-        console.error('Failed to parse stored analyses:', e);
-      }
-    }
-    // Also check for legacy single analysis
-    const legacyAnalysis = localStorage.getItem('natavium_analysis');
-    if (legacyAnalysis && !storedAnalyses) {
-      try {
-        const parsed = JSON.parse(legacyAnalysis);
-        setAnalyses({ natal: parsed });
-        // Migrate to new format
-        localStorage.setItem('natavium_analyses', JSON.stringify({ natal: parsed }));
-      } catch (e) {
-        console.error('Failed to parse legacy analysis:', e);
-      }
-    }
-  }, []);
+  // Analyses are initialized synchronously from localStorage in useState above.
+  // This flag tracks whether we've also checked Supabase for saved analyses.
+  const [analysesLoaded, setAnalysesLoaded] = useState(false);
 
   // Silent claim on login so users rarely need to press "Claim purchases" manually.
   useEffect(() => {
@@ -2120,11 +2112,14 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
     };
   }, []);
 
-  // Fetch order data to get purchased products (if orderId is in localStorage)
+  // Fetch order data to get purchased products AND saved analyses (if orderId is in localStorage)
   useEffect(() => {
     const fetchOrderData = async () => {
       const orderId = localStorage.getItem('natavium_orderId');
-      if (!orderId) return;
+      if (!orderId) {
+        setAnalysesLoaded(true);
+        return;
+      }
 
       try {
         const claimToken = localStorage.getItem('natavium_claimToken');
@@ -2144,9 +2139,36 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
           };
           setPurchasedProducts(products);
           localStorage.setItem('natavium_purchasedProducts', JSON.stringify(products));
+
+          // Load saved analyses from Supabase and merge into state
+          if (data.analyses && Object.keys(data.analyses).length > 0) {
+            const zodiacSystem = data.zodiacSystem || zodiacType || 'tropical';
+            const normalized = {};
+            Object.entries(data.analyses).forEach(([key, value]) => {
+              // Strip zodiac prefix (e.g. 'sidereal_natal' -> 'natal')
+              const unprefixed = key.startsWith(`${zodiacSystem}_`)
+                ? key.slice(`${zodiacSystem}_`.length)
+                : key;
+              normalized[unprefixed] = value;
+            });
+            // Merge: Supabase analyses fill in any gaps not already in state
+            setAnalyses(prev => {
+              const merged = { ...normalized, ...prev };
+              // But prefer Supabase data for keys that are in Supabase but empty locally
+              Object.keys(normalized).forEach(key => {
+                if (!prev[key]?.content && normalized[key]?.content) {
+                  merged[key] = normalized[key];
+                }
+              });
+              localStorage.setItem('natavium_analyses', JSON.stringify(merged));
+              return merged;
+            });
+          }
         }
       } catch (err) {
         console.error('Failed to fetch order data:', err);
+      } finally {
+        setAnalysesLoaded(true);
       }
     };
 
@@ -2314,23 +2336,25 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
     }
   };
 
-  // Auto-generate natal analysis on mount if purchased but not yet generated
+  // Auto-generate natal analysis once Supabase data is loaded, if purchased but not yet generated
   useEffect(() => {
+    if (!analysesLoaded) return;
     if (isTabAccessible('natal') && !analyses.natal?.content && !generatingTab) {
       generateAnalysisForTab('natal');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [analysesLoaded]);
 
   // Auto-generate the initially active tab's analysis (for non-natal, non-compatibility tabs)
   useEffect(() => {
+    if (!analysesLoaded) return;
     if (activeTab && activeTab !== 'natal' && activeTab !== 'compatibility') {
       if (isTabAccessible(activeTab) && !analyses[activeTab]?.content && !generatingTab) {
         generateAnalysisForTab(activeTab);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [analysesLoaded]);
 
   // Handle tab click
   const handleTabClick = (tab) => {
