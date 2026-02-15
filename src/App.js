@@ -88,7 +88,7 @@ function OngoingPage() {
           <div className="mt-6 bg-white/5 rounded-xl p-5 border border-white/10">
             <div className="text-sm font-semibold mb-2">Sample (preview)</div>
             <div className="space-y-2 text-sm t-text-muted">
-              <p><span className="text-white/90 font-semibold">Theme:</span> Clarity in communication and self-definition.</p>
+              <p><span className="text-white/90 font-semibold">Theme:</span> Understand Your Star Power.</p>
               <p><span className="text-white/90 font-semibold">Best days:</span> Midweek for decisions, weekend for connection.</p>
               <p><span className="text-white/90 font-semibold">Watch-outs:</span> Overcommitting or reading too much into signals.</p>
             </div>
@@ -740,6 +740,14 @@ function InfoPage() {
 // =========================
 function LandingPage() {
   const navigate = useNavigate();
+  const { theme, toggleTheme } = useTheme();
+
+  // Get theme label for display
+  const getThemeLabel = () => {
+    if (theme === 'theme-daylight') return '☀️';
+    if (theme === 'theme-v2') return '🌙';
+    return '🌅';
+  };
 
   return (
     <div className="min-h-screen px-6 py-6">
@@ -749,7 +757,15 @@ function LandingPage() {
           <img src={LogoRed} alt="Natavium Logo" className="w-11 h-11 mr-3 object-contain" />
           <h1 className="font-serif text-5xl md:text-6xl font-semibold gold-gradient-text leading-none pt-3">Natavium</h1>
         </div>  
-        <nav className="flex gap-4">
+        <nav className="flex gap-4 items-center">
+          {/* Theme Toggle */}
+          <button
+            onClick={toggleTheme}
+            className="t-btn-secondary text-sm"
+            title="Toggle theme"
+          >
+            {getThemeLabel()}
+          </button>
           <button
             onClick={() => navigate("/reports")}
             className="t-btn-secondary text-sm"
@@ -782,7 +798,7 @@ function LandingPage() {
       <section className="hero-vignette max-w-5xl mx-auto text-center pt-8 pb-6 md:pt-14 md:pb-10 px-4">
         {/* Big hero headline (dominates page) */}
           <h2 className="font-serif text-5xl md:text-7xl font-semibold t-text-primary leading-tight tracking-tight mb-6 text-center">
-            Clarity for your next move
+            Understand your star power 
           </h2>
 
         {/* Tagline (slightly smaller, still prominent) */}
