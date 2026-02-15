@@ -597,23 +597,23 @@
    DAYLIGHT THEME: Playful Heading Fonts
    ================================ */
 
-/* Override serif headings with Outfit for a playful but modern feel */
+/* Override serif headings with Quicksand for an ethereal, weightless feel */
 .theme-daylight .font-serif {
-  font-family: 'Outfit', 'Inter', system-ui, sans-serif;
+  font-family: 'Quicksand', 'Inter', system-ui, sans-serif;
   font-weight: 600;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
 }
 
 .theme-daylight .heading-display {
-  font-family: 'Outfit', 'Inter', system-ui, sans-serif;
+  font-family: 'Quicksand', 'Inter', system-ui, sans-serif;
   font-weight: 600;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
 }
 
 .theme-daylight .subheading-luxury {
-  font-family: 'Outfit', 'Inter', system-ui, sans-serif;
+  font-family: 'Quicksand', 'Inter', system-ui, sans-serif;
   font-weight: 500;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.03em;
 }
 
 /* ================================

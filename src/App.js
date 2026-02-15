@@ -5,7 +5,7 @@ import { calculateNatalChartFromLocal } from "./ephemeris";
 import BrandStar from "./components/BrandStar";
 import ReportsPage from "./ReportsPage";
 import { supabase } from "./supabaseClient";
-import LogoRed from "./LogoRed.png";
+import LogoBlue from "./LogoBlue.png";
 import {
   Sparkles,
   Lock,
@@ -754,7 +754,7 @@ function LandingPage() {
       {/* Header with Logo/Title on left, Nav on right */}
       <header className="max-w-5xl mx-auto flex justify-between items-center mb-8">
         <div className="flex items-center">
-          <img src={LogoRed} alt="Natavium Logo" className="w-11 h-11 mr-3 object-contain" />
+          <img src={LogoBlue} alt="Natavium Logo" className="w-11 h-11 mr-3 object-contain" />
           <h1 className="font-serif text-5xl md:text-6xl font-semibold gold-gradient-text leading-none pt-3">Natavium</h1>
         </div>  
         <nav className="flex gap-4 items-center">
@@ -831,7 +831,7 @@ function LandingPage() {
 
         <div className="card-illuminated text-center py-8 px-6">
           <Zap className="w-8 h-8 icon-gold mx-auto mb-4" strokeWidth={1} />
-          <h3 className="font-serif text-xl md:text-2xl mb-2 t-text-primary">Chat With Your Astrologer</h3>
+          <h3 className="font-serif text-xl md:text-2xl mb-2 t-text-primary">Astrologer Chat</h3>
           <p className="t-text-muted text-sm leading-relaxed">
             Ask the AI astrologer questions about your planetary placements or transits.
           </p>
@@ -839,7 +839,7 @@ function LandingPage() {
 
         <div className="card-illuminated text-center py-8 px-6">
           <Heart className="w-8 h-8 icon-gold mx-auto mb-4" strokeWidth={1} />
-          <h3 className="font-serif text-xl md:text-2xl mb-2 t-text-primary">Astro Forecasts</h3>
+          <h3 className="font-serif text-xl md:text-2xl mb-2 t-text-primary">Astrological Forecasts</h3>
           <p className="t-text-muted text-sm leading-relaxed">
             Get transit reports tailored to relationships, finances, or personal growth. 
           </p>
