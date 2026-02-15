@@ -823,7 +823,7 @@ function LandingPage() {
       <section className="max-w-4xl mx-auto grid md:grid-cols-3 gap-6 mt-2 mb-12">
         <div className="card-illuminated text-center py-8 px-6">
           <Star className="w-8 h-8 icon-gold mx-auto mb-4" strokeWidth={1} />
-          <h3 className="font-serif text-xl md:text-2xl mb-2 t-text-primary">Personalized Birth Chart</h3>
+          <h3 className="font-serif text-xl md:text-2xl mb-2 t-text-primary">Free Birth Chart</h3>
           <p className="t-text-muted text-sm leading-relaxed">
             Built from exact planetary positions at your birth—so it's about you, not just your Sun sign.
           </p>
@@ -831,17 +831,17 @@ function LandingPage() {
 
         <div className="card-illuminated text-center py-8 px-6">
           <Zap className="w-8 h-8 icon-gold mx-auto mb-4" strokeWidth={1} />
-          <h3 className="font-serif text-xl md:text-2xl mb-2 t-text-primary">Powerful AI</h3>
+          <h3 className="font-serif text-xl md:text-2xl mb-2 t-text-primary">Chat With Your Astrologer</h3>
           <p className="t-text-muted text-sm leading-relaxed">
-            The latest AI models analyse your planetary placements + transits into a coherent story. No templates.
+            Ask the AI astrologer questions about your planetary placements or transits.
           </p>
         </div>
 
         <div className="card-illuminated text-center py-8 px-6">
           <Heart className="w-8 h-8 icon-gold mx-auto mb-4" strokeWidth={1} />
-          <h3 className="font-serif text-xl md:text-2xl mb-2 t-text-primary">One-Time Unlocks</h3>
+          <h3 className="font-serif text-xl md:text-2xl mb-2 t-text-primary">Astro Forecasts</h3>
           <p className="t-text-muted text-sm leading-relaxed">
-            Subscriptions are not required. Pay for exactly what you want. 
+            Get transit reports tailored to relationships, finances, or personal growth. 
           </p>
         </div>
       </section>

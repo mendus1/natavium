@@ -594,6 +594,29 @@
 .theme-daylight .t-warning { color: #D97706; }
 
 /* ================================
+   DAYLIGHT THEME: Playful Heading Fonts
+   ================================ */
+
+/* Override serif headings with Outfit for a playful but modern feel */
+.theme-daylight .font-serif {
+  font-family: 'Outfit', 'Inter', system-ui, sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.theme-daylight .heading-display {
+  font-family: 'Outfit', 'Inter', system-ui, sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.theme-daylight .subheading-luxury {
+  font-family: 'Outfit', 'Inter', system-ui, sans-serif;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+/* ================================
    BASE STYLES (Applied to themed root)
    ================================ */
 .theme-original,
