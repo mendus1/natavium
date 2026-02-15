@@ -466,22 +466,38 @@
   );
 }
 
-/* Inputs - light theme */
+/* Inputs - magical light theme with glowing effects */
 .theme-daylight .t-input,
 .theme-daylight .t-select {
-  background: rgba(255, 255, 255, 0.7);
-  border: 1px solid rgba(107, 184, 212, 0.4);
-  color: #2D1B4E;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(139, 90, 159, 0.25);
+  color: #4A3A5C;
+  box-shadow: 
+    0 2px 8px rgba(107, 184, 212, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
 }
 
 .theme-daylight .t-input:focus,
 .theme-daylight .t-select:focus {
-  border-color: #6BB8D4;
-  box-shadow: 0 0 0 3px rgba(107, 184, 212, 0.2);
+  border-color: #E85D75;
+  box-shadow: 
+    0 0 0 3px rgba(232, 93, 117, 0.15),
+    0 4px 20px rgba(232, 93, 117, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.95);
 }
 
 .theme-daylight .t-input::placeholder {
   color: rgba(91, 74, 110, 0.5);
+}
+
+/* Magical floating label effect for input containers */
+.theme-daylight .t-input-label {
+  color: #6B4A7E;
+  font-weight: 500;
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+  display: block;
 }
 
 /* Select dropdown arrow for light theme */
@@ -489,28 +505,45 @@
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%235B4A6E' fill-opacity='0.7' d='M2 4l4 4 4-4'/%3E%3C/svg%3E");
 }
 
-/* Card preview - light version */
-.theme-daylight .card-preview {
+/* Card input hover - magical glass effect */
+.theme-daylight .card-input-hover {
   background:
     linear-gradient(135deg,
-      rgba(255, 255, 255, 0.8) 0%,
-      rgba(255, 255, 255, 0.6) 100%
-    ),
-    rgba(255, 255, 255, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 4px 20px rgba(107, 184, 212, 0.15);
-}
-
-.theme-daylight .card-preview:hover {
-  background:
-    linear-gradient(135deg,
-      rgba(232, 93, 117, 0.1) 0%,
+      rgba(255, 255, 255, 0.9) 0%,
       rgba(255, 255, 255, 0.75) 50%,
-      rgba(255, 255, 255, 0.8) 100%
+      rgba(212, 229, 247, 0.6) 100%
     ),
     rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 
+    0 8px 32px rgba(107, 184, 212, 0.15),
+    0 2px 8px rgba(139, 90, 159, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 1);
+  backdrop-filter: blur(12px);
+}
+
+.theme-daylight .card-input-hover:hover {
+  background:
+    linear-gradient(135deg,
+      rgba(255, 255, 255, 0.95) 0%,
+      rgba(255, 255, 255, 0.85) 40%,
+      rgba(232, 93, 117, 0.1) 100%
+    ),
+    rgba(255, 255, 255, 0.9);
   border-color: rgba(232, 93, 117, 0.3);
-  box-shadow: 0 10px 35px rgba(107, 184, 212, 0.25);
+  box-shadow: 
+    0 12px 40px rgba(232, 93, 117, 0.2),
+    0 4px 12px rgba(107, 184, 212, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 1);
+  transform: translateY(-3px);
+}
+
+/* Magical aurora background for input sections */
+.theme-daylight .input-section {
+  background: 
+    radial-gradient(ellipse 80% 50% at 20% 40%, rgba(232, 93, 117, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse 60% 40% at 80% 60%, rgba(107, 184, 212, 0.1) 0%, transparent 50%),
+    radial-gradient(ellipse 50% 30% at 50% 80%, rgba(139, 90, 159, 0.06) 0%, transparent 50%);
 }
 
 /* Comparison table - light */

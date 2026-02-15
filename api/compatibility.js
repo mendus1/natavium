@@ -188,7 +188,19 @@ function buildRelationshipContext(relationshipType) {
   return `\n\nRELATIONSHIP CONTEXT:\n- The intended relationship type is: ${label}.\n- Tailor examples, advice, boundaries, and "growth work" to this context (e.g., friendship dynamics vs romantic attachment).`;
 }
 
-function buildCompatibilityPrompt({ zodiacSystem, subjectChart, partnerChart, subjectTitle, partnerTitle, relationshipType, audienceContext }) {
+function buildToneContext(tone) {
+  if (!tone || tone === 'classic') return '';
+
+  const map = {
+    coach: 'motivational and direct, like a supportive life coach\u2014action-oriented, encouraging, and empowering',
+    witty: 'clever and witty\u2014use humor, wordplay, and a lighthearted touch while still being insightful and respectful',
+  };
+  const desc = map[tone];
+  if (!desc) return '';
+  return `\n\nTONE:\n- Use a respectful but ${desc} tone throughout the analysis.`;
+}
+
+function buildCompatibilityPrompt({ zodiacSystem, subjectChart, partnerChart, subjectTitle, partnerTitle, relationshipType, audienceContext, tone }) {
   const systemLine = zodiacSystem === 'sidereal'
     ? 'ZODIAC SYSTEM: SIDEREAL (Fagan-Bradley ayanamsa)'
     : 'ZODIAC SYSTEM: TROPICAL (Western)';
@@ -209,7 +221,7 @@ IMPORTANT:
   - Trine / Square: up to 6°
   - Sextile: up to 4°
 - Focus primarily on Sun/Moon/Asc, Venus/Mars, Mercury, Saturn. Outer planets are secondary.
-- Avoid fatalistic language. Keep it practical and supportive.
+- Avoid fatalistic language. Keep it practical and supportive.${buildToneContext(tone)}
 
 ${formatChartForPrompt(subjectChart, subjectTitle || 'Person A (Chart A)')}
 ${formatChartForPrompt(partnerChart, partnerTitle || 'Person B (Chart B)')}
@@ -363,7 +375,7 @@ export default async function handler(req) {
       const url = new URL(req.url);
       const body = await req.json().catch(() => ({}));
 
-      const { partnerBirthData, partnerChartData, label, relationshipType } = body || {};
+      const { partnerBirthData, partnerChartData, label, relationshipType, tone } = body || {};
       const orderId = body?.orderId || url.searchParams.get('orderId') || url.searchParams.get('id') || getHeader(req, 'X-Order-Id');
 
       if (!orderId || !partnerBirthData || !partnerChartData) {
@@ -443,6 +455,7 @@ export default async function handler(req) {
         partnerTitle,
         relationshipType,
         audienceContext,
+        tone,
       });
 
       const result = streamText({

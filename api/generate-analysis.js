@@ -88,6 +88,32 @@ ZODIAC SYSTEM: TROPICAL (Western)
 - Interpret placements using traditional Western psychological astrology.`;
 }
 
+function buildFocusContext(birthData) {
+  const focus = birthData?.focus;
+  if (!focus || focus === 'standard') return '';
+
+  const map = {
+    career: 'Career & Money',
+    love: 'Love & Relationships',
+    growth: 'Self & Growth',
+  };
+  const label = map[focus] || focus;
+  return `\n\nFOCUS EMPHASIS:\n- Provide a well-rounded analysis with a focus on ${label}. Give this area slightly more depth and practical guidance than other areas.`;
+}
+
+function buildToneContext(birthData) {
+  const tone = birthData?.tone;
+  if (!tone || tone === 'classic') return '';
+
+  const map = {
+    coach: 'motivational and direct, like a supportive life coach—action-oriented, encouraging, and empowering',
+    witty: 'clever and witty—use humor, wordplay, and a lighthearted touch while still being insightful and respectful',
+  };
+  const desc = map[tone];
+  if (!desc) return '';
+  return `\n\nTONE:\n- Use a respectful but ${desc} tone throughout the analysis.`;
+}
+
 function buildAgeContext(birthData) {
   const year = Number(birthData?.birthYear);
   const month = Number(birthData?.birthMonth);
@@ -581,7 +607,9 @@ export default async function handler(req) {
       const addonConfig = ADDON_CONFIG[baseType];
       const prompts = buildAddonPrompt(activeChart, baseType, birthData);
 
-      systemPrompt = prompts.systemPrompt + '\n' + zodiacContext + ageContext;
+      const focusContext = buildFocusContext(birthData);
+      const toneContext = buildToneContext(birthData);
+      systemPrompt = prompts.systemPrompt + '\n' + zodiacContext + ageContext + focusContext + toneContext;
       userPrompt = prompts.userPrompt;
       model = addonConfig.model;
       maxTokens = addonConfig.maxTokens;
@@ -614,7 +642,7 @@ ASTROLOGICAL EXPERTISE:
 FORMAT:
 - Use clean Markdown: ## for major headers, ### for subsections, #### for sub-subsections
 - Use **bold** for planet/sign combinations
-- Use bullet points for lists where appropriate${ageContext}`;
+- Use bullet points for lists where appropriate${ageContext}${buildFocusContext(birthData)}${buildToneContext(birthData)}`;
 
       userPrompt = `${chartDataSection}\n\n${analysisRequest}`;
       model = config.model;

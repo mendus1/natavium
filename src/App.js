@@ -754,7 +754,7 @@ function LandingPage() {
       {/* Header with Logo/Title on left, Nav on right */}
       <header className="max-w-5xl mx-auto flex justify-between items-center mb-8">
         <div className="flex items-center">
-          <img src={LogoBlue} alt="Natavium Logo" className="w-11 h-11 mr-3 object-contain" />
+          <img src={LogoBlue} alt="Natavium Logo" className="w-13 h-13 mr-3 object-contain" />
           <h1 className="font-serif text-5xl md:text-6xl font-semibold gold-gradient-text leading-none pt-3">Natavium</h1>
         </div>  
         <nav className="flex gap-4 items-center">
@@ -811,7 +811,7 @@ function LandingPage() {
     className="gold-gradient-btn gold-gradient-btn-lg"
     style={{ marginTop: '24px', marginBottom: '24px' }}
   >
-    Discover Your Chart
+    Try It Now
   </button>
 {/* Supporting line (smaller + softer so it doesn't compete) */}
           <p className="text-base md:text-lg t-text-muted mb-8 text-center" style={{ marginBottom: '48px' }}>
@@ -1001,6 +1001,39 @@ function InputPage({ birthData, handleInputChange, calculateChart, calcError }) 
                   ))}
                 </div>
               </div>
+            </div>
+
+            <div className="bg-white/15 rounded-xl p-4 border border-white/10">
+              <label className="flex items-center text-sm font-medium mb-2">
+                Focus
+              </label>
+              <select
+                value={birthData.focus || 'standard'}
+                onChange={(e) => handleInputChange('focus', e.target.value)}
+                className="w-full px-3 py-2 rounded-lg bg-[#12142A]/80 border border-white/10 text-white focus:outline-none"
+              >
+                <option value="standard">Standard</option>
+                <option value="career">Career & Money</option>
+                <option value="love">Love & Relationships</option>
+                <option value="growth">Self & Growth</option>
+              </select>
+              <p className="text-xs t-text-muted mt-2">Your selection here will be emphasized a little more</p>
+            </div>
+
+            <div className="bg-white/15 rounded-xl p-4 border border-white/10">
+              <label className="flex items-center text-sm font-medium mb-2">
+                Tone
+              </label>
+              <select
+                value={birthData.tone || 'classic'}
+                onChange={(e) => handleInputChange('tone', e.target.value)}
+                className="w-full px-3 py-2 rounded-lg bg-[#12142A]/80 border border-white/10 text-white focus:outline-none"
+              >
+                <option value="classic">Classic</option>
+                <option value="coach">Coach</option>
+                <option value="witty">Witty</option>
+              </select>
+              <p className="text-xs t-text-muted mt-2">This changes the 'vibe' of your analysis</p>
             </div>
           </div>
 
@@ -2013,6 +2046,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
     minute: "",
     period: "AM",
     location: "",
+    tone: "classic",
   });
   const [compatibilityFetching, setCompatibilityFetching] = useState(false);
   const [compatibilityGenerating, setCompatibilityGenerating] = useState(false);
@@ -2608,6 +2642,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
           partnerChartData,
           label,
           relationshipType: compatPartnerBirthData?.relationshipType,
+          tone: compatPartnerBirthData?.tone || birthData?.tone || 'classic',
         })
       });
 
@@ -4188,6 +4223,20 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
                         className="w-full px-3 py-2 rounded-lg bg-[#12142A]/80 border border-white/10 text-white placeholder-white/40 focus:outline-none"
                       />
                     </div>
+
+                    <div className="bg-white/15 rounded-xl p-4 border border-white/10 md:col-span-2">
+                      <label className="block text-sm font-medium mb-2">Tone</label>
+                      <select
+                        value={compatPartnerBirthData.tone || 'classic'}
+                        onChange={(e) => setCompatPartnerBirthData(prev => ({ ...prev, tone: e.target.value }))}
+                        className="w-full px-3 py-2 rounded-lg bg-[#12142A]/80 border border-white/10 text-white focus:outline-none"
+                      >
+                        <option value="classic">Classic</option>
+                        <option value="coach">Coach</option>
+                        <option value="witty">Witty</option>
+                      </select>
+                      <p className="text-xs t-text-muted mt-2">This changes the 'vibe' of your analysis</p>
+                    </div>
                   </div>
 
                   <div className="mt-6">
@@ -4586,6 +4635,8 @@ export default function Natavium() {
       minute: "",
       period: "AM",
       location: "",
+      focus: "standard",
+      tone: "classic",
     };
   });
   const [calcError, setCalcError] = useState(null);

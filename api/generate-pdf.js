@@ -96,10 +96,56 @@ function formatChartDataForPrompt(chartResult) {
 - **Pluto:** ${chartResult.pluto?.sign || 'Unknown'} (${formatDegree(chartResult.pluto)}) in House ${chartResult.pluto?.house || '?'}`;
 }
 
+// Focus context for prompts
+function buildFocusContext(birthData) {
+  const focus = birthData?.focus;
+  if (!focus || focus === 'standard') return '';
+  const map = { career: 'Career & Money', love: 'Love & Relationships', growth: 'Self & Growth' };
+  const label = map[focus] || focus;
+  return `\n\nFOCUS EMPHASIS:\n- Provide a well-rounded analysis with a focus on ${label}. Give this area slightly more depth and practical guidance than other areas.`;
+}
+
+// Tone context for prompts
+function buildToneContext(birthData) {
+  const tone = birthData?.tone;
+  if (!tone || tone === 'classic') return '';
+  const map = {
+    coach: 'motivational and direct, like a supportive life coach\u2014action-oriented, encouraging, and empowering',
+    witty: 'clever and witty\u2014use humor, wordplay, and a lighthearted touch while still being insightful and respectful',
+  };
+  const desc = map[tone];
+  if (!desc) return '';
+  return `\n\nTONE:\n- Use a respectful but ${desc} tone throughout the analysis.`;
+}
+
+// Age context for prompts
+function buildAgeContext(birthData) {
+  const year = Number(birthData?.birthYear);
+  const month = Number(birthData?.birthMonth);
+  const day = Number(birthData?.birthDay);
+  if (!Number.isFinite(year) || !Number.isFinite(month) || !Number.isFinite(day)) return '';
+  if (year < 1900 || year > new Date().getFullYear()) return '';
+  if (month < 1 || month > 12) return '';
+  if (day < 1 || day > 31) return '';
+  const dob = new Date(Date.UTC(year, month - 1, day));
+  if (Number.isNaN(dob.getTime())) return '';
+  const now = new Date();
+  let age = now.getUTCFullYear() - dob.getUTCFullYear();
+  const m = now.getUTCMonth() - dob.getUTCMonth();
+  if (m < 0 || (m === 0 && now.getUTCDate() < dob.getUTCDate())) age -= 1;
+  if (!Number.isFinite(age) || age < 0 || age > 120) return '';
+  if (age < 13) return `\n\nAUDIENCE CONTEXT:\n- The recipient is approximately ${age} years old (a child).\n- Keep guidance age-appropriate: avoid adult topics. Focus on family, school, friendships, confidence, and creativity.`;
+  if (age < 18) return `\n\nAUDIENCE CONTEXT:\n- The recipient is approximately ${age} years old (a minor).\n- Keep guidance age-appropriate: avoid explicit content or adult-life assumptions.`;
+  return `\n\nAUDIENCE CONTEXT:\n- The recipient is approximately ${age} years old (an adult).`;
+}
+
 // Build prompts for each analysis type
 function buildAnalysisPrompts(chartResult, analysisType, zodiacSystem, birthData) {
   const chartData = formatChartDataForPrompt(chartResult);
   const zodiacContext = getZodiacSystemContext(zodiacSystem);
+  const ageContext = buildAgeContext(birthData);
+  const focusContext = buildFocusContext(birthData);
+  const toneContext = buildToneContext(birthData);
 
   const baseSystemPrompt = `You are a professional astrology report generator, NOT a chatbot.
 
@@ -112,7 +158,7 @@ ${zodiacContext}
 
 FORMAT:
 - Use clean Markdown: ## for major headers, ### for subsections
-- Use **bold** for planet/sign combinations`;
+- Use **bold** for planet/sign combinations${ageContext}${focusContext}${toneContext}`;
 
   switch (analysisType) {
     case 'natal':
