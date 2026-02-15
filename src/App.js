@@ -4539,7 +4539,7 @@ export default function Natavium() {
   // Theme state - persist to localStorage
   const [theme, setTheme] = useState(() => {
     const saved = localStorage.getItem("natavium_theme");
-    return saved || 'theme-v2'; // default to V2 dark cosmic theme
+    return saved || 'theme-daylight'; // default to daylight theme
   });
 
   // Persist theme to localStorage
@@ -4548,7 +4548,11 @@ export default function Natavium() {
   }, [theme]);
 
   const toggleTheme = () => {
-    setTheme(prev => prev === 'theme-original' ? 'theme-v2' : 'theme-original');
+    setTheme(prev => {
+      if (prev === 'theme-original') return 'theme-v2';
+      if (prev === 'theme-v2') return 'theme-daylight';
+      return 'theme-original';
+    });
   };
 
   // Load initial state from localStorage
