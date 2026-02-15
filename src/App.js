@@ -753,9 +753,9 @@ function LandingPage() {
     <div className="min-h-screen px-6 py-6">
       {/* Header with Logo/Title on left, Nav on right */}
       <header className="max-w-5xl mx-auto flex justify-between items-center mb-8">
-        <div className="flex items-center">
-          <img src={LogoBlue} alt="Natavium Logo" className="w-13 h-13 mr-3 object-contain" />
-          <h1 className="font-serif text-5xl md:text-6xl font-semibold gold-gradient-text leading-none pt-3">Natavium</h1>
+        <div className="flex items-center gap-3">
+          <img src={LogoBlue} alt="Natavium Logo" className="w-11 h-11 object-contain" />
+          <h1 className="text-5xl md:text-6xl font-normal gold-gradient-text leading-none" style={{ fontFamily: 'Federant, serif' }}>Natavium</h1>
         </div>  
         <nav className="flex gap-4 items-center">
           {/* Theme Toggle */}
@@ -797,7 +797,7 @@ function LandingPage() {
       {/* Hero Section */}
       <section className="hero-vignette max-w-5xl mx-auto text-center pt-8 pb-6 md:pt-14 md:pb-10 px-4">
         {/* Big hero headline (dominates page) */}
-          <h2 className="font-serif text-5xl md:text-7xl font-semibold t-text-primary leading-tight tracking-tight mb-6 text-center">
+          <h2 className="text-5xl md:text-7xl font-normal t-text-primary leading-tight tracking-tight mb-6 text-center" style={{ fontFamily: 'Federant, serif' }}>
             Understand your star power 
           </h2>
 
