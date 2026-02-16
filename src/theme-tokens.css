@@ -1573,3 +1573,227 @@
 .theme-daylight .card-preview .text-center .icon-gold {
   filter: drop-shadow(0 2px 4px rgba(232, 93, 117, 0.4));
 }
+
+/* =========================
+   ChartPage Daylight Styles
+   ========================= */
+
+/* Dashboard tab buttons in daylight */
+.theme-daylight .card-solid button[class*="bg-[#D6B35A]/20"] {
+  background: rgba(232, 93, 117, 0.15);
+  border-color: rgba(232, 93, 117, 0.5);
+}
+
+.theme-daylight .card-solid button[class*="bg-[#D6B35A]/10"] {
+  background: rgba(232, 93, 117, 0.1);
+  border-color: rgba(232, 93, 117, 0.3);
+}
+
+.theme-daylight .card-solid button[class*="bg-white/5"] {
+  background: rgba(255, 255, 255, 0.7);
+  border-color: rgba(107, 184, 212, 0.3);
+}
+
+/* Tab text colors in daylight */
+.theme-daylight .card-solid button .text-green-400 {
+  color: #059669;
+}
+
+/* Modal backdrops in daylight */
+.theme-daylight [class*="bg-black/60"] {
+  background: rgba(45, 27, 78, 0.4);
+}
+
+/* Email modal input in daylight */
+.theme-daylight input[type="email"][class*="bg-[#12142A]/80"] {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(232, 93, 117, 0.3);
+  color: #2D1B4E;
+}
+
+.theme-daylight input[type="email"]::placeholder {
+  color: #8B7A9E;
+}
+
+/* My Reports button in daylight */
+.theme-daylight button[class*="bg-[#12142A]/80"] {
+  background: rgba(255, 255, 255, 0.8);
+  border-color: rgba(232, 93, 117, 0.3);
+  color: #2D1B4E;
+}
+
+/* Upsell modal in daylight */
+.theme-daylight [class*="bg-[#69D2FF]/10"] {
+  background: rgba(107, 184, 212, 0.15);
+  border-color: rgba(107, 184, 212, 0.3);
+}
+
+.theme-daylight [class*="bg-[#69D2FF]/20"] {
+  background: rgba(107, 184, 212, 0.25);
+}
+
+/* Chart wheel container in daylight */
+.theme-daylight #natal-chart-container {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.85) 0%,
+    rgba(255, 255, 255, 0.75) 100%
+  );
+  border-color: rgba(232, 93, 117, 0.25);
+}
+
+/* Analysis content text in daylight */
+.theme-daylight .prose p,
+.theme-daylight .prose li,
+.theme-daylight [class*="whitespace-pre-wrap"] {
+  color: #3D2F50;
+}
+
+/* Compatibility form in daylight */
+.theme-daylight select,
+.theme-daylight input[type="text"] {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(232, 93, 117, 0.3);
+  color: #2D1B4E;
+}
+
+/* Locked tab indicator in daylight */
+.theme-daylight [class*="text-[#69D2FF]"] {
+  color: #2A7A94;
+}
+
+/* =========================
+   InputPage Daylight Styles
+   ========================= */
+
+/* Form inputs in daylight */
+.theme-daylight .card-solid input,
+.theme-daylight .card-solid select {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(232, 93, 117, 0.3);
+  color: #2D1B4E;
+}
+
+.theme-daylight .card-solid input::placeholder {
+  color: #8B7A9E;
+}
+
+/* Focus states for inputs */
+.theme-daylight .card-solid input:focus,
+.theme-daylight .card-solid select:focus {
+  border-color: #E85D75;
+  box-shadow: 0 0 0 3px rgba(232, 93, 117, 0.15);
+}
+
+/* Checkbox styling in daylight */
+.theme-daylight [class*="border-white/30"] {
+  border-color: rgba(107, 184, 212, 0.4);
+}
+
+/* =========================
+   LandingPage Daylight Styles
+   ========================= */
+
+/* Hero section text */
+.theme-daylight .text-white\/90 {
+  color: #3D2F50;
+}
+
+.theme-daylight .text-white\/60 {
+  color: #5B4A6E;
+}
+
+/* Feature cards */
+.theme-daylight .bg-white\/5 {
+  background: rgba(255, 255, 255, 0.7);
+  border-color: rgba(107, 184, 212, 0.2);
+}
+
+/* Sample report preview */
+.theme-daylight .bg-\[\#12142A\]\/60 {
+  background: rgba(255, 255, 255, 0.8);
+}
+
+/* =========================
+   PaymentPage Daylight Styles
+   ========================= */
+
+/* Payment card backgrounds */
+.theme-daylight .bg-white\/5 {
+  background: rgba(255, 255, 255, 0.75);
+}
+
+.theme-daylight .bg-white\/10 {
+  background: rgba(255, 255, 255, 0.85);
+}
+
+/* Price display */
+.theme-daylight .text-white\/50 {
+  color: #5B4A6E;
+}
+
+/* =========================
+   SuccessPage Daylight Styles
+   ========================= */
+
+/* Success checkmark container */
+.theme-daylight .bg-green-500\/20 {
+  background: rgba(16, 185, 129, 0.15);
+}
+
+/* Success text */
+.theme-daylight .text-green-400 {
+  color: #059669;
+}
+
+/* =========================
+   ReportsPage Daylight Styles
+   ========================= */
+
+/* Report cards */
+.theme-daylight .card-solid h3.font-serif {
+  color: #2D1B4E;
+}
+
+/* Delete button hover */
+.theme-daylight button[title="Delete"]:hover {
+  background: rgba(232, 93, 117, 0.1);
+}
+
+/* Empty state */
+.theme-daylight .t-text-muted {
+  color: #5B4A6E;
+}
+
+/* =========================
+   OngoingPage Daylight Styles
+   ========================= */
+
+/* Weekly weather cards */
+.theme-daylight .card-preview h3 {
+  color: #2D1B4E;
+}
+
+/* Transit date badges */
+.theme-daylight .text-xs.bg-\[\#69D2FF\]\/20 {
+  background: rgba(107, 184, 212, 0.25);
+  color: #2A7A94;
+}
+
+/* Power date highlights */
+.theme-daylight .bg-\[\#D6B35A\]\/20 {
+  background: rgba(232, 93, 117, 0.15);
+}
+
+.theme-daylight .text-\[\#D6B35A\] {
+  color: #E85D75;
+}
+
+/* Border accents */
+.theme-daylight .border-\[\#69D2FF\]\/30 {
+  border-color: rgba(107, 184, 212, 0.4);
+}
+
+.theme-daylight .border-\[\#D6B35A\]\/30 {
+  border-color: rgba(232, 93, 117, 0.4);
+}

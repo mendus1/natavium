@@ -1789,12 +1789,12 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
                               e.stopPropagation();
                               setShowTooltip(showTooltip === `${bundle.id}-${idx}` ? null : `${bundle.id}-${idx}`);
                             }}
-                            className="p-1 hover:bg-white/10 rounded-full transition-colors"
+                            className="p-1 hover:bg-white/10 theme-daylight:hover:bg-[#E85D75]/10 rounded-full transition-colors"
                           >
                             <Info className="w-4 h-4 t-text-muted" />
                           </button>
                           {showTooltip === `${bundle.id}-${idx}` && (
-                            <div className="absolute right-0 top-8 w-64 bg-[#12142A] border border-white/15 rounded-xl p-4 shadow-xl z-20">
+                            <div className="absolute right-0 top-8 w-64 bg-[#12142A] border border-white/15 rounded-xl p-4 shadow-xl z-20 theme-daylight:bg-white theme-daylight:border-[#E85D75]/30">
                               <p className="text-sm t-text-primary">{service.description}</p>
                             </div>
                           )}
@@ -1814,7 +1814,7 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
                   {isSelected && (
                     <div className="absolute top-3 right-3">
                       <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-                        <Check className="w-4 h-4 text-white" />
+                        <Check className="w-4 h-4 text-white theme-daylight:text-[#12142A]" />
                       </div>
                     </div>
                   )}
@@ -1988,7 +1988,7 @@ function PaymentPage({ handlePayment, selectedBundle }) {
             {bundle.features.filter(f => f.included).slice(0, 5).map((feature, idx) => (
               <div key={idx} className="flex items-start text-sm">
                 <Check className="w-4 h-4 text-green-400 mr-2 flex-shrink-0 mt-0.5" />
-                <span className="text-white/80">{feature.text}</span>
+                <span className="t-text-muted">{feature.text}</span>
               </div>
             ))}
           </div>
@@ -1998,7 +1998,7 @@ function PaymentPage({ handlePayment, selectedBundle }) {
         <div className="bg-white/5 rounded-xl p-4 mb-6 border border-white/10">
           <div className="flex items-center justify-between">
             <span className="t-text-muted">Order Total</span>
-            <span className="text-2xl font-bold text-white">${bundle.price.toFixed(2)}</span>
+            <span className="text-2xl font-bold text-[#D6B35A]">${bundle.price.toFixed(2)}</span>
           </div>
         </div>
 
