@@ -1779,6 +1779,93 @@
 }
 
 /* =========================
+   PreviewPage Daylight Enhancements
+   ========================= */
+
+/* Service selection container - make it pop */
+.theme-daylight .service-selection-container {
+  background:
+    linear-gradient(135deg,
+      rgba(255, 255, 255, 0.9) 0%,
+      rgba(248, 240, 252, 0.85) 50%,
+      rgba(232, 240, 247, 0.8) 100%
+    );
+  border: 2px solid rgba(232, 93, 117, 0.25);
+  box-shadow:
+    0 8px 32px rgba(107, 184, 212, 0.2),
+    0 2px 8px rgba(232, 93, 117, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+/* Service selection boxes - more prominent */
+.theme-daylight .service-selection-container button[class*="bg-[#12142A]/60"] {
+  background:
+    linear-gradient(145deg,
+      rgba(255, 255, 255, 0.95) 0%,
+      rgba(245, 248, 255, 0.9) 100%
+    );
+  border: 1px solid rgba(107, 184, 212, 0.4);
+  box-shadow: 0 4px 12px rgba(107, 184, 212, 0.15);
+}
+
+.theme-daylight .service-selection-container button[class*="bg-[#12142A]/60"]:hover {
+  border-color: rgba(232, 93, 117, 0.5);
+  box-shadow:
+    0 6px 20px rgba(232, 93, 117, 0.2),
+    0 4px 12px rgba(107, 184, 212, 0.15);
+  transform: translateY(-2px);
+}
+
+/* Selected service box - enhanced */
+.theme-daylight .service-selection-container button[class*="bg-[#D6B35A]/15"] {
+  background:
+    linear-gradient(145deg,
+      rgba(232, 93, 117, 0.15) 0%,
+      rgba(255, 240, 242, 0.9) 100%
+    );
+  border: 2px solid rgba(232, 93, 117, 0.6);
+  box-shadow:
+    0 8px 24px rgba(232, 93, 117, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+/* Included in bundle service box */
+.theme-daylight .service-selection-container button[class*="bg-green-500/10"] {
+  background:
+    linear-gradient(145deg,
+      rgba(16, 185, 129, 0.1) 0%,
+      rgba(240, 253, 244, 0.9) 100%
+    );
+  border: 1px solid rgba(16, 185, 129, 0.4);
+}
+
+/* PreviewPage livelier background - subtle animated gradient */
+.theme-daylight .min-h-screen {
+  background:
+    radial-gradient(ellipse at 10% 20%, rgba(232, 93, 117, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 90% 80%, rgba(107, 184, 212, 0.1) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(139, 90, 159, 0.05) 0%, transparent 70%),
+    linear-gradient(180deg, #FAF8FC 0%, #F5F0F8 50%, #F0F5FA 100%);
+  background-attachment: fixed;
+}
+
+/* Add subtle floating orbs effect */
+.theme-daylight .min-h-screen::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    radial-gradient(circle at 20% 30%, rgba(232, 93, 117, 0.06) 0%, transparent 25%),
+    radial-gradient(circle at 80% 70%, rgba(107, 184, 212, 0.08) 0%, transparent 30%),
+    radial-gradient(circle at 60% 20%, rgba(139, 90, 159, 0.05) 0%, transparent 20%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* =========================
    LandingPage Daylight Styles
    ========================= */
 

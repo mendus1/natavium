@@ -1670,7 +1670,7 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
           <h2 className="font-serif text-3xl font-semibold gold-gradient-text text-center mb-2">Select Services</h2>
           <p className="text-center t-text-muted text-sm mb-8">Pick any combination you want</p>
 
-          <div className="card-solid rounded-2xl p-6">
+          <div className="card-solid rounded-2xl p-6 service-selection-container">
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               {SERVICES.map((service) => {
                 const isSelected = !selectedBundle && selectedServices.includes(service.id);
@@ -1768,12 +1768,13 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
                 >
                   <div className="flex items-center justify-between mb-4">
                     <IconComponent className={`w-8 h-8 ${colors.icon}`} />
-                    <div className={`text-3xl font-black ${colors.price}`}>
-                      ${bundle.price.toFixed(2)}
+                    <div className="flex items-baseline gap-2">
+                      <h3 className={`font-serif text-2xl font-bold ${colors.price}`}>{bundle.name}</h3>
+                      <div className={`text-3xl font-black ${colors.price}`}>
+                        ${bundle.price.toFixed(2)}
+                      </div>
                     </div>
                   </div>
-
-                  <h3 className="font-serif text-xl font-bold mb-3 t-text-primary">{bundle.name}</h3>
 
                   <div className="space-y-2 mb-3">
                     {bundle.essentialIncludes && (
