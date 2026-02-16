@@ -243,7 +243,6 @@ const BUNDLES = {
     description: "Natal Chart + House Deep Dive + Solar Return",
     icon: Gift,
     color: "purple",
-    popular: true,
     includes: ["natal", "house_deep_dive", "solar_return"],
     essentialIncludes: false,
     services: [
@@ -2251,7 +2250,7 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
           <h2 className="font-serif text-3xl font-semibold gold-gradient-text text-center mb-2">Or Save With a Bundle</h2>
           <p className="text-center t-text-muted text-sm mb-8">Discount packages that include multiple services</p>
 
-          <div className="grid md:grid-cols-2 gap-4">
+          <div className="grid md:grid-cols-2 gap-4 items-start">
             {Object.values(BUNDLES).map((bundle) => {
               const IconComponent = bundle.icon;
               const isSelected = selectedBundle === bundle.id;
