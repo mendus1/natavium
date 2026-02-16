@@ -1839,17 +1839,27 @@
   border: 1px solid rgba(16, 185, 129, 0.4);
 }
 
-/* PreviewPage livelier background - subtle animated gradient */
+/* PreviewPage livelier background - rich layered gradient with multiple orbs */
 .theme-daylight .min-h-screen {
   background:
-    radial-gradient(ellipse at 10% 20%, rgba(232, 93, 117, 0.08) 0%, transparent 50%),
-    radial-gradient(ellipse at 90% 80%, rgba(107, 184, 212, 0.1) 0%, transparent 50%),
-    radial-gradient(ellipse at 50% 50%, rgba(139, 90, 159, 0.05) 0%, transparent 70%),
-    linear-gradient(180deg, #FAF8FC 0%, #F5F0F8 50%, #F0F5FA 100%);
+    /* Fine noise texture overlay */
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E"),
+    /* Top-right coral glow */
+    radial-gradient(ellipse at 85% 15%, rgba(232, 93, 117, 0.12) 0%, transparent 40%),
+    /* Bottom-left cyan glow */
+    radial-gradient(ellipse at 15% 85%, rgba(107, 184, 212, 0.14) 0%, transparent 45%),
+    /* Center purple haze */
+    radial-gradient(ellipse at 50% 50%, rgba(139, 90, 159, 0.08) 0%, transparent 60%),
+    /* Mid-left coral accent */
+    radial-gradient(ellipse at 25% 40%, rgba(232, 93, 117, 0.08) 0%, transparent 35%),
+    /* Mid-right cyan accent */
+    radial-gradient(ellipse at 75% 60%, rgba(107, 184, 212, 0.1) 0%, transparent 40%),
+    /* Base gradient */
+    linear-gradient(180deg, #FAF8FC 0%, #F8F4FA 30%, #F5F0F8 60%, #F0F5FA 100%);
   background-attachment: fixed;
 }
 
-/* Add subtle floating orbs effect */
+/* Animated floating orbs with more elements */
 .theme-daylight .min-h-screen::before {
   content: '';
   position: fixed;
@@ -1858,9 +1868,35 @@
   right: 0;
   bottom: 0;
   background:
-    radial-gradient(circle at 20% 30%, rgba(232, 93, 117, 0.06) 0%, transparent 25%),
-    radial-gradient(circle at 80% 70%, rgba(107, 184, 212, 0.08) 0%, transparent 30%),
-    radial-gradient(circle at 60% 20%, rgba(139, 90, 159, 0.05) 0%, transparent 20%);
+    /* Large coral orb top-left */
+    radial-gradient(circle at 15% 25%, rgba(232, 93, 117, 0.08) 0%, transparent 30%),
+    /* Large cyan orb bottom-right */
+    radial-gradient(circle at 85% 75%, rgba(107, 184, 212, 0.1) 0%, transparent 35%),
+    /* Medium purple orb center-right */
+    radial-gradient(circle at 65% 35%, rgba(139, 90, 159, 0.06) 0%, transparent 25%),
+    /* Small coral orb bottom-left */
+    radial-gradient(circle at 30% 70%, rgba(232, 93, 117, 0.05) 0%, transparent 20%),
+    /* Small cyan orb top-right */
+    radial-gradient(circle at 70% 15%, rgba(107, 184, 212, 0.07) 0%, transparent 18%),
+    /* Tiny accent orbs */
+    radial-gradient(circle at 45% 85%, rgba(232, 93, 117, 0.04) 0%, transparent 15%),
+    radial-gradient(circle at 55% 20%, rgba(139, 90, 159, 0.05) 0%, transparent 12%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Subtle mesh gradient overlay */
+.theme-daylight .min-h-screen::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    radial-gradient(ellipse at 0% 0%, rgba(255, 240, 245, 0.6) 0%, transparent 50%),
+    radial-gradient(ellipse at 100% 100%, rgba(240, 248, 255, 0.5) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 100%, rgba(252, 240, 255, 0.4) 0%, transparent 40%);
   pointer-events: none;
   z-index: 0;
 }
