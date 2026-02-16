@@ -1348,3 +1348,228 @@
     inset 0 1px 0 rgba(214, 179, 90, 0.12);
   transform: translateY(-4px) scale(1.02);
 }
+
+/* ================================
+   DAYLIGHT THEME: Preview Page Enhancements
+   Light, airy cards with soft coral/cyan accents
+   ================================ */
+
+/* Preview cards - soft glass effect with coral accents for daylight */
+.theme-daylight .card-preview {
+  background:
+    linear-gradient(135deg,
+      rgba(255, 255, 255, 0.75) 0%,
+      rgba(255, 255, 255, 0.55) 35%,
+      rgba(255, 255, 255, 0.45) 100%
+    ),
+    rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 
+    0 4px 20px rgba(107, 184, 212, 0.15),
+    0 1px 3px rgba(232, 93, 117, 0.08);
+}
+
+.theme-daylight .card-preview:hover {
+  background:
+    linear-gradient(135deg,
+      rgba(232, 93, 117, 0.12) 0%,
+      rgba(255, 255, 255, 0.7) 40%,
+      rgba(255, 255, 255, 0.6) 100%
+    ),
+    rgba(255, 255, 255, 0.65);
+  border-color: rgba(232, 93, 117, 0.4);
+  box-shadow:
+    0 16px 48px rgba(232, 93, 117, 0.2),
+    0 8px 24px rgba(107, 184, 212, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  transform: translateY(-4px) scale(1.02);
+}
+
+/* Big Three cards (Sun, Moon, Rising) - special daylight treatment */
+.theme-daylight .card-preview .text-xl.font-bold {
+  color: #2D1B4E;
+  font-weight: 700;
+}
+
+.theme-daylight .card-preview .text-xs.t-text-muted {
+  color: #5B4A6E;
+}
+
+/* Icon colors for daylight theme cards */
+.theme-daylight .card-preview .icon-gold {
+  color: #E85D75;
+  filter: drop-shadow(0 2px 4px rgba(232, 93, 117, 0.3));
+}
+
+.theme-daylight .card-preview .text-\[\#69D2FF\] {
+  color: #4A9BB8;
+  filter: drop-shadow(0 2px 4px rgba(107, 184, 212, 0.3));
+}
+
+/* Natal Chart Analysis & Transit Report cards - soft purple tint */
+.theme-daylight .card-preview:has(.font-serif) {
+  background:
+    linear-gradient(135deg,
+      rgba(255, 255, 255, 0.8) 0%,
+      rgba(248, 240, 252, 0.6) 50%,
+      rgba(240, 230, 245, 0.5) 100%
+    ),
+    rgba(255, 255, 255, 0.65);
+}
+
+/* Service selection cards in daylight - enhanced visibility */
+.theme-daylight .card-solid {
+  background:
+    linear-gradient(135deg,
+      rgba(255, 255, 255, 0.75) 0%,
+      rgba(255, 255, 255, 0.55) 35%,
+      rgba(232, 240, 247, 0.45) 70%,
+      rgba(220, 235, 245, 0.4) 100%
+    ),
+    rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 4px 20px rgba(107, 184, 212, 0.15);
+}
+
+.theme-daylight .card-solid:hover {
+  background:
+    linear-gradient(135deg,
+      rgba(255, 255, 255, 0.85) 0%,
+      rgba(255, 255, 255, 0.65) 35%,
+      rgba(232, 240, 247, 0.55) 70%,
+      rgba(220, 235, 245, 0.5) 100%
+    ),
+    rgba(255, 255, 255, 0.7);
+  border-color: rgba(232, 93, 117, 0.4);
+  box-shadow: 0 10px 40px rgba(232, 93, 117, 0.2);
+}
+
+/* Selected service button in daylight */
+.theme-daylight .card-solid button[class*="bg-[#D6B35A]/15"] {
+  background: rgba(232, 93, 117, 0.15) !important;
+  border-color: rgba(232, 93, 117, 0.5) !important;
+}
+
+/* Bundle cards - warm coral glow for daylight */
+.theme-daylight .card-preview[class*="border-[#D6B35A]"] {
+  background:
+    linear-gradient(135deg,
+      rgba(232, 93, 117, 0.15) 0%,
+      rgba(255, 255, 255, 0.75) 40%,
+      rgba(255, 255, 255, 0.65) 100%
+    ),
+    rgba(255, 255, 255, 0.7);
+  border-color: rgba(232, 93, 117, 0.5);
+  box-shadow:
+    0 12px 40px rgba(232, 93, 117, 0.25),
+    0 4px 12px rgba(107, 184, 212, 0.15);
+}
+
+/* Price display in daylight - coral gradient for any element with coral/gold text class */
+.theme-daylight .text-coral {
+  color: #E85D75;
+  font-weight: 700;
+}
+
+.theme-daylight [class*="text-[#D6B35A]"] {
+  color: #E85D75;
+  font-weight: 700;
+}
+
+.theme-daylight .gold-gradient-text {
+  background: linear-gradient(135deg, #8B5A9F 0%, #E85D75 50%, #6BB8D4 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Lock icon in daylight - soft coral */
+.theme-daylight .icon-gold {
+  color: #E85D75;
+}
+
+/* Teaser text in daylight - better readability */
+.theme-daylight .card-preview p.text-sm.leading-relaxed,
+.theme-daylight .card-preview p.text-white\/90 {
+  color: #3D2F50;
+}
+
+/* Blurred preview area - very subtle for daylight to avoid muddy look */
+.theme-daylight .card-preview .blur-sm {
+  opacity: 0.85 !important;
+  filter: blur(2px) !important;
+}
+
+/* Gradient overlay for locked content - soft fade to match card bg */
+.theme-daylight .card-preview [class*="bg-gradient-to-b"] {
+  background: linear-gradient(to bottom, transparent 30%, rgba(255,255,255,0.8) 80%, rgba(255,255,255,0.98) 100%) !important;
+}
+
+/* Proceed button area - soft glow */
+.theme-daylight button.gold-gradient-btn:disabled {
+  opacity: 0.4;
+  background: linear-gradient(135deg, #ccc 0%, #ddd 100%);
+}
+
+/* Service description tooltip in daylight */
+.theme-daylight .card-solid .absolute.right-0.top-8 {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(232, 93, 117, 0.3);
+  box-shadow: 0 8px 32px rgba(107, 184, 212, 0.25);
+}
+
+.theme-daylight .card-solid .absolute.right-0.top-8 p {
+  color: #2D1B4E;
+}
+
+/* "Coming Soon" badge - cyan accent for daylight */
+.theme-daylight [class*="bg-[#69D2FF]"] {
+  background: rgba(107, 184, 212, 0.25);
+  color: #2A7A94;
+  border-color: rgba(107, 184, 212, 0.4);
+}
+
+/* Weekly Astro Weather heading in daylight */
+.theme-daylight .card-preview h3.font-serif {
+  color: #2D1B4E;
+}
+
+/* Element legend colors - adjusted for light background */
+.theme-daylight .flex.flex-wrap.justify-center.gap-4 .t-text-muted {
+  color: #5B4A6E;
+}
+
+/* Archetype text styling */
+.theme-daylight .card-preview .font-serif.text-2xl {
+  background: linear-gradient(135deg, #8B5A9F 0%, #E85D75 50%, #6BB8D4 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* "MOST POPULAR" badge for daylight */
+.theme-daylight .gold-gradient-btn.text-xs {
+  background: linear-gradient(135deg, #E85D75 0%, #F07085 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(232, 93, 117, 0.35);
+}
+
+/* Checkmark in selected state - daylight */
+.theme-daylight [class*="bg-green-500"] {
+  background: rgba(16, 185, 129, 0.15);
+}
+
+.theme-daylight [class*="border-green-500"] {
+  border-color: rgba(16, 185, 129, 0.4);
+}
+
+/* Green text in daylight - more visible */
+.theme-daylight .text-green-400,
+.theme-daylight .text-green-200 {
+  color: #059669;
+}
+
+/* Lock icon container */
+.theme-daylight .card-preview .text-center .icon-gold {
+  filter: drop-shadow(0 2px 4px rgba(232, 93, 117, 0.4));
+}

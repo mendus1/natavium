@@ -1235,7 +1235,7 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
         <div className="grid md:grid-cols-3 gap-3 mb-6">
           <div className="card-preview rounded-xl p-4 text-center">
             <Sun className="w-8 h-8 icon-gold mb-2 mx-auto" />
-            <div className="text-xl font-bold mb-0.5">{activeChart.sun.sign} Sun</div>
+            <div className="text-xl font-bold mb-0.5 t-text-primary">{activeChart.sun.sign} Sun</div>
             <div className="text-xs t-text-muted">Core Identity</div>
             <div className="text-xs t-text-muted mt-1">
               {activeChart.sun.degree}° {String(activeChart.sun.minutes || 0).padStart(2, '0')}' • House {activeChart.sun.house}
@@ -1244,7 +1244,7 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
 
           <div className="card-preview rounded-xl p-4 text-center">
             <Moon className="w-8 h-8 text-[#69D2FF] mb-2 mx-auto" />
-            <div className="text-xl font-bold mb-0.5">{activeChart.moon.sign} Moon</div>
+            <div className="text-xl font-bold mb-0.5 t-text-primary">{activeChart.moon.sign} Moon</div>
             <div className="text-xs t-text-muted">Emotional Core</div>
             <div className="text-xs t-text-muted mt-1">
               {activeChart.moon.degree}° {String(activeChart.moon.minutes || 0).padStart(2, '0')}' • House {activeChart.moon.house}
@@ -1253,7 +1253,7 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
 
           <div className="card-preview rounded-xl p-4 text-center">
             <Star className="w-8 h-8 icon-gold mb-2 mx-auto" />
-            <div className="text-xl font-bold mb-0.5">{activeChart.rising.sign} Rising</div>
+            <div className="text-xl font-bold mb-0.5 t-text-primary">{activeChart.rising.sign} Rising</div>
             <div className="text-xs t-text-muted">How Others See You</div>
             <div className="text-xs t-text-muted mt-1">{activeChart.rising.degree}° {String(activeChart.rising.minutes || 0).padStart(2, '0')}' Ascendant</div>
           </div>
@@ -1604,7 +1604,7 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
               <p className="text-xs">Your communication style reveals hidden patterns...</p>
             </div>
 
-            {/* Gradient overlay */}
+            {/* Gradient overlay - handled by theme CSS */}
             <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#12142A] pointer-events-none" />
           </div>
 
@@ -1654,13 +1654,13 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
 
           <div className="text-center mt-4">
             <Lock className="w-6 h-6 icon-gold mx-auto mb-2" />
-            <p className="t-text-muted text-xs">Select the Transit Report below to unlock your full forecast</p>
+            <p className="text-xs t-text-primary">Select the Transit Report below to unlock your full forecast</p>
           </div>
         </div>
 
       {/* Services description */}
       <div className="w-full px-4 mt-8">
-        <p className="text-lg leading-relaxed text-white/90 text-center mb-12 max-w-4xl mx-auto">
+        <p className="text-lg leading-relaxed t-text-primary text-center mb-12 max-w-4xl mx-auto">
           Select individual services or save with a bundle package.
         </p>
       </div>
@@ -1712,12 +1712,12 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
                         </button>
                         {showTooltip === `svc-${service.id}` && (
                           <div className="absolute right-0 top-8 w-64 bg-[#12142A] border border-white/15 rounded-xl p-4 shadow-xl z-20">
-                            <p className="text-sm text-white/90">{service.description}</p>
+                            <p className="text-sm t-text-primary">{service.description}</p>
                           </div>
                         )}
                       </div>
                     </div>
-                    <h4 className="font-semibold text-sm mb-1">{service.name}</h4>
+                    <h4 className="font-semibold text-sm mb-1 t-text-primary">{service.name}</h4>
                     <p className="text-[#D6B35A] text-xs font-bold">${service.price.toFixed(2)}</p>
                     {isIncludedInBundle && (
                       <p className="text-green-400 text-xs mt-1">Included in {BUNDLES[selectedBundle]?.name}</p>
@@ -1773,15 +1773,15 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
                     </div>
                   </div>
 
-                  <h3 className="font-serif text-xl font-bold mb-3">{bundle.name}</h3>
+                  <h3 className="font-serif text-xl font-bold mb-3 t-text-primary">{bundle.name}</h3>
 
                   <div className="space-y-2 mb-3">
                     {bundle.essentialIncludes && (
-                      <div className="text-sm text-white">Essential +</div>
+                      <div className="text-sm t-text-muted">Essential +</div>
                     )}
                     {bundle.services.map((service, idx) => (
                       <div key={idx} className="flex items-center justify-between text-sm">
-                        <span className="text-white">{service.name}</span>
+                        <span className="t-text-primary">{service.name}</span>
                         <div className="relative">
                           <button
                             type="button"
@@ -1795,7 +1795,7 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
                           </button>
                           {showTooltip === `${bundle.id}-${idx}` && (
                             <div className="absolute right-0 top-8 w-64 bg-[#12142A] border border-white/15 rounded-xl p-4 shadow-xl z-20">
-                              <p className="text-sm text-white/90">{service.description}</p>
+                              <p className="text-sm t-text-primary">{service.description}</p>
                             </div>
                           )}
                         </div>
