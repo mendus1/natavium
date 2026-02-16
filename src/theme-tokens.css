@@ -281,7 +281,7 @@
     radial-gradient(ellipse 30% 25% at 35% 35%, rgba(255, 200, 180, 0.3) 0%, transparent 50%),
     radial-gradient(ellipse 25% 30% at 65% 70%, rgba(200, 180, 240, 0.35) 0%, transparent 45%),
     /* Base gradient */
-    linear-gradient(180deg, #E8D5F2 0%, #D4E5F7 40%, #B8D4F0 70%, #A8C8E8 100%);
+    linear-gradient(180deg, #E8D5F2 0%, #D4E5F7 40%, #B8D4F0 70%, #7fe1b0 100%);
 }
 
 /* Additional floating blob layer */
