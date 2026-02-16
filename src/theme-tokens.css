@@ -1350,6 +1350,20 @@
 }
 
 /* ================================
+   DAYLIGHT THEME: Text Colors
+   ================================ */
+
+/* Primary text - dark purple for light backgrounds */
+.theme-daylight .t-text-primary {
+  color: #2D1B4E !important;
+}
+
+/* Muted text - softer purple for secondary text */
+.theme-daylight .t-text-muted {
+  color: #5B4A6E !important;
+}
+
+/* ================================
    DAYLIGHT THEME: Preview Page Enhancements
    Light, airy cards with soft coral/cyan accents
    ================================ */
@@ -1511,6 +1525,15 @@
   background: linear-gradient(135deg, #ccc 0%, #ddd 100%);
 }
 
+/* Proceed button disabled state - visible in daylight */
+.theme-daylight button.gold-gradient-btn:disabled,
+.theme-daylight button.gold-gradient-btn[class*="opacity-50"] {
+  opacity: 0.7 !important;
+  background: linear-gradient(135deg, #E85D75 0%, #F07085 100%) !important;
+  color: white !important;
+  cursor: not-allowed;
+}
+
 /* Service description tooltip in daylight */
 .theme-daylight .card-solid .absolute.right-0.top-8 {
   background: rgba(255, 255, 255, 0.95);
@@ -1666,21 +1689,54 @@
    InputPage Daylight Styles
    ========================= */
 
-/* Form inputs in daylight */
-.theme-daylight .card-solid input,
-.theme-daylight .card-solid select {
+/* Form containers in daylight - darker for visibility */
+.theme-daylight .bg-white\/15 {
+  background: rgba(45, 27, 78, 0.08);
+  border-color: rgba(232, 93, 117, 0.2);
+}
+
+/* Form labels in daylight */
+.theme-daylight label.flex-items-center {
+  color: #2D1B4E;
+}
+
+/* Input backgrounds in daylight - lighter with dark text */
+.theme-daylight input[class*="bg-[#12142A]/80"],
+.theme-daylight select[class*="bg-[#12142A]/80"] {
   background: rgba(255, 255, 255, 0.9);
   border-color: rgba(232, 93, 117, 0.3);
   color: #2D1B4E;
 }
 
-.theme-daylight .card-solid input::placeholder {
+.theme-daylight input::placeholder {
   color: #8B7A9E;
 }
 
+/* Quick select city buttons in daylight */
+.theme-daylight button[class*="bg-white/5"] {
+  background: rgba(255, 255, 255, 0.7);
+  border-color: rgba(232, 93, 117, 0.25);
+  color: #2D1B4E;
+}
+
+.theme-daylight button[class*="bg-white/5"]:hover {
+  background: rgba(232, 93, 117, 0.1);
+  border-color: rgba(232, 93, 117, 0.4);
+}
+
+/* Privacy/security box in daylight */
+.theme-daylight .bg-\[\#69D2FF\]\/10 {
+  background: rgba(107, 184, 212, 0.15);
+  border-color: rgba(107, 184, 212, 0.3);
+}
+
+.theme-daylight .text-\[\#69D2FF\] {
+  color: #2A7A94;
+}
+
 /* Focus states for inputs */
-.theme-daylight .card-solid input:focus,
-.theme-daylight .card-solid select:focus {
+.theme-daylight input:focus,
+.theme-daylight select:focus {
   border-color: #E85D75;
   box-shadow: 0 0 0 3px rgba(232, 93, 117, 0.15);
 }
@@ -1688,6 +1744,38 @@
 /* Checkbox styling in daylight */
 .theme-daylight [class*="border-white/30"] {
   border-color: rgba(107, 184, 212, 0.4);
+}
+
+/* Explore More section - product names */
+.theme-daylight .card-solid h4.text-xl.font-semibold {
+  color: #2D1B4E;
+}
+
+/* Social media icons in daylight */
+.theme-daylight .social-links a,
+.theme-daylight .social-links svg,
+.theme-daylight a[class*="social"] svg {
+  color: #2D1B4E;
+  fill: #2D1B4E;
+}
+
+/* Explore More cards background */
+.theme-daylight .card-solid .bg-white\/5 {
+  background: rgba(255, 255, 255, 0.7);
+  border-color: rgba(232, 93, 117, 0.2);
+}
+
+/* Footer buttons in daylight */
+.theme-daylight button[class*="bg-[#12142A]/80"] {
+  background: rgba(255, 255, 255, 0.8);
+  border-color: rgba(232, 93, 117, 0.3);
+  color: #2D1B4E;
+}
+
+.theme-daylight button[class*="bg-[#69D2FF]/10"] {
+  background: rgba(107, 184, 212, 0.15);
+  border-color: rgba(107, 184, 212, 0.3);
+  color: #2A7A94;
 }
 
 /* =========================
