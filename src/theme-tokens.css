@@ -265,8 +265,6 @@
   z-index: 0;
   /* Multiple organic blob shapes */
   background:
-    /* Top-right purple blob (behind) */
-    radial-gradient(ellipse 60% 50% at 85% 15%, rgba(200, 160, 220, 0.5) 0%, transparent 60%),
     /* Top-right leaf green blob (on top) */
     radial-gradient(ellipse 55% 45% at 90% 10%, rgba(115, 213, 148, 0.8) 0%, transparent 55%),
     /* Top-left soft pink blob */
