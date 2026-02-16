@@ -2191,7 +2191,7 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
                     <div className="flex items-start justify-between">
                       <div className="flex items-center gap-2 pr-2">
                         <ServiceIcon className="w-5 h-5 text-[#D6B35A] flex-shrink-0" />
-                        <h4 className="font-serif text-xl font-semibold gold-gradient-text leading-none">{service.name}</h4>
+                        <h4 className="font-serif !text-xl font-semibold gold-gradient-text leading-none" style={{fontSize: '1.25rem'}}>{service.name}</h4>
                       </div>
                       <div className="relative flex-shrink-0">
                         <button
@@ -2280,9 +2280,11 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
                     </div>
                   </div>
 
-                  <div className="space-y-2 mb-3">
-                    {bundle.essentialIncludes && (
-                      <div className="text-sm t-text-muted text-center leading-none mb-1">Essential +</div>
+                  <div>
+                    {!bundle.essentialIncludes ? (
+                      <div className="text-sm t-text-muted text-left leading-none mb-2">&nbsp;</div>
+                    ) : (
+                      <div className="text-sm t-text-muted text-left leading-none mb-2">Essential +</div>
                     )}
                     {bundle.services.map((service, idx) => (
                       <div key={idx} className="flex items-center justify-between text-sm">
