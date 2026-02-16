@@ -1844,16 +1844,16 @@
   background:
     /* Fine noise texture overlay */
     url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E"),
-    /* Top-right coral glow */
-    radial-gradient(ellipse at 85% 15%, rgba(232, 93, 117, 0.12) 0%, transparent 40%),
-    /* Bottom-left cyan glow */
-    radial-gradient(ellipse at 15% 85%, rgba(107, 184, 212, 0.14) 0%, transparent 45%),
-    /* Center purple haze */
-    radial-gradient(ellipse at 50% 50%, rgba(139, 90, 159, 0.08) 0%, transparent 60%),
-    /* Mid-left coral accent */
-    radial-gradient(ellipse at 25% 40%, rgba(232, 93, 117, 0.08) 0%, transparent 35%),
-    /* Mid-right cyan accent */
-    radial-gradient(ellipse at 75% 60%, rgba(107, 184, 212, 0.1) 0%, transparent 40%),
+    /* Top-right coral glow - increased intensity */
+    radial-gradient(ellipse at 85% 15%, rgba(232, 93, 117, 0.22) 0%, transparent 45%),
+    /* Bottom-left cyan glow - increased intensity */
+    radial-gradient(ellipse at 15% 85%, rgba(107, 184, 212, 0.24) 0%, transparent 50%),
+    /* Center purple haze - increased intensity */
+    radial-gradient(ellipse at 50% 50%, rgba(139, 90, 159, 0.15) 0%, transparent 65%),
+    /* Mid-left coral accent - increased intensity */
+    radial-gradient(ellipse at 25% 40%, rgba(232, 93, 117, 0.16) 0%, transparent 40%),
+    /* Mid-right cyan accent - increased intensity */
+    radial-gradient(ellipse at 75% 60%, rgba(107, 184, 212, 0.18) 0%, transparent 45%),
     /* Base gradient */
     linear-gradient(180deg, #FAF8FC 0%, #F8F4FA 30%, #F5F0F8 60%, #F0F5FA 100%);
   background-attachment: fixed;
@@ -1868,24 +1868,24 @@
   right: 0;
   bottom: 0;
   background:
-    /* Large coral orb top-left */
-    radial-gradient(circle at 15% 25%, rgba(232, 93, 117, 0.08) 0%, transparent 30%),
-    /* Large cyan orb bottom-right */
-    radial-gradient(circle at 85% 75%, rgba(107, 184, 212, 0.1) 0%, transparent 35%),
-    /* Medium purple orb center-right */
-    radial-gradient(circle at 65% 35%, rgba(139, 90, 159, 0.06) 0%, transparent 25%),
-    /* Small coral orb bottom-left */
-    radial-gradient(circle at 30% 70%, rgba(232, 93, 117, 0.05) 0%, transparent 20%),
-    /* Small cyan orb top-right */
-    radial-gradient(circle at 70% 15%, rgba(107, 184, 212, 0.07) 0%, transparent 18%),
-    /* Tiny accent orbs */
-    radial-gradient(circle at 45% 85%, rgba(232, 93, 117, 0.04) 0%, transparent 15%),
-    radial-gradient(circle at 55% 20%, rgba(139, 90, 159, 0.05) 0%, transparent 12%);
+    /* Large coral orb top-left - increased intensity */
+    radial-gradient(circle at 15% 25%, rgba(232, 93, 117, 0.15) 0%, transparent 35%),
+    /* Large cyan orb bottom-right - increased intensity */
+    radial-gradient(circle at 85% 75%, rgba(107, 184, 212, 0.18) 0%, transparent 40%),
+    /* Medium purple orb center-right - increased intensity */
+    radial-gradient(circle at 65% 35%, rgba(139, 90, 159, 0.12) 0%, transparent 30%),
+    /* Small coral orb bottom-left - increased intensity */
+    radial-gradient(circle at 30% 70%, rgba(232, 93, 117, 0.1) 0%, transparent 25%),
+    /* Small cyan orb top-right - increased intensity */
+    radial-gradient(circle at 70% 15%, rgba(107, 184, 212, 0.12) 0%, transparent 22%),
+    /* Tiny accent orbs - increased intensity */
+    radial-gradient(circle at 45% 85%, rgba(232, 93, 117, 0.08) 0%, transparent 18%),
+    radial-gradient(circle at 55% 20%, rgba(139, 90, 159, 0.1) 0%, transparent 15%);
   pointer-events: none;
   z-index: 0;
 }
 
-/* Subtle mesh gradient overlay */
+/* Subtle mesh gradient overlay - increased intensity */
 .theme-daylight .min-h-screen::after {
   content: '';
   position: fixed;
@@ -1894,9 +1894,9 @@
   right: 0;
   bottom: 0;
   background:
-    radial-gradient(ellipse at 0% 0%, rgba(255, 240, 245, 0.6) 0%, transparent 50%),
-    radial-gradient(ellipse at 100% 100%, rgba(240, 248, 255, 0.5) 0%, transparent 50%),
-    radial-gradient(ellipse at 50% 100%, rgba(252, 240, 255, 0.4) 0%, transparent 40%);
+    radial-gradient(ellipse at 0% 0%, rgba(255, 230, 235, 0.8) 0%, transparent 55%),
+    radial-gradient(ellipse at 100% 100%, rgba(230, 245, 255, 0.7) 0%, transparent 55%),
+    radial-gradient(ellipse at 50% 100%, rgba(250, 235, 255, 0.6) 0%, transparent 45%);
   pointer-events: none;
   z-index: 0;
 }
