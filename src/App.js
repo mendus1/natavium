@@ -351,8 +351,507 @@ const formatBirthDate = (birthMonth, birthDay, birthYear) => {
 };
 
 // =========================
-// Info / Documentation Pages
+// Learn More Page - Grid of topic tiles with sidebar
 // =========================
+function LearnMorePage() {
+  const navigate = useNavigate();
+  const { topic } = useParams();
+  const [selectedTopic, setSelectedTopic] = useState(topic || null);
+
+  const topics = [
+    {
+      id: "natal-chart",
+      title: "Natal Chart",
+      description: "What a natal chart is and how to read it",
+      icon: Star,
+      content: (
+        <div className="space-y-6">
+          <div>
+            <h2 className="font-serif text-3xl font-semibold gold-gradient-text mb-4">Understanding Your Natal Chart</h2>
+            <p className="t-text-muted">
+              Your natal chart is a cosmic snapshot of the sky at your birth moment.
+            </p>
+          </div>
+          <div className="bg-[#12142A]/60 rounded-xl p-6 border border-white/10">
+            <h3 className="text-xl font-bold text-[#D6B35A] mb-3">The Chart Wheel</h3>
+            <p className="t-text-muted">
+              A circular map divided into 12 houses and 12 zodiac signs. Planets are placed according to their positions at your birth, showing how cosmic energies manifest in your life.
+            </p>
+          </div>
+          <div className="bg-[#12142A]/60 rounded-xl p-6 border border-white/10">
+            <h3 className="text-xl font-bold text-[#D6B35A] mb-3">Key Components</h3>
+            <p className="t-text-muted">
+              Planets represent different drives and energies. Signs show how those energies express. Houses indicate where in life they manifest. Aspects reveal how planets interact.
+            </p>
+          </div>
+          <div className="bg-[#12142A]/60 rounded-xl p-6 border border-white/10">
+            <h3 className="text-xl font-bold text-[#D6B35A] mb-3">Reading Your Chart</h3>
+            <p className="t-text-muted">
+              Start with your Sun, Moon, and Rising (the &quot;Big Three&quot;). Then explore house placements and aspects. Look for patterns and repeating themes that tell your unique story.
+            </p>
+          </div>
+        </div>
+      )
+    },
+    {
+      id: "foundations",
+      title: "Foundations",
+      description: "The basics of astrology and how charts work",
+      icon: Sparkles,
+      content: (
+        <div className="space-y-6">
+          <div>
+            <h2 className="font-serif text-3xl font-semibold gold-gradient-text mb-4">Astrology Foundations</h2>
+            <p className="t-text-muted">
+              Understanding the fundamental building blocks of astrology.
+            </p>
+          </div>
+          <div className="bg-[#12142A]/60 rounded-xl p-6 border border-white/10">
+            <h3 className="text-xl font-bold text-[#D6B35A] mb-3">What is a Birth Chart?</h3>
+            <p className="t-text-muted">
+              A birth chart (or natal chart) is a snapshot of the sky at the exact moment you were born. 
+              It maps where all the planets were in relation to Earth, creating a unique cosmic fingerprint.
+            </p>
+          </div>
+          <div className="bg-[#12142A]/60 rounded-xl p-6 border border-white/10">
+            <h3 className="text-xl font-bold text-[#D6B35A] mb-3">The Zodiac Wheel</h3>
+            <p className="t-text-muted">
+              The zodiac is a 360° circle divided into 12 signs, each representing 30° of sky. 
+              Each sign has its own characteristics, elements, and ruling planets.
+            </p>
+          </div>
+        </div>
+      )
+    },
+    {
+      id: "big-three",
+      title: "Big Three and Angles",
+      description: "Sun, Moon, Rising and the four chart angles",
+      icon: Star,
+      content: (
+        <div className="space-y-6">
+          <div>
+            <h2 className="font-serif text-3xl font-semibold gold-gradient-text mb-4">The Big Three</h2>
+            <p className="t-text-muted">
+              Your Sun, Moon, and Rising signs form the core of your astrological identity.
+            </p>
+          </div>
+          <div className="bg-[#12142A]/60 rounded-xl p-6 border border-white/10">
+            <h3 className="text-xl font-bold text-[#D6B35A] mb-3">Sun Sign</h3>
+            <p className="t-text-muted">
+              Represents your core identity, ego, and conscious self. This is what most people know as their "sign."
+            </p>
+          </div>
+          <div className="bg-[#12142A]/60 rounded-xl p-6 border border-white/10">
+            <h3 className="text-xl font-bold text-[#69D2FF] mb-3">Moon Sign</h3>
+            <p className="t-text-muted">
+              Represents your emotional nature, instincts, and subconscious patterns. 
+              It shows how you process feelings and what you need for emotional security.
+            </p>
+          </div>
+          <div className="bg-[#12142A]/60 rounded-xl p-6 border border-white/10">
+            <h3 className="text-xl font-bold text-[#D6B35A] mb-3">Rising Sign (Ascendant)</h3>
+            <p className="t-text-muted">
+              The mask you wear and how others perceive you. It represents your approach to life and first impressions.
+            </p>
+          </div>
+        </div>
+      )
+    },
+    {
+      id: "planets-signs",
+      title: "Planets in Signs",
+      description: "How each planet expresses through the zodiac",
+      icon: Zap,
+      content: (
+        <div className="space-y-6">
+          <div>
+            <h2 className="font-serif text-3xl font-semibold gold-gradient-text mb-4">Planets in Signs</h2>
+            <p className="t-text-muted">
+              Each planet has a unique expression through every zodiac sign.
+            </p>
+          </div>
+          <div className="bg-[#12142A]/60 rounded-xl p-6 border border-white/10">
+            <h3 className="text-xl font-bold text-[#D6B35A] mb-3">Personal Planets</h3>
+            <p className="t-text-muted">
+              The Sun, Moon, Mercury, Venus, and Mars move quickly through the zodiac and represent 
+              your personal drives, communication style, relationships, and actions.
+            </p>
+          </div>
+          <div className="bg-[#12142A]/60 rounded-xl p-6 border border-white/10">
+            <h3 className="text-xl font-bold text-[#D6B35A] mb-3">Social & Outer Planets</h3>
+            <p className="t-text-muted">
+              Jupiter, Saturn, Uranus, Neptune, and Pluto move slower and represent generational themes, 
+              life lessons, and transformative forces.
+            </p>
+          </div>
+        </div>
+      )
+    },
+    {
+      id: "planets-houses",
+      title: "Planets in Houses",
+      description: "Where planetary energy manifests in your life",
+      icon: Home,
+      content: (
+        <div className="space-y-6">
+          <div>
+            <h2 className="font-serif text-3xl font-semibold gold-gradient-text mb-4">Planets in Houses</h2>
+            <p className="t-text-muted">
+              The 12 houses represent different areas of life where planetary energy manifests.
+            </p>
+          </div>
+          <div className="bg-[#12142A]/60 rounded-xl p-6 border border-white/10">
+            <h3 className="text-xl font-bold text-[#D6B35A] mb-3">Angular Houses (1, 4, 7, 10)</h3>
+            <p className="t-text-muted">
+              These are the most active houses, representing self, home, relationships, and career. 
+              Planets here have strong, visible influence.
+            </p>
+          </div>
+          <div className="bg-[#12142A]/60 rounded-xl p-6 border border-white/10">
+            <h3 className="text-xl font-bold text-[#D6B35A] mb-3">Succedent & Cadent Houses</h3>
+            <p className="t-text-muted">
+              Succedent houses (2, 5, 8, 11) relate to resources and values. 
+              Cadent houses (3, 6, 9, 12) relate to learning, service, and spirituality.
+            </p>
+          </div>
+        </div>
+      )
+    },
+    {
+      id: "aspects",
+      title: "Aspects",
+      description: "The conversations between planets in your chart",
+      icon: Heart,
+      content: (
+        <div className="space-y-6">
+          <div>
+            <h2 className="font-serif text-3xl font-semibold gold-gradient-text mb-4">Aspects</h2>
+            <p className="t-text-muted">
+              Aspects are the angles between planets, showing how they interact and influence each other.
+            </p>
+          </div>
+          <div className="bg-[#12142A]/60 rounded-xl p-6 border border-white/10">
+            <h3 className="text-xl font-bold text-[#D6B35A] mb-3">Major Aspects</h3>
+            <p className="t-text-muted">
+              Conjunction (0°), Sextile (60°), Square (90°), Trine (120°), and Opposition (180°). 
+              These are the most significant planetary relationships.
+            </p>
+          </div>
+          <div className="bg-[#12142A]/60 rounded-xl p-6 border border-white/10">
+            <h3 className="text-xl font-bold text-[#D6B35A] mb-3">Harmonious vs Challenging</h3>
+            <p className="t-text-muted">
+              Trines and sextiles show easy flow and natural talents. Squares and oppositions 
+              show tension that drives growth and mastery.
+            </p>
+          </div>
+        </div>
+      )
+    },
+    {
+      id: "synthesis",
+      title: "Synthesis & Chart Stories",
+      description: "Putting it all together into a coherent narrative",
+      icon: BookOpen,
+      content: (
+        <div className="space-y-6">
+          <div>
+            <h2 className="font-serif text-3xl font-semibold gold-gradient-text mb-4">Chart Synthesis</h2>
+            <p className="t-text-muted">
+              True astrological skill lies in weaving all chart elements into a meaningful story.
+            </p>
+          </div>
+          <div className="bg-[#12142A]/60 rounded-xl p-6 border border-white/10">
+            <h3 className="text-xl font-bold text-[#D6B35A] mb-3">Chart Patterns</h3>
+            <p className="t-text-muted">
+              Look for geometric patterns like T-squares, Grand Trines, and Stellia. 
+              These reveal major life themes and repeating patterns.
+            </p>
+          </div>
+          <div className="bg-[#12142A]/60 rounded-xl p-6 border border-white/10">
+            <h3 className="text-xl font-bold text-[#D6B35A] mb-3">Element & Mode Balance</h3>
+            <p className="t-text-muted">
+              Check the balance of fire, earth, air, and water elements. 
+              Also note the balance of cardinal, fixed, and mutable modes.
+            </p>
+          </div>
+        </div>
+      )
+    },
+    {
+      id: "systems",
+      title: "Systems and Traditions",
+      description: "Tropical, Sidereal, and other astrological approaches",
+      icon: Crown,
+      content: (
+        <div className="space-y-8">
+          <div>
+            <h2 className="font-serif text-3xl font-semibold gold-gradient-text mb-6">Understanding Astrology Systems</h2>
+            <p className="t-text-muted mb-8">
+              Different astrological traditions offer unique perspectives on the same cosmic data.
+            </p>
+          </div>
+
+          <div className="space-y-6">
+            <div className="bg-[#12142A]/60 rounded-xl p-6 border border-white/10">
+              <h3 className="text-2xl font-bold text-[#D6B35A] mb-3">
+                Astrology At A Glance
+              </h3>
+              <p className="t-text-muted mb-3">
+                <strong className="text-white">Astrology captures the sky at a specific moment, such as your birth, in a chart wheel.</strong>
+              </p>
+              <p className="t-text-muted">
+                This wheel divides the sky in two main ways: zodiac signs, which are 12 equal 30° slices along the apparent path of the sun, and houses, which are 12 slices based on your local horizon and meridian at the birth time and location. Houses can shift rapidly throughout the day. Planets, including the Sun and Moon, are placed in the chart according to their measured positions.
+              </p>
+              <p className="t-text-muted">
+                Astrological interpretations stem from patterns like the signs planets occupy, the houses they fall into, and the angles between planets, known as aspects. For quick clarity, signs relate to the sun's path, while houses pertain to your local sky at that moment.
+              </p>
+            </div>
+            <div className="bg-[#12142A]/60 rounded-xl p-6 border border-white/10">
+              <h3 className="text-2xl font-bold text-[#D6B35A] mb-3">
+                Sun-Sign Astrology
+              </h3>
+              <p className="t-text-muted mb-3">
+                <strong className="text-white">This is the kind of general astrology you find in magazines.</strong>
+              </p>
+              <p className="t-text-muted">
+                Sun-sign astrology is the simplified style presented as daily horoscopes. It focuses exclusively on the Sun's sign at your birth.
+              </p>
+              <p className="t-text-muted">
+                Elements like the Moon, rising sign, houses, and aspects are not considered. This leads to very broad and general interpretations.
+              </p>
+            </div>
+            <div className="bg-[#12142A]/60 rounded-xl p-6 border border-white/10">
+              <h3 className="text-2xl font-bold text-[#D6B35A] mb-3">
+                Natal-Chart Astrology
+              </h3>
+              <p className="t-text-muted mb-3">
+                <strong className="text-white">This is the basis of most personalized astrology systems.</strong>
+              </p>
+              <p className="t-text-muted">
+                Unlike Sun-sign astrology natal-chart astrology (which Natavium specializes in) is based on a specific person's birth date/time and location.
+              </p>
+              <p className="t-text-muted">
+                Positions of the Sun, Moon, planets, key chart points, houses, and aspects are determined for specific birth times and places.
+                This means analyses are more targeted. Natavium computes placements using Swiss Ephemeris (which itself uses NASA data).
+                Natal-charts are the basis of both Tropical and Sidereal astrological systems.
+              </p>
+            </div>
+
+            <div className="bg-[#12142A]/60 rounded-xl p-6 border border-white/10">
+              <h3 className="text-2xl font-bold text-[#D6B35A] mb-3">
+                Western (Tropical) Astrology
+              </h3>
+              <p className="t-text-muted mb-3">
+                <strong className="text-white">This system (which Natavium offers) is the most popular.</strong>
+              </p>
+              <p className="t-text-muted">
+                This Systems anchors the zodiac at 0° Aries, defined by the March equinox or vernal point, making the system season-based as signs are measured from this equinox.
+              </p>
+              <p className="t-text-muted">
+                The 1st house begins at the Ascendant, the eastern horizon at birth, rather than at 0° Aries—houses and signs are distinct layers.
+                Similarly, you're considered an Aries if the Sun is in the tropical sign of Aries, not because it's in the 1st house.
+              </p>
+            </div>
+
+            <div className="bg-[#12142A]/60 rounded-xl p-6 border border-white/10">
+              <h3 className="text-2xl font-bold text-[#D6B35A] mb-3">
+                Western (Sidereal) Astrology
+              </h3>
+              <p className="t-text-muted mb-3">
+                <strong className="text-white">This system (which Natavium offers) anchors the zodiac to the fixed stars instead of the equinox.</strong>
+              </p>
+              <p className="t-text-muted">
+                Western sidereal astrology uses the same planets and 360° circle as tropical but accounts for Earth's axial precession. This results in a gradual
+                drift between tropical and sidereal systems over centuries. The offset, called the ayanamsa, allows conversion between them.
+              </p>
+              <p className="t-text-muted">
+                Importantly, sidereal shifts the sign labels and degrees, not the houses. This means your "sign" may differ from more popular tropical Western astrology. Some say sidereal is more accurate. Other that it is simply a different reference system.
+              </p>
+            </div>
+
+            <div className="bg-[#12142A]/60 rounded-xl p-6 border border-white/10">
+              <h3 className="text-2xl font-bold text-[#69D2FF] mb-3">
+                Vedic (Jyotish) Sidereal Astrology
+              </h3>
+              <p className="t-text-muted mb-3">
+                <strong className="text-white">This is a traditional Indian system with a unique interpretative framwework.</strong>
+              </p>
+              <p className="t-text-muted">
+                Jyotish employs a sidereal zodiac aligned with the stars rather than the tropical equinox-based system. It commonly uses the Lahiri ayanamsa for its offset calculations.
+              </p>
+              <p className="t-text-muted">
+                Beyond core elements shared with Western systems, it incorporates nakshatras (lunar mansions) and dashas (planetary timing periods), which are less central in modern Western astrology.
+                The system offer predictive astrology, timing life events, and understanding karma and destiny. Natavium will soon offer Jyotish Astrology
+              </p>
+            </div>
+          </div>
+
+          <div className="bg-[#D6B35A]/10 rounded-xl p-6 border border-[#D6B35A]/30">
+            <h3 className="text-xl font-bold mb-3">Which System Should I Use?</h3>
+            <p className="t-text-muted">
+              We suggest start with <strong className="text-white">Western (Tropical)</strong> - it's most accessible and your sign will likely match what you've always thought it was. If you're looking for
+              something new, perhaps <strong className="text-white">Western (Sidereal)</strong>. You may even get a new sign! Vedic analyses will be available soon.
+            </p>
+          </div>
+        </div>
+      )
+    },
+    {
+      id: "forecasting",
+      title: "Forecasting Basics",
+      description: "Transits, progressions, and predictive techniques",
+      icon: TrendingUp,
+      content: (
+        <div className="space-y-6">
+          <div>
+            <h2 className="font-serif text-3xl font-semibold gold-gradient-text mb-4">Forecasting Basics</h2>
+            <p className="t-text-muted">
+              Learn how astrologers predict timing and future trends.
+            </p>
+          </div>
+          <div className="bg-[#12142A]/60 rounded-xl p-6 border border-white/10">
+            <h3 className="text-xl font-bold text-[#D6B35A] mb-3">Transits</h3>
+            <p className="t-text-muted">
+              Current planetary positions as they move through the sky and aspect your natal chart. 
+              Transits trigger events and shifts in different life areas.
+            </p>
+          </div>
+          <div className="bg-[#12142A]/60 rounded-xl p-6 border border-white/10">
+            <h3 className="text-xl font-bold text-[#D6B35A] mb-3">Solar Returns</h3>
+            <p className="t-text-muted">
+              The chart cast for the moment the Sun returns to its exact birth position each year. 
+              This reveals themes for your coming year.
+            </p>
+          </div>
+          <div className="bg-[#12142A]/60 rounded-xl p-6 border border-white/10">
+            <h3 className="text-xl font-bold text-[#D6B35A] mb-3">Progressions</h3>
+            <p className="t-text-muted">
+              A symbolic timing technique where each day after birth represents a year of life. 
+              Progressions show your internal evolution.
+            </p>
+          </div>
+        </div>
+      )
+    },
+    {
+      id: "examples",
+      title: "Example Charts",
+      description: "Famous charts analyzed for learning",
+      icon: Crown,
+      content: (
+        <div className="space-y-6">
+          <div>
+            <h2 className="font-serif text-3xl font-semibold gold-gradient-text mb-4">Example Charts</h2>
+            <p className="t-text-muted">
+              Study famous charts to see astrology in action.
+            </p>
+          </div>
+          <div className="bg-[#12142A]/60 rounded-xl p-6 border border-white/10">
+            <h3 className="text-xl font-bold text-[#D6B35A] mb-3">Coming Soon</h3>
+            <p className="t-text-muted">
+              We're curating a collection of fascinating charts from history, 
+              entertainment, and public life to illustrate astrological principles.
+            </p>
+          </div>
+        </div>
+      )
+    }
+  ];
+
+  const handleTopicClick = (topicId) => {
+    setSelectedTopic(topicId);
+    navigate(`/learn/${topicId}`, { replace: true });
+  };
+
+  const handleCloseSidebar = () => {
+    setSelectedTopic(null);
+    navigate('/learn', { replace: true });
+  };
+
+  const selectedTopicData = topics.find(t => t.id === selectedTopic);
+
+  return (
+    <div className="min-h-screen text-white p-6">
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="font-serif text-4xl md:text-5xl font-semibold gold-gradient-text mb-2">
+              Learn Astrology
+            </h1>
+            <p className="t-text-muted text-lg">
+              Master the language of the stars
+            </p>
+          </div>
+          <button
+            onClick={() => navigate("/")}
+            className="px-4 py-2 bg-[#12142A]/80 border border-white/10 rounded-lg hover:bg-white/10 transition-colors flex items-center"
+          >
+            <X className="w-4 h-4 mr-2" />
+            Close
+          </button>
+        </div>
+
+        {/* Main content area with optional sidebar */}
+        <div className="flex gap-6">
+          {/* Topic Grid - takes full width when no topic selected, or shrinks when sidebar open */}
+          <div className={`transition-all duration-300 ${selectedTopic ? 'w-1/3' : 'w-full'}`}>
+            <div className={`grid gap-4 ${selectedTopic ? 'grid-cols-1' : 'md:grid-cols-2 lg:grid-cols-3'}`}>
+              {topics.map((topic) => {
+                const IconComponent = topic.icon;
+                const isSelected = selectedTopic === topic.id;
+                return (
+                  <button
+                    key={topic.id}
+                    onClick={() => handleTopicClick(topic.id)}
+                    className={`card-solid rounded-2xl p-6 text-left transition-all hover:scale-[1.02] ${
+                      isSelected 
+                        ? 'ring-2 ring-[#D6B35A] bg-[#D6B35A]/10' 
+                        : 'hover:bg-white/5'
+                    }`}
+                  >
+                    <div className="flex items-start gap-4">
+                      <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
+                        isSelected ? 'bg-[#D6B35A]/20' : 'bg-white/10'
+                      }`}>
+                        <IconComponent className={`w-6 h-6 ${isSelected ? 'text-[#D6B35A]' : 'icon-gold'}`} />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-serif text-xl font-semibold t-text-primary mb-1">
+                          {topic.title}
+                        </h3>
+                        <p className="text-sm t-text-muted leading-relaxed">
+                          {topic.description}
+                        </p>
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Sidebar - shows when topic selected */}
+          {selectedTopic && selectedTopicData && (
+            <div className="w-2/3">
+              <div className="card-solid rounded-2xl p-8 sticky top-6 max-h-[calc(100vh-3rem)] overflow-y-auto">
+                <button
+                  onClick={handleCloseSidebar}
+                  className="mb-6 px-4 py-2 bg-[#12142A]/80 border border-white/10 rounded-lg hover:bg-white/10 transition-colors flex items-center text-sm"
+                >
+                  <X className="w-4 h-4 mr-2" />
+                  Back to Topics
+                </button>
+                {selectedTopicData.content}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
 function InfoPage() {
   const navigate = useNavigate();
   const { page } = useParams();
@@ -785,7 +1284,7 @@ function LandingPage() {
             <span className="ml-2 text-[10px] bg-[#69D2FF]/20 px-1.5 py-0.5 rounded text-[#69D2FF]">Soon</span>
           </button>
           <button
-            onClick={() => navigate("/info/systems")}
+            onClick={() => navigate("/learn")}
             className="t-btn-secondary text-sm"
           >
             <BookOpen className="w-4 h-4 mr-2 icon-gold" strokeWidth={1} />
@@ -4829,6 +5328,8 @@ export default function Natavium() {
           } />
           <Route path="/info/:page" element={<InfoPage />} />
           <Route path="/info" element={<InfoPage />} />
+          <Route path="/learn/:topic" element={<LearnMorePage />} />
+          <Route path="/learn" element={<LearnMorePage />} />
           <Route path="/impressum" element={<ImpressumPage />} />
           <Route path="/datenschutz" element={<PrivacyPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
