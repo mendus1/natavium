@@ -1254,7 +1254,7 @@ function LandingPage() {
       {/* Header with Logo/Title on left, Nav on right */}
       <header className="max-w-5xl mx-auto flex justify-between items-center mb-8">
         <div className="flex items-center gap-3">
-          <img src={LogoBlue} alt="Natavium Logo" className="w-11 h-11 object-contain" />
+          <img src={LogoBlue} alt="Natavium Logo" className="w-24 h-24 md:w-28 md:h-28 object-contain" />
           <h1 className="font-serif text-5xl md:text-6xl font-normal gold-gradient-text leading-none">Natavium</h1>
         </div>  
         <nav className="flex gap-4 items-center">

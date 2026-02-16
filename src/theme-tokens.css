@@ -265,6 +265,8 @@
   z-index: 0;
   /* Multiple organic blob shapes */
   background:
+    /* Top-right leaf green blob */
+    radial-gradient(ellipse 55% 45% at 90% 10%, rgba(120, 180, 140, 0.45) 0%, transparent 55%),
     /* Top-right purple blob */
     radial-gradient(ellipse 60% 50% at 85% 15%, rgba(200, 160, 220, 0.5) 0%, transparent 60%),
     /* Top-left soft pink blob */
@@ -275,6 +277,8 @@
     radial-gradient(ellipse 55% 45% at 20% 75%, rgba(120, 210, 220, 0.4) 0%, transparent 55%),
     /* Bottom-center soft purple */
     radial-gradient(ellipse 50% 40% at 50% 85%, rgba(180, 160, 210, 0.35) 0%, transparent 50%),
+    /* Lower leaf green blob */
+    radial-gradient(ellipse 40% 35% at 70% 90%, rgba(100, 160, 120, 0.4) 0%, transparent 50%),
     /* Small accent blobs */
     radial-gradient(ellipse 30% 25% at 35% 35%, rgba(255, 200, 180, 0.3) 0%, transparent 50%),
     radial-gradient(ellipse 25% 30% at 65% 70%, rgba(200, 180, 240, 0.35) 0%, transparent 45%),
