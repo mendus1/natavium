@@ -262,7 +262,8 @@ const BUNDLES = {
     includes: ["natal", "house_deep_dive", "solar_return", "transit_report", "compatibility"],
     services: [
       { name: "Compatibility ×1", description: "Known as synastry, this compares two people's charts to explore emotional, romantic, and communication dynamics. It identifies strengths, friction points, and what helps the relationship thrive." },
-      { name: "Transit Report", description: "A timing-focused forecast that tracks current planetary movements, important celestial events, and how they interact with your natal chart. Periods of change, growth, or pressure are highlighted and suggestions made on how to deal with them." }
+      { name: "Transit Report", description: "A timing-focused forecast that tracks current planetary movements, important celestial events, and how they interact with your natal chart. Periods of change, growth, or pressure are highlighted and suggestions made on how to deal with them." },
+      { name: "", description: "" }
     ],
   },
 };
