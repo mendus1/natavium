@@ -225,12 +225,12 @@ const SocialLinks = ({ className = "", iconClassName = "w-5 h-5" }) => (
 // Service Definitions (individually purchasable)
 // =========================
 const SERVICES = [
-  { id: "natal", name: "Natal Chart Analysis", price: 4.99, description: "A snapshot of the sky at your birth that maps the positions of the planets, signs, and houses to describe your core personality, motivations, and life themes. The foundation." },
-  { id: "house_deep_dive", name: "House Deep Dive", price: 2.99, description: "A focused reading of the 12 houses in your chart, showing where key life areas (like relationships, career, home, and health) are emphasized and shape your experiences and patterns." },
-  { id: "solar_return", name: "Solar Return", price: 4.99, description: "A forecast for your year ahead timed to the moment the Sun returns to its exact birth position." },
-  { id: "transit_report", name: "Transit Report", price: 1.99, description: "A timing-focused forecast that tracks current planetary movements, important celestial events, and how they interact with your natal chart. Periods of change, growth, or pressure are highlighted and suggestions made on how to deal with them." },
-  { id: "compatibility", name: "Compatibility ×1", price: 3.99, description: "Known as synastry, this compares two people's charts to explore emotional, romantic, and communication dynamics. It identifies strengths, friction points, and what helps the relationship thrive." },
-  { id: "compatibility_3x", name: "Compatibility ×3", price: 9.99, description: "3 compatibility comparisons. Compare your chart with up to three different people." },
+  { id: "natal", name: "Natal Chart Analysis", price: 4.99, description: "A snapshot of the sky at your birth that maps the positions of the planets, signs, and houses to describe your core personality, motivations, and life themes. The foundation.", icon: Star },
+  { id: "house_deep_dive", name: "House Deep Dive", price: 2.99, description: "A focused reading of the 12 houses in your chart, showing where key life areas (like relationships, career, home, and health) are emphasized and shape your experiences and patterns.", icon: Home },
+  { id: "solar_return", name: "Solar Return", price: 4.99, description: "A forecast for your year ahead timed to the moment the Sun returns to its exact birth position.", icon: Cake },
+  { id: "transit_report", name: "Transit Report", price: 1.99, description: "A timing-focused forecast that tracks current planetary movements, important celestial events, and how they interact with your natal chart. Periods of change, growth, or pressure are highlighted and suggestions made on how to deal with them.", icon: TrendingUp },
+  { id: "compatibility", name: "Compatibility ×1", price: 3.99, description: "Known as synastry, this compares two people's charts to explore emotional, romantic, and communication dynamics. It identifies strengths, friction points, and what helps the relationship thrive.", icon: Heart },
+  { id: "compatibility_3x", name: "Compatibility ×3", price: 9.99, description: "3 compatibility comparisons. Compare your chart with up to three different people.", icon: Heart },
 ];
 
 // Bundle Definitions (discount packages)
@@ -245,6 +245,7 @@ const BUNDLES = {
     color: "purple",
     popular: true,
     includes: ["natal", "house_deep_dive", "solar_return"],
+    essentialIncludes: false,
     services: [
       { name: "Natal Chart Analysis", description: "A snapshot of the sky at your birth that maps the positions of the planets, signs, and houses to describe your core personality, motivations, and life themes. The foundation." },
       { name: "House Deep Dive", description: "A focused reading of the 12 houses in your chart, showing where key life areas (like relationships, career, home, and health) are emphasized and shape your experiences and patterns." },
@@ -2174,6 +2175,7 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
               {SERVICES.map((service) => {
                 const isSelected = !selectedBundle && selectedServices.includes(service.id);
                 const isIncludedInBundle = selectedBundle && BUNDLES[selectedBundle]?.includes?.includes(service.id);
+                const ServiceIcon = service.icon;
                 return (
                   <button
                     key={service.id}
@@ -2187,7 +2189,10 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
                     }`}
                   >
                     <div className="flex items-start justify-between">
-                      <h4 className="font-serif text-xl font-semibold gold-gradient-text leading-none pr-2">{service.name}</h4>
+                      <div className="flex items-center gap-2 pr-2">
+                        <ServiceIcon className="w-5 h-5 text-[#D6B35A] flex-shrink-0" />
+                        <h4 className="font-serif text-xl font-semibold gold-gradient-text leading-none">{service.name}</h4>
+                      </div>
                       <div className="relative flex-shrink-0">
                         <button
                           type="button"
