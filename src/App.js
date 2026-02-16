@@ -2068,8 +2068,8 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
         </div>
 
         {/* Cosmic Blueprint - beside chart box */}
-        <div className="card-preview rounded-2xl p-6">
-          <h2 className="font-serif text-2xl font-semibold gold-gradient-text mb-4">Natal Chart Analysis</h2>
+        <div className="card-preview rounded-2xl p-6 flex flex-col">
+          <h2 className="font-serif text-2xl font-semibold gold-gradient-text mb-4 text-center">Natal Chart Analysis</h2>
 
           {teaserLoading ? (
             <div className="flex flex-col items-center justify-center py-6">
@@ -2178,7 +2178,7 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
                   <button
                     key={service.id}
                     onClick={() => toggleService(service.id)}
-                    className={`relative p-4 rounded-xl border transition-all text-left ${
+                    className={`relative p-4 rounded-xl border transition-all text-left flex flex-col justify-between min-h-[140px] ${
                       isSelected
                         ? "bg-[#D6B35A]/15 border-[#D6B35A]"
                         : isIncludedInBundle
@@ -2186,19 +2186,9 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
                         : "bg-[#12142A]/60 border-white/10 hover:bg-white/10"
                     }`}
                   >
-                    <div className="flex items-start justify-between mb-2">
-                      <div
-                        className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
-                          isSelected
-                            ? "bg-[#D6B35A] border-[#D6B35A]"
-                            : isIncludedInBundle
-                            ? "bg-green-500 border-green-500"
-                            : "border-white/30"
-                        }`}
-                      >
-                        {(isSelected || isIncludedInBundle) && <Check className="w-3 h-3 text-[#12142A]" />}
-                      </div>
-                      <div className="relative">
+                    <div className="flex items-start justify-between">
+                      <h4 className="font-serif text-lg font-semibold t-text-primary leading-tight pr-2">{service.name}</h4>
+                      <div className="relative flex-shrink-0">
                         <button
                           type="button"
                           onClick={(e) => {
@@ -2216,10 +2206,22 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
                         )}
                       </div>
                     </div>
-                    <h4 className="font-semibold text-sm mb-1 t-text-primary">{service.name}</h4>
-                    <p className="text-[#D6B35A] text-xs font-bold">${service.price.toFixed(2)}</p>
+                    <div className="flex items-center justify-between mt-auto pt-3">
+                      <div
+                        className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
+                          isSelected
+                            ? "bg-[#D6B35A] border-[#D6B35A]"
+                            : isIncludedInBundle
+                            ? "bg-green-500 border-green-500"
+                            : "border-white/30"
+                        }`}
+                      >
+                        {(isSelected || isIncludedInBundle) && <Check className="w-3 h-3 text-[#12142A]" />}
+                      </div>
+                      <p className="text-[#D6B35A] text-sm font-bold">${service.price.toFixed(2)}</p>
+                    </div>
                     {isIncludedInBundle && (
-                      <p className="text-green-400 text-xs mt-1">Included in {BUNDLES[selectedBundle]?.name}</p>
+                      <p className="text-green-400 text-xs mt-1 text-right">Included in {BUNDLES[selectedBundle]?.name}</p>
                     )}
                   </button>
                 );
@@ -2261,23 +2263,21 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
                     setSelectedBundle(isSelected ? null : bundle.id);
                     setSelectedServices([]);
                   }}
-                  className={`card-preview relative rounded-2xl border transition-all text-left ${colors.border} ${
+                  className={`card-preview relative rounded-2xl border transition-all text-left p-6 ${colors.border} ${
                     isSelected ? "scale-105 shadow-lg border-[#D6B35A]" : ""
                   }`}
                 >
-                  <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center justify-center gap-3 mb-4">
                     <IconComponent className={`w-8 h-8 ${colors.icon}`} />
-                    <div className="flex items-baseline gap-2">
-                      <h3 className={`font-serif text-2xl font-bold ${colors.price}`}>{bundle.name}</h3>
-                      <div className={`text-3xl font-black ${colors.price}`}>
-                        ${bundle.price.toFixed(2)}
-                      </div>
+                    <h3 className={`font-serif text-4xl font-bold ${colors.price}`}>{bundle.name}</h3>
+                    <div className={`text-3xl font-black ${colors.price}`}>
+                      ${bundle.price.toFixed(2)}
                     </div>
                   </div>
 
                   <div className="space-y-2 mb-3">
                     {bundle.essentialIncludes && (
-                      <div className="text-sm t-text-muted">Essential +</div>
+                      <div className="text-sm t-text-muted text-center">Essential +</div>
                     )}
                     {bundle.services.map((service, idx) => (
                       <div key={idx} className="flex items-center justify-between text-sm">
