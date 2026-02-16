@@ -755,7 +755,7 @@ function LandingPage() {
       <header className="max-w-5xl mx-auto flex justify-between items-center mb-8">
         <div className="flex items-center gap-3">
           <img src={LogoBlue} alt="Natavium Logo" className="w-11 h-11 object-contain" />
-          <h1 className="text-5xl md:text-6xl font-normal gold-gradient-text leading-none" style={{ fontFamily: '"Dancing Script", cursive' }}>Natavium</h1>
+          <h1 className="font-serif text-5xl md:text-6xl font-normal gold-gradient-text leading-none">Natavium</h1>
         </div>  
         <nav className="flex gap-4 items-center">
           {/* Theme Toggle */}
@@ -797,7 +797,7 @@ function LandingPage() {
       {/* Hero Section */}
       <section className="hero-vignette max-w-5xl mx-auto text-center pt-8 pb-6 md:pt-14 md:pb-10 px-4">
         {/* Big hero headline (dominates page) */}
-          <h2 className="text-5xl md:text-7xl font-normal t-text-primary leading-tight tracking-tight mb-6 text-center" style={{ fontFamily: '"Dancing Script", cursive' }}>
+          <h2 className="font-serif text-5xl md:text-7xl font-semibold t-text-primary leading-tight tracking-tight mb-6 text-center">
             Understand your star power 
           </h2>
 
@@ -1081,7 +1081,7 @@ function CalculatingPage() {
           <div className="animate-spin rounded-full h-32 w-32 border-t-4 border-b-4 border-[#D6B35A] mx-auto" />
           <Star className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-16 h-16 icon-gold animate-pulse" />
         </div>
-        <h2 className="text-3xl font-bold mb-4 gold-gradient-text">Calculating Your Cosmic Blueprint...</h2>
+        <h2 className="font-serif text-3xl font-bold mb-4 gold-gradient-text">Calculating Your Cosmic Blueprint...</h2>
         <div className="space-y-2 t-text-muted">
           <p className="animate-pulse">⚡ Computing planetary positions...</p>
           <p className="animate-pulse">🌙 Analyzing house placements...</p>
@@ -1773,7 +1773,7 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
                     </div>
                   </div>
 
-                  <h3 className="text-xl font-bold mb-3">{bundle.name}</h3>
+                  <h3 className="font-serif text-xl font-bold mb-3">{bundle.name}</h3>
 
                   <div className="space-y-2 mb-3">
                     {bundle.essentialIncludes && (
@@ -1975,7 +1975,7 @@ function PaymentPage({ handlePayment, selectedBundle }) {
         <div className={`${colors.bg} rounded-2xl p-6 mb-6 border ${colors.border}`}>
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h3 className="text-xl font-semibold">{bundle.name} Package</h3>
+              <h3 className="font-serif text-xl font-semibold">{bundle.name} Package</h3>
               <p className="text-sm t-text-muted">{bundle.description}</p>
             </div>
             <div className={`text-3xl font-bold ${colors.price}`}>
@@ -3209,7 +3209,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
                     <div className="w-16 h-16 bg-[#69D2FF]/20 rounded-full flex items-center justify-center mx-auto mb-4">
                       <Sparkles className="w-8 h-8 text-[#69D2FF]" />
                     </div>
-                    <h3 className="text-2xl font-semibold mb-2">{upsellTab.label}</h3>
+                    <h3 className="font-serif text-2xl font-semibold mb-2">{upsellTab.label}</h3>
                     <p className="t-text-muted mb-4">{upsellTab.description}</p>
                     <div className="bg-[#69D2FF]/10 rounded-xl p-4 mb-4 border border-[#69D2FF]/20">
                       <p className="text-[#D6B35A] font-semibold">Coming Soon!</p>
@@ -3229,7 +3229,7 @@ function ChartPage({ chartResult, birthData, isPremium, selectedBundle }) {
                     <div className="w-16 h-16 bg-[#D6B35A]/20 rounded-full flex items-center justify-center mx-auto mb-4">
                       <ShoppingCart className="w-8 h-8 text-[#D6B35A]" />
                     </div>
-                    <h3 className="text-2xl font-semibold mb-2">Unlock Premium Features</h3>
+                    <h3 className="font-serif text-2xl font-semibold mb-2">Unlock Premium Features</h3>
                     <p className="t-text-muted">Select the add-ons you'd like to unlock</p>
                   </div>
 

@@ -395,7 +395,7 @@ export default function ReportsPage() {
 
         {!accessToken ? (
           <div className="card-solid rounded-2xl p-6 max-w-lg">
-            <h2 className="text-xl font-semibold mb-2">Sign in to view your reports</h2>
+            <h2 className="font-serif text-xl font-semibold mb-2">Sign in to view your reports</h2>
             <p className="t-text-muted text-sm mb-4">
               We’ll email you a secure magic link. No password.
             </p>
@@ -429,7 +429,7 @@ export default function ReportsPage() {
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <div className="text-sm t-text-muted">Ongoing Reports</div>
-                  <h3 className="text-xl font-semibold mt-1">Weekly Astro Weather</h3>
+                  <h3 className="font-serif text-xl font-semibold mt-1">Weekly Astro Weather</h3>
                   <p className="t-text-muted text-sm mt-2">A weekly forecast tailored to your natal chart. Coming Soon.</p>
                 </div>
                 <span className="text-xs bg-[#69D2FF]/20 px-2 py-1 rounded text-[#69D2FF] border border-[#69D2FF]/20">Coming Soon</span>
@@ -446,7 +446,7 @@ export default function ReportsPage() {
             </div>
 
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold">Your purchases</h2>
+              <h2 className="font-serif text-xl font-semibold">Your purchases</h2>
               <button
                 onClick={loadOrders}
                 disabled={loadingOrders}

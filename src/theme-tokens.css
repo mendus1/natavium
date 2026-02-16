@@ -630,23 +630,29 @@
    DAYLIGHT THEME: Playful Heading Fonts
    ================================ */
 
-/* Override serif headings with Quicksand for an ethereal, weightless feel */
-.theme-daylight .font-serif {
-  font-family: 'Quicksand', 'Inter', system-ui, sans-serif;
+/* Daylight theme uses Dancing Script for playful, handwritten headings */
+.theme-daylight .font-serif,
+.theme-daylight .t-heading-xl,
+.theme-daylight .t-heading-lg,
+.theme-daylight .t-heading-md,
+.theme-daylight h1,
+.theme-daylight h2,
+.theme-daylight h3 {
+  font-family: 'Dancing Script', cursive;
   font-weight: 600;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
 }
 
 .theme-daylight .heading-display {
-  font-family: 'Quicksand', 'Inter', system-ui, sans-serif;
+  font-family: 'Dancing Script', cursive;
   font-weight: 600;
   letter-spacing: -0.01em;
 }
 
 .theme-daylight .subheading-luxury {
-  font-family: 'Quicksand', 'Inter', system-ui, sans-serif;
+  font-family: 'Dancing Script', cursive;
   font-weight: 500;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.02em;
 }
 
 /* ================================
@@ -1065,7 +1071,18 @@
   letter-spacing: 0.025em;
 }
 
-/* Serif headings for luxury feel */
+.theme-original .font-serif,
+.theme-v2 .font-serif,
+.theme-original h1,
+.theme-v2 h1,
+.theme-original h2,
+.theme-v2 h2,
+.theme-original h3,
+.theme-v2 h3 {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+}
+
+/* Serif headings for luxury feel - default for original/v2 themes */
 .font-serif {
   font-family: 'Cormorant Garamond', Georgia, serif;
 }
