@@ -292,6 +292,8 @@
   pointer-events: none;
   z-index: 0;
   background:
+    /* Top-right leaf green blob (on top) */
+    radial-gradient(ellipse 55% 45% at 90% 10%, rgba(115, 213, 148, 0.8) 0%, transparent 55%),
     /* Floating blob 1 */
     radial-gradient(ellipse 35% 30% at 90% 60%, rgba(240, 190, 210, 0.25) 0%, transparent 50%),
     /* Floating blob 2 */
