@@ -266,22 +266,23 @@
   /* Multiple organic blob shapes */
   background:
     /* Top-right leaf green blob (on top) */
-    radial-gradient(ellipse 55% 45% at 90% 10%, rgba(115, 213, 148, 0.8) 0%, transparent 55%),
+    /* radial-gradient(ellipse 55% 45% at 90% 10%, rgba(115, 213, 148, 0.8) 0%, transparent 55%),
     /* Top-left soft pink blob */
-    radial-gradient(ellipse 50% 40% at 15% 20%, rgba(240, 180, 200, 0.4) 0%, transparent 55%),
+    /*radial-gradient(ellipse 50% 40% at 15% 20%, rgba(240, 180, 200, 0.4) 0%, transparent 55%),
     /* Center-right blue blob */
-    radial-gradient(ellipse 45% 55% at 75% 45%, rgba(140, 200, 230, 0.45) 0%, transparent 50%),
+    /*radial-gradient(ellipse 45% 55% at 75% 45%, rgba(140, 200, 230, 0.45) 0%, transparent 50%),
     /* Bottom-left cyan blob */
-    radial-gradient(ellipse 55% 45% at 20% 75%, rgba(120, 210, 220, 0.4) 0%, transparent 55%),
+    /*radial-gradient(ellipse 55% 45% at 20% 75%, rgba(120, 210, 220, 0.4) 0%, transparent 55%),
     /* Bottom-center soft purple */
-    radial-gradient(ellipse 50% 40% at 50% 85%, rgba(180, 160, 210, 0.35) 0%, transparent 50%),
+    /*radial-gradient(ellipse 50% 40% at 50% 85%, rgba(180, 160, 210, 0.35) 0%, transparent 50%),
     /* Lower leaf green blob */
-    radial-gradient(ellipse 40% 35% at 70% 90%, rgba(100, 160, 120, 0.4) 0%, transparent 50%),
+    /* radial-gradient(ellipse 40% 35% at 70% 90%, rgba(100, 160, 120, 0.4) 0%, transparent 50%),
     /* Small accent blobs */
-    radial-gradient(ellipse 30% 25% at 35% 35%, rgba(255, 200, 180, 0.3) 0%, transparent 50%),
-    radial-gradient(ellipse 25% 30% at 65% 70%, rgba(200, 180, 240, 0.35) 0%, transparent 45%),
+    /* radial-gradient(ellipse 30% 25% at 35% 35%, rgba(255, 200, 180, 0.3) 0%, transparent 50%),
+    /* radial-gradient(ellipse 25% 30% at 65% 70%, rgba(200, 180, 240, 0.35) 0%, transparent 45%),
     /* Base gradient */
-    linear-gradient(180deg, #E8D5F2 0%, #D4E5F7 40%, #B8D4F0 70%, #7fe1b0 100%);
+    /* linear-gradient(180deg, #E8D5F2 0%, #D4E5F7 40%, #B8D4F0 70%, #7fe1b0 100%);*/
+    /* radial-gradient(ellipse 55% 45% at 90% 10%, rgba(115, 213, 148, 0.8) 0%, transparent 55%)*/
 }
 
 /* Additional floating blob layer */
@@ -292,14 +293,10 @@
   pointer-events: none;
   z-index: 0;
   background:
-    /* Top-right leaf green blob (on top) */
-    radial-gradient(ellipse 55% 45% at 90% 10%, rgba(115, 213, 148, 0.8) 0%, transparent 55%),
-    /* Floating blob 1 */
-    radial-gradient(ellipse 35% 30% at 90% 60%, rgba(240, 190, 210, 0.25) 0%, transparent 50%),
-    /* Floating blob 2 */
-    radial-gradient(ellipse 40% 35% at 10% 55%, rgba(160, 210, 230, 0.3) 0%, transparent 50%),
-    /* Floating blob 3 - soft center glow */
-    radial-gradient(ellipse 50% 30% at 50% 50%, rgba(255, 255, 255, 0.2) 0%, transparent 60%);
+    /* Faint astrological chart watermark - golden lines on existing bg */
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 800'%3E%3Cg fill='none' stroke='%23D4AF37' stroke-width='0.8' stroke-opacity='0.15'%3E%3Ccircle cx='400' cy='400' r='380'/%3E%3Ccircle cx='400' cy='400' r='300'/%3E%3Ccircle cx='400' cy='400' r='220'/%3E%3Ccircle cx='400' cy='400' r='140'/%3E%3Cline x1='400' y1='20' x2='400' y2='780'/%3E%3Cline x1='20' y1='400' x2='780' y2='400'/%3E%3Cline x1='115' y1='115' x2='685' y2='685'/%3E%3Cline x1='685' y1='115' x2='115' y2='685'/%3E%3Cline x1='68' y1='245' x2='732' y2='555'/%3E%3Cline x1='68' y1='555' x2='732' y2='245'/%3E%3C/g%3E%3Cg fill='%23D4AF37' fill-opacity='0.12' font-family='serif' font-size='14'%3E%3Ctext x='400' y='55' text-anchor='middle'%3E♈%3C/text%3E%3Ctext x='745' y='405' text-anchor='middle'%3E♉%3C/text%3E%3Ctext x='400' y='765' text-anchor='middle'%3E♊%3C/text%3E%3Ctext x='55' y='405' text-anchor='middle'%3E♋%3C/text%3E%3Ctext x='160' y='160' text-anchor='middle'%3E♌%3C/text%3E%3Ctext x='640' y='160' text-anchor='middle'%3E♍%3C/text%3E%3Ctext x='640' y='640' text-anchor='middle'%3E♎%3C/text%3E%3Ctext x='160' y='640' text-anchor='middle'%3E♏%3C/text%3E%3C/g%3E%3C/svg%3E") center/contain no-repeat;
+  background-size: min(90vw, 90vh);
+  opacity: 0.6;
 }
 
 .theme-daylight > * {
