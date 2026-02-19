@@ -1768,7 +1768,7 @@ function LandingPageNew({ navigate, theme, toggleTheme, getThemeLabel, setUseNew
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-3 gap-8 md:gap-12">
             {/* Feature 1 */}
-            <div className="group space-y-3 p-6 rounded-xl border border-gray-200/50 bg-white/30 backdrop-blur-sm hover:border-gray-300/50 hover:bg-white/50 transition-all duration-300">
+            <div className="group space-y-3 p-6 rounded-xl border border-gray-300 bg-white/30 backdrop-blur-sm hover:border-gray-300/50 hover:bg-white/50 transition-all duration-300">
               <div className="w-12 h-12 rounded-full border border-gray-200 bg-white/50 flex items-center justify-center text-xl text-gray-600">
                 ☽
               </div>
@@ -1779,7 +1779,7 @@ function LandingPageNew({ navigate, theme, toggleTheme, getThemeLabel, setUseNew
             </div>
 
             {/* Feature 2 */}
-            <div className="group space-y-3 p-6 rounded-xl border border-gray-200/50 bg-white/30 backdrop-blur-sm hover:border-gray-300/50 hover:bg-white/50 transition-all duration-300">
+            <div className="group space-y-3 p-6 rounded-xl border border-gray-300 bg-white/30 backdrop-blur-sm hover:border-gray-300/50 hover:bg-white/50 transition-all duration-300">
               <div className="w-12 h-12 rounded-full border border-gray-200 bg-white/50 flex items-center justify-center text-xl text-gray-600">
                 ♡
               </div>
@@ -1790,7 +1790,7 @@ function LandingPageNew({ navigate, theme, toggleTheme, getThemeLabel, setUseNew
             </div>
 
             {/* Feature 3 */}
-            <div className="group space-y-3 p-6 rounded-xl border border-gray-200/50 bg-white/30 backdrop-blur-sm hover:border-gray-300/50 hover:bg-white/50 transition-all duration-300">
+            <div className="group space-y-3 p-6 rounded-xl border border-gray-300 bg-white/30 backdrop-blur-sm hover:border-gray-300/50 hover:bg-white/50 transition-all duration-300">
               <div className="w-12 h-12 rounded-full border border-gray-200 bg-white/50 flex items-center justify-center text-xl text-gray-600">
                 ✧
               </div>
@@ -1805,7 +1805,7 @@ function LandingPageNew({ navigate, theme, toggleTheme, getThemeLabel, setUseNew
 
 
       {/* Footer - Ultra minimal */}
-      <footer className="relative z-10 px-6 md:px-12 py-12 border-t border-gray-200/50">
+      <footer className="relative z-10 px-6 md:px-12 py-12 border-t border-gray-300">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex items-center gap-2">
             <span className="text-xs font-light tracking-wide text-gray-400 uppercase">© 2024 natavium</span>
@@ -1885,7 +1885,7 @@ function InputPage({ birthData, handleInputChange, calculateChart, calcError }) 
             <p className="text-base font-light text-gray-500">Everything begins with your natal chart. Enter your details now to see yours</p>
           </div>
 
-          <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-8 border border-gray-200/50 shadow-sm">
+          <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-8 border border-gray-300 shadow-sm">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
               <div className="bg-white/80 rounded-xl p-4 border border-gray-200/60">
                 <label className="flex items-center text-sm font-light text-gray-700 mb-2">
@@ -2073,7 +2073,7 @@ function InputPage({ birthData, handleInputChange, calculateChart, calcError }) 
       </main>
 
       {/* Footer */}
-      <footer className="relative z-10 px-6 md:px-12 py-8 border-t border-gray-200/50 mt-auto">
+      <footer className="relative z-10 px-6 md:px-12 py-8 border-t border-gray-300 mt-auto">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
           <span className="text-xs font-light tracking-wide text-gray-400 uppercase">© 2024 natavium</span>
           <div className="flex gap-8">
@@ -2299,35 +2299,41 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
 
         {/* Big Three - Above chart wheel */}
         <div className="grid md:grid-cols-3 gap-3 mb-6">
-          <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 text-center border border-gray-200/50">
-            <Sun className="w-8 h-8 text-amber-500 mb-2 mx-auto" />
-            <div className="text-xl font-light text-gray-900 mb-0.5">{activeChart.sun.sign} Sun</div>
-            <div className="text-xs text-gray-500">Core Identity</div>
-            <div className="text-xs text-gray-400 mt-1">
-              {activeChart.sun.degree}° {String(activeChart.sun.minutes || 0).padStart(2, '0')}' • House {activeChart.sun.house}
+          <div className="bg-gradient-to-br from-white/80 via-white/50 to-gray-100/60 backdrop-blur-sm rounded-xl p-4 text-center border border-gray-300 relative overflow-hidden">
+            <div className="relative z-10">
+              <Sun className="w-8 h-8 text-amber-500 mb-2 mx-auto" />
+              <div className="text-xl font-light text-gray-900 mb-0.5">{activeChart.sun.sign} Sun</div>
+              <div className="text-xs text-gray-500">Core Identity</div>
+              <div className="text-xs text-gray-400 mt-1">
+                {activeChart.sun.degree}° {String(activeChart.sun.minutes || 0).padStart(2, '0')}' • House {activeChart.sun.house}
+              </div>
             </div>
           </div>
 
-          <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 text-center border border-gray-200/50">
-            <Moon className="w-8 h-8 text-gray-600 mb-2 mx-auto" />
-            <div className="text-xl font-light text-gray-900 mb-0.5">{activeChart.moon.sign} Moon</div>
-            <div className="text-xs text-gray-500">Emotional Core</div>
-            <div className="text-xs text-gray-400 mt-1">
-              {activeChart.moon.degree}° {String(activeChart.moon.minutes || 0).padStart(2, '0')}' • House {activeChart.moon.house}
+          <div className="bg-gradient-to-br from-white/80 via-white/50 to-gray-100/60 backdrop-blur-sm rounded-xl p-4 text-center border border-gray-300 relative overflow-hidden">
+            <div className="relative z-10">
+              <Moon className="w-8 h-8 text-amber-500 mb-2 mx-auto" />
+              <div className="text-xl font-light text-gray-900 mb-0.5">{activeChart.moon.sign} Moon</div>
+              <div className="text-xs text-gray-500">Emotional Core</div>
+              <div className="text-xs text-gray-400 mt-1">
+                {activeChart.moon.degree}° {String(activeChart.moon.minutes || 0).padStart(2, '0')}' • House {activeChart.moon.house}
+              </div>
             </div>
           </div>
 
-          <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 text-center border border-gray-200/50">
-            <Star className="w-8 h-8 text-amber-500 mb-2 mx-auto" />
-            <div className="text-xl font-light text-gray-900 mb-0.5">{activeChart.rising.sign} Rising</div>
-            <div className="text-xs text-gray-500">How Others See You</div>
-            <div className="text-xs text-gray-400 mt-1">{activeChart.rising.degree}° {String(activeChart.rising.minutes || 0).padStart(2, '0')}' Ascendant</div>
+          <div className="bg-gradient-to-br from-white/80 via-white/50 to-gray-100/60 backdrop-blur-sm rounded-xl p-4 text-center border border-gray-300 relative overflow-hidden">
+            <div className="relative z-10">
+              <Star className="w-8 h-8 text-amber-500 mb-2 mx-auto" />
+              <div className="text-xl font-light text-gray-900 mb-0.5">{activeChart.rising.sign} Rising</div>
+              <div className="text-xs text-gray-500">How Others See You</div>
+              <div className="text-xs text-gray-400 mt-1">{activeChart.rising.degree}° {String(activeChart.rising.minutes || 0).padStart(2, '0')}' Ascendant</div>
+            </div>
           </div>
         </div>
 
         {/* Premium Chart Wheel - Left aligned on desktop with Cosmic Blueprint on right */}
         <div className="md:grid md:grid-cols-2 gap-6 mb-8">
-          <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-8 border border-gray-200/50">
+          <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-8 border border-gray-300">
           {/* Personalized Archetype - above wheel */}
           {(() => {
             // Sun sign base archetypes
@@ -2635,7 +2641,7 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
         </div>
 
         {/* Cosmic Blueprint - beside chart box */}
-        <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-6 flex flex-col border border-gray-200/50">
+        <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-6 flex flex-col border border-gray-300">
           <h2 className="text-2xl font-light text-gray-900 mb-4 text-center">Natal Chart Analysis</h2>
 
           {teaserLoading ? (
@@ -2682,7 +2688,7 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
       </div>
 
         {/* Transit Report Preview */}
-        <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/50 mb-8">
+        <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-gray-300 mb-8">
           <h2 className="text-2xl font-light text-gray-900 mb-4">Transit Report Preview</h2>
 
           {transitTeaserLoading ? (
@@ -2736,7 +2742,7 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
           <h2 className="text-3xl font-light text-gray-900 text-center mb-2">Select Services</h2>
           <p className="text-center text-gray-500 text-sm mb-8 font-light">Pick any combination you want</p>
 
-          <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/50">
+          <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-gray-300">
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               {SERVICES.map((service) => {
                 const isSelected = !selectedBundle && selectedServices.includes(service.id);
@@ -2756,7 +2762,15 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex items-center gap-2 pr-2">
-                        <ServiceIcon className="w-5 h-5 text-gray-600 flex-shrink-0" />
+                        <ServiceIcon className={`w-5 h-5 flex-shrink-0 ${
+                          service.id === 'natal-basic' || service.id === 'natal-full' || service.id === 'personality-deep' 
+                            ? 'text-amber-500' 
+                            : service.id === 'compat-1' || service.id === 'compat-2'
+                            ? 'text-rose-400'
+                            : service.id === 'transit-report'
+                            ? 'text-blue-400'
+                            : 'text-gray-600'
+                        }`} />
                         <h4 className="text-lg font-light text-gray-900 leading-none">{service.name}</h4>
                       </div>
                       <div className="relative flex-shrink-0">
@@ -2829,12 +2843,12 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
                     setSelectedBundle(isSelected ? null : bundle.id);
                     setSelectedServices([]);
                   }}
-                  className={`bg-white/60 backdrop-blur-sm relative rounded-2xl border transition-all text-left p-6 border-gray-200/50 hover:bg-white/80 ${
+                  className={`bg-white/60 backdrop-blur-sm relative rounded-2xl border transition-all text-left p-6 border-gray-300 hover:bg-white/80 ${
                     isSelected ? "scale-105 shadow-lg border-gray-400" : ""
                   }`}
                 >
                   <div className="flex items-center justify-between gap-3 mb-4 w-full">
-                    <IconComponent className="w-8 h-8 text-gray-600" />
+                    <IconComponent className={`w-8 h-8 ${bundle.id === 'ultimate' ? 'text-amber-500' : 'text-gray-600'}`} />
                     <h3 className="text-4xl font-light text-gray-900">{bundle.name}</h3>
                     <div className="text-3xl font-light text-gray-900">
                       ${bundle.price.toFixed(2)}
