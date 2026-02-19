@@ -1241,6 +1241,7 @@ function InfoPage() {
 function LandingPage() {
   const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
+  const [useNewDesign, setUseNewDesign] = useState(false);
 
   // Get theme label for display
   const getThemeLabel = () => {
@@ -1249,119 +1250,575 @@ function LandingPage() {
     return '🌅';
   };
 
+  // theme-original now uses the new landing page design
+  if (theme === 'theme-original') {
+    return <LandingPageNew navigate={navigate} theme={theme} toggleTheme={toggleTheme} getThemeLabel={getThemeLabel} setUseNewDesign={setUseNewDesign} />;
+  }
+
+  // If using new design toggle, render the WIP version
+  if (useNewDesign) {
+    return <LandingPageNew navigate={navigate} theme={theme} toggleTheme={toggleTheme} getThemeLabel={getThemeLabel} setUseNewDesign={setUseNewDesign} />;
+  }
+
+  // Original landing page design (for theme-v2 and theme-daylight)
+  return <LandingPageOriginal navigate={navigate} theme={theme} toggleTheme={toggleTheme} getThemeLabel={getThemeLabel} setUseNewDesign={setUseNewDesign} />;
+}
+
+// Original Landing Page Design
+function LandingPageOriginal({ navigate, theme, toggleTheme, getThemeLabel, setUseNewDesign }) {
   return (
-    <div className="min-h-screen px-6 py-6">
-      {/* Header with Logo/Title on left, Nav on right */}
-      <header className="max-w-5xl mx-auto flex justify-between items-center mb-8">
-        <div className="flex items-center gap-3">
-          <img src={LogoBlue} alt="Natavium Logo" className="w-24 h-24 md:w-28 md:h-28 object-contain" />
-          <h1 className="font-serif text-5xl md:text-6xl font-normal gold-gradient-text leading-none">Natavium</h1>
-        </div>  
-        <nav className="flex gap-4 items-center">
-          {/* Theme Toggle */}
+    <div className="min-h-screen p-6">
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <header className="flex justify-between items-center mb-16">
+          <div className="flex items-center gap-3">
+            <img src={LogoBlue} alt="Natavium Logo" className="w-24 h-24 md:w-28 md:h-28 object-contain" />
+            <h1 className="text-4xl md:text-5xl font-serif">Natavium</h1>
+          </div>
+          <nav className="flex items-center gap-6">
+            <button
+              onClick={() => setUseNewDesign(true)}
+              className="px-4 py-2 bg-blue-500 text-white rounded-lg text-sm hover:bg-blue-600 transition-colors"
+              title="Switch to new design"
+            >
+              Try New Design
+            </button>
+            <button
+              onClick={toggleTheme}
+              className="text-2xl"
+              title="Toggle theme"
+            >
+              {getThemeLabel()}
+            </button>
+            <button
+              onClick={() => navigate("/reports")}
+              className="t-text-primary hover:opacity-70 transition-opacity"
+            >
+              Reports
+            </button>
+            <button
+              onClick={() => navigate("/learn")}
+              className="t-text-primary hover:opacity-70 transition-opacity"
+            >
+              Learn
+            </button>
+          </nav>
+        </header>
+
+        {/* Hero Section */}
+        <section className="hero-vignette text-center mb-20">
+          <h2 className="text-5xl md:text-6xl font-serif mb-6 leading-tight">
+            Your Cosmic Blueprint,
+            <br />
+            <span className="gold-gradient-text">Decoded by AI</span>
+          </h2>
+          <p className="text-xl t-text-muted mb-8 max-w-2xl mx-auto">
+            Discover the profound insights hidden in your birth chart. Get personalized astrological guidance powered by advanced AI.
+          </p>
           <button
-            onClick={toggleTheme}
-            className="t-btn-secondary text-sm"
-            title="Toggle theme"
+            onClick={() => navigate("/input")}
+            className="gold-gradient-btn px-8 py-4 rounded-full text-lg font-semibold inline-flex items-center gap-2 hover:scale-105 transition-transform"
           >
-            {getThemeLabel()}
+            <Sparkles className="w-5 h-5" />
+            Start Your Journey
           </button>
-          <button
-            onClick={() => navigate("/reports")}
-            className="t-btn-secondary text-sm"
-          >
-            <Star className="w-4 h-4 mr-2 icon-gold" strokeWidth={1} />
-            My Reports
-          </button>
-          <button
-            onClick={async () => {
-              await logEvent('coming_soon_nav_clicked', { destination: 'ongoing', surface: 'landing_nav' });
-              navigate('/ongoing');
+        </section>
+
+        {/* Feature Cards */}
+        <section className="grid md:grid-cols-3 gap-8 mb-20">
+          <div className="card-illuminated p-8 rounded-2xl text-center hover:scale-105 transition-transform">
+            <div className="text-4xl mb-4">🌟</div>
+            <h3 className="text-2xl font-serif mb-3">Birth Chart Analysis</h3>
+            <p className="t-text-muted">
+              Your complete cosmic blueprint decoded with AI-powered insights about your personality, strengths, and life path.
+            </p>
+          </div>
+          <div className="card-illuminated p-8 rounded-2xl text-center hover:scale-105 transition-transform">
+            <div className="text-4xl mb-4">💕</div>
+            <h3 className="text-2xl font-serif mb-3">Relationship Insights</h3>
+            <p className="t-text-muted">
+              Understand compatibility patterns and navigate your connections with cosmic wisdom about love and partnership.
+            </p>
+          </div>
+          <div className="card-illuminated p-8 rounded-2xl text-center hover:scale-105 transition-transform">
+            <div className="text-4xl mb-4">🌈</div>
+            <h3 className="text-2xl font-serif mb-3">Timing & Transits</h3>
+            <p className="t-text-muted">
+              Know when to act, when to wait, and what cosmic energies are influencing your journey right now.
+            </p>
+          </div>
+        </section>
+
+        {/* Footer */}
+        <footer className="text-center t-text-muted text-sm pt-12 border-t t-border">
+          <div className="flex justify-center gap-8 mb-4">
+            <button onClick={() => navigate("/impressum")} className="hover:opacity-70 transition-opacity">
+              Impressum
+            </button>
+            <button onClick={() => navigate("/datenschutz")} className="hover:opacity-70 transition-opacity">
+              Datenschutz
+            </button>
+          </div>
+          <p>© 2024 Natavium. All rights reserved.</p>
+        </footer>
+      </div>
+    </div>
+  );
+}
+
+// New Landing Page Design (WIP)
+function LandingPageNew({ navigate, theme, toggleTheme, getThemeLabel, setUseNewDesign }) {
+  const [cometActive, setCometActive] = React.useState(false);
+  const [cometTrajectory, setCometTrajectory] = React.useState(0);
+
+  // Rotation angles for each trajectory
+  // Base: tail points left (180°), head points right (0°)
+  // Flip right-moving trajectories by 180° so head leads
+  const trajectoryRotations = {
+    0: 45,     // Top-left to bottom-right (was -135, flip: -135+180 = 45)
+    1: 135,    // Top-right to bottom-left (left-moving, correct)
+    2: 30,     // Left to right-lower (was -150, flip: -150+180 = 30)
+    3: 150,    // Right to left-lower (left-moving, correct)
+    4: 60,     // Top-center to bottom-right (was -120, flip: -120+180 = 60)
+    5: 120     // Top-right to bottom-left (left-moving, correct)
+  };
+
+  React.useEffect(() => {
+    const triggerComet = () => {
+      // Random trajectory (0-5 for different angles)
+      setCometTrajectory(Math.floor(Math.random() * 6));
+      setCometActive(true);
+      
+      // Reset after animation completes (6.5 seconds)
+      setTimeout(() => {
+        setCometActive(false);
+      }, 6500);
+    };
+
+    // Trigger first comet after random delay
+    const initialDelay = Math.random() * 1000 + 1000; // 5-10 seconds
+    const initialTimer = setTimeout(triggerComet, initialDelay);
+
+    // Set up recurring comets
+    const interval = setInterval(() => {
+      const delay = Math.random() * 5000 + 5000; // 5-10 seconds
+      setTimeout(triggerComet, delay);
+    }, 9000); // Check every 9 seconds (within the 5-10 second range)
+
+    return () => {
+      clearTimeout(initialTimer);
+      clearInterval(interval);
+    };
+  }, []);
+
+  return (
+    <div className="min-h-screen relative overflow-hidden"  style={{ 
+      background: '#ffffff',
+      backgroundColor: '#faf8f4',
+      backgroundImage: `
+        repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(139,119,101,0.05) 2px, rgba(139,119,101,0.05) 4px),
+        repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(139,119,101,0.05) 2px, rgba(139,119,101,0.05) 4px),
+        radial-gradient(ellipse at 30% 50%, rgba(222,184,135,0.15) 0%, transparent 50%),
+        radial-gradient(ellipse at 70% 80%, rgba(210,180,140,0.12) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 20%, rgba(245,222,179,0.1) 0%, transparent 40%)
+      `
+    }}>
+        {/* Green gradient overlay on parchment texture - top right corner */}
+        <div className="absolute inset-0 pointer-events-none z-0" style={{
+          backgroundImage: `
+            repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(65, 177, 91, 0.08) 2px, rgba(65, 177, 91, 0.08) 4px),
+            repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(198, 183, 135, 0.44) 2px, rgba(198, 183, 135, 0.08) 4px),
+            radial-gradient(circle at 100% 0%, rgba(3, 248, 60, 0.12) 0%, transparent 35%)
+          `
+        }}></div>
+       
+
+        {/* Golden Morning Sun Orb - Top Left Corner - DOUBLED SIZE */}
+        <div className="absolute -top-64 -left-64 w-[768px] h-[768px] pointer-events-none z-0">
+          <div className="relative w-full h-full">
+            {/* Main sun orb with gradient - doubled */}
+            <div className="absolute inset-0 rounded-full bg-gradient-radial from-amber-200/40 via-yellow-100/30 to-transparent blur-3xl"></div>
+            <div className="absolute inset-16 rounded-full bg-gradient-radial from-amber-300/30 via-yellow-200/20 to-transparent blur-2xl"></div>
+            <div className="absolute inset-32 rounded-full bg-gradient-radial from-yellow-200/40 via-amber-100/25 to-transparent blur-xl"></div>
+            
+            {/* Soft glow effect */}
+            <div className="absolute inset-0 rounded-full" style={{
+              background: 'radial-gradient(circle, rgba(251, 191, 36, 0.2) 0%, rgba(252, 211, 77, 0.12) 40%, transparent 70%)'
+            }}></div>
+          </div>
+        </div>
+
+        {/* Faint Astrological Chart - Right Side - Spinning Slowly - Aligned with Hero */}
+        <div className="absolute -right-64 top-[380px] w-[600px] h-[600px] pointer-events-none z-0 opacity-[0.55]">
+          <div className="relative w-full h-full animate-spin-very-slow">
+            {/* Outer circle */}
+            <svg className="absolute inset-0 w-full h-full" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
+              {/* Main circle */}
+              <circle cx="300" cy="300" r="280" fill="none" stroke="currentColor" strokeWidth="1" className="text-gray-400" />
+              
+              {/* Inner circles */}
+              <circle cx="300" cy="300" r="240" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-gray-400" />
+              <circle cx="300" cy="300" r="200" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-gray-400" />
+              <circle cx="300" cy="300" r="160" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-gray-400" />
+              <circle cx="300" cy="300" r="120" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-gray-400" />
+              
+              {/* 12 house divisions - radial lines */}
+              {[...Array(12)].map((_, i) => {
+                const angle = (i * 30) * Math.PI / 180;
+                const x1 = 300 + 120 * Math.cos(angle);
+                const y1 = 300 + 120 * Math.sin(angle);
+                const x2 = 300 + 280 * Math.cos(angle);
+                const y2 = 300 + 280 * Math.sin(angle);
+                return (
+                  <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="currentColor" strokeWidth="0.5" className="text-gray-400" />
+                );
+              })}
+              
+              {/* Zodiac symbols positions (small dots) */}
+              {[...Array(12)].map((_, i) => {
+                const angle = (i * 30 + 15) * Math.PI / 180;
+                const x = 300 + 260 * Math.cos(angle);
+                const y = 300 + 260 * Math.sin(angle);
+                return (
+                  <circle key={`dot-${i}`} cx={x} cy={y} r="2" fill="currentColor" className="text-gray-400" />
+                );
+              })}
+              
+              {/* Aspect lines (connecting random points for authenticity) */}
+              <line x1="300" y1="180" x2="380" y2="300" stroke="currentColor" strokeWidth="0.3" className="text-gray-300" strokeDasharray="2,2" />
+              <line x1="220" y1="300" x2="300" y2="420" stroke="currentColor" strokeWidth="0.3" className="text-gray-300" strokeDasharray="2,2" />
+              <line x1="380" y1="300" x2="300" y2="420" stroke="currentColor" strokeWidth="0.3" className="text-gray-300" strokeDasharray="2,2" />
+              
+              {/* Center point */}
+              <circle cx="300" cy="300" r="3" fill="currentColor" className="text-gray-400" />
+            </svg>
+          </div>
+        </div>
+
+        {/* Decorative Circles - Scattered in blank areas */}
+        
+        {/* Circle 1 - Small 3D Spinning Sphere - Upper right */}
+        <div className="absolute right-[12%] top-[8%] w-[120px] h-[120px] pointer-events-none z-0 opacity-[0.65]">
+          <div className="relative w-full h-full animate-spin-very-slow">
+            <svg className="absolute inset-0 w-full h-full" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                {/* Radial gradient for shading */}
+                <radialGradient id="sphereShading1" cx="40%" cy="40%">
+                  <stop offset="0%" stopColor="rgba(8, 153, 25, 0.4)" />
+                  <stop offset="50%" stopColor="rgba(8, 153, 8, 0.25)" />
+                  <stop offset="100%" stopColor="rgba(8, 153, 8, 0.15)" />
+                </radialGradient>
+              </defs>
+              
+              {/* Shaded sphere background */}
+              <circle cx="60" cy="60" r="50" fill="url(#sphereShading1)" />
+              
+              {/* Outer sphere outline */}
+              <circle cx="60" cy="60" r="50" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-gray-400" />
+              
+              {/* Latitude lines */}
+              <ellipse cx="60" cy="60" rx="50" ry="12" fill="none" stroke="currentColor" strokeWidth="0.3" className="text-gray-800" />
+              <ellipse cx="60" cy="60" rx="50" ry="25" fill="none" stroke="currentColor" strokeWidth="0.3" className="text-gray-800" />
+              <ellipse cx="60" cy="60" rx="50" ry="38" fill="none" stroke="currentColor" strokeWidth="0.3" className="text-gray-800" />
+              
+              {/* Longitude lines */}
+              <ellipse cx="60" cy="60" rx="12" ry="50" fill="none" stroke="currentColor" strokeWidth="0.3" className="text-gray-800" />
+              <ellipse cx="60" cy="60" rx="25" ry="50" fill="none" stroke="currentColor" strokeWidth="0.3" className="text-gray-800" />
+              <ellipse cx="60" cy="60" rx="38" ry="50" fill="none" stroke="currentColor" strokeWidth="0.3" className="text-gray-800" />
+              
+              {/* Center meridian */}
+              <line x1="60" y1="10" x2="60" y2="110" stroke="currentColor" strokeWidth="0.5" className="text-gray-800" />
+              
+              {/* Equator */}
+              <line x1="10" y1="60" x2="110" y2="60" stroke="currentColor" strokeWidth="0.5" className="text-gray-800" />
+            </svg>
+          </div>
+        </div>
+
+        {/* Circle 2 - 3D Spinning Sphere - Left side upper */}
+        <div className="absolute left-[12%] top-[18%] w-[200px] h-[200px] pointer-events-none z-0 opacity-[0.85]">
+          <div className="relative w-full h-full animate-spin-very-slow">
+            <svg className="absolute inset-0 w-full h-full" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                {/* Radial gradient for shading */}
+                <radialGradient id="sphereShading2" cx="40%" cy="40%">
+                  <stop offset="0%" stopColor="rgba(159, 13, 152, 0.19)" />
+                  <stop offset="50%" stopColor="rgba(156, 13, 152, 0.15)" />
+                  <stop offset="100%" stopColor="rgba(156, 13, 152, 0.05)" />
+                </radialGradient>
+              </defs>
+              
+              {/* Shaded sphere background */}
+              <circle cx="100" cy="100" r="85" fill="url(#sphereShading2)" />
+              
+              {/* Outer sphere outline */}
+              <circle cx="100" cy="100" r="85" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-gray-400" opacity="0.0"/>
+              
+              {/* Latitude lines (horizontal ellipses) */}
+              <ellipse cx="100" cy="100" rx="85" ry="20" fill="none" stroke="currentColor" strokeWidth="0.3" className="text-black-400" opacity="0.0"/>
+              <ellipse cx="100" cy="100" rx="85" ry="40" fill="none" stroke="currentColor" strokeWidth="0.3" className="text-black-400" opacity="0.0"/>
+              <ellipse cx="100" cy="100" rx="85" ry="60" fill="none" stroke="currentColor" strokeWidth="0.3" className="text-black-400" opacity="0.0"/>
+              <ellipse cx="100" cy="100" rx="85" ry="85" fill="none" stroke="currentColor" strokeWidth="0.3" className="text-black-400" opacity="0.0"/>
+              
+              {/* Longitude lines (vertical ellipses with rotation) */}
+              <ellipse cx="100" cy="100" rx="20" ry="85" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-gray-400" />
+              <ellipse cx="100" cy="100" rx="40" ry="85" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-gray-400" />
+              <ellipse cx="100" cy="100" rx="60" ry="85" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-gray-400" />
+              <ellipse cx="100" cy="100" rx="85" ry="85" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-gray-400" />
+              
+              {/* Center meridian (vertical line) */}
+              <line x1="100" y1="15" x2="100" y2="185" stroke="currentColor" strokeWidth="0.5" className="text-gray-400" />
+              
+              {/* Equator (horizontal line) */}
+              <line x1="15" y1="100" x2="185" y2="100" stroke="currentColor" strokeWidth="0.5" className="text-gray-400" />
+            </svg>
+          </div>
+        </div>
+
+        {/* Circle 3 - Lower left */}
+        <div className="absolute left-[27%] bottom-[23%] w-[200px] h-[200px] pointer-events-none z-0 opacity-[0.85]">
+          <svg className="absolute inset-0 w-full h-full" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="100" cy="100" r="93" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-gray-400" />
+            <circle cx="100" cy="100" r="80" fill="none" stroke="currentColor" strokeWidth="0.3" className="text-gray-400" />
+          </svg>
+        </div>
+
+        {/* Circle 4 - Right side middle */}
+        <div className="absolute right-[15%] top-[45%] w-[200px] h-[200px] pointer-events-none z-0 opacity-[0.35]">
+          <svg className="absolute inset-0 w-full h-full" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="100" cy="100" r="93" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-gray-400" />
+            <circle cx="100" cy="100" r="80" fill="none" stroke="currentColor" strokeWidth="0.3" className="text-gray-400" />
+          </svg>
+        </div>
+
+        {/* Circle 5 - Lower right */}
+        <div className="absolute right-[5%] bottom-[15%] w-[200px] h-[200px] pointer-events-none z-0 opacity-[0.35]">
+          <svg className="absolute inset-0 w-full h-full" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="100" cy="100" r="93" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-gray-400" />
+            <circle cx="100" cy="100" r="80" fill="none" stroke="currentColor" strokeWidth="0.3" className="text-gray-400" />
+          </svg>
+        </div>
+
+        {/* Ivy Image 1 - Upper right - HIDDEN */}
+        <div className="absolute right-[12%] top-[1%] w-[300px] h-[300px] pointer-events-none z-0 opacity-[0.0]" style={{ transform: 'rotate(320deg)' }}>
+          <img 
+            src="/ivy.png" 
+            alt="" 
+            className="w-full h-full object-contain" 
+            style={{ 
+              filter: 'sepia(100%) saturate(300%) hue-rotate(70deg) brightness(0.9)',
+              mixBlendMode: 'multiply'
             }}
-            className="t-btn-secondary text-sm"
+          />
+        </div>
+
+        {/* Ivy Image 2 - Lower left, mirror reflected */}
+        <div className="absolute left-[8%] bottom-[63%] w-[300px] h-[300px] pointer-events-none z-0 opacity-[0.0]" style={{ transform: 'rotate(160deg) scaleX(-1)' }}>
+          <img 
+            src="/ivy2.png" 
+            alt="" 
+            className="w-full h-full object-contain" 
+            style={{ 
+              filter: 'sepia(100%) saturate(300%) hue-rotate(70deg) brightness(0.9)',
+              mixBlendMode: 'multiply'
+            }}
+          />
+        </div>
+
+
+        {/* Animated Comet - Streaks across screen */}
+        {cometActive && (
+          <div 
+            className={`absolute pointer-events-none z-5 opacity-30 comet-trajectory-${cometTrajectory}`}
+            style={{ willChange: 'transform' }}
           >
-            <TrendingUp className="w-4 h-4 mr-2 text-[#69D2FF]" strokeWidth={1} />
-            Ongoing
-            <span className="ml-2 text-[10px] bg-[#69D2FF]/20 px-1.5 py-0.5 rounded text-[#69D2FF]">Soon</span>
-          </button>
-          <button
-            onClick={() => navigate("/learn")}
-            className="t-btn-secondary text-sm"
-          >
-            <BookOpen className="w-4 h-4 mr-2 icon-gold" strokeWidth={1} />
-            Learn More
-          </button>
-        </nav>
+            <div style={{ 
+              transform: `rotate(${trajectoryRotations[cometTrajectory]}deg)`,
+              transformOrigin: 'center'
+            }}>
+              <svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                {/* Comet head - at center, pointing right */}
+                <circle cx="50" cy="50" r="4" fill="rgba(30, 56, 225, 0.4)" stroke="rgba(115, 118, 138, 0.5)" strokeWidth="0.1" />
+                
+                {/* Comet tail - straight lines pointing left from center */}
+                {/* Main tail lines - progressively longer and fainter */}
+                <line x1="46" y1="50" x2="40" y2="50" stroke="rgba(30, 65, 225, 0.7)" strokeWidth="3" strokeLinecap="round" />
+                <line x1="46" y1="50" x2="30" y2="50" stroke="rgba(30, 65, 225, 0.5)" strokeWidth="2.5" strokeLinecap="round" />
+                <line x1="46" y1="50" x2="20" y2="50" stroke="rgba(30, 65, 225, 0.35)" strokeWidth="2.2" strokeLinecap="round" />
+                <line x1="46" y1="50" x2="10" y2="50" stroke="rgba(30, 65, 225, 0.22)" strokeWidth="1.8" strokeLinecap="round" />
+                <line x1="46" y1="50" x2="0" y2="50" stroke="rgba(30, 65, 225, 0.12)" strokeWidth="1.5" strokeLinecap="round" />
+                <line x1="46" y1="50" x2="-10" y2="50" stroke="rgba(30, 65, 225, 0.06)" strokeWidth="1.3" strokeLinecap="round" />
+                
+                {/* Wispy side trails for depth - slight vertical offset */}
+                <line x1="46" y1="50" x2="15" y2="48" stroke="rgba(30, 65, 225, 0.25)" strokeWidth="0.8" strokeLinecap="round" />
+                <line x1="46" y1="50" x2="15" y2="52" stroke="rgba(30, 65, 225, 0.25)" strokeWidth="0.8" strokeLinecap="round" />
+                <line x1="46" y1="50" x2="5" y2="47" stroke="rgba(30, 65, 225, 0.15)" strokeWidth="0.5" strokeLinecap="round" />
+                <line x1="46" y1="50" x2="5" y2="53" stroke="rgba(30, 65, 225, 0.15)" strokeWidth="0.5" strokeLinecap="round" />
+              </svg>
+            </div>
+          </div>
+        )}
+
+        {/* Orbital Arc - Partial orbit path around hero */}
+        <div className="absolute inset-0 pointer-events-none z-1 overflow-hidden">
+          <svg className="absolute inset-0 w-full h-full" viewBox="0 0 1440 900" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+            {/* Curved orbital path - elliptical orbit section around hero text (mirrored) */}
+            {/* Adjust the translateX value (currently 0) to move the arc left (negative) or right (positive) */}
+            <g transform="translate(-350, 0)">
+              <path 
+                d="M 1040 25 Q 1285 50, 1340 150 Q 1390 250, 1290 400 Q 1140 600, 890 750 Q 640 850, 440 900"
+                fill="none" 
+                stroke="rgba(0, 0, 0, 0.15)" 
+                strokeWidth="1.5" 
+                strokeLinecap="round"
+              />
+            </g>
+          </svg>
+        </div>
+
+        {/* Minimalist header - Co-Star inspired */}
+        <header className="relative z-20 px-6 md:px-12 py-8">
+        <div className="max-w-7xl mx-auto flex justify-between items-center">
+          <div className="flex items-center gap-4">
+            <img src={LogoBlue} alt="Natavium" className="w-12 h-12 md:w-14 md:h-14" />
+            <h1 className="text-2xl md:text-3xl lg:text-4xl font-light tracking-[0.15em] uppercase text-gray-900">natavium</h1>
+          </div>
+          <nav className="flex items-center gap-8">
+            <button
+              onClick={() => navigate("/reports")}
+              className="text-sm font-light tracking-wide text-gray-600 hover:text-gray-900 transition-colors uppercase"
+            >
+              reports
+            </button>
+            <button
+              onClick={() => navigate("/learn")}
+              className="text-sm font-light tracking-wide text-gray-600 hover:text-gray-900 transition-colors uppercase"
+            >
+              learn
+            </button>
+            
+            {/* Social Media Icons */}
+            <div className="flex items-center gap-4 ml-4 pl-4 border-l border-gray-200">
+              <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-gray-700 transition-colors">
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+                </svg>
+              </a>
+              <a href="https://x.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-gray-700 transition-colors">
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                </svg>
+              </a>
+              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-gray-700 transition-colors">
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                </svg>
+              </a>
+            </div>
+
+            {/* Theme Selector */}
+            <button
+              onClick={toggleTheme}
+              className="text-2xl ml-4 pl-4 border-l border-gray-200 hover:opacity-70 transition-opacity"
+              title="Toggle theme"
+            >
+              {getThemeLabel()}
+            </button>
+          </nav>
+        </div>
       </header>
 
-      {/* Hero Section */}
-      <section className="hero-vignette max-w-5xl mx-auto text-center pt-8 pb-6 md:pt-14 md:pb-10 px-4">
-        {/* Big hero headline (dominates page) */}
-          <h2 className="font-serif text-5xl md:text-7xl font-semibold t-text-primary leading-tight tracking-tight mb-6 text-center">
-            Understand your star power 
+      {/* Hero Section - Chani inspired ethereal minimalism */}
+      <section className="relative z-10 px-6 md:px-12 pt-20 pb-32">
+        <div className="max-w-4xl mx-auto text-center space-y-12">
+          {/* Main headline - bold and direct like Co-Star */}
+          <h2 className="text-5xl md:text-7xl lg:text-8xl font-light leading-[0.95] tracking-tight text-gray-900">
+            understand
+            <br />
+            <span className="font-normal">you</span>
+            <br />
+            
           </h2>
 
-        {/* Tagline (slightly smaller, still prominent) */}
-          <p className="text-xl md:text-2xl t-text-muted mb-4 text-center">
-            AI-powered astrology from your full birth chart.
+          {/* Subtext - approachable like Aliza Kelly */}
+          <p className="text-lg md:text-xl font-light text-gray-600 max-w-2xl mx-auto leading-relaxed">
+            Thousands of years of astrological wisdom, simplified for your daily journey.
+
           </p>
 
-  <button
-    onClick={() => navigate("/input")}
-    className="gold-gradient-btn gold-gradient-btn-lg"
-    style={{ marginTop: '24px', marginBottom: '24px' }}
-  >
-    Try It Now
-  </button>
-{/* Supporting line (smaller + softer so it doesn't compete) */}
-          <p className="text-base md:text-lg t-text-muted mb-8 text-center" style={{ marginBottom: '48px' }}>
-            Timing for career, relationships, and personal growth—based on what's happening now.
-          </p>
-</section>
+          {/* CTA - clean and modern */}
+          <div className="pt-8">
+            <button
+              onClick={() => navigate("/input")}
+              className="group inline-flex items-center gap-3 px-10 py-5 bg-black text-white rounded-full text-base font-light tracking-wide hover:bg-gray-900 transition-all duration-300 shadow-lg hover:shadow-xl"
+            >
+              get your chart
+              <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </button>
+          </div>
 
-    {/* Feature Cards */}
-      <section className="max-w-4xl mx-auto grid md:grid-cols-3 gap-6 mt-2 mb-12">
-        <div className="card-illuminated text-center py-8 px-6">
-          <Star className="w-8 h-8 icon-gold mx-auto mb-4" strokeWidth={1} />
-          <h3 className="font-serif text-xl md:text-2xl mb-2 t-text-primary">Free Birth Chart</h3>
-          <p className="t-text-muted text-sm leading-relaxed">
-            Built from exact planetary positions at your birth—so it's about you, not just your Sun sign.
-          </p>
-        </div>
-
-        <div className="card-illuminated text-center py-8 px-6">
-          <Zap className="w-8 h-8 icon-gold mx-auto mb-4" strokeWidth={1} />
-          <h3 className="font-serif text-xl md:text-2xl mb-2 t-text-primary">Astrologer Chat</h3>
-          <p className="t-text-muted text-sm leading-relaxed">
-            Ask the AI astrologer questions about your planetary placements or transits.
-          </p>
-        </div>
-
-        <div className="card-illuminated text-center py-8 px-6">
-          <Heart className="w-8 h-8 icon-gold mx-auto mb-4" strokeWidth={1} />
-          <h3 className="font-serif text-xl md:text-2xl mb-2 t-text-primary">Astrological Forecasts</h3>
-          <p className="t-text-muted text-sm leading-relaxed">
-            Get transit reports tailored to relationships, finances, or personal growth. 
-          </p>
+          
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="max-w-4xl mx-auto pt-8 pb-4 text-center border-t border-white/10">
-        <div className="flex justify-center gap-8 mb-4">
-          <button onClick={() => navigate("/impressum")} className="text-sm t-text-muted hover:text-[#D6B35A] transition-colors">
-            Impressum
-          </button>
-          <button onClick={() => navigate("/datenschutz")} className="text-sm t-text-muted hover:text-[#D6B35A] transition-colors">
-            Datenschutz
-          </button>
+      {/* Features - Minimal cards with cosmic touches */}
+      <section className="relative z-10 px-6 md:px-12 py-12">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-3 gap-8 md:gap-12">
+            {/* Feature 1 */}
+            <div className="group space-y-3 p-6 rounded-xl border border-gray-200/50 bg-white/30 backdrop-blur-sm hover:border-gray-300/50 hover:bg-white/50 transition-all duration-300">
+              <div className="w-12 h-12 rounded-full border border-gray-200 bg-white/50 flex items-center justify-center text-xl text-gray-600">
+                ☽
+              </div>
+              <h3 className="text-lg font-light tracking-wide text-gray-900">natal chart</h3>
+              <p className="text-sm font-light text-gray-600 leading-relaxed">
+                Your cosmic DNA decoded. Understand your sun, moon, rising, and all planetary placements.
+              </p>
+            </div>
+
+            {/* Feature 2 */}
+            <div className="group space-y-3 p-6 rounded-xl border border-gray-200/50 bg-white/30 backdrop-blur-sm hover:border-gray-300/50 hover:bg-white/50 transition-all duration-300">
+              <div className="w-12 h-12 rounded-full border border-gray-200 bg-white/50 flex items-center justify-center text-xl text-gray-600">
+                ♡
+              </div>
+              <h3 className="text-lg font-light tracking-wide text-gray-900">relationships</h3>
+              <p className="text-sm font-light text-gray-600 leading-relaxed">
+                Navigate love and connection with cosmic clarity. Understand compatibility and patterns.
+              </p>
+            </div>
+
+            {/* Feature 3 */}
+            <div className="group space-y-3 p-6 rounded-xl border border-gray-200/50 bg-white/30 backdrop-blur-sm hover:border-gray-300/50 hover:bg-white/50 transition-all duration-300">
+              <div className="w-12 h-12 rounded-full border border-gray-200 bg-white/50 flex items-center justify-center text-xl text-gray-600">
+                ✧
+              </div>
+              <h3 className="text-lg font-light tracking-wide text-gray-900">transits</h3>
+              <p className="text-sm font-light text-gray-600 leading-relaxed">
+                Know when to move and when to wait. Track cosmic weather in real-time.
+              </p>
+            </div>
+          </div>
         </div>
-        <div className="flex justify-center mb-4">
-          <SocialLinks iconClassName="w-4 h-4" />
+      </section>
+
+
+      {/* Footer - Ultra minimal */}
+      <footer className="relative z-10 px-6 md:px-12 py-12 border-t border-gray-200/50">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-light tracking-wide text-gray-400 uppercase">© 2024 natavium</span>
+          </div>
+          <div className="flex gap-8">
+            <button onClick={() => navigate("/impressum")} className="text-xs font-light tracking-wide text-gray-500 hover:text-gray-700 transition-colors uppercase">
+              impressum
+            </button>
+            <button onClick={() => navigate("/datenschutz")} className="text-xs font-light tracking-wide text-gray-500 hover:text-gray-700 transition-colors uppercase">
+              privacy
+            </button>
+          </div>
         </div>
-        <p className="t-text-subtle text-xs tracking-wide">
-          © {new Date().getFullYear()} Natavium. Alle Rechte vorbehalten.
-        </p>
       </footer>
     </div>
   );
@@ -1372,200 +1829,263 @@ function LandingPage() {
 // =========================
 function InputPage({ birthData, handleInputChange, calculateChart, calcError }) {
   const navigate = useNavigate();
+  const { theme, toggleTheme } = useTheme();
+
+  // Get theme label for display
+  const getThemeLabel = () => {
+    if (theme === 'theme-daylight') return '☀️';
+    if (theme === 'theme-v2') return '🌙';
+    return '🌅';
+  };
 
   return (
-    <div className="min-h-screen text-white p-6 flex items-center justify-center">
-      <div className="max-w-2xl w-full">
-        <div className="text-center mb-8">
-          <h2 className="font-serif text-4xl md:text-5xl font-semibold gold-gradient-text mb-3">Enter Your Birth Details</h2>
-          <p className="text-lg t-text-muted">Everything begins with your natal chart. Enter your details now to see yours</p>
+    <div className="min-h-screen bg-[#faf8f4] relative overflow-hidden">
+      {/* Background pattern matching LandingPageNew */}
+      <div className="absolute inset-0 pointer-events-none z-0" style={{
+        backgroundImage: `
+          repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(139,119,101,0.05) 2px, rgba(139,119,101,0.05) 4px),
+          repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(139,119,101,0.05) 2px, rgba(139,119,101,0.05) 4px),
+          radial-gradient(ellipse at 30% 50%, rgba(222,184,135,0.15) 0%, transparent 50%),
+          radial-gradient(ellipse at 70% 80%, rgba(210,180,140,0.12) 0%, transparent 50%),
+          radial-gradient(ellipse at 50% 20%, rgba(245,222,179,0.1) 0%, transparent 40%)
+        `
+      }}></div>
+
+      {/* Minimalist header - matching LandingPageNew */}
+      <header className="relative z-20 px-6 md:px-12 py-8">
+        <div className="max-w-7xl mx-auto flex justify-between items-center">
+          <div className="flex items-center gap-4 cursor-pointer" onClick={() => navigate("/")}>
+            <img src={LogoBlue} alt="Natavium" className="w-12 h-12 md:w-14 md:h-14" />
+            <h1 className="text-2xl md:text-3xl lg:text-4xl font-light tracking-[0.15em] uppercase text-gray-900">natavium</h1>
+          </div>
+          <nav className="flex items-center gap-8">
+            <button
+              onClick={() => navigate("/")}
+              className="text-sm font-light tracking-wide text-gray-600 hover:text-gray-900 transition-colors uppercase"
+            >
+              home
+            </button>
+            {/* Theme Selector */}
+            <button
+              onClick={toggleTheme}
+              className="text-2xl ml-4 pl-4 border-l border-gray-200 hover:opacity-70 transition-opacity"
+              title="Toggle theme"
+            >
+              {getThemeLabel()}
+            </button>
+          </nav>
         </div>
+      </header>
 
-        <div className="card-input-hover rounded-2xl p-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-            <div className="bg-white/15 rounded-xl p-4 border border-white/10">
-              <label className="flex items-center text-sm font-medium mb-2">
-                Who is this chart for?
-              </label>
-              <select
-                value={birthData.subjectRelationship || 'self'}
-                onChange={(e) => handleInputChange('subjectRelationship', e.target.value)}
-                className="w-full px-3 py-2 rounded-lg bg-[#12142A]/80 border border-white/10 text-white focus:outline-none"
-              >
-                <option value="self">Self</option>
-                <option value="partner">Partner</option>
-                <option value="child">Child</option>
-                <option value="friend">Friend</option>
-                <option value="client">Client</option>
-                <option value="other">Other</option>
-              </select>
-              <p className="text-xs t-text-muted mt-2">Shown in your saved reports and headings</p>
-            </div>
+      {/* Main content */}
+      <main className="relative z-10 px-6 md:px-12 py-12 flex items-center justify-center">
+        <div className="max-w-2xl w-full">
+          <div className="text-center mb-10">
+            <h2 className="text-4xl md:text-5xl font-light text-gray-900 mb-3">Enter Your Birth Details</h2>
+            <p className="text-base font-light text-gray-500">Everything begins with your natal chart. Enter your details now to see yours</p>
+          </div>
 
-            <div className="bg-white/15 rounded-xl p-4 border border-white/10">
-              <label className="flex items-center text-sm font-medium mb-2">
-                Initials (2–3 letters)
-              </label>
-              <input
-                value={birthData.subjectInitials || ''}
-                onChange={(e) => handleInputChange('subjectInitials', e.target.value)}
-                placeholder="AB"
-                className="w-full px-3 py-2 rounded-lg bg-[#12142A]/80 border border-white/10 text-white placeholder-white/40 focus:outline-none"
-              />
-              <p className="text-xs t-text-muted mt-2">Use initials only (no full names)</p>
-            </div>
-
-            <div className="bg-white/15 rounded-xl p-4 border border-white/10">
-              <label className="flex items-center text-sm font-medium mb-2">
-                <Calendar className="w-4 h-4 mr-2 icon-gold" />
-                Birth date
-              </label>
-              <div className="grid grid-cols-3 gap-2">
-                <input
-                  value={birthData.birthMonth}
-                  onChange={(e) => handleInputChange("birthMonth", e.target.value)}
-                  placeholder="MM"
-                  className="w-full px-3 py-2 rounded-lg bg-[#12142A]/80 border border-white/10 text-white placeholder-white/40 focus:outline-none"
-                />
-                <input
-                  value={birthData.birthDay}
-                  onChange={(e) => handleInputChange("birthDay", e.target.value)}
-                  placeholder="DD"
-                  className="w-full px-3 py-2 rounded-lg bg-[#12142A]/80 border border-white/10 text-white placeholder-white/40 focus:outline-none"
-                />
-                <input
-                  value={birthData.birthYear}
-                  onChange={(e) => handleInputChange("birthYear", e.target.value)}
-                  placeholder="YYYY"
-                  className="w-full px-3 py-2 rounded-lg bg-[#12142A]/80 border border-white/10 text-white placeholder-white/40 focus:outline-none"
-                />
-              </div>
-            </div>
-
-            <div className="bg-white/15 rounded-xl p-4 border border-white/10">
-              <label className="flex items-center text-sm font-medium mb-2">
-                <Clock className="w-4 h-4 mr-2 icon-gold" />
-                Birth time
-              </label>
-              <div className="grid grid-cols-3 gap-2">
-                <input
-                  value={birthData.hour}
-                  onChange={(e) => handleInputChange("hour", e.target.value)}
-                  placeholder="HH"
-                  className="w-full px-3 py-2 rounded-lg bg-[#12142A]/80 border border-white/10 text-white placeholder-white/40 focus:outline-none"
-                />
-                <input
-                  value={birthData.minute}
-                  onChange={(e) => handleInputChange("minute", e.target.value)}
-                  placeholder="MM"
-                  className="w-full px-3 py-2 rounded-lg bg-[#12142A]/80 border border-white/10 text-white placeholder-white/40 focus:outline-none"
-                />
+          <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-8 border border-gray-200/50 shadow-sm">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+              <div className="bg-white/80 rounded-xl p-4 border border-gray-200/60">
+                <label className="flex items-center text-sm font-light text-gray-700 mb-2">
+                  Who is this chart for?
+                </label>
                 <select
-                  value={birthData.period}
-                  onChange={(e) => handleInputChange("period", e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg bg-[#12142A]/80 border border-white/10 text-white focus:outline-none"
+                  value={birthData.subjectRelationship || 'self'}
+                  onChange={(e) => handleInputChange('subjectRelationship', e.target.value)}
+                  className="w-full px-3 py-2 rounded-lg bg-white border border-gray-200 text-gray-900 focus:outline-none focus:border-gray-400 font-light"
                 >
-                  <option value="AM">AM</option>
-                  <option value="PM">PM</option>
+                  <option value="self">Self</option>
+                  <option value="partner">Partner</option>
+                  <option value="child">Child</option>
+                  <option value="friend">Friend</option>
+                  <option value="client">Client</option>
+                  <option value="other">Other</option>
                 </select>
+                <p className="text-xs font-light text-gray-400 mt-2">Shown in your saved reports and headings</p>
               </div>
-              <p className="text-xs t-text-muted mt-2">Check birth certificate. Use noon if time is unknown.</p>
-            </div>
 
-            <div className="bg-white/15 rounded-xl p-4 border border-white/10 md:col-span-2">
-              <label className="flex items-center text-sm font-medium mb-2">
-                <MapPin className="w-4 h-4 mr-2 icon-gold" />
-                Birth location
-              </label>
-              <input
-                type="text"
-                value={birthData.location}
-                onChange={(e) => handleInputChange("location", e.target.value)}
-                placeholder="City, Country"
-                className="w-full px-3 py-2 rounded-lg bg-[#12142A]/80 border border-white/10 text-white placeholder-white/40 focus:outline-none"
-              />
-              <p className="text-xs t-text-muted mt-2">City name auto-detected • Timezone calculated automatically</p>
+              <div className="bg-white/80 rounded-xl p-4 border border-gray-200/60">
+                <label className="flex items-center text-sm font-light text-gray-700 mb-2">
+                  Initials (2–3 letters)
+                </label>
+                <input
+                  value={birthData.subjectInitials || ''}
+                  onChange={(e) => handleInputChange('subjectInitials', e.target.value)}
+                  placeholder="AB"
+                  className="w-full px-3 py-2 rounded-lg bg-white border border-gray-200 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-gray-400 font-light"
+                />
+                <p className="text-xs font-light text-gray-400 mt-2">Use initials only (no full names)</p>
+              </div>
 
-              <div className="mt-3">
-                <p className="text-xs t-text-muted mb-2">Quick select:</p>
-                <div className="flex flex-wrap gap-2">
-                  {["New York", "Los Angeles", "Chicago", "London", "Toronto", "Sydney"].map((city) => (
-                    <button
-                      key={city}
-                      type="button"
-                      onClick={() => handleInputChange("location", city)}
-                      className="px-2 py-1 text-xs bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 hover:border-white/20 transition-colors"
-                    >
-                      {city}
-                    </button>
-                  ))}
+              <div className="bg-white/80 rounded-xl p-4 border border-gray-200/60">
+                <label className="flex items-center text-sm font-light text-gray-700 mb-2">
+                  <Calendar className="w-4 h-4 mr-2 text-gray-500" />
+                  Birth date
+                </label>
+                <div className="grid grid-cols-3 gap-2">
+                  <input
+                    value={birthData.birthMonth}
+                    onChange={(e) => handleInputChange("birthMonth", e.target.value)}
+                    placeholder="MM"
+                    className="w-full px-3 py-2 rounded-lg bg-white border border-gray-200 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-gray-400 font-light text-center"
+                  />
+                  <input
+                    value={birthData.birthDay}
+                    onChange={(e) => handleInputChange("birthDay", e.target.value)}
+                    placeholder="DD"
+                    className="w-full px-3 py-2 rounded-lg bg-white border border-gray-200 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-gray-400 font-light text-center"
+                  />
+                  <input
+                    value={birthData.birthYear}
+                    onChange={(e) => handleInputChange("birthYear", e.target.value)}
+                    placeholder="YYYY"
+                    className="w-full px-3 py-2 rounded-lg bg-white border border-gray-200 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-gray-400 font-light text-center"
+                  />
                 </div>
               </div>
+
+              <div className="bg-white/80 rounded-xl p-4 border border-gray-200/60">
+                <label className="flex items-center text-sm font-light text-gray-700 mb-2">
+                  <Clock className="w-4 h-4 mr-2 text-gray-500" />
+                  Birth time
+                </label>
+                <div className="grid grid-cols-3 gap-2">
+                  <input
+                    value={birthData.hour}
+                    onChange={(e) => handleInputChange("hour", e.target.value)}
+                    placeholder="HH"
+                    className="w-full px-3 py-2 rounded-lg bg-white border border-gray-200 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-gray-400 font-light text-center"
+                  />
+                  <input
+                    value={birthData.minute}
+                    onChange={(e) => handleInputChange("minute", e.target.value)}
+                    placeholder="MM"
+                    className="w-full px-3 py-2 rounded-lg bg-white border border-gray-200 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-gray-400 font-light text-center"
+                  />
+                  <select
+                    value={birthData.period}
+                    onChange={(e) => handleInputChange("period", e.target.value)}
+                    className="w-full px-3 py-2 rounded-lg bg-white border border-gray-200 text-gray-900 focus:outline-none focus:border-gray-400 font-light"
+                  >
+                    <option value="AM">AM</option>
+                    <option value="PM">PM</option>
+                  </select>
+                </div>
+                <p className="text-xs font-light text-gray-400 mt-2">Check birth certificate. Use noon if time is unknown.</p>
+              </div>
+
+              <div className="bg-white/80 rounded-xl p-4 border border-gray-200/60 md:col-span-2">
+                <label className="flex items-center text-sm font-light text-gray-700 mb-2">
+                  <MapPin className="w-4 h-4 mr-2 text-gray-500" />
+                  Birth location
+                </label>
+                <input
+                  type="text"
+                  value={birthData.location}
+                  onChange={(e) => handleInputChange("location", e.target.value)}
+                  placeholder="City, Country"
+                  className="w-full px-3 py-2 rounded-lg bg-white border border-gray-200 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-gray-400 font-light"
+                />
+                <p className="text-xs font-light text-gray-400 mt-2">City name auto-detected • Timezone calculated automatically</p>
+
+                <div className="mt-3">
+                  <p className="text-xs font-light text-gray-400 mb-2">Quick select:</p>
+                  <div className="flex flex-wrap gap-2">
+                    {["New York", "Los Angeles", "Chicago", "London", "Toronto", "Sydney"].map((city) => (
+                      <button
+                        key={city}
+                        type="button"
+                        onClick={() => handleInputChange("location", city)}
+                        className="px-3 py-1.5 text-xs bg-white border border-gray-200 rounded-lg hover:bg-gray-50 hover:border-gray-300 transition-colors font-light text-gray-600"
+                      >
+                        {city}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white/80 rounded-xl p-4 border border-gray-200/60">
+                <label className="flex items-center text-sm font-light text-gray-700 mb-2">
+                  Focus
+                </label>
+                <select
+                  value={birthData.focus || 'standard'}
+                  onChange={(e) => handleInputChange('focus', e.target.value)}
+                  className="w-full px-3 py-2 rounded-lg bg-white border border-gray-200 text-gray-900 focus:outline-none focus:border-gray-400 font-light"
+                >
+                  <option value="standard">Standard</option>
+                  <option value="career">Career & Money</option>
+                  <option value="love">Love & Relationships</option>
+                  <option value="growth">Self & Growth</option>
+                </select>
+                <p className="text-xs font-light text-gray-400 mt-2">Your selection here will be emphasized a little more</p>
+              </div>
+
+              <div className="bg-white/80 rounded-xl p-4 border border-gray-200/60">
+                <label className="flex items-center text-sm font-light text-gray-700 mb-2">
+                  Tone
+                </label>
+                <select
+                  value={birthData.tone || 'classic'}
+                  onChange={(e) => handleInputChange('tone', e.target.value)}
+                  className="w-full px-3 py-2 rounded-lg bg-white border border-gray-200 text-gray-900 focus:outline-none focus:border-gray-400 font-light"
+                >
+                  <option value="classic">Classic</option>
+                  <option value="coach">Coach</option>
+                  <option value="witty">Witty</option>
+                </select>
+                <p className="text-xs font-light text-gray-400 mt-2">This changes the 'vibe' of your analysis</p>
+              </div>
             </div>
 
-            <div className="bg-white/15 rounded-xl p-4 border border-white/10">
-              <label className="flex items-center text-sm font-medium mb-2">
-                Focus
-              </label>
-              <select
-                value={birthData.focus || 'standard'}
-                onChange={(e) => handleInputChange('focus', e.target.value)}
-                className="w-full px-3 py-2 rounded-lg bg-[#12142A]/80 border border-white/10 text-white focus:outline-none"
-              >
-                <option value="standard">Standard</option>
-                <option value="career">Career & Money</option>
-                <option value="love">Love & Relationships</option>
-                <option value="growth">Self & Growth</option>
-              </select>
-              <p className="text-xs t-text-muted mt-2">Your selection here will be emphasized a little more</p>
+            {calcError && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6 text-sm text-red-600 font-light">
+                ⚠️ Error: {calcError}
+              </div>
+            )}
+
+            <div className="bg-amber-50/50 border border-amber-200/50 rounded-lg p-4 mb-6 text-sm text-amber-700 font-light">
+              🔒 Your data is private and secure
             </div>
 
-            <div className="bg-white/15 rounded-xl p-4 border border-white/10">
-              <label className="flex items-center text-sm font-medium mb-2">
-                Tone
-              </label>
-              <select
-                value={birthData.tone || 'classic'}
-                onChange={(e) => handleInputChange('tone', e.target.value)}
-                className="w-full px-3 py-2 rounded-lg bg-[#12142A]/80 border border-white/10 text-white focus:outline-none"
+            <div className="flex gap-4">
+              <button
+                onClick={() => calculateChart(navigate, 'tropical')}
+                disabled={!birthData.birthMonth || !birthData.birthDay || !birthData.birthYear || !birthData.hour || !birthData.minute || !birthData.location}
+                className="flex-1 bg-gray-900 text-white rounded-xl py-4 text-base font-light tracking-wide hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <option value="classic">Classic</option>
-                <option value="coach">Coach</option>
-                <option value="witty">Witty</option>
-              </select>
-              <p className="text-xs t-text-muted mt-2">This changes the 'vibe' of your analysis</p>
+                Calculate Tropical Chart
+              </button>
+
+              <button
+                onClick={() => calculateChart(navigate, 'sidereal')}
+                disabled={!birthData.birthMonth || !birthData.birthDay || !birthData.birthYear || !birthData.hour || !birthData.minute || !birthData.location}
+                className="flex-1 bg-gray-900 text-white rounded-xl py-4 text-base font-light tracking-wide hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Calculate Sidereal Chart
+              </button>
             </div>
           </div>
+        </div>
+      </main>
 
-          {calcError && (
-            <div className="bg-red-500/15 border border-red-500/40 rounded-lg p-4 mb-6 text-sm text-red-300">
-              ⚠️ Error: {calcError}
-            </div>
-          )}
-
-          <div className="bg-[#69D2FF]/10 border border-[#69D2FF]/20 rounded-lg p-4 mb-6 text-sm text-[#69D2FF]">
-            🔒 Your data is private and secure
-          </div>
-
-          <div className="flex gap-4">
-            <button
-              onClick={() => calculateChart(navigate, 'tropical')}
-              disabled={!birthData.birthMonth || !birthData.birthDay || !birthData.birthYear || !birthData.hour || !birthData.minute || !birthData.location}
-              className="flex-1 gold-gradient-btn rounded-xl py-4 text-base disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
-            >
-              Calculate Tropical Chart
+      {/* Footer */}
+      <footer className="relative z-10 px-6 md:px-12 py-8 border-t border-gray-200/50 mt-auto">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+          <span className="text-xs font-light tracking-wide text-gray-400 uppercase">© 2024 natavium</span>
+          <div className="flex gap-8">
+            <button onClick={() => navigate("/impressum")} className="text-xs font-light tracking-wide text-gray-500 hover:text-gray-700 transition-colors uppercase">
+              impressum
             </button>
-
-            <button
-              onClick={() => calculateChart(navigate, 'sidereal')}
-              disabled={!birthData.birthMonth || !birthData.birthDay || !birthData.birthYear || !birthData.hour || !birthData.minute || !birthData.location}
-              className="flex-1 gold-gradient-btn rounded-xl py-4 text-base disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
-            >
-              Calculate Sidereal Chart
+            <button onClick={() => navigate("/datenschutz")} className="text-xs font-light tracking-wide text-gray-500 hover:text-gray-700 transition-colors uppercase">
+              privacy
             </button>
           </div>
         </div>
-      </div>
+      </footer>
     </div>
   );
 }
@@ -1606,6 +2126,14 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
   const [transitTeaserError, setTransitTeaserError] = useState("");
   // eslint-disable-next-line no-unused-vars
   const navigate = useNavigate();
+  const { theme, toggleTheme } = useTheme();
+
+  // Get theme label for display
+  const getThemeLabel = () => {
+    if (theme === 'theme-daylight') return '☀️';
+    if (theme === 'theme-v2') return '🌙';
+    return '🌅';
+  };
 
   const zodiacType = chartResult?.zodiacType || 'tropical';
   const activeChart = chartResult?.tropical ? chartResult[zodiacType] : chartResult;
@@ -1715,53 +2243,91 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
   };
 
   return (
-    <div className="min-h-screen text-white p-6 pb-16">
-      <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-8">
-          <h1 className="font-serif text-4xl md:text-5xl font-semibold gold-gradient-text mb-2">
-            {birthData.subjectInitials 
-              ? `Natavium Preview for ${birthData.subjectInitials.toUpperCase()}` 
-              : `Natavium Preview`}
-          </h1>
-          <p className="text-lg t-text-muted">
-            {displayDate} • {birthData.time} • {birthData.location}
-          </p>
+    <div className="min-h-screen bg-[#faf8f4] relative overflow-hidden">
+      {/* Background pattern matching LandingPageNew */}
+      <div className="absolute inset-0 pointer-events-none z-0" style={{
+        backgroundImage: `
+          repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(139,119,101,0.05) 2px, rgba(139,119,101,0.05) 4px),
+          repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(139,119,101,0.05) 2px, rgba(139,119,101,0.05) 4px),
+          radial-gradient(ellipse at 30% 50%, rgba(222,184,135,0.15) 0%, transparent 50%),
+          radial-gradient(ellipse at 70% 80%, rgba(210,180,140,0.12) 0%, transparent 50%),
+          radial-gradient(ellipse at 50% 20%, rgba(245,222,179,0.1) 0%, transparent 40%)
+        `
+      }}></div>
+
+      {/* Minimalist header - matching LandingPageNew */}
+      <header className="relative z-20 px-6 md:px-12 py-8">
+        <div className="max-w-7xl mx-auto flex justify-between items-center">
+          <div className="flex items-center gap-4 cursor-pointer" onClick={() => navigate("/")}>
+            <img src={LogoBlue} alt="Natavium" className="w-12 h-12 md:w-14 md:h-14" />
+            <h1 className="text-2xl md:text-3xl lg:text-4xl font-light tracking-[0.15em] uppercase text-gray-900">natavium</h1>
+          </div>
+          <nav className="flex items-center gap-8">
+            <button
+              onClick={() => navigate("/")}
+              className="text-sm font-light tracking-wide text-gray-600 hover:text-gray-900 transition-colors uppercase"
+            >
+              home
+            </button>
+            {/* Theme Selector */}
+            <button
+              onClick={toggleTheme}
+              className="text-2xl ml-4 pl-4 border-l border-gray-200 hover:opacity-70 transition-opacity"
+              title="Toggle theme"
+            >
+              {getThemeLabel()}
+            </button>
+          </nav>
         </div>
+      </header>
+
+      <main className="relative z-10 px-6 md:px-12 py-8 pb-16">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-8">
+            <h1 className="text-4xl md:text-5xl font-light text-gray-900 mb-2">
+              {birthData.subjectInitials 
+                ? `Natavium Preview for ${birthData.subjectInitials.toUpperCase()}` 
+                : `Natavium Preview`}
+            </h1>
+            <p className="text-lg font-light text-gray-500">
+              {displayDate} • {birthData.time} • {birthData.location}
+            </p>
+          </div>
 
         {/* Sun Sign Heading - now inside wheel box */}
         {/* Removed - moved inside wheel box */}
 
-        {/* Big Three - Above chart wheel, tightened with gold hover */}
+        {/* Big Three - Above chart wheel */}
         <div className="grid md:grid-cols-3 gap-3 mb-6">
-          <div className="card-preview rounded-xl p-4 text-center">
-            <Sun className="w-8 h-8 icon-gold mb-2 mx-auto" />
-            <div className="text-xl font-bold mb-0.5 t-text-primary">{activeChart.sun.sign} Sun</div>
-            <div className="text-xs t-text-muted">Core Identity</div>
-            <div className="text-xs t-text-muted mt-1">
+          <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 text-center border border-gray-200/50">
+            <Sun className="w-8 h-8 text-amber-500 mb-2 mx-auto" />
+            <div className="text-xl font-light text-gray-900 mb-0.5">{activeChart.sun.sign} Sun</div>
+            <div className="text-xs text-gray-500">Core Identity</div>
+            <div className="text-xs text-gray-400 mt-1">
               {activeChart.sun.degree}° {String(activeChart.sun.minutes || 0).padStart(2, '0')}' • House {activeChart.sun.house}
             </div>
           </div>
 
-          <div className="card-preview rounded-xl p-4 text-center">
-            <Moon className="w-8 h-8 text-[#69D2FF] mb-2 mx-auto" />
-            <div className="text-xl font-bold mb-0.5 t-text-primary">{activeChart.moon.sign} Moon</div>
-            <div className="text-xs t-text-muted">Emotional Core</div>
-            <div className="text-xs t-text-muted mt-1">
+          <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 text-center border border-gray-200/50">
+            <Moon className="w-8 h-8 text-gray-600 mb-2 mx-auto" />
+            <div className="text-xl font-light text-gray-900 mb-0.5">{activeChart.moon.sign} Moon</div>
+            <div className="text-xs text-gray-500">Emotional Core</div>
+            <div className="text-xs text-gray-400 mt-1">
               {activeChart.moon.degree}° {String(activeChart.moon.minutes || 0).padStart(2, '0')}' • House {activeChart.moon.house}
             </div>
           </div>
 
-          <div className="card-preview rounded-xl p-4 text-center">
-            <Star className="w-8 h-8 icon-gold mb-2 mx-auto" />
-            <div className="text-xl font-bold mb-0.5 t-text-primary">{activeChart.rising.sign} Rising</div>
-            <div className="text-xs t-text-muted">How Others See You</div>
-            <div className="text-xs t-text-muted mt-1">{activeChart.rising.degree}° {String(activeChart.rising.minutes || 0).padStart(2, '0')}' Ascendant</div>
+          <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 text-center border border-gray-200/50">
+            <Star className="w-8 h-8 text-amber-500 mb-2 mx-auto" />
+            <div className="text-xl font-light text-gray-900 mb-0.5">{activeChart.rising.sign} Rising</div>
+            <div className="text-xs text-gray-500">How Others See You</div>
+            <div className="text-xs text-gray-400 mt-1">{activeChart.rising.degree}° {String(activeChart.rising.minutes || 0).padStart(2, '0')}' Ascendant</div>
           </div>
         </div>
 
         {/* Premium Chart Wheel - Left aligned on desktop with Cosmic Blueprint on right */}
         <div className="md:grid md:grid-cols-2 gap-6 mb-8">
-          <div className="card-preview rounded-2xl p-8">
+          <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-8 border border-gray-200/50">
           {/* Personalized Archetype - above wheel */}
           {(() => {
             // Sun sign base archetypes
@@ -1817,11 +2383,11 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
             const archetype = `The ${moonMod} ${archetypeNoun}`;
 
             return (
-              <div className="text-center mb-6 pb-6 border-b border-white/10">
-                <p className="font-serif text-2xl font-semibold gold-gradient-text">
-                  {sunSign} — <span className="italic">"{archetype}"</span>
+              <div className="text-center mb-6 pb-6 border-b border-gray-200">
+                <p className="text-2xl font-light text-gray-900">
+                  {sunSign} — <span className="italic text-gray-600">"{archetype}"</span>
                 </p>
-                <p className="text-xs t-text-muted mt-2">
+                <p className="text-xs text-gray-400 mt-2">
                   {moonSign} Moon • {risingSign} Rising
                 </p>
               </div>
@@ -2057,38 +2623,38 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
 
           {/* Legend - centered */}
           <div className="flex flex-wrap justify-center gap-4 text-xs mb-3 mt-2">
-            <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full" style={{ background: 'linear-gradient(135deg, #ff6b6b, #f97316)' }}></span><span className="t-text-muted">Fire</span></div>
-            <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full" style={{ background: 'linear-gradient(135deg, #4ade80, #22c55e)' }}></span><span className="t-text-muted">Earth</span></div>
-            <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full" style={{ background: 'linear-gradient(135deg, #fde047, #facc15)' }}></span><span className="t-text-muted">Air</span></div>
-            <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full" style={{ background: 'linear-gradient(135deg, #60a5fa, #3b82f6)' }}></span><span className="t-text-muted">Water</span></div>
+            <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full" style={{ background: 'linear-gradient(135deg, #ff6b6b, #f97316)' }}></span><span className="text-gray-500">Fire</span></div>
+            <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full" style={{ background: 'linear-gradient(135deg, #4ade80, #22c55e)' }}></span><span className="text-gray-500">Earth</span></div>
+            <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full" style={{ background: 'linear-gradient(135deg, #fde047, #facc15)' }}></span><span className="text-gray-500">Air</span></div>
+            <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full" style={{ background: 'linear-gradient(135deg, #60a5fa, #3b82f6)' }}></span><span className="text-gray-500">Water</span></div>
           </div>
 
-          <p className="text-center t-text-muted italic text-sm">
+          <p className="text-center text-gray-500 italic text-sm">
             {activeChart.rising.sign} Rising • Planets positioned by degree
           </p>
         </div>
 
         {/* Cosmic Blueprint - beside chart box */}
-        <div className="card-preview rounded-2xl p-6 flex flex-col">
-          <h2 className="font-serif text-2xl font-semibold gold-gradient-text mb-4 text-center">Natal Chart Analysis</h2>
+        <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-6 flex flex-col border border-gray-200/50">
+          <h2 className="text-2xl font-light text-gray-900 mb-4 text-center">Natal Chart Analysis</h2>
 
           {teaserLoading ? (
             <div className="flex flex-col items-center justify-center py-6">
-              <Loader2 className="w-8 h-8 icon-gold animate-spin mb-3" />
-              <p className="t-text-muted text-sm">Analyzing your unique cosmic signature...</p>
+              <Loader2 className="w-8 h-8 text-amber-500 animate-spin mb-3" />
+              <p className="text-gray-500 text-sm font-light">Analyzing your unique cosmic signature...</p>
             </div>
           ) : teaserError ? (
             <div className="space-y-3">
-              <p className="text-sm leading-relaxed">
+              <p className="text-sm leading-relaxed text-gray-700 font-light">
                 Your {activeChart.sun.sign} Sun combined with {activeChart.moon.sign} Moon and {activeChart.rising.sign} Rising
                 creates a unique cosmic blueprint that shapes your personality, emotions, and how others perceive you.
               </p>
-              <p className="t-text-muted text-xs">Full AI analysis available in paid packages below.</p>
+              <p className="text-gray-400 text-xs font-light">Full AI analysis available in paid packages below.</p>
             </div>
           ) : teaser ? (
             <div className="space-y-3">
               {teaser.split('\n\n').slice(0, 2).map((paragraph, idx) => (
-                <p key={idx} className="text-sm leading-relaxed text-white/90">
+                <p key={idx} className="text-sm leading-relaxed text-gray-700 font-light">
                   {paragraph}
                 </p>
               ))}
@@ -2098,44 +2664,44 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
           <div className="relative mt-4">
             {/* Blurred premium preview */}
             <div className="blur-sm select-none opacity-50">
-              <h3 className="text-base font-bold mb-1">
+              <h3 className="text-base font-medium text-gray-900 mb-1">
                 Mercury in {activeChart.mercury.sign}
               </h3>
-              <p className="text-xs">Your communication style reveals hidden patterns...</p>
+              <p className="text-xs text-gray-600">Your communication style reveals hidden patterns...</p>
             </div>
 
-            {/* Gradient overlay - handled by theme CSS */}
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#12142A] pointer-events-none" />
+            {/* Gradient overlay */}
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white pointer-events-none" />
           </div>
 
           <div className="text-center mt-4">
-            <Lock className="w-6 h-6 icon-gold mx-auto mb-2" />
-            <p className="t-text-muted text-xs">Select a package below to unlock your full analysis</p>
+            <Lock className="w-6 h-6 text-gray-400 mx-auto mb-2" />
+            <p className="text-gray-400 text-xs font-light">Select a package below to unlock your full analysis</p>
           </div>
         </div>
       </div>
 
         {/* Transit Report Preview */}
-        <div className="card-preview rounded-2xl p-6">
-          <h2 className="font-serif text-2xl font-semibold gold-gradient-text mb-4">Transit Report Preview</h2>
+        <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/50 mb-8">
+          <h2 className="text-2xl font-light text-gray-900 mb-4">Transit Report Preview</h2>
 
           {transitTeaserLoading ? (
             <div className="flex flex-col items-center justify-center py-6">
-              <Loader2 className="w-8 h-8 icon-gold animate-spin mb-3" />
-              <p className="t-text-muted text-sm">Scanning current planetary transits...</p>
+              <Loader2 className="w-8 h-8 text-amber-500 animate-spin mb-3" />
+              <p className="text-gray-500 text-sm font-light">Scanning current planetary transits...</p>
             </div>
           ) : transitTeaserError ? (
             <div className="space-y-3">
-              <p className="text-sm leading-relaxed">
+              <p className="text-sm leading-relaxed text-gray-700 font-light">
                 Current planetary movements are creating significant shifts in your chart. Saturn, Jupiter, and the outer planets
                 are activating key areas of your life right now.
               </p>
-              <p className="t-text-muted text-xs">Full transit analysis available below.</p>
+              <p className="text-gray-400 text-xs font-light">Full transit analysis available below.</p>
             </div>
           ) : transitTeaser ? (
             <div className="space-y-3">
               {transitTeaser.split('\n\n').slice(0, 2).map((paragraph, idx) => (
-                <p key={idx} className="text-sm leading-relaxed text-white/90">
+                <p key={idx} className="text-sm leading-relaxed text-gray-700 font-light">
                   {paragraph}
                 </p>
               ))}
@@ -2144,33 +2710,33 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
 
           <div className="relative mt-4">
             <div className="blur-sm select-none opacity-50">
-              <h3 className="text-base font-bold mb-1">
+              <h3 className="text-base font-medium text-gray-900 mb-1">
                 Saturn Transit to your {activeChart.sun.sign} Sun
               </h3>
-              <p className="text-xs">Major restructuring themes are emerging in your life...</p>
+              <p className="text-xs text-gray-600">Major restructuring themes are emerging in your life...</p>
             </div>
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#12142A] pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white pointer-events-none" />
           </div>
 
           <div className="text-center mt-4">
-            <Lock className="w-6 h-6 icon-gold mx-auto mb-2" />
-            <p className="text-xs t-text-primary">Select the Transit Report below to unlock your full forecast</p>
+            <Lock className="w-6 h-6 text-gray-400 mx-auto mb-2" />
+            <p className="text-xs text-gray-500 font-light">Select the Transit Report below to unlock your full forecast</p>
           </div>
         </div>
 
       {/* Services description */}
       <div className="w-full px-4 mt-8">
-        <p className="text-lg leading-relaxed t-text-primary text-center mb-12 max-w-4xl mx-auto">
+        <p className="text-lg leading-relaxed text-gray-900 text-center mb-12 max-w-4xl mx-auto font-light">
           Select individual services or save with a bundle package.
         </p>
       </div>
 
       {/* Individual Services Selection */}
         <div className="mb-12">
-          <h2 className="font-serif text-3xl font-semibold gold-gradient-text text-center mb-2">Select Services</h2>
-          <p className="text-center t-text-muted text-sm mb-8">Pick any combination you want</p>
+          <h2 className="text-3xl font-light text-gray-900 text-center mb-2">Select Services</h2>
+          <p className="text-center text-gray-500 text-sm mb-8 font-light">Pick any combination you want</p>
 
-          <div className="card-solid rounded-2xl p-6 service-selection-container">
+          <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/50">
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               {SERVICES.map((service) => {
                 const isSelected = !selectedBundle && selectedServices.includes(service.id);
@@ -2182,16 +2748,16 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
                     onClick={() => toggleService(service.id)}
                     className={`relative p-3 rounded-xl border transition-all text-left hover:scale-[1.02] ${
                       isSelected
-                        ? "bg-[#D6B35A]/15 border-[#D6B35A]"
+                        ? "bg-gray-100 border-gray-400"
                         : isIncludedInBundle
-                        ? "bg-green-500/10 border-green-500/30"
-                        : "bg-[#12142A]/60 border-white/10 hover:bg-white/10"
+                        ? "bg-green-50 border-green-300"
+                        : "bg-white border-gray-200 hover:bg-gray-50"
                     }`}
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex items-center gap-2 pr-2">
-                        <ServiceIcon className="w-5 h-5 text-[#D6B35A] flex-shrink-0" />
-                        <h4 className="font-serif !text-xl font-semibold gold-gradient-text leading-none" style={{fontSize: '1.25rem'}}>{service.name}</h4>
+                        <ServiceIcon className="w-5 h-5 text-gray-600 flex-shrink-0" />
+                        <h4 className="text-lg font-light text-gray-900 leading-none">{service.name}</h4>
                       </div>
                       <div className="relative flex-shrink-0">
                         <button
@@ -2200,33 +2766,33 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
                             e.stopPropagation();
                             setShowTooltip(showTooltip === `svc-${service.id}` ? null : `svc-${service.id}`);
                           }}
-                          className="p-1 hover:bg-white/10 rounded-full transition-colors"
+                          className="p-1 hover:bg-gray-100 rounded-full transition-colors"
                         >
-                          <Info className="w-4 h-4 t-text-muted" />
+                          <Info className="w-4 h-4 text-gray-400" />
                         </button>
                         {showTooltip === `svc-${service.id}` && (
-                          <div className="absolute right-0 top-8 w-64 bg-[#12142A] border border-white/15 rounded-xl p-4 shadow-xl z-20">
-                            <p className="text-sm t-text-primary">{service.description}</p>
+                          <div className="absolute right-0 top-8 w-64 bg-white border border-gray-200 rounded-xl p-4 shadow-xl z-20">
+                            <p className="text-sm text-gray-700 font-light">{service.description}</p>
                           </div>
                         )}
                       </div>
                     </div>
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between mt-2">
                       <div
                         className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
                           isSelected
-                            ? "bg-[#D6B35A] border-[#D6B35A]"
+                            ? "bg-gray-900 border-gray-900"
                             : isIncludedInBundle
                             ? "bg-green-500 border-green-500"
-                            : "border-white/30"
+                            : "border-gray-300"
                         }`}
                       >
-                        {(isSelected || isIncludedInBundle) && <Check className="w-3 h-3 text-[#12142A]" />}
+                        {(isSelected || isIncludedInBundle) && <Check className="w-3 h-3 text-white" />}
                       </div>
-                      <p className="text-[#D6B35A] text-base font-bold">${service.price.toFixed(2)}</p>
+                      <p className="text-gray-900 text-base font-light">${service.price.toFixed(2)}</p>
                     </div>
                     {isIncludedInBundle && (
-                      <p className="text-green-400 text-xs mt-1 text-right">Included in {BUNDLES[selectedBundle]?.name}</p>
+                      <p className="text-green-600 text-xs mt-1 text-right font-light">Included in {BUNDLES[selectedBundle]?.name}</p>
                     )}
                   </button>
                 );
@@ -2234,11 +2800,11 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
             </div>
 
             {selectedServices.length > 0 && !selectedBundle && (
-              <div className="mt-4 pt-4 border-t border-white/10 flex items-center justify-between">
-                <span className="t-text-muted text-sm">
+              <div className="mt-4 pt-4 border-t border-gray-200 flex items-center justify-between">
+                <span className="text-gray-500 text-sm font-light">
                   {selectedServices.length} service{selectedServices.length > 1 ? "s" : ""} selected
                 </span>
-                <span className="text-[#D6B35A] font-bold">
+                <span className="text-gray-900 font-light">
                   ${servicesTotal.toFixed(2)}
                 </span>
               </div>
@@ -2248,18 +2814,13 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
 
       {/* Bundle Packages */}
         <div className="mb-12">
-          <h2 className="font-serif text-3xl font-semibold gold-gradient-text text-center mb-2">Or Save With a Bundle</h2>
-          <p className="text-center t-text-muted text-sm mb-8">Discount packages that include multiple services</p>
+          <h2 className="text-3xl font-light text-gray-900 text-center mb-2">Or Save With a Bundle</h2>
+          <p className="text-center text-gray-500 text-sm mb-8 font-light">Discount packages that include multiple services</p>
 
           <div className="grid md:grid-cols-2 gap-4 items-start">
             {Object.values(BUNDLES).map((bundle) => {
               const IconComponent = bundle.icon;
               const isSelected = selectedBundle === bundle.id;
-              const colors = {
-                border: isSelected ? "border-[#D6B35A]" : "border-white/10",
-                icon: "icon-gold",
-                price: "gold-gradient-text",
-              };
 
               return (
                 <button
@@ -2268,27 +2829,27 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
                     setSelectedBundle(isSelected ? null : bundle.id);
                     setSelectedServices([]);
                   }}
-                  className={`card-preview relative rounded-2xl border transition-all text-left p-6 ${colors.border} ${
-                    isSelected ? "scale-105 shadow-lg border-[#D6B35A]" : ""
+                  className={`bg-white/60 backdrop-blur-sm relative rounded-2xl border transition-all text-left p-6 border-gray-200/50 hover:bg-white/80 ${
+                    isSelected ? "scale-105 shadow-lg border-gray-400" : ""
                   }`}
                 >
                   <div className="flex items-center justify-between gap-3 mb-4 w-full">
-                    <IconComponent className={`w-8 h-8 ${colors.icon}`} />
-                    <h3 className={`font-serif text-4xl font-bold ${colors.price}`}>{bundle.name}</h3>
-                    <div className={`text-3xl font-black ${colors.price}`}>
+                    <IconComponent className="w-8 h-8 text-gray-600" />
+                    <h3 className="text-4xl font-light text-gray-900">{bundle.name}</h3>
+                    <div className="text-3xl font-light text-gray-900">
                       ${bundle.price.toFixed(2)}
                     </div>
                   </div>
 
                   <div>
                     {!bundle.essentialIncludes ? (
-                      <div className="text-sm t-text-muted text-left leading-none mb-2">&nbsp;</div>
+                      <div className="text-sm text-gray-400 text-left leading-none mb-2">&nbsp;</div>
                     ) : (
-                      <div className="text-sm t-text-muted text-left leading-none mb-2">Essential +</div>
+                      <div className="text-sm text-gray-400 text-left leading-none mb-2">Essential +</div>
                     )}
                     {bundle.services.map((service, idx) => (
                       <div key={idx} className="flex items-center justify-between text-sm">
-                        <span className="t-text-primary">{service.name}</span>
+                        <span className="text-gray-700 font-light">{service.name}</span>
                         <div className="relative">
                           <button
                             type="button"
@@ -2296,13 +2857,13 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
                               e.stopPropagation();
                               setShowTooltip(showTooltip === `${bundle.id}-${idx}` ? null : `${bundle.id}-${idx}`);
                             }}
-                            className="p-1 hover:bg-white/10 theme-daylight:hover:bg-[#E85D75]/10 rounded-full transition-colors"
+                            className="p-1 hover:bg-gray-100 rounded-full transition-colors"
                           >
-                            <Info className="w-4 h-4 t-text-muted" />
+                            <Info className="w-4 h-4 text-gray-400" />
                           </button>
                           {showTooltip === `${bundle.id}-${idx}` && (
-                            <div className="absolute right-0 top-8 w-64 bg-[#12142A] border border-white/15 rounded-xl p-4 shadow-xl z-20 theme-daylight:bg-white theme-daylight:border-[#E85D75]/30">
-                              <p className="text-sm t-text-primary">{service.description}</p>
+                            <div className="absolute right-0 top-8 w-64 bg-white border border-gray-200 rounded-xl p-4 shadow-xl z-20">
+                              <p className="text-sm text-gray-700 font-light">{service.description}</p>
                             </div>
                           )}
                         </div>
@@ -2310,18 +2871,18 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
                     ))}
                   </div>
 
-                  <p className="text-xs t-text-muted text-center mb-3">One-time payment</p>
+                  <p className="text-xs text-gray-400 text-center mb-3 font-light">One-time payment</p>
 
                   {bundle.popular && (
-                    <div className="gold-gradient-btn text-xs font-bold px-3 py-1 rounded-full text-center">
+                    <div className="bg-gray-900 text-white text-xs font-light px-3 py-1 rounded-full text-center">
                       MOST POPULAR
                     </div>
                   )}
 
                   {isSelected && (
                     <div className="absolute top-3 right-3">
-                      <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-                        <Check className="w-4 h-4 text-white theme-daylight:text-[#12142A]" />
+                      <div className="w-6 h-6 bg-gray-900 rounded-full flex items-center justify-center">
+                        <Check className="w-4 h-4 text-white" />
                       </div>
                     </div>
                   )}
@@ -2379,16 +2940,17 @@ function PreviewPage({ chartResult, birthData, selectedBundle, setSelectedBundle
                 alert("Network error. Please try again.");
               }
             }}
-            className={`gold-gradient-btn gold-gradient-btn-lg hover:scale-105 transition-transform shadow-2xl ${!hasSelection ? 'opacity-50 cursor-not-allowed' : ''}`}
+            className={`bg-gray-900 text-white rounded-xl py-4 px-8 text-base font-light tracking-wide hover:bg-gray-800 transition-colors shadow-lg ${!hasSelection ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
             {hasSelection ? `Proceed to Payment — $${totalPrice.toFixed(2)}` : 'Select services or a bundle'}
           </button>
-          <p className="t-text-muted mt-3 text-sm">
+          <p className="text-gray-500 mt-3 text-sm font-light">
             Secure checkout • Instant access • Yours forever
           </p>
         </div>
 
       </div>
+    </main>
     </div>
   );
 }

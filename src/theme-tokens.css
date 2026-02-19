@@ -13,64 +13,64 @@
    THEME: Original (Purple Gradient)
    ================================ */
 .theme-original {
-  /* Page background */
-  --page-bg: linear-gradient(to bottom right, #312e81, #581c87, #be185d);
+  /* Page background - CLEAN WHITE */
+  --page-bg: #ffffff;
 
-  /* Text colors */
-  --text-primary: #ffffff;
-  --text-muted: #c4b5fd;
-  --text-subtle: #a78bfa;
+  /* Text colors - DARK FOR LIGHT BG */
+  --text-primary: #1a1a1a;
+  --text-muted: #666666;
+  --text-subtle: #999999;
 
-  /* Accent colors */
-  --accent: #fde047;
-  --accent-hover: #fef08a;
-  --accent-secondary: #f97316;
+  /* Accent colors - NEUTRAL + GOLD */
+  --accent: #000000;
+  --accent-hover: #333333;
+  --accent-secondary: #cccccc;
 
   /* Card/Surface */
-  --card-bg: rgba(255, 255, 255, 0.1);
-  --card-bg-hover: rgba(255, 255, 255, 0.15);
-  --card-border: rgba(255, 255, 255, 0.2);
-  --card-border-hover: rgba(255, 255, 255, 0.3);
+  --card-bg: rgba(255, 255, 255, 0.6);
+  --card-bg-hover: rgba(255, 255, 255, 0.75);
+  --card-border: rgba(200, 200, 200, 0.3);
+  --card-border-hover: rgba(150, 150, 150, 0.4);
 
-  /* Buttons - Primary */
-  --btn-primary-bg: linear-gradient(to right, #facc15, #f97316);
-  --btn-primary-bg-hover: linear-gradient(to right, #fde047, #fb923c);
-  --btn-primary-text: #581c87;
+  /* Buttons - Primary (BLACK) */
+  --btn-primary-bg: #000000;
+  --btn-primary-bg-hover: #333333;
+  --btn-primary-text: #ffffff;
 
   /* Buttons - Secondary */
-  --btn-secondary-bg: rgba(255, 255, 255, 0.1);
-  --btn-secondary-bg-hover: rgba(255, 255, 255, 0.2);
-  --btn-secondary-text: #ffffff;
-  --btn-secondary-border: rgba(255, 255, 255, 0.2);
+  --btn-secondary-bg: rgba(255, 255, 255, 0.5);
+  --btn-secondary-bg-hover: rgba(255, 255, 255, 0.7);
+  --btn-secondary-text: #333333;
+  --btn-secondary-border: rgba(200, 200, 200, 0.4);
 
   /* Inputs */
-  --input-bg: rgba(255, 255, 255, 0.2);
-  --input-border: rgba(255, 255, 255, 0.3);
-  --input-border-focus: #fde047;
-  --input-text: #ffffff;
-  --input-placeholder: rgba(255, 255, 255, 0.5);
+  --input-bg: rgba(255, 255, 255, 0.7);
+  --input-border: rgba(200, 200, 200, 0.4);
+  --input-border-focus: #666666;
+  --input-text: #1a1a1a;
+  --input-placeholder: rgba(100, 100, 100, 0.5);
 
   /* Borders & Dividers */
-  --border-default: rgba(255, 255, 255, 0.1);
-  --border-hover: rgba(255, 255, 255, 0.2);
+  --border-default: rgba(200, 200, 200, 0.3);
+  --border-hover: rgba(150, 150, 150, 0.5);
 
-  /* Shadows */
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.15);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.2);
-  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.25);
+  /* Shadows - NEUTRAL GRAY */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.12);
 
   /* Radius */
-  --radius: 1rem;
-  --radius-lg: 1.5rem;
+  --radius: 1.25rem;
+  --radius-lg: 1.75rem;
   --radius-full: 9999px;
 
   /* Status colors */
-  --success: #4ade80;
-  --error: #f87171;
-  --warning: #fbbf24;
+  --success: #10B981;
+  --error: #EF4444;
+  --warning: #F59E0B;
 
-  /* Backdrop blur (for glass effect) */
-  --backdrop-blur: blur(12px);
+  /* Backdrop blur */
+  --backdrop-blur: blur(16px);
 }
 
 /* ================================
@@ -162,58 +162,92 @@
    THEME: Daylight (Playful & Upbeat)
    Soft purple-to-blue gradient with organic shapes
    ================================ */
-.theme-daylight {
-  /* Page background - soft gradient with organic blobs */
-  --page-bg: linear-gradient(180deg, #E8D5F2 0%, #D4E5F7 50%, #B8D4F0 100%);
+/* Force white background for all elements */
+html, body, #root {
+  background: white !important;
+  background-image: none !important;
+  background-color: white !important;
+}
 
-  /* Background colors - light and airy */
-  --cosmic-bg: #F0E6F5;
-  --cosmic-bg2: #E1F0FA;
-  --cosmic-surface: rgba(255, 255, 255, 0.7);
-  --cosmic-surface2: rgba(255, 255, 255, 0.85);
+/* Complete theme reset for new landing page */
+.theme-reset,
+.theme-reset *,
+.theme-reset::before,
+.theme-reset::after {
+  background: white !important;
+  background-image: none !important;
+  background-color: white !important;
+  color: inherit !important;
+}
+
+.theme-reset {
+  all: initial;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  background: white !important;
+  overflow: auto !important;
+}
+
+.theme-daylight {
+  /* Page background - disabled for landing page */
+  --page-bg: white;
+  
+  /* Force white background */
+  background: white !important;
+
+  /* Background colors - PURE WHITE ONLY */
+  --cosmic-bg: #FFFFFF;
+  --cosmic-bg2: #FFFFFF;
+  --cosmic-surface: rgba(255, 255, 255, 0.8);
+  --cosmic-surface2: rgba(255, 255, 255, 0.9);
 
   /* Text colors - dark for contrast on light bg */
-  --text-primary: #2D1B4E;
-  --text-muted: #5B4A6E;
-  --text-subtle: #7A6A8A;
+  --text-primary: #1a1a1a;
+  --text-muted: #666666;
+  --text-subtle: #999999;
 
-  /* Accent colors - warm coral and soft gold */
-  --accent: #E85D75;
-  --accent-hover: #F07085;
-  --accent-secondary: #6BB8D4;
+  /* Accent colors - neutral palette */
+  --accent: #000000;
+  --accent-hover: #333333;
+  --accent-secondary: #cccccc;
+  --accent-gold: #d4af37;
+  --accent-cyan: #999999;
 
   /* Card/Surface - glassmorphism on light */
   --card-bg: rgba(255, 255, 255, 0.6);
   --card-bg-hover: rgba(255, 255, 255, 0.75);
-  --card-border: rgba(255, 255, 255, 0.8);
-  --card-border-hover: rgba(233, 196, 253, 0.6);
+  --card-border: rgba(200, 200, 200, 0.3);
+  --card-border-hover: rgba(150, 150, 150, 0.4);
 
-  /* Buttons - Primary (coral) */
-  --btn-primary-bg: linear-gradient(135deg, #E85D75 0%, #F07085 100%);
-  --btn-primary-bg-hover: linear-gradient(135deg, #F07085 0%, #F58A9A 100%);
+  /* Buttons - Primary (black) */
+  --btn-primary-bg: #000000;
+  --btn-primary-bg-hover: #333333;
   --btn-primary-text: #FFFFFF;
 
   /* Buttons - Secondary */
   --btn-secondary-bg: rgba(255, 255, 255, 0.5);
   --btn-secondary-bg-hover: rgba(255, 255, 255, 0.7);
-  --btn-secondary-text: #5B4A6E;
-  --btn-secondary-border: rgba(107, 184, 212, 0.4);
+  --btn-secondary-text: #333333;
+  --btn-secondary-border: rgba(200, 200, 200, 0.4);
 
   /* Inputs */
   --input-bg: rgba(255, 255, 255, 0.7);
-  --input-border: rgba(107, 184, 212, 0.4);
-  --input-border-focus: #6BB8D4;
-  --input-text: #2D1B4E;
-  --input-placeholder: rgba(91, 74, 110, 0.5);
+  --input-border: rgba(200, 200, 200, 0.4);
+  --input-border-focus: #666666;
+  --input-text: #1a1a1a;
+  --input-placeholder: rgba(100, 100, 100, 0.5);
 
   /* Borders & Dividers */
-  --border-default: rgba(107, 184, 212, 0.3);
-  --border-hover: rgba(107, 184, 212, 0.5);
+  --border-default: rgba(200, 200, 200, 0.3);
+  --border-hover: rgba(150, 150, 150, 0.5);
 
-  /* Shadows - soft colored shadows */
-  --shadow-sm: 0 2px 8px rgba(107, 184, 212, 0.15);
-  --shadow-md: 0 4px 16px rgba(107, 184, 212, 0.2);
-  --shadow-lg: 0 8px 32px rgba(107, 184, 212, 0.25);
+  /* Shadows - neutral gray shadows */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.12);
 
   /* Radius - softer, rounder */
   --radius: 1.25rem;
@@ -228,26 +262,19 @@
   /* Backdrop blur */
   --backdrop-blur: blur(16px);
 
-  /* Cosmic overrides for daylight */
-  --cosmic-accent: #E85D75;
-  --cosmic-accent-gold: #F5D76E;
-  --cosmic-accent-cyan: #6BB8D4;
-  --cosmic-gradient-bg: linear-gradient(180deg, #E8D5F2 0%, #D4E5F7 50%, #B8D4F0 100%);
-  --cosmic-gradient-cta: linear-gradient(135deg, #E85D75 0%, #F07085 100%);
-  --cosmic-border: rgba(107, 184, 212, 0.3);
-  --cosmic-border-medium: rgba(107, 184, 212, 0.5);
-  --cosmic-shadow-glow: 0 0 30px rgba(107, 184, 212, 0.3);
+  /* Cosmic overrides for daylight - ALL WHITE/NEUTRAL */
+  --cosmic-accent: #000000;
+  --cosmic-accent-gold: #d4af37;
+  --cosmic-accent-cyan: #999999;
+  --cosmic-gradient-bg: #FFFFFF;
+  --cosmic-gradient-cta: #000000;
+  --cosmic-border: rgba(200, 200, 200, 0.3);
+  --cosmic-border-medium: rgba(150, 150, 150, 0.5);
+  --cosmic-shadow-glow: 0 0 30px rgba(0, 0, 0, 0.1);
   --cosmic-radius: 1.25rem;
-  --focus-ring: 0 0 0 3px rgba(107, 184, 212, 0.3);
-  --shadow-soft: 0 8px 32px rgba(107, 184, 212, 0.2);
-  --blur-amount: 16px;
-}
-
-/* Daylight theme base styles */
-.theme-daylight {
+  --focus-ring: 0 0 0 3px rgba(0, 0, 0, 0.1);
+  --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.08);
   min-height: 100vh;
-  background-color: var(--cosmic-bg);
-  background-image: var(--cosmic-gradient-bg);
   color: var(--text-primary);
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   line-height: 1.6;
@@ -256,47 +283,111 @@
   position: relative;
 }
 
-/* Organic blob background for daylight theme */
+/* Organic blob background for daylight theme - DISABLED */
 .theme-daylight::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  /* Multiple organic blob shapes */
-  background:
-    /* Top-right leaf green blob (on top) */
-    /* radial-gradient(ellipse 55% 45% at 90% 10%, rgba(115, 213, 148, 0.8) 0%, transparent 55%),
-    /* Top-left soft pink blob */
-    /*radial-gradient(ellipse 50% 40% at 15% 20%, rgba(240, 180, 200, 0.4) 0%, transparent 55%),
-    /* Center-right blue blob */
-    /*radial-gradient(ellipse 45% 55% at 75% 45%, rgba(140, 200, 230, 0.45) 0%, transparent 50%),
-    /* Bottom-left cyan blob */
-    /*radial-gradient(ellipse 55% 45% at 20% 75%, rgba(120, 210, 220, 0.4) 0%, transparent 55%),
-    /* Bottom-center soft purple */
-    /*radial-gradient(ellipse 50% 40% at 50% 85%, rgba(180, 160, 210, 0.35) 0%, transparent 50%),
-    /* Lower leaf green blob */
-    /* radial-gradient(ellipse 40% 35% at 70% 90%, rgba(100, 160, 120, 0.4) 0%, transparent 50%),
-    /* Small accent blobs */
-    /* radial-gradient(ellipse 30% 25% at 35% 35%, rgba(255, 200, 180, 0.3) 0%, transparent 50%),
-    /* radial-gradient(ellipse 25% 30% at 65% 70%, rgba(200, 180, 240, 0.35) 0%, transparent 45%),
-    /* Base gradient */
-    /* linear-gradient(180deg, #E8D5F2 0%, #D4E5F7 40%, #B8D4F0 70%, #7fe1b0 100%);*/
-    /* radial-gradient(ellipse 55% 45% at 90% 10%, rgba(115, 213, 148, 0.8) 0%, transparent 55%)*/
+  display: none;
 }
 
-/* Additional floating blob layer */
+/* Custom animations for landing page */
+@keyframes spin-slow {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+@keyframes spin-slow-reverse {
+  from { transform: translate(-50%, -50%) rotate(360deg); }
+  to { transform: translate(-50%, -50%) rotate(0deg); }
+}
+
+@keyframes spin-very-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes spinOnEquator {
+  from { transform: rotateY(0deg); }
+  to { transform: rotateY(360deg); }
+}
+
+/* Comet trajectory animations - diagonal paths across screen */
+/* Translation only - rotation handled by inline transform */
+
+/* Trajectory 0: Top-left to bottom-right */
+@keyframes comet-trajectory-0 {
+  from { transform: translate(-100px, -100px); }
+  to { transform: translate(calc(100vw + 100px), calc(100vh + 100px)); }
+}
+
+/* Trajectory 1: Top-right to bottom-left */
+@keyframes comet-trajectory-1 {
+  from { transform: translate(calc(100vw + 100px), -100px); }
+  to { transform: translate(-100px, calc(100vh + 100px)); }
+}
+
+/* Trajectory 2: Left-center to right-lower */
+@keyframes comet-trajectory-2 {
+  from { transform: translate(-100px, 30vh); }
+  to { transform: translate(calc(100vw + 100px), calc(30vh + 70vh)); }
+}
+
+/* Trajectory 3: Right-center to left-lower */
+@keyframes comet-trajectory-3 {
+  from { transform: translate(calc(100vw + 100px), 40vh); }
+  to { transform: translate(-100px, calc(40vh + 60vh)); }
+}
+
+/* Trajectory 4: Upper-center to bottom-right */
+@keyframes comet-trajectory-4 {
+  from { transform: translate(20vw, -100px); }
+  to { transform: translate(calc(20vw + 80vw), calc(100vh + 100px)); }
+}
+
+/* Trajectory 5: Upper-right to bottom-left */
+@keyframes comet-trajectory-5 {
+  from { transform: translate(80vw, -100px); }
+  to { transform: translate(calc(80vw - 80vw), calc(100vh + 100px)); }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 20s linear infinite;
+}
+
+.animate-spin-slow-reverse {
+  animation: spin-slow-reverse 15s linear infinite;
+}
+
+.animate-spin-very-slow {
+  animation: spin-very-slow 60s linear infinite;
+}
+
+/* Comet trajectory classes */
+.comet-trajectory-0 {
+  animation: comet-trajectory-0 6.5s linear forwards;
+}
+
+.comet-trajectory-1 {
+  animation: comet-trajectory-1 6.5s linear forwards;
+}
+
+.comet-trajectory-2 {
+  animation: comet-trajectory-2 6.5s linear forwards;
+}
+
+.comet-trajectory-3 {
+  animation: comet-trajectory-3 6.5s linear forwards;
+}
+
+.comet-trajectory-4 {
+  animation: comet-trajectory-4 6.5s linear forwards;
+}
+
+.comet-trajectory-5 {
+  animation: comet-trajectory-5 6.5s linear forwards;
+}
+
+/* Additional floating blob layer - DISABLED */
 .theme-daylight::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  background:
-    /* Faint astrological chart watermark - golden lines on existing bg */
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 800'%3E%3Cg fill='none' stroke='%23D4AF37' stroke-width='0.8' stroke-opacity='0.15'%3E%3Ccircle cx='400' cy='400' r='380'/%3E%3Ccircle cx='400' cy='400' r='300'/%3E%3Ccircle cx='400' cy='400' r='220'/%3E%3Ccircle cx='400' cy='400' r='140'/%3E%3Cline x1='400' y1='20' x2='400' y2='780'/%3E%3Cline x1='20' y1='400' x2='780' y2='400'/%3E%3Cline x1='115' y1='115' x2='685' y2='685'/%3E%3Cline x1='685' y1='115' x2='115' y2='685'/%3E%3Cline x1='68' y1='245' x2='732' y2='555'/%3E%3Cline x1='68' y1='555' x2='732' y2='245'/%3E%3C/g%3E%3Cg fill='%23D4AF37' fill-opacity='0.12' font-family='serif' font-size='14'%3E%3Ctext x='400' y='55' text-anchor='middle'%3E♈%3C/text%3E%3Ctext x='745' y='405' text-anchor='middle'%3E♉%3C/text%3E%3Ctext x='400' y='765' text-anchor='middle'%3E♊%3C/text%3E%3Ctext x='55' y='405' text-anchor='middle'%3E♋%3C/text%3E%3Ctext x='160' y='160' text-anchor='middle'%3E♌%3C/text%3E%3Ctext x='640' y='160' text-anchor='middle'%3E♍%3C/text%3E%3Ctext x='640' y='640' text-anchor='middle'%3E♎%3C/text%3E%3Ctext x='160' y='640' text-anchor='middle'%3E♏%3C/text%3E%3C/g%3E%3C/svg%3E") center/contain no-repeat;
-  background-size: min(90vw, 90vh);
-  opacity: 0.6;
+  display: none;
 }
 
 .theme-daylight > * {
@@ -659,7 +750,18 @@
 /* ================================
    BASE STYLES (Applied to themed root)
    ================================ */
-.theme-original,
+.theme-original {
+  min-height: 100vh;
+  background: #ffffff;
+  background-color: #ffffff;
+  background-image: none;
+  color: #1a1a1a;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 .theme-v2 {
   min-height: 100vh;
   background-color: var(--cosmic-bg);
